@@ -1,0 +1,29 @@
+User-Agent: Exabot
+Crawl-Delay: 900
+Disallow: /geek/hits/
+Disallow: /gb-view.php
+
+User-Agent: msnbot
+Disallow: /
+
+User-Agent: sitecheck.internetseer.com
+Disallow: /
+
+User-Agent: NPBot
+Disallow: /
+
+User-agent: UbiCrawler
+Disallow: /
+
+User-agent: TurnitinBot
+Disallow: /
+
+User-agent: Pompos
+Disallow: /
+
+User-agent: e-SocietyRobot
+Disallow: /
+
+User-agent: *
+Disallow: /geek/hits/
+Disallow: /gb-view.php

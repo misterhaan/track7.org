@@ -1,0 +1,6 @@
+AuthType Basic
+AuthName "track7 administration"
+# AuthUserFile /home/misterhaan/.htpasswd/.track7.org
+AuthUserFile /etc/httpd/.htpasswd/track7.org/admin
+
+require valid-user

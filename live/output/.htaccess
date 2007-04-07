@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteOptions inherit
+RewriteRule ^cd/([a-z]+)\.php$ compilations.php?cd=$1

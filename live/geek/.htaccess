@@ -1,0 +1,15 @@
+RewriteEngine on
+RewriteOptions inherit
+RewriteRule ^guides/contribute$ guide-add.php
+RewriteRule ^guides/([^/]+)/all$ guide.php?guide=$1&page=all
+RewriteRule ^guides/([^/]+)/page([1-9])$ guide.php?guide=$1&page=$2
+RewriteRule ^guides/([^/]+)/$ guide.php?guide=$1
+RewriteRule ^guides/sort=(.+)$ guide.php?sort=$1
+RewriteRule ^guides/$ guide.php
+
+RedirectPermanent /geek/dualxp98.php http://www.track7.org/geek/guides/dualxp98/
+RedirectPermanent /geek/installxp.php http://www.track7.org/geek/guides/installxp/
+RedirectPermanent /geek/objects.php http://www.track7.org/geek/guides/objects/
+RedirectPermanent /geek/stats/ http://www.track7.org/geek/hits/
+RedirectPermanent /geek/analogu.html http://www.track7.org/analogu/
+RedirectPermanent /geek/fewrights.php http://www.track7.org/fewrights.php

