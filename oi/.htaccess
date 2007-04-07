@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteOptions inherit
+RewriteRule ^f([0-9]+)/t([0-9]+)/delete=([0-9]+)$ delete.php?f=$1&t=$2&p=$3
+RewriteRule ^f([0-9]+)/t([0-9]+)/edit=([0-9]+)$ post.php?f=$1&t=$2&edit=$3
+RewriteRule ^f([0-9]+)/t([0-9]+)/reply=([0-9]+)$ post.php?f=$1&t=$2&p=$3
+RewriteRule ^f([0-9]+)/t([0-9]+)/reply$ post.php?f=$1&t=$2
+RewriteRule ^f([0-9]+)/t([0-9]+)/\??(.+)$ thread.php?fid=$1&tid=$2&$3
+RewriteRule ^f([0-9]+)/t([0-9]+)/?$ thread.php?fid=$1&tid=$2
+RewriteRule ^f([0-9]+)/post$ post.php?f=$1
+RewriteRule ^f([0-9]+)/\??(.+)$ forum.php?fid=$1&$2
+RewriteRule ^f([0-9]+)/?$ forum.php?fid=$1

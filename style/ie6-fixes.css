@@ -1,0 +1,19 @@
+<?
+  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/style.track7.php';
+?>
+/******************************************************************************\
+ * track7 style sheet by misterhaan of http://www.track7.org/                 *
+ *                                                                            *
+ * -> fixes for internet explorer 6                                           *
+\******************************************************************************/
+
+
+img {
+  behavior: url(/style/pngalpha.htc);
+}
+
+samp {
+  margin-right: 0;
+  width: 42em;
+  height: 10em;
+}

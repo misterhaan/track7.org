@@ -1,0 +1,15 @@
+
+# Contact info submission
+
+url: track7.org/
+site_owner: misterhaan
+address1: ICQ 6567017
+address2: AIM misterhaan
+city: 
+state: 
+country: 
+postal_code: 
+phone_number: 
+display_email: 
+site_name: track7
+site_description: track7 is my creative outlet -- i create stuff and put it here.  some of it may even be funny or useful!

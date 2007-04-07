@@ -1,0 +1,96 @@
+Options -Indexes
+
+DirectoryIndex index.php
+
+ErrorDocument 404 /404.php
+ErrorDocument 403 /403.php
+ErrorDocument 401 /401.php
+
+RedirectMatch /(.+)\.shtml$ /$1\.php
+
+RedirectPermanent /track7.php http://www.track7.org/
+RedirectPermanent /ready.shtml http://www.track7.org/output/pen/theory/ready.php
+RedirectPermanent /ready.html http://www.track7.org/output/pen/theory/ready.php
+RedirectPermanent /news/ready.php http://www.track7.org/output/pen/theory/ready.php
+RedirectPermanent /oldguestbook.php http://www.track7.org/gb-view.php
+RedirectPermanent /track7.php http://www.track7.org/
+RedirectPermanent /news/linz.php http://www.track7.org/output/gfx/linz.php
+RedirectPermanent /news/nazi.php http://www.track7.org/output/gfx/nazi.php
+RedirectPermanent /news/pentium4.php http://www.track7.org/output/pen/theory/pentium4.php
+RedirectPermanent /user/profile.php http://www.track7.org/user/editprofile.php
+RedirectPermanent /pen/bln/ http://www.track7.org/output/pen/bln/
+RedirectPermanent /pen/index.php http://www.track7.org/output/pen/
+RedirectPermanent /av/lego.php http://www.track7.org/output/lego.php
+RedirectPermanent /av/lego/ http://www.track7.org/output/lego/
+RedirectPermanent /av/compilations.php http://www.track7.org/output/compilations.php
+RedirectPermanent /av/cd/ http://www.track7.org/output/cd/
+RedirectPermanent /av/ http://www.track7.org/output/gfx/
+RedirectPermanent /album/ http://www.track7.org/output/album/
+
+RewriteEngine on
+RewriteRule ^source/([a-z0-9/\-]+\.(php|css))$ /showsource.php?file=$1
+RewriteRule ^files/(.+\.(zip|wsz|xpi|msi|cab))$ /download.php?file=$1
+RewriteRule ^robots.txt /robots.php
+RewriteRule ^pen/([^/]+)\.php output/pen/rewrite/$1.php
+
+# RewriteCond %{HTTP_REFERER} ^http://[^/]*$ [NC,OR] # IE actually sends referrers missing the trailing slash
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?a-b-l-o-g\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?absolutelycaninephotography\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?adultsitescenter\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?akksess\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?bobbakazoo\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?bongohome\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?buy-drugs-online\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?buy-hgh-human-growth-hormone\.net.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?celebinfo\.reallyconfused\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?convair\.de.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?counter-service\.de.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?download-slotmachines.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?formula42\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?freenudecelebrity\.net.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?gothic\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?harrisburg\.cowparade\.net.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?iamwin\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?learnthebiz\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?link-directory\.de.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?malixya\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?midget-sex-pictures\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?mikesspot\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?mtv-badpyrmont\.de.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?paris-hilton-video\.blogspot\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?pi-o\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?picturesplace\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?quiro\.de.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?saulem\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?search4hardcore\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?sex\.upx\.net.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?shatteredreality\.net.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?teoras\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?timesoft\.org.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?vanillaice\.net.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?visitcelebrities\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?wizard\.yellowbrick\.oz.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?worldnewslog\.com.*$ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://(www\.)?wr18\.com.*$ [NC,OR]
+RewriteCond %{REMOTE_ADDR} ^195\.225\.176\.87$ [OR]
+RewriteCond %{REMOTE_ADDR} ^81\.95\.146\.162$ [OR]
+# RewriteCond %{REMOTE_ADDR} ^12\.175\.5\.133$ [OR]
+RewriteCond %{REMOTE_ADDR} ^84\.1(10|08)\.[0-9]+\.[0-9]+$ [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/4\.0\ \(compatible;\ MSIE\ 6\.0;\ Windows\ NT\ 5\.1$ [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} HTTrack [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^8484\ Boston\ Project\ v\ 1\.0$ [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^TAMU_CS_IRL_CRAWLER/1\.0$ [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^Green\ Research,\ Inc\.$ [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^River\ Valley\ Inc\.$ [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/3\.0\ (compatible;\ Indy\ Library)$ [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^SurveyBot/[0-9]\.[0-9]\ (Whois\ Source)$ [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^[a-z]+(\ [a-z]+)*(\ ([0-9]+\.)*[0-9]+)?$ [NC]
+RewriteRule !(403\.php|\.css|\.png|\.ico) - [F,L]
+
+# AddHandler application/x-httpd-php .php
+AddType application/x-xpinstall .xpi
+
+# php_value session.use_trans_sid 0
+# php_value register_globals 0
+# php_value magic_quote_gpc 0
+# php_value include_path .:/usr/lib/php:/usr/local/lib/php:/home/misterhaan/inc

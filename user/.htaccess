@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteOptions inherit
+RewriteRule ^([0-9a-zA-Z\_\-]+)/?$ viewprofile.php?login=$1

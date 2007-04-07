@@ -1,0 +1,26 @@
+<?
+  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/style.track7.php';
+?>
+/******************************************************************************\
+ * track7 style sheet by misterhaan of http://www.track7.org/                 *
+ *                                                                            *
+ * -> '<?=STYLE; ?>' layout style disc golf pages                                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+\******************************************************************************/
+
+table#golfdiscs td {
+  text-align: center;
+}
+
+table#dgformparfront,
+table#dgformparback {
+  margin: 0;
+}
+table#dgformparback {
+  margin-top: .5em;
+}
+
+table#coursepar tr,
+table#coursepar td {
+  text-align: center;
+  width: 2em;
+}

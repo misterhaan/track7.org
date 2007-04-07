@@ -1,0 +1,44 @@
+<?
+  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/style.track7.php';
+?>
+/******************************************************************************\
+ * track7 style sheet by misterhaan of http://www.track7.org/                 *
+ *                                                                            *
+ * -> '<?=STYLE; ?>' layout style for photo album pages                              <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+\******************************************************************************/
+
+div.photogroup {
+  margin: .5em auto;
+  width: 506px;
+  padding: 0 0 1em 5px;
+}
+div.photogroup div.photo {
+  width: 160px;
+  height: 125px;
+  overflow: hidden;
+  text-align: center;
+  float: left;
+  margin: 0 5px 5px 0;
+  border: 1px solid #000000;
+  background-color: #ffffff;
+}
+div.photogroup div.photo a.img {
+  display: block;
+  line-height: 20px;
+}
+div.photogroup div.photo a.img:hover {
+  background-color: #<?=LIGHT; ?>;
+  color: #000000;
+}
+div.photogroup div.photo a.img img {
+  width: 150px;
+  height: 100px;
+  padding: 5px 5px 0;
+  display: block;
+}
+
+img.photo {
+  display: block;
+  margin: .5em auto;
+  border: 1px solid #000000;
+}

@@ -1,0 +1,5 @@
+# AddHandler php5-cgi .css
+AddType application/x-httpd-php .css
+
+RewriteEngine On
+RewriteRule ^([^/]+)/(.+)\.css$ $2.css?style=$1
