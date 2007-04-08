@@ -6,6 +6,7 @@ ErrorDocument 404 /404.php
 ErrorDocument 403 /403.php
 ErrorDocument 401 /401.php
 
+RedirectMatch 403 /\.svn.*$
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
 RedirectPermanent /track7.php http://www.track7.org/
