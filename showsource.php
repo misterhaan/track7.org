@@ -33,6 +33,7 @@
     }
     $page->Start('source of /' . $_GET['file'], 'php source', '/' . $_GET['file']);
 ?>
+      <ul class="svn"><li>get <a href="http://svn.track7.org/track7/live/<?=$_GET['file']; ?>"><?=basename($_GET['file']); ?></a> from subversion</li></ul>
       <div class="source"><ol>
 <?
     $file = fopen($_SERVER['DOCUMENT_ROOT'] . '/' . $_GET['file'], 'r');  // open the file for reading
