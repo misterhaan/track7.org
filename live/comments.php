@@ -173,7 +173,8 @@
       $page->Start($u->login . '\'s comment history');
       $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments, p.avatar, s.rank from comments as c left join users as u on c.uid=u.uid left join userprofiles as p on c.uid=p.uid left join userstats as s on c.uid=s.uid where c.uid=' . $u->uid . ' order by instant desc';
     } else {
-      $page->Start('comment history');
+      $page->AddFeed('track7 page comments', '/feeds/comments.rss');
+      $page->Start('comment history<a class="feed" href="/feeds/comments.rss" title="rss feed of comment history"><img src="/style/feed.png" alt="feed" /></a>');
       $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments, p.avatar, s.rank from comments as c left join users as u on c.uid=u.uid left join userprofiles as p on c.uid=p.uid left join userstats as s on c.uid=s.uid order by instant desc';
     }
     if($comments = $db->GetSplit($comments, 10, 0, '', '', 'error looking up comments', 'nobody has commented on anything')) {
@@ -188,7 +189,7 @@
 <?
       while($comment = $comments->NextRecord()) {
 ?>
-        <table class="post" cellspacing="0"><tr>
+        <table class="post" cellspacing="0" id="c<?=$comment->id; ?>"><tr>
           <td class="userinfo">
 <?
         if($comment->uid > 0) {

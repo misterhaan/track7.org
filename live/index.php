@@ -8,7 +8,10 @@
   $quoteid = rand(0, count($quotetext) - 1);
 
   require_once 'auText.php';
+  $page->AddFeed('track7', '/feeds/unifeed.rss');
+  $page->AddFeed('track7 site updates', '/feeds/updates.rss');
   $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
+  $page->AddFeed('track7 page comments', '/feeds/comments.rss');
   $page->Start('track7 - ' . $quotetext[$quoteid], '');
 ?>
       <h1>
@@ -68,7 +71,7 @@
       </div>
       <div class="twocolumn">
 <?
-  $page->Heading('recent updates');
+  $page->Heading('recent updates<a class="feed" href="/feeds/updates.rss" title="rss feed of recent updates"><img src="/style/feed.png" alt="feed" /></a>');
   $updates = 'select instant, `change` from updates order by instant desc';
   if($updates = $db->GetLimit($updates, 0, 3, 'unable to read last 3 updates', 'no updates found')) {
 ?>
@@ -113,7 +116,7 @@
 
 <?
   }
-  $page->Heading('recent comments');
+  $page->Heading('recent comments<a class="feed" href="/feeds/comments.rss" title="rss feed of recent comments"><img src="/style/feed.png" alt="feed" /></a>');
   $comments = 'select c.page, c.instant, c.uid, u.login, c.name from comments as c left join users as u on c.uid=u.uid order by instant desc';
   if($comments = $db->GetLimit($comments, 0, 3, 'unable to read last 3 comments', 'no comments found')) {
 ?>

@@ -1,6 +1,7 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('new + exciting stuff', 'track7 update history');
+  $page->AddFeed('track7 site updates', '/feeds/updates.rss');
+  $page->Start('new + exciting stuff', 'track7 update history<a class="feed" href="/feeds/updates.rss" title="rss feed of site update history"><img src="/style/feed.png" alt="feed" /></a>');
 
   if($user->GodMode) {
     require_once 'auForm.php';
