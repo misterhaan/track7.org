@@ -7,7 +7,7 @@
   <channel>
     <title>track7 updates</title>
     <link>http://<?=$_SERVER['HTTP_HOST']; ?>/new.php</link>
-    <description>track7 update news</description>
+    <description>track7 site updates feed</description>
     <language>en-us</language>
     <copyright>copyright 2007 track7</copyright>
     <generator>PHP/<?=phpversion(); ?></generator>
