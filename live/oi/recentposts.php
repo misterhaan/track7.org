@@ -12,7 +12,8 @@
     }
   }
   $posts .= ' order by p.instant desc';
-  $page->Start('most recent posts - oi', 'most recent posts');
+  $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
+  $page->Start('most recent posts - oi', 'most recent posts<a class="feed" href="/feeds/posts.rss" title="rss feed of most recent posts"><img src="/style/feed.png" alt="feed" /></a>');
   if($posts = $db->GetSplit($posts, 20, 0, '', '', 'error looking up recent posts', 'no posts found')) {
 ?>
       <table class="text" cellspacing="0">
