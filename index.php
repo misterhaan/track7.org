@@ -8,6 +8,7 @@
   $quoteid = rand(0, count($quotetext) - 1);
 
   require_once 'auText.php';
+  $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
   $page->Start('track7 - ' . $quotetext[$quoteid], '');
 ?>
       <h1>
@@ -86,7 +87,7 @@
 
 <?
   }
-  $page->Heading('recent posts');
+  $page->Heading('recent posts<a class="feed" href="/feeds/posts.rss" title="rss feed of recent posts"><img src="/style/feed.png" alt="feed" /></a>');
   $posts = 'select p.instant, p.id, p.subject, p.uid, u.login, p.number, p.tid, t.fid, f.title from oiposts as p left join users as u on p.uid=u.uid left join oithreads as t on p.tid=t.id left join oiforums as f on t.fid=f.id order by p.instant desc';
   if($posts = $db->GetLimit($posts, 0, 3, 'unable to read last 3 posts', 'no posts found')) {
 ?>

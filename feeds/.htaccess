@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^(.+)\.rss$ $1.rss.php
