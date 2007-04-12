@@ -5,9 +5,9 @@
 ?>
 <rss version="2.0">
   <channel>
-    <title>track7 forum posts</title>
-    <link>http://<?=$_SERVER['HTTP_HOST']; ?>/oi/</link>
-    <description>all posts from the track7 forums</description>
+    <title>track7 page comments</title>
+    <link>http://<?=$_SERVER['HTTP_HOST']; ?>/comments.php</link>
+    <description>all comments posted on track7 pages</description>
     <language>en-us</language>
     <copyright>copyright 2007 track7</copyright>
     <generator>PHP/<?=phpversion(); ?></generator>
