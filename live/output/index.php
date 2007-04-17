@@ -39,7 +39,7 @@
   }
   echo "</li>\n      </ul>\n\n";
  
-  $page->Heading('cd compilations', 'cdcomp');
+  $page->Heading('cd compilations', 'cd');
 ?>
       <p>
         one of my hobbies is to use my limited tools and skills to throw together
