@@ -16,7 +16,7 @@
       <table class="text" cellspacing="0">
         <thead class="minor"><tr><th>browser</th><th>version</th><th title="the engine actually displays web pages, and may be used by other browsers as well">engine</th></tr></thead>
         <tbody>
-          <tr class="firstchild"><td><a href="http://www.mozilla.org/products/firefox/">mozilla firefox</a></td><td>2.0.0.1</td><td>gecko</td></tr>
+          <tr class="firstchild"><td><a href="http://www.mozilla.org/products/firefox/">mozilla firefox</a></td><td>2.0.0.3</td><td>gecko</td></tr>
           <tr><td><a href="http://www.opera.com/download/">opera</a></td><td>9.10</td><td>opera</td></tr>
           <tr><td><a href="http://www.microsoft.com/windows/ie/default.mspx?mg_ID=10010">microsoft internet explorer</a></td><td>7.0</td><td>mshtml</td></tr>
           <tr><td><a href="http://www.konqueror.org/">konqueror</a></td><td>3.5</td><td>khtml</td></tr>
@@ -43,7 +43,7 @@
         based on the user agent sent by your browser, you appear to be using the
         <abbr title="<?=htmlspecialchars($_SERVER['HTTP_USER_AGENT']); ?>"><?=$browser; ?> browser, based on the <?=$engine; ?> engine</abbr>.&nbsp;
         note that this value is not reliable, and if it's not entirely correct,
-        parts of track7 will not look right.
+        parts of track7 may not look right.
       </p>
 
 <?
