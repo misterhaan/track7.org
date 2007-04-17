@@ -3,7 +3,7 @@
   if(isset($_GET['cd'])) {
     $cd = 'select id, title, coverart, music, time from compcds where id=\'' . addslashes($_GET['cd']) . '\'';
     if($cd = $db->GetRecord($cd, 'error looking up cd information', 'cd not found')) {
-      $page->Start($cd->title, '<img class="cd" src="/av/' . $cd->id . '.jpg" alt="' . $cd->title . '" />');
+      $page->Start($cd->title, '<img class="cd" src="' . dirname($_SERVER['PHP_SELF']) . '/' . $cd->id . '.jpg" alt="' . $cd->title . '" />');
 ?>
       <h2>cover art</h2>
       <p>

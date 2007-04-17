@@ -20,7 +20,8 @@ RedirectPermanent /news/nazi.php http://www.track7.org/output/gfx/nazi.php
 RedirectPermanent /news/pentium4.php http://www.track7.org/output/pen/theory/pentium4.php
 RedirectPermanent /user/profile.php http://www.track7.org/user/editprofile.php
 RedirectPermanent /pen/bln/ http://www.track7.org/output/pen/bln/
-RedirectPermanent /pen/index.php http://www.track7.org/output/pen/
+RedirectPermanent /pen/ http://www.track7.org/output/pen/
+RedirectPermanent /shop/ http://www.track7.org/output/gfx/shop/
 RedirectPermanent /av/lego.php http://www.track7.org/output/lego.php
 RedirectPermanent /av/lego/ http://www.track7.org/output/lego/
 RedirectPermanent /av/compilations.php http://www.track7.org/output/compilations.php
