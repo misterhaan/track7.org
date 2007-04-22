@@ -93,7 +93,7 @@
 <?
       showpreview();
       $sf = new auForm('save');
-      $sf->AddButton(array('save', 'back'), array('submit this guide for approval', 'go back and make some changes'));
+      $sf->AddButtons(array('save', 'back'), array('submit this guide for approval', 'go back and make some changes'));
       $sf->WriteHTML(true);
       $page->End();
       die;

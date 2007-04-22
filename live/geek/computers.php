@@ -1,6 +1,6 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->start('computer hardware - geek', 'computer hardware', '', '', array('hecubus', 'dougall', 'galileo', 'egan'));
+  $page->start('computer hardware - geek', 'computer hardware', '', '', array('hecubus', 'tesla', 'galileo', 'egan'));
 
   $page->heading('hecubus', 'hecubus');
 ?>
@@ -20,28 +20,25 @@
       </table>
 
 <?
-  $page->heading('dougall', 'dougall');
+  $page->heading('tesla', 'tesla');
 ?>
       <table class="columns" cellspacing="0">
-        <tr><th>name</th><td>dougall</td></tr>
-        <tr><th>purpose</th><td>main workstation</td></tr>
-        <tr><th>mainboard</th><td>gigabyte ga-8ip900</td></tr>
-        <tr><th>processor</th><td>2.4-ghz intel pentium 4</td></tr>
-        <tr><th>ram</th><td>512 MB pc2700 ddr sdram<br />512 MB pc2700 ddr sdram</td></tr>
-        <tr><th>video</th><td>nvidia geforce fx 5200 agp (256 MB)</td></tr>
+        <tr><th>name</th><td>tesla</td></tr>
+        <tr><th>purpose</th><td>main workstation / <abbr title="personal video recorder">pvr</abbr></td></tr>
+        <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2</td></tr>
+        <tr><th>processor</th><td>2.66-ghz intel pentium d</td></tr>
+        <tr><th>ram</th><td>1 GB pc2 5300 ddr2 sdram</td></tr>
+        <tr><th>video</th><td>intel 82945g express (128 MB)</td></tr>
         <tr><th>audio</th><td>creative soundblaster live! value</td></tr>
         <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
-        <tr><th>network</th><td>3com etherlink xl 10/100 pci 3c905c-tx</td></tr>
-        <tr><th>modem</th><td>creative modem blaster v.90 pci</td></tr>
+        <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet</td></tr>
         <tr><th>fd0</th><td>generic 3½" floppy</td></tr>
         <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
-        <tr><th>ide1</th><td>iomega zip 100</td></tr>
-        <tr><th>ide2</th><td>lg 8/4/24/4/2/16/12/32x dvd+/-rw</td></tr>
-        <tr><th>ide3</th><td>lg 16/10/40x cd-rw</td></tr>
-        <tr><th>operating system</th><td>microsoft windows xp professional, sp2<br />fedora core 4</td></tr>
+        <tr><th>ide1</th><td>lg 8/4/24/4/2/16/12/32x dvd+/-rw</td></tr>
+        <tr><th>operating system</th><td>microsoft windows xp professional, sp2<br />fedora core 6</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech trackman wheel<br />logitech cordless optical</td></tr>
-        <tr><th>monitor</th><td>hp pavilion m90</td></tr>
+        <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
         <tr><th>scanner</th><td>canon n670u</td></tr>
         <tr><th>joystick</th><td>logitech wingman rumblepad</td></tr>
       </table>

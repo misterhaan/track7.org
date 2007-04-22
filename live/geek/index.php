@@ -63,8 +63,9 @@
       <ul>
         <li><a href="computers.php">computers</a><ul>
           <li><a href="computers.php#hecubus">hecubus</a> - file / ftp / http server</li>
-          <li><a href="computers.php#dougall">dougall</a> - main workstation</li>
-          <li><a href="computers.php#egan">egan</a> - vpn / mobile</li>
+          <li><a href="computers.php#tesla">tesla</a> - main workstation / pvr</li>
+          <li><a href="computers.php#galileo">galileo</a> - mobile / secondary workstation</li>
+          <li><a href="computers.php#egan">egan</a> - (mostly) retired mobile</li>
         </ul></li>
         <li>network</li>
         <li>audio / visual<ul>
