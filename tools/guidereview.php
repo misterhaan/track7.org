@@ -64,14 +64,14 @@
         }
       }
       $page->Heading('approval');
-      $gaf = new auForm('?id=' . $_GET['id']);
+      $gaf = new auForm('guideapproval', '?id=' . $_GET['id']);
       $gaf->AddField('id', 'id', 'enter an id for this guide, which will be part of its url', true, '', _AU_FORM_FIELD_NORMAL, 10, 32);
       $gaf->AddSelect('skill', 'skill', 'choose the skill level for this guide', auFormSelect::ArrayIndex(array('beginner', 'intermediate', 'advanced')));
       $gaf->AddButtons('approve', 'approve this guide');
       $gaf->WriteHTML(true);
 
       $page->Heading('rejection');
-      $gdf = new auForm('?id=' . $_GET['id']);
+      $gdf = new auForm('guiderejection', '?id=' . $_GET['id']);
       $gdf->AddField('reason', 'reason', 'describe why this guide is being rejected', true, '', _AU_FORM_FIELD_MULTILINE);
       $gdf->AddButtons('reject', 'reject this guide');
       $gdf->WriteHTML(true);
@@ -85,7 +85,7 @@
   $page->End();
 
   function listguides() {
-    global $db;
+    global $db, $user;
     $guides = 'select g.title, g.id, g.dateadded, g.pages, u.login from guides as g left join users as u on g.author=u.uid where g.status=\'pending\' order by dateadded desc';
     if($guides = $db->Get($guides, 'error looking up guides to review', 'no guides to review')) {
 ?>
@@ -95,7 +95,7 @@
 <?
       while($guide = $guides->NextRecord()) {
 ?>
-          <tr><td><?=auText::SmartTime($guide->dateadded); ?></td><td><a href="?id=<?=$guide->id; ?>"><?=$guide->title; ?></a></td><td><?=$guide->pages; ?></td><td><a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></td></tr>
+          <tr><td><?=auText::SmartTime($guide->dateadded, $user); ?></td><td><a href="?id=<?=$guide->id; ?>"><?=$guide->title; ?></a></td><td><?=$guide->pages; ?></td><td><a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></td></tr>
 <?
       }
 ?>
