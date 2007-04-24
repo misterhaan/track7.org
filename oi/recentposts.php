@@ -7,7 +7,7 @@
   if(isset($_GET['author'])) {
     $u = 'select uid, login from users where login=\'' . $_GET['author'] . '\'';
     if($u = $db->GetRecord($u, 'error looking up user', 'user not found')) {
-      $posts .= ' and u.uid=' . $u->uid;
+      $posts .= ' where u.uid=' . $u->uid;
       $page->Start($u->login . '\'s posts - oi', $u->login . '\'s posts');
     }
   }
