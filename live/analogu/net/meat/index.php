@@ -16,17 +16,14 @@
   $page->Heading('files', 'files');
 ?>
       <table class="data" cellspacing="0">
-        <thead><tr><th>package</th><th>version</th><th>filename</th><th>size</th><th>downloads</th></tr></thead>
+        <thead><tr><th>package</th><th>version</th><th>filename</th><th>size</th><th>type</th></tr></thead>
         <tbody>
-          <tr class="current"><td>meat installer</td><td class="number">0.1.0</td><td><a href="/files/analogu/net/meat/meat-v0.1.0.msi">meat-v0.1.0.msi</a></td><td class="number"><?=auFile::Size('meat-v0.1.0.msi'); ?></td><td class="number"></td></tr>
-          <tr class="current"><td>meat source <a href="#source" title="notes on installing source code">*</a></td><td class="number">0.1.0</td><td><a href="/files/analogu/net/meat/m-src010.cab">m-src010.cab</a></td><td class="number"><?=auFile::Size('m-src010.cab'); ?></td><td></td></tr>
+          <tr class="current"><td>meat installer</td><td class="number">0.2.0</td><td><a href="/files/analogu/net/meat/meat-v0.2.0.msi">meat-v0.2.0.msi</a></td><td class="number"><?=auFile::Size('meat-v0.2.0.msi'); ?></td><td>windows installer</td></tr>
+          <tr class="current"><td>meat source</td><td class="number">0.2.0</td><td><a href="http://svn.track7.org/meat/releases/0.2.0/">0.2.0 source</a></td><td></td><td>subversion repository</td></tr>
+          <tr><td>meat installer</td><td class="number">0.1.0</td><td><a href="/files/analogu/net/meat/meat-v0.1.0.msi">meat-v0.1.0.msi</a></td><td class="number"><?=auFile::Size('meat-v0.1.0.msi'); ?></td><td>windows installer</td></tr>
+          <tr><td>meat source</td><td class="number">0.1.0</td><td><a href="http://svn.track7.org/meat/releases/0.1.0/">0.1.0 source</a></td><td></td><td>subversion repository</td></tr>
         </tbody>
       </table>
-      <p class="info" id="source">
-        in order to get the source code, you must use the msi installer for the
-        same version, and select either custom or complete installation.&nbsp;
-        the source cab file must be in the same directory as the msi.
-      </p>
 
 <?
   $page->Heading('documentation', 'doc');

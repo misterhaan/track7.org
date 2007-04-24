@@ -1,6 +1,6 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('c# .net projects - the analog underground', 'c# .net projects', '', '', array('phd', 'meat', 'aulib'));
+  $page->Start('c# .net projects - the analog underground', 'c# .net projects', '', '', array('mo', 'meat', 'aulib'));
 ?>
       <p>
         though my programs written in <a href="../vb.php">visual basic</a> are
@@ -21,16 +21,15 @@
       </p>
       <p>
         to run any of these projects, you will need to have the
-        <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=262d25e3-f589-4842-8157-034d1e7cf3a3">.net framework 1.1</a>
-        which you can get for free from microsoft if you don't already have it
-        (windows xp service pack 2 includes it, and so does windows 2003).&nbsp;
+        <a href="http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5">.net framework 2.0</a>
+        which you can get for free from microsoft if you don't already have it.&nbsp;
         in order to build the projects from source you will need the .net
-        framework sdk (also free from microsoft), and visual studio .net might
-        be of some help as well (but that's sure not free).
+        framework sdk (also free from microsoft), and visual studio 2005 might
+        be of some help as well but that's sure not free.
       </p>
 
 <?
-  $page->Heading('photo album designer (phd)', 'phd');
+  $page->Heading('memory organizer', 'mo');
 ?>
       <p>
         replaces the vb program known as pad -- coming &quot;soon!&quot;
@@ -47,9 +46,9 @@
         mim did.
       </p>
       <ul>
-        <li><a href="/files/analogu/net/meat/meat-v0.1.0.msi">download latest meat installer</a></li>
+        <li><a href="/files/analogu/net/meat/meat-v0.2.0.msi">download latest meat installer</a></li>
+        <li><a href="http://wiki.track7.org/Movie_Enlister_And_Tracker">meat documentation on auwiki</a></li>
         <li><a href="meat/">meat project page</a></li>
-        <li><a href="meat/manual/">meat documentation</a></li>
       </ul>
 
 <?
@@ -59,15 +58,16 @@
       <p class="iconned">
         shared libraries used by most analog underground applications (including
         the two above).&nbsp; it's not an application itself, and is pretty much
-        useless to anyone who isn't a programmer.&nbsp; programmers may be
-        interested to know that the installer places auIO and auComCtl into the
-        .net gac, which you then should be able to use in your own .net projects
-        (though i couldn't seem to get that part to work).
+        useless to anyone who isn't a programmer.&nbsp; the two dll files are
+        strongly-named which means they can be installed to the
+        <abbr title="global assembly cache">gac</abbr> &mdash; in fact this is
+        what happens when one of the applications using them gets installed.
       </p>
 
       <ul>
-        <li><a href="/files/analogu/net/aulib/aulib-v3.0.0.msi">download latest aulib installer</a></li>
-        <li><a href="aulib/">aulib project page</a></li>
+        <li><a href="/files/analogu/net/aulib/aulib-v3.1.0.zip">download latest aulib package</a></li>
+        <li><a href="http://wiki.track7.org/Shared_Libraries">au.util documentation on auwiki</a></li>
+        <li><a href="aulib/">au.util project page</a></li>
       </ul>
 
 <?

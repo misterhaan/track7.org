@@ -23,6 +23,7 @@ dl.guides dt {
   float: none;
   padding: 0;
   margin-top: .5em;
+  background-image: none;
 }
 dl.guides dd {
   margin: 0 1em;
