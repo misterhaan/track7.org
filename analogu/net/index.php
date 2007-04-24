@@ -65,7 +65,7 @@
       </p>
 
       <ul>
-        <li><a href="/files/analogu/net/aulib/aulib-v3.1.0.zip">download latest aulib package</a></li>
+        <li><a href="/files/analogu/net/aulib/au.util-v3.1.0.zip">download latest aulib package</a></li>
         <li><a href="http://wiki.track7.org/Shared_Libraries">au.util documentation on auwiki</a></li>
         <li><a href="aulib/">au.util project page</a></li>
       </ul>

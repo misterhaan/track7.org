@@ -33,10 +33,9 @@
         for documentation or support.&nbsp; to help with this, the entire
         application is enabled with tooltips -- just move the mouse over the
         text next to a field and it will explain what it's for.&nbsp; when
-        that's not enough, check the <a href="manual/" title="movie enlister and tracker manual">manual</a>
-        that will eventually be added here.
+        that's not enough, check the documentation on auwiki.
       </p>
-      <ul><li><a href="manual/">movie enlister and tracker manual</a></li></ul>
+      <ul><li><a href="http://wiki.track7.org/Movie_Enlister_And_Tracker">movie enlister and tracker documentation on auwiki</a></li></ul>
       
 <?
   $page->Heading('support', 'help');
