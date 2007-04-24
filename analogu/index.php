@@ -3,16 +3,15 @@
   $page->Start('the analog underground', null, '', '', array('php', '.net', 'vb', 'ti8x', 'games'), array('', 'net', '', '', 'mzx'));
 ?>
       <p>
-        orignally known as 'jay software' and surviving a phase as 'blue comb
-        software,' the analog underground is the final name of my software
-        'company.'&nbsp; it's just me, and i don't make any money at it since
-        everything's free (and nobody has offered to donate, so i don't have any
-        sort of donation system set up), so i don't really call it a company.&nbsp;
-        i've been programming since i was too young to remember, and track7
-        hosts some of the results that might be useful to you.
+        the analog underground is the name of my software 'company.'&nbsp; it's
+        just me, and i don't make any money at it since everything's free (and
+        nobody has offered to donate, so i don't have any sort of donation
+        system set up), so i don't really call it a company.&nbsp; i've been
+        programming since i was too young to remember, and track7 hosts some of
+        the results that might be useful to you.
       </p>
       <p>
-        all files are available in zip format.&nbsp; windows xp can open these
+        most files are available in zip format.&nbsp; windows xp can open these
         files itself, but if you have an older version you might need something
         else, like <a href="http://www.7-zip.org/" title="download 7-zip">7-zip</a>
         (free!) or 
