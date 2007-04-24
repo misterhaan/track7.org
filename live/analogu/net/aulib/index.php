@@ -20,7 +20,7 @@
       <table class="data" cellspacing="0">
         <thead><tr><th>package</th><th>version</th><th>filename</th><th>size</th><th>type</th></tr></thead>
         <tbody>
-          <tr class="current"><td>au.util binaries</td><td class="number">3.1.0</td><td><a href="/files/analogu/net/aulib/au.util-v3.1.0.zip">aulib-v3.1.0.zip</a></td><td class="number"><?=auFile::Size('au.util-v3.1.0.zip'); ?></td><td>zip archive</td></tr>
+          <tr class="current"><td>au.util binaries</td><td class="number">3.1.0</td><td><a href="/files/analogu/net/aulib/au.util-v3.1.0.zip">au.util-v3.1.0.zip</a></td><td class="number"><?=auFile::Size('au.util-v3.1.0.zip'); ?></td><td>zip archive</td></tr>
           <tr class="current"><td>au.util source</td><td class="number">3.1.0</td><td><a href="http://svn.track7.org/util/releases/3.1.0/">3.1.0 source</a></td><td></td><td>subversion repository</td></tr>
           <tr><td>aulib installer</td><td class="number">3.0.0</td><td><a href="/files/analogu/net/aulib/aulib-v3.0.0.msi">aulib-v3.0.0.msi</a></td><td class="number"><?=auFile::Size('aulib-v3.0.0.msi'); ?></td><td>windows installer</td></tr>
           <tr><td>aulib source</td><td class="number">3.0.0</td><td><a href="http://svn.track7.org/util/releases/3.0.0/">3.0.0 source</a></td><td></td><td>subversion repository</td></tr>
