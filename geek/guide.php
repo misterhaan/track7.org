@@ -157,7 +157,7 @@
     }
     if($_GET['tag']) {
       $tags = addslashes($_GET['tag']);
-      $tags = 'and (tags=\'' . $tags . '\' tags like \'' . $tags . ',%\' or tags like \'%,' . $tags . '\' or tags like \'%,' . $tags . ',%\') ';
+      $tags = 'and (tags=\'' . $tags . '\' or tags like \'' . $tags . ',%\' or tags like \'%,' . $tags . '\' or tags like \'%,' . $tags . ',%\') ';
     }
     $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.pages, g.author, u.login, r.rating, r.votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
     if($guides = $db->Get($guides, 'error getting list of guides', 'no guides found')) {

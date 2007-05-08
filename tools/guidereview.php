@@ -66,7 +66,7 @@
       $page->Heading('approval');
       $gaf = new auForm('guideapproval', '?id=' . $_GET['id']);
       $gaf->AddField('id', 'id', 'enter an id for this guide, which will be part of its url', true, '', _AU_FORM_FIELD_NORMAL, 10, 32);
-      $gaf->AddField('tags', 'tags', 'enter a space-separated list of tags for this guide', false, '', _AU_FORM_FIELD_NORMAL, 32, 200);
+      $gaf->AddField('tags', 'tags', 'enter a comma-separated list of tags for this guide', false, '', _AU_FORM_FIELD_NORMAL, 32, 200);
       $gaf->AddSelect('skill', 'skill', 'choose the skill level for this guide', auFormSelect::ArrayIndex(array('beginner', 'intermediate', 'advanced')));
       $gaf->AddButtons('approve', 'approve this guide');
       $gaf->WriteHTML(true);
