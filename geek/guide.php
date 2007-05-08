@@ -139,7 +139,7 @@
         like to contribute, use the link below and i'll review it and probably
         put it up here.
       </p>
-      <ul><li><a href="contribute">contribute a guide of your own</a></li></ul>
+      <ul><li><a href="contribute">contribute a guide</a></li></ul>
 <?
     switch($_GET['sort']) {
       case 'views':
@@ -155,7 +155,11 @@
         $guides = 'g.dateadded';
         break;
     }
-    $guides = 'select g.id, g.title, g.description, g.skill, g.dateadded, g.pages, g.author, u.login, r.rating, r.votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' order by ' . $guides . ' desc';
+    if($_GET['tag']) {
+      $tags = addslashes($_GET['tag']);
+      $tags = 'and (tags like \'' . $tags . '%\' or tags like \'%' . $tags . '\' or tags like \'%' . $tags . '%\') ';
+    }
+    $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.pages, g.author, u.login, r.rating, r.votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
     if($guides = $db->Get($guides, 'error getting list of guides', 'no guides found')) {
       $page->Heading($sort . ' guides');
 ?>
@@ -178,6 +182,7 @@
             <span>pages:&nbsp; <?=$guide->pages; ?></span>
             <span>rated:&nbsp; <?=+$guide->rating; ?> (<?=+$guide->votes; ?> vote<?=$guide->votes != 1 ? 's' : ''; ?>)</span>
             <span>views:&nbsp; <?=+$guide->hits; ?></span>
+            <span>tags:&nbsp; <?=TagLinks($guide->tags); ?></span>
           </div>
           <?=$guide->description; ?>
 
@@ -190,4 +195,14 @@
     }
   }
   $page->End();
+
+  function TagLinks($tags) {
+    if(!$tags)
+      return '<em>(none)</em>';
+    $tags = explode(',', $tags);
+    foreach($tags as $tag)
+      if($tag)
+        $links[] = '<a href="tag=' . $tag . '">' . $tag . '</a>';
+    return implode(' ', $links);
+  }
 ?>

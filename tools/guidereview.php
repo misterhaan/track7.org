@@ -8,7 +8,7 @@
     if($_POST['submit'] == 'approve') {
       $update = 'update guidepages set guideid=\'' . $_POST['id'] . '\' where guideid=\'' . $_GET['id'] . '\'';
       if(false !== $db->Change($update, 'error changing guide id in page table')) {
-        $update = 'update guides set id=\'' . $_POST['id'] . '\', dateadded=' . time() . ', skill=\'' . $_POST['skill'] . '\', status=\'approved\' where id=\'' . $_GET['id'] . '\'';
+        $update = 'update guides set id=\'' . $_POST['id'] . '\', dateadded=' . time() . ', tags=\'' . addslashes($_POST['tags']) . '\', skill=\'' . $_POST['skill'] . '\', status=\'approved\' where id=\'' . $_GET['id'] . '\'';
         if(false !== $db->Change($update, 'error approving guide')) {
           $email = 'select c.email from guides as g left join usercontact as c on g.author=c.uid where g.id=\'' . $_POST['id'] . '\'';
           if($email = $db->GetValue($email, 'error looking up author\'s e-mail address', 'author\'s e-mail address not found'))
@@ -66,6 +66,7 @@
       $page->Heading('approval');
       $gaf = new auForm('guideapproval', '?id=' . $_GET['id']);
       $gaf->AddField('id', 'id', 'enter an id for this guide, which will be part of its url', true, '', _AU_FORM_FIELD_NORMAL, 10, 32);
+      $gaf->AddField('tags', 'tags', 'enter a space-separated list of tags for this guide', false, '', _AU_FORM_FIELD_NORMAL, 32, 200);
       $gaf->AddSelect('skill', 'skill', 'choose the skill level for this guide', auFormSelect::ArrayIndex(array('beginner', 'intermediate', 'advanced')));
       $gaf->AddButtons('approve', 'approve this guide');
       $gaf->WriteHTML(true);
