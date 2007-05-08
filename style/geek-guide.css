@@ -32,10 +32,11 @@ div.guideinfo {
   background-color: #<?=LIGHT; ?>;
   padding: .1em .5em;
   margin: .2em 0;
+  font-size: .8em;
 }
 div.guideinfo span {
   margin: 0 1.5em 0 0;
 }
-div.guideinfo a {
+div#content div.guideinfo a {
   font-weight: normal;
 }
