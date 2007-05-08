@@ -182,7 +182,7 @@
             <span>pages:&nbsp; <?=$guide->pages; ?></span>
             <span>rated:&nbsp; <?=+$guide->rating; ?> (<?=+$guide->votes; ?> vote<?=$guide->votes != 1 ? 's' : ''; ?>)</span>
             <span>views:&nbsp; <?=+$guide->hits; ?></span>
-            <span>tags:&nbsp; <?=TagLinks($guide->tags); ?></span>
+            <span class="tags">tags:&nbsp; <?=TagLinks($guide->tags); ?></span>
           </div>
           <?=$guide->description; ?>
 
