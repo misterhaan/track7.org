@@ -3,8 +3,7 @@
   require_once 'auFeed.php';
   define('MAXITEMS', 15);
   
-  $rss = new auFeed();
-  $rss->Start('track7', '/', 'track7 site updates, forum posts, and page comments unifeed', 'copyright 2007 track7');
+  $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, and page comments unifeed', 'copyright 2007 track7');
   
   $updates = 'select id, instant, `change` from updates order by instant desc';
   if($updates = $db->GetLimit($updates, 0, MAXITEMS, '', ''))
