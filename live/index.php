@@ -3,8 +3,10 @@
 
   $quotetext[] = 'dudes love it but chicks at best endure it';
   $quotetext[] = 'there&rsquo;s no i in team &mdash; there&rsquo;s a me though if you jumble it up';
+  $quotetext[] = 'there&rsquo;s no pecans in this!';
   $quoteby[] = 'r. smuckles';
   $quoteby[] = 'g. house';
+  $quoteby[] = 'crazy pecan lady';
   $quoteid = rand(0, count($quotetext) - 1);
 
   require_once 'auText.php';
