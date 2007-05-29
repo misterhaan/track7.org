@@ -28,7 +28,7 @@
         <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2</td></tr>
         <tr><th>processor</th><td>2.66-ghz intel pentium d</td></tr>
         <tr><th>ram</th><td>1 GB pc2 5300 ddr2 sdram</td></tr>
-        <tr><th>video</th><td>intel 82945g express (128 MB)</td></tr>
+        <tr><th>video</th><td>pny verto nvidia geforce 7300 gt (256 MB)</td></tr>
         <tr><th>audio</th><td>creative soundblaster live! value</td></tr>
         <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
         <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet</td></tr>
