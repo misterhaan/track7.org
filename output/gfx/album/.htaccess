@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^tag/([a-zA-Z0-9_\-\.]+)$ ?tag=$1
+RewriteRule ^photo/([a-zA-Z0-9_\-\.]+)$ viewphoto.php?id=$1
