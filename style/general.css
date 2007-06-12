@@ -475,15 +475,16 @@ table.post div.foot a {
 
 /* ===========================================================[ tag cloud ]== */
 div.tagcloud {
+  margin: .5em 2em;
   padding: 3px 6px 3px 26px;
   background-repeat: no-repeat;
   background-position: 4px 4px;
   min-height: 18px;
-  border: 1px dotted <?=MEDIUM; ?>;
+  border: 1px dotted #<?=MEDIUM; ?>;
   background-image: url(/style/tag.png);
 }
 div.tagcloud a {
-  margin: 0 1em;
+  margin: 0 .5em;
 }
 div.tagcloud a.tagfew {
   font-weight: normal;
