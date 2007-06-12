@@ -96,10 +96,32 @@
             $update = 'update photos set id=\'' . addslashes($_GET['id']) . '\'';
             if(!$db->Change($update, 'error updating photo information'))
               $error = true;
+            elseif($_POST['tags'] != $photo->tags) {
+              $newtags = explode(',', $_POST['tags']);
+              $oldtags = explode(',', $photo->tags);
+              foreach($oldtags as $tag)
+                if(in_array($tag, $newtags)) {
+                  unset($oldtags[array_search($tag, $oldtags)]);
+                  unset($newtags[array_search($tag, $newtags)]);
+                }
+              if(is_array($oldtags) && count($oldtags)) {
+                $update = 'update taginfo set count=count-1 where type=\'photos\' and (name=\'' . implode('\' or name=\'', $oldtags) . '\')';
+                $db->Put($update, 'error derceasing tag counts');
+              }
+              if(is_array($newtags) && count($newtags)) {
+                $ins = 'insert into taginfo (type, name, count) values (\'photos\', \'' . implode('\', 1), (\'photos\', \'', $newtags) . '\', 1) on duplicate key update count=count+1';
+                $db->Put($ins, 'error updating tag information');
+              }
+            }
           } else {
             $ins = 'insert into photos (id, caption, description, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'])) . '\', \'' . addslashes(htmlentities($_POST['description'])) . '\', \'' . addslashes(htmlentities($_POST['tags'])) . '\', \'' . time() . '\')';
             if(!$db->Put($ins, 'error adding photo information'))
               $error = true;
+            else {
+              $tags = explode(',', $_POST['tags']);
+              $ins = 'insert into taginfo (type, name, count) values (\'photos\', \'' . implode('\', 1), (\'photos\', \'', $tags) . '\', 1) on duplicate key update count=count+1';
+              $db->Put($ins, 'error updating tag information');
+            }
           }
           if(!$error) {
             header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/photo/' . $id);
