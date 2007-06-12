@@ -14,11 +14,12 @@
 ?>
       <img id="photo" src="<?=$url; ?>/photos/<?=$photo->id; ?>.jpeg" />
       <div id="photometa">
-        <span id="added">added:&nbsp; <?=auText::HowLongAgo($photo->added); ?></span>
+        <span id="added">added:&nbsp; <?=auText::HowLongAgo($photo->added); ?> ago</span>
         <span id="tags">tags:&nbsp; <?=TagLinks($photo->tags, $url); ?></span>
       </div>
       <p><?=$photo->description; ?></p>
 <?
+    $page->SetFlag(_FLAG_PAGES_COMMENTS);
     $page->End();
     die;
   }

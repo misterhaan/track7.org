@@ -32,6 +32,7 @@
     }
 ?>
       </div>
+      <br class="clear" />
 <?
     $page->SplitLinks();
   }

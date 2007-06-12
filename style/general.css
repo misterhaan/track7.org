@@ -473,6 +473,35 @@ table.post div.foot a {
 }
 
 
+/* ===========================================================[ tag cloud ]== */
+div.tagcloud {
+  padding: 3px 6px 3px 26px;
+  background-repeat: no-repeat;
+  background-position: 4px 4px;
+  min-height: 18px;
+  border: 1px dotted <?=MEDIUM; ?>;
+  
+}
+div.tagcloud a {
+  margin: 0 1em;
+}
+div.tagcloud a.tagfew {
+  font-weight: normal;
+  font-size: .8em;
+}
+div.tagcloud a.tagsome {
+  font-size: .8em;
+}
+div.tagcloud a.tagmany {
+  font-weight: normal;
+}
+div.tagcloud a.taglots {}
+div.tagcloud a.tagtons {
+  font-size: 1.1em;
+}
+
+
+
 /* ==============================================================[ layout ]== */
 
 html {
