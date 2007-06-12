@@ -94,7 +94,7 @@
         if(!$error) {
           if($photoedit->Submitted() == 'edit') {
             $update = 'update photos set id=\'' . addslashes($_GET['id']) . '\'';
-            if(!$db->Change($update, 'error updating photo information'))
+            if(false === $db->Change($update, 'error updating photo information'))
               $error = true;
             elseif($_POST['tags'] != $photo->tags) {
               $newtags = explode(',', $_POST['tags']);
@@ -115,7 +115,7 @@
             }
           } else {
             $ins = 'insert into photos (id, caption, description, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'])) . '\', \'' . addslashes(htmlentities($_POST['description'])) . '\', \'' . addslashes(htmlentities($_POST['tags'])) . '\', \'' . time() . '\')';
-            if(!$db->Put($ins, 'error adding photo information'))
+            if(false === $db->Put($ins, 'error adding photo information'))
               $error = true;
             else {
               $tags = explode(',', $_POST['tags']);
@@ -137,6 +137,6 @@
     $page->Start('add photo - photo album', 'add photo');
   $photoedit->WriteHTML(true);
   if($photo)
-    echo $page->indent . '<img id="photo" src="' . dirname($_SERVER['PHP_SELF']) . '/photos/' . $photo->id . '.jpeg" />' . "\n";
+    echo '      <img id="photo" src="' . dirname($_SERVER['PHP_SELF']) . '/photos/' . $photo->id . '.jpeg" />' . "\n";
   $page->End();
 ?>
