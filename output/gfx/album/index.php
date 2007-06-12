@@ -1,6 +1,8 @@
 <?
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   $url = dirname($_SERVER['PHP_SELF']) . '/';
+  if($user->GodMode())
+    $page->Info('<a href="editphoto.php">add a new photo</a>');
   if(isset($_GET['tag'])) {
     $tag = htmlentities($_GET['tag']);
     $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']');
