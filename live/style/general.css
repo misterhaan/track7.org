@@ -480,7 +480,7 @@ div.tagcloud {
   background-position: 4px 4px;
   min-height: 18px;
   border: 1px dotted <?=MEDIUM; ?>;
-  
+  background-image: url(/style/tag.png);
 }
 div.tagcloud a {
   margin: 0 1em;
