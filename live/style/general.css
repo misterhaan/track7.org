@@ -484,20 +484,22 @@ div.tagcloud {
   background-image: url(/style/tag.png);
 }
 div.tagcloud a {
-  margin: 0 .5em;
+  margin: 0 .3em;
 }
-div.tagcloud a.tagfew {
+div#content div.tagcloud a.tagfew {
   font-weight: normal;
   font-size: .8em;
 }
-div.tagcloud a.tagsome {
+div#content div.tagcloud a.tagsome {
   font-size: .8em;
 }
-div.tagcloud a.tagmany {
+div#content div.tagcloud a.tagmany {
   font-weight: normal;
 }
-div.tagcloud a.taglots {}
-div.tagcloud a.tagtons {
+div#content div.tagcloud a.taglots {
+  /* same as default links */
+}
+div#content div.tagcloud a.tagtons {
   font-size: 1.1em;
 }
 

@@ -27,10 +27,12 @@ a.photoframe {
   display: block;
   border: 1px solid #<?=MEDIUM; ?>;
   padding: .3em;
+  margin: .3em;
   float: left;
 }
 a.photoframe:hover {
   border-color: #<?=LINK; ?>;
+  color: #000000;
 }
 span.photopreview {
   display: block;
