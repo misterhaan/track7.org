@@ -2,7 +2,7 @@
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   $url = dirname($_SERVER['PHP_SELF']) . '/';
   if($user->GodMode)
-    $page->Info('<a href="editphoto.php">add a new photo</a>');
+    $page->Info('<a href="' . dirname($_SERVER['PHP_SELF']) . '/editphoto.php">add a new photo</a>');
   if(isset($_GET['tag'])) {
     $tag = htmlentities($_GET['tag']);
     $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']');
@@ -11,7 +11,7 @@
     $page->Info('viewing photos tagged with ' . htmlentities($_GET['tag']) . '.&nbsp; <a href="' . dirname($_SERVER['PHP_SELF']) . '/">go back</a> to choose a different tag.');
     $page->ShowTagDescription('photos', $tag);
     if($user->GodMode)
-      $page->Info('<a href="/tools/taginfo.php">add/edit tag description</a>');
+      $page->Info('<a href="/tools/taginfo.php?type=photos&amp;name=' . htmlentities($_GET['tag']) . '">add/edit tag description</a>');
   } else {
     $page->Start('photo album');
     $page->TagCloud('photos', $url . 'tag/');

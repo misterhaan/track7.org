@@ -19,8 +19,27 @@
           $page->Info('tag description successfully updated');
       }
       $tagedit->WriteHTML(true);
+    } else
+      unset($desc);
+  }
+  if(!$desc){
+    $page->Start('tag information editor', 'tag information editor');
+    $tags = 'select name, type, count from taginfo order by name, type';
+    if($tags = $db->GetSplit($tags, 20, 0, '', '', 'error looking up tags', 'no tag information found')) {
+?>
+      <ul>
+<?
+      while($tag = $tags->NextRecord()) {
+?>
+        <li><a href="?type=<?=$tag->type; ?>&amp;name=<?=$tag->name; ?>"><?=$tag->type; ?>/<?=$tag->name; ?> (<?=$tag->count; ?>)</a></li>
+<?
+      }
+?>
+      </ul>
+  
+<?
+      $page->SplitLinks();
     }
   }
-  $page->Start('tag information editor', 'tag information editor');
   $page->End();
 ?>
