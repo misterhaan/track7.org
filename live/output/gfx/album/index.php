@@ -8,8 +8,10 @@
     $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']');
     $photos = addslashes($_GET['tag']); 
     $photos = ' where tags=\'' . $photos . '\' or tags like \'' . $photos . ',%\' or tags like \'%,' . $photos . '\' or tags like \'%,' . $photos . ',%\'';
-    $page->Info('viewing photos tagged with ' . htmlentities($_GET['tag']) . '.&nbsp; <a href="../album/">go back</a> to choose a different tag.');
+    $page->Info('viewing photos tagged with ' . htmlentities($_GET['tag']) . '.&nbsp; <a href="' . dirname($_SERVER['PHP_SELF']) . '/">go back</a> to choose a different tag.');
     $page->ShowTagDescription('photos', $tag);
+    if($user->GodMode)
+      $page->Info('<a href="/tools/taginfo.php">add/edit tag description</a>');
   } else {
     $page->Start('photo album');
     $page->TagCloud('photos', $url . 'tag/');

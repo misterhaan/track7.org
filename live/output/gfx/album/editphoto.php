@@ -24,15 +24,20 @@
   else
     $photoedit->AddField('photo', 'photo', 'choose a jpeg image to upload', true, '', _AU_FORM_FIELD_FILE);
   $photoedit->AddField('caption', 'caption', 'enter a caption for this photo', false, $photo->caption, _AU_FORM_FIELD_NORMAL, 15, 30);
-  $photoedit->AddField('description', 'description', 'enter a description of this photo', false, auText::HTML2BB($photo->description), _AU_FORM_FIELD_BBCODE);
+  $photoedit->AddField('desc', 'description', 'enter a description of this photo', false, auText::HTML2BB($photo->description), _AU_FORM_FIELD_BBCODE);
   $photoedit->AddField('tags', 'tags', 'enter tags for this photo, separated by commas', false, $photo->tags, _AU_FORM_FIELD_NORMAL, 20, 255);
   if($photo)
-    $photoedit->AddButtons('edit', 'delete');
+    $photoedit->AddButtons(array('edit', 'delete'), array('save changes to this photo', 'delete this photo'));
   else
-    $photoedit->AddButtons('add');
+    $photoedit->AddButtons('add', 'add this photo to the album');
   if($photoedit->Submitted() == 'delete') {
-    $del = 'delete from photos where id=\'' . addslashes($_GET['id']) . '\'';
+    $del = 'delete from photos where id=\'' . addslashes($photo->id) . '\'';
     if($db->Remove($del, 'error removing photo')) {
+      if($photo->tags) {
+        $tags = explode(',', $photo->tags);
+        $update = 'update taginfo set count=count-1 where type=\'photos\' and (name=\'' . implode('\' or name=\'', $tags) . '\')';
+        $db->Change($update);
+      }
       header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/');
       die;
     }
@@ -93,7 +98,7 @@
         }
         if(!$error) {
           if($photoedit->Submitted() == 'edit') {
-            $update = 'update photos set id=\'' . addslashes($_GET['id']) . '\'';
+            $update = 'update photos set id=\'' . addslashes($id) . '\', caption=\'' . addslashes(htmlentities($_POST['caption'])) . '\', description=\'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', tags=\'' . addslashes(htmlentities($_POST['tags'])) . '\' where id=\'' . $photo->id . '\'';
             if(false === $db->Change($update, 'error updating photo information'))
               $error = true;
             elseif($_POST['tags'] != $photo->tags) {
@@ -114,7 +119,7 @@
               }
             }
           } else {
-            $ins = 'insert into photos (id, caption, description, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'])) . '\', \'' . addslashes(htmlentities($_POST['description'])) . '\', \'' . addslashes(htmlentities($_POST['tags'])) . '\', \'' . time() . '\')';
+            $ins = 'insert into photos (id, caption, description, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'])) . '\', \'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', \'' . addslashes(htmlentities($_POST['tags'])) . '\', \'' . time() . '\')';
             if(false === $db->Put($ins, 'error adding photo information'))
               $error = true;
             else {
