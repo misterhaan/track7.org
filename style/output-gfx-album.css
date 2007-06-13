@@ -25,8 +25,8 @@ div#photos {
 }
 a.photoframe {
   display: block;
-  border: 1px solid #<?=LIGHTGREY; ?>;
-  padding: .2em;
+  border: 1px solid #<?=MEDIUM; ?>;
+  padding: .3em;
   float: left;
 }
 a.photoframe:hover {
@@ -37,6 +37,8 @@ span.photopreview {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
+  width: 150px;
+  height: 150px;
 }
 span.iefix {
   display: inline-block;
