@@ -42,6 +42,10 @@ span.photopreview {
   width: 150px;
   height: 150px;
 }
+span.photopreview img {
+  display: block;
+  margin: auto;
+}
 span.iefix {
   display: inline-block;
   height:  100%;
