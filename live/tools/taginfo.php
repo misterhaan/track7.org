@@ -7,10 +7,11 @@
   }
   if(strlen($_GET['name']) && strlen($_GET['type'])) {
     $desc = 'select description from taginfo where type=\'' . addslashes($_GET['type']) . '\' and name=\'' . addslashes($_GET['name']) . '\'';
-    if($desc = $db->GetValue($desc, 'error looking up tag information', 'tag not found', true)) {
+    if(false !== $desc = $db->GetValue($desc, 'error looking up tag information', 'tag not found', true)) {
+      $page->Start(htmlentities($_GET['type'] . '/' . $_GET['name']) . ' - tag information editor', htmlentities($_GET['type'] . '/' . $_GET['name']));
       require_once 'auForm.php';
       require_once 'auText.php';
-      $tagedit = new auForm('tagedit', '?type=' . $_GET['type'] . '&amp;name=' . $_GET['name']);
+      $tagedit = new auForm('tagedit', '?type=' . $_GET['type'] . '&name=' . $_GET['name']);
       $tagedit->AddField('desc', 'description', 'enter a description for this tag', false, auText::HTML2BB($desc), _AU_FORM_FIELD_BBCODE);
       $tagedit->AddButtons('save', 'save tag description');
       if($tagedit->CheckInput(true)) {
@@ -19,6 +20,8 @@
           $page->Info('tag description successfully updated');
       }
       $tagedit->WriteHTML(true);
+      $page->End();
+      die;
     } else
       unset($desc);
   }
