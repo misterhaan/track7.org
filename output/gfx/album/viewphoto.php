@@ -7,10 +7,10 @@
   $photo = 'select id, caption, description, added, tags from photos where id=\'' . addslashes($_GET['id']) . '\'';
   if($photo = $db->GetRecord($photo, 'Error looking up photo', '')) {
     $page->Start($photo->caption . ' - photo album', $photo->caption);
-    if($user->GodMode)
-      $page->Info('<a href="editphoto.php?id=' . $photo->id . '">edit this photo</a>');
-    require_once 'auText.php';
     $url = dirname($_SERVER['PHP_SELF']);
+    if($user->GodMode)
+      $page->Info('<a href="' . $url . '/editphoto.php?id=' . $photo->id . '">edit this photo</a>');
+    require_once 'auText.php';
 ?>
       <img id="photo" src="<?=$url; ?>/photos/<?=$photo->id; ?>.jpeg" />
       <div id="photometa">
