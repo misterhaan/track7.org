@@ -1,7 +1,19 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('graphics', null, '', '', array('skin', 'digital', 'sketch', 'comics', 'shop'));
+  $page->Start('graphics', null, '', '', array('album', 'skin', 'digital', 'sketch', 'comics', 'shop'));
 
+  $page->Heading('photo album', 'album');
+?>
+      <img class="icon" src="album/favicon.png" alt="" />
+      <p class="iconned">
+        everybody likes photos, right?&nbsp; i tend to hoard them and not look
+        at them <em>or</em> show them to anybody.&nbsp; to help reverse that,
+        here's an online photo album with some pictures, which i really should
+        add to more frequently.
+      </p>
+      <ul><li><a href="album/">photo album</a></li></ul>
+
+<?
   $page->Heading('skins / themes / etc.', 'skin');
 ?>
       <p>
