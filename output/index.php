@@ -1,7 +1,7 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
 
-  $page->Start('output', null, '', '', array('pen', 'lego', 'cd', 'graphics', 'album'));
+  $page->Start('output', null, '', '', array('pen', 'lego', 'cd', 'graphics'));
   $page->Heading('pen vs. sword', 'pen');
 ?>
       <img class="icon" src="pen/favicon.png" alt="" />
@@ -80,18 +80,6 @@
         either way the results of that sort of activity are on display here.
       </p>
       <ul><li><a href="gfx/">graphics</a></li></ul>
-
-<?
-  $page->Heading('photo album', 'album');
-?>
-      <img class="icon" src="album/favicon.png" alt="" />
-      <p class="iconned">
-        everybody likes photos, right?&nbsp; i tend to hoard them and not look
-        at them <em>or</em> show them to anybody.&nbsp; to help reverse that,
-        here's an online photo album with some pictures, which i really should
-        add to more frequently.
-      </p>
-      <ul><li><a href="album/">photo album</a></li></ul>
 
 <?
   $page->End();
