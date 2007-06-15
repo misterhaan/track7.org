@@ -14,10 +14,10 @@
       $page->Info('<a href="/tools/taginfo.php?type=photos&amp;name=' . htmlentities($_GET['tag']) . '">add/edit tag description</a>');
   } else {
     $page->Start('photo album');
-    $page->TagCloud('photos', $url . 'tag/');
+    $page->TagCloud('photos', $url . 'tag/', 5, 10, 25, 50);
   }
   $photos = 'select id, caption, added from photos' . $photos . ' order by added desc';
-  if($photos = $db->GetSplit($photos, 20, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . htmlentities($_GET['tag']) : 'no photos found')) {
+  if($photos = $db->GetSplit($photos, 24, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . htmlentities($_GET['tag']) : 'no photos found')) {
 ?>
       <div id="photos">
 <?
