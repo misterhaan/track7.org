@@ -7,6 +7,7 @@
         <li><a href="votes.php">votes</a></li>
         <li><a href="unknownreferrers.php">unknown referrers</a></li>
         <li><a href="guidereview.php">guide review</a></li>
+        <li><a href="taginfo.php">tag info</a></li>
         <li><a href="links.php">related links</a></li>
 <?
   if(strpos($_SERVER['HTTP_HOST'], 'track7.') !== false) {
