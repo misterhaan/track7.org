@@ -474,6 +474,7 @@ table.post div.foot a {
 
 
 /* ===========================================================[ tag cloud ]== */
+
 div.tagcloud {
   margin: .5em 2em;
   padding: 3px 6px 3px 26px;
@@ -484,25 +485,29 @@ div.tagcloud {
   background-image: url(/style/tag.png);
 }
 div#content div.tagcloud a {
-  margin: 0 .3em;
+  margin: 0 .2em;
   font-weight: normal;
+  vertical-align: middle;
 }
 div.tagcloud a.tagfew {
   font-size: .8em;
+  line-height: 2.5em;
 }
 div.tagcloud a.tagsome {
-  /* same as default links */
+  line-height: 2em;
 }
 div.tagcloud a.tagmany {
-  font-size: 1.1em;
+  font-size: 1.2em;
+  line-height: 1.538em;
 }
 div.tagcloud a.taglots {
-  font-size: 1.2em;
+  font-size: 1.5em;
+  line-height: 1.33em;
 }
 div.tagcloud a.tagtons {
-  font-size: 1.3em;
+  font-size: 2em;
+  line-height: 1em;
 }
-
 
 
 /* ==============================================================[ layout ]== */
