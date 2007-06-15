@@ -483,24 +483,24 @@ div.tagcloud {
   border: 1px dotted #<?=MEDIUM; ?>;
   background-image: url(/style/tag.png);
 }
-div.tagcloud a {
+div#content div.tagcloud a {
   margin: 0 .3em;
-}
-div#content div.tagcloud a.tagfew {
-  font-weight: normal;
-  font-size: .8em;
-}
-div#content div.tagcloud a.tagsome {
-  font-size: .8em;
-}
-div#content div.tagcloud a.tagmany {
   font-weight: normal;
 }
-div#content div.tagcloud a.taglots {
+div.tagcloud a.tagfew {
+  font-size: .8em;
+}
+div.tagcloud a.tagsome {
   /* same as default links */
 }
-div#content div.tagcloud a.tagtons {
+div.tagcloud a.tagmany {
   font-size: 1.1em;
+}
+div.tagcloud a.taglots {
+  font-size: 1.2em;
+}
+div.tagcloud a.tagtons {
+  font-size: 1.3em;
 }
 
 
