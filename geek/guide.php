@@ -129,7 +129,14 @@
     }
   } else { // no guide set, show list instead
     $page->ResetFlag(_FLAG_PAGES_COMMENTS);
-    $page->Start('guides');
+    if(strlen($_GET['tag'])) {
+      $tag = htmlentities($_GET['tag']);
+      $page->Start($tag . ' - guides', 'guides [' . $tag . ']');
+      $page->ShowTagDescription('guides', $tag);
+      if($user->GodMode)
+        $page->Info('<a href="/tools/taginfo.php?type=guides&amp;name=' . htmlentities($_GET['tag']) . '">add/edit tag description</a>');
+    } else {
+      $page->Start('guides');
 ?>
       <p>
         i tend to figure things out on my own as much as i can, but sometimes it
@@ -139,8 +146,15 @@
         like to contribute, use the link below and i'll review it and probably
         put it up here.
       </p>
+<?
+    }
+?>
       <ul><li><a href="contribute">contribute a guide</a></li></ul>
 <?
+    if($tag) {
+    } else {
+      $page->TagCloud('guides', 'tag=');
+    }
     switch($_GET['sort']) {
       case 'views':
         $sort = 'most viewed';
