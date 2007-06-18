@@ -10,6 +10,8 @@
       if(false !== $db->Change($update, 'error changing guide id in page table')) {
         $update = 'update guides set id=\'' . $_POST['id'] . '\', dateadded=' . time() . ', tags=\'' . addslashes($_POST['tags']) . '\', skill=\'' . $_POST['skill'] . '\', status=\'approved\' where id=\'' . $_GET['id'] . '\'';
         if(false !== $db->Change($update, 'error approving guide')) {
+          $tags = explode(',', $_POST['tags']);
+          $ins = 'insert into taginfo (type, name, count) values (\'guides\', \'' . implode('\', 1), (\'guides\', \'', $tags) . '\', 1) on duplicate key update count=count+1';
           $email = 'select c.email from guides as g left join usercontact as c on g.author=c.uid where g.id=\'' . $_POST['id'] . '\'';
           if($email = $db->GetValue($email, 'error looking up author\'s e-mail address', 'author\'s e-mail address not found'))
             @mail($email, 'your guide has been approved!', 'congratulations, your guide has been approved and is now available to track7 visitors!  if you\'d like to look at it now, use this url:' . "\n\n" . 'http://' . $_SERVER['HTTP_HOST'] . '/geek/guides/' . $_POST['id'] . '/', 'From: track7 guides <guide@' . _HOST . '>');
