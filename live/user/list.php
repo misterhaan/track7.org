@@ -1,4 +1,5 @@
 <?
+  $getvars = array('showall');
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   require_once 'auText.php';
 
@@ -10,7 +11,7 @@
         contact them.
       </p>
 <?
-  if($_GET['show'] != 'all') {
+  if(!isset($_GET['showall'])) {
 ?>
       <p>
         only users who have posted something to track7 are shown.
@@ -18,7 +19,7 @@
 <?
     if($user->Valid) {
 ?>
-        <ul><li><a href="?show=all">show all users</a></li></ul>
+        <ul><li><a href="?showall">show all users</a></li></ul>
 <?
     }
     $us = ' and s.signings+s.comments+s.posts+s.discs+s.rounds>0';
