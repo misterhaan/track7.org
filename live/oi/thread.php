@@ -79,6 +79,8 @@
             echo '              | <a href="mailto:' . TEXT::safemail($post->email) . '" title="send ' . $post->login . ' an e-mail">e-mail</a>' . "\n";
           if($post->website)
             echo '              | <a href="' . $post->website . '" title="visit ' . $post->login . '\'s website">www</a>' . "\n";
+          if($user->Valid)
+            echo '              | <a href="/user/friends.php?add=' . $post->login . '" title="add ' . $post->login . ' to your friend list">+friend</a>' . "\n";
 ?>
             </div>
 <?

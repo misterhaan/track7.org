@@ -9,20 +9,41 @@
     require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
     require_once 'auText.php';
 
-    $page->Start(htmlspecialchars($_GET['login']) . '\'s profile', 'profile for ' . htmlspecialchars($_GET['login']));
+    $page->Start(htmlentities($_GET['login']) . '\'s profile', 'profile for ' . htmlspecialchars($_GET['login']));
 
     $u = 'select uid from users where login=\'' . addslashes($_GET['login']) . '\'';
     if($u = $db->GetRecord($u, 'error looking up basic profile information', 'could not find a user named \'' . htmlspecialchars($_GET['login']) .'\'', true)) {
-      if($user->Valid && $u->uid == $user->ID) {
+      if($user->Valid) {
+        $isfriend = 'select 1 from userfriends where fanuid=\'' . $user->ID . '\' and frienduid=\'' . $u->uid . '\'';
+        $isfriend = $db->Get($isfriend, 'error checking if you are already friends', '');
+        if($u->uid == $user->ID) {
+          if($isfriend)
+            $page->info('you are your friend');
+          else {
+?>
+      <p><a href="/user/friends.php?add=<?=$_GET['login']; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>">add yourself to your friends list</a> (won't increase your fan count)</p>
+<?
+          }
 ?>
       <p><a href="/user/editprofile.php">edit profile</a></p>
 
 <?
-      } elseif($user->GodMode) {
+        } else {
+          if($isfriend)
+            $page->info($_GET['login'] . ' is your friend');
+          else {
+?>
+      <p><a href="/user/friends.php?add=<?=$_GET['login']; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>">add <?=$_GET['login']; ?> to your friends list</a></p>
+
+<?
+          }
+          if($user->GodMode) {
 ?>
       <p><a href="/user/editprofile.php?user=<?=$_GET['login']; ?>">edit this user's profile</a></p>
 
 <?
+          }
+        }
       }
       $song = 'select instant, title, artist, length, filename from usersongs where uid=' . $u->uid . ' order by instant desc';
       $song = $db->GetRecord($song, 'error looking up last song played', '');
@@ -100,7 +121,7 @@
 
 <?
       }
-      $stats = 'select since, lastlogin, signings, rank, posts, comments, discs, rounds from userstats where uid=' . $u->uid;
+      $stats = 'select since, lastlogin, signings, rank, posts, comments, discs, rounds, fans from userstats where uid=' . $u->uid;
       if($stats = $db->GetRecord($stats, 'error looking up statistics for user')) {
         $page->Heading('statistics');
 ?>
@@ -109,6 +130,7 @@
         <tr><th>registered</th><td><?=($stats->since == null ? '' : strtolower($user->tzdate('M d, Y \a\t g:i:s a', $stats->since))); ?></td></tr>
         <tr><th>last login</th><td><?=($stats->lastlogin == null ? '' : strtolower($user->tzdate('M d, Y \a\t g:i:s a', $stats->lastlogin))); ?></td></tr>
         <tr><th>frequency</th><td><?=$stats->rank; ?></td></tr>
+        <tr><th>fans</th><td><?=$stats->fans; ?></td></tr>
         <tr><th>posts</th><td><?=$stats->posts; ?></td></tr>
         <tr><th>comments</th><td><?=$stats->comments; ?></td></tr>
 <?
@@ -120,6 +142,26 @@
       </table>
 
 <?
+        if($user->ID == $u->uid || $user->GodMode) {
+          $page->Heading('friends (only visible to you)', 'friends');
+          $friends = 'select u.login from userfriends as f left join users as u on u.uid=f.frienduid where fanuid=\'' . $u->uid . '\' order by login';
+          if($friends = $db->Get($friends, 'error looking up friends', 'you don\'t currently have any <a href="/user/friends.php">friends</a>.&nbsp; visit <a href="/user/list.php">other users\'</a> profiles to add them to your list.')) {
+?>
+      <table class="text" cellspacing="0">
+        <thead class="minor"><tr><th>name</th><th>profile</th><th>send</th><th>remove</th></tr></thead>
+        <tbody>
+<?
+            while($friend = $friends->NextRecord()) {
+?>
+          <tr><td><?=$friend->login; ?></td><td><a href="/user/<?=$friend->login; ?>/"><img src="/style/profile.png" alt="profile" /></a></td><td><a href="/user/sendmessage.php?to=<?=$friend->login; ?>"><img src="/style/send.png" alt="send" /></a></td><td><a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>%23friends"><img src="/style/remove.png" alt="remove" /></a></td></tr>
+<?
+            }
+?>
+        </tbody>
+      </table>
+<?
+          }
+        }
         if($stats->posts) {
           $posts = 'select p.instant, p.id, p.tid, t.fid, p.subject, t.title as thread, f.title as forum from oiposts as p, oithreads as t, oiforums as f where p.tid=t.id and t.fid=f.id and p.uid=' . $u->uid . ' order by instant desc';
           if($posts = $db->GetLimit($posts, 0, 5, 'error getting list of posts by this user')) {
