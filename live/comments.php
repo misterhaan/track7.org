@@ -171,11 +171,11 @@
     // did not submit a form, so let's show the most recent comments
     if(isset($_GET['user']) && $u = $db->GetRecord('select uid, login from users where login=\'' . addslashes($_GET['user']) . '\'', '', '')) {
       $page->Start($u->login . '\'s comment history');
-      $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments, p.avatar, s.rank from comments as c left join users as u on c.uid=u.uid left join userprofiles as p on c.uid=p.uid left join userstats as s on c.uid=s.uid where c.uid=' . $u->uid . ' order by instant desc';
+      $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments, p.avatar, s.rank, f.frienduid from comments as c left join users as u on c.uid=u.uid left join userprofiles as p on c.uid=p.uid left join userstats as s on c.uid=s.uid left join userfriends as f on c.uid=f.frienduid and f.fanuid=\'' . $user->ID . '\' where c.uid=' . $u->uid . ' order by instant desc';
     } else {
       $page->AddFeed('track7 page comments', '/feeds/comments.rss');
       $page->Start('comment history<a class="feed" href="/feeds/comments.rss" title="rss feed of comment history"><img src="/style/feed.png" alt="feed" /></a>');
-      $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments, p.avatar, s.rank from comments as c left join users as u on c.uid=u.uid left join userprofiles as p on c.uid=p.uid left join userstats as s on c.uid=s.uid order by instant desc';
+      $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments, p.avatar, s.rank, f.frienduid from comments as c left join users as u on c.uid=u.uid left join userprofiles as p on c.uid=p.uid left join userstats as s on c.uid=s.uid left join userfriends as f on c.uid=f.frienduid and f.fanuid=\'' . $user->ID . '\' order by instant desc';
     }
     if($comments = $db->GetSplit($comments, 10, 0, '', '', 'error looking up comments', 'nobody has commented on anything')) {
 ?>
@@ -235,6 +235,11 @@
           if($comment->website) {
 ?>
                 | <a href="<?=$comment->website; ?>" title="visit <?=$comment->login; ?>'s website">www</a>
+<?
+          }
+          if($user->Valid && $comment->frienduid === null) { 
+?>
+                | <a href="/user/friends.php?add=<?=$comment->login; ?>" title="add <?=$comment->login; ?> to your friend list">+friend</a>
 <?
           }
 ?>
