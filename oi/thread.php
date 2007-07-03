@@ -14,7 +14,7 @@
     } else
       $ftitle = '(error looking up forum title)';
     $page->Start($thread->title . ' - ' . $ftitle . ' - oi', $thread->title);
-    $posts = 'select u.login, s.rank, p.id, p.uid, p.instant, p.subject, p.post, p.history, r.signature, r.avatar, c.flags&' . _FLAG_USERCONTACT_SHOWEMAIL . ' as showemail, c.email, c.website from oiposts as p left join users as u on p.uid=u.uid left join usercontact as c on u.uid=c.uid left join userstats as s on u.uid=s.uid left join userprofiles as r on u.uid=r.uid where p.tid=' . $_GET['tid'] . ' order by instant';
+    $posts = 'select u.login, s.rank, p.id, p.uid, p.instant, p.subject, p.post, p.history, r.signature, r.avatar, c.flags&' . _FLAG_USERCONTACT_SHOWEMAIL . ' as showemail, c.email, c.website, f.frienduid from oiposts as p left join users as u on p.uid=u.uid left join usercontact as c on u.uid=c.uid left join userstats as s on u.uid=s.uid left join userprofiles as r on u.uid=r.uid left join userfriends as f on f.frienduid=u.uid and f.fanuid=\'' . $user->ID . '\' where p.tid=' . $_GET['tid'] . ' order by instant';
     if($posts = $db->GetSplit($posts, _FORUM_POSTS_PER_PAGE, 0, '', '', 'error getting posts for this thread', 'this thread is empty!', true, true)) {
       while($post = $posts->NextRecord()) {
 ?>
@@ -79,7 +79,7 @@
             echo '              | <a href="mailto:' . TEXT::safemail($post->email) . '" title="send ' . $post->login . ' an e-mail">e-mail</a>' . "\n";
           if($post->website)
             echo '              | <a href="' . $post->website . '" title="visit ' . $post->login . '\'s website">www</a>' . "\n";
-          if($user->Valid)
+          if($user->Valid && !$post->frienduid)
             echo '              | <a href="/user/friends.php?add=' . $post->login . '" title="add ' . $post->login . ' to your friend list">+friend</a>' . "\n";
 ?>
             </div>
