@@ -46,11 +46,17 @@
         <tr><th>skill</th><td><?=$stats->skill; ?></td></tr>
         <tr><th>discs</th><td><?=$player->discs; ?></td></tr>
         <tr><th>rounds</th><td><?=$player->rounds; ?></td></tr>
+<?
+      if($stats->holes) {
+?>
         <tr><th>aces</th><td><?=$stats->aces; ?> (<?=round(100 * $stats->aces / $stats->holes); ?>%)</td></tr>
         <tr><th>birdies</th><td><?=$stats->birds; ?> (<?=round(100 * $stats->birds / $stats->holes); ?>%)</td></tr>
         <tr><th>pars</th><td><?=$stats->pars; ?> (<?=round(100 * $stats->pars / $stats->holes); ?>%)</td></tr>
         <tr><th>bogies</th><td><?=$stats->bogies; ?> (<?=round(100 * $stats->bogies / $stats->holes); ?>%)</td></tr>
         <tr><th>doubles</th><td><?=$stats->doubles; ?> (<?=round(100 * $stats->doubles / $stats->holes); ?>%)</td></tr>
+<?
+      }
+?>
       </table>
 
 <?
