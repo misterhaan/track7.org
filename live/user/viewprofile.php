@@ -153,7 +153,7 @@
 <?
             while($friend = $friends->NextRecord()) {
 ?>
-          <tr><td><?=$friend->login; ?></td><td><a href="/user/<?=$friend->login; ?>/"><img src="/style/profile.png" alt="profile" /></a></td><td><a href="/user/sendmessage.php?to=<?=$friend->login; ?>"><img src="/style/send.png" alt="send" /></a></td><td><a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>%23friends"><img src="/style/remove.png" alt="remove" /></a></td></tr>
+          <tr><td><?=$friend->login; ?></td><td><a href="/user/<?=$friend->login; ?>/">profile</a></td><td><a href="/user/sendmessage.php?to=<?=$friend->login; ?>">send</a></td><td><a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>%23friends">remove</a></td></tr>
 <?
             }
 ?>
