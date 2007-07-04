@@ -10,9 +10,11 @@
     if($uid = $db->GetValue($uid, 'error looking up user id', 'user not found'))
       if(removeAll($db, $uid)) {
         $page->Info('successfully deleted user ' . htmlentities($_GET['user']));
-        if(shiftAll($db, $uid)) {
+        if(shiftAll($db, $uid))
           $page->Info('successfully shifted other users');
-        }
+        if($nextuid = $db->GetValue('select max(uid)+1 from users'))
+          if(false !== $db->Change('alter table users auto_increment=' . +$nextuid))
+            $page->Info('successfully updated next user id');
       }
   }
   // show list of users who should probably be deleted
@@ -29,6 +31,7 @@
 ?>
       </ul>
 <?
+    $page->SplitLinks();
   }
   $page->End();
 
