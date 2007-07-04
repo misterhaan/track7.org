@@ -40,6 +40,7 @@
           if($user->GodMode) {
 ?>
       <p><a href="/user/editprofile.php?user=<?=$_GET['login']; ?>">edit this user's profile</a></p>
+      <p><a href="/user/delete.php?user=<?=$_GET['login']; ?>">delete this user</a></p>
 
 <?
           }
