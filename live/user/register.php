@@ -1,10 +1,11 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   require_once 'auForm.php';
+  $reg = $user->GetRegistrationForm();
 
   $page->Start('register', 'track7 registration');
 
-  if($_POST['formid'] == 'userregister') {
+  if($reg->Submitted) {
     if($user->RegisterMessage == _AU_USER_REGISTER_SUCCESS) {
 ?>
       <p>
@@ -30,12 +31,6 @@
       </p>
 
 <?
-  $reg = new auForm('userregister');
-  $reg->AddField('login', 'username', 'username may contain between 3 and 32 letters, numbers, underscores, and dashes', true, '', _AU_FORM_FIELD_NORMAL, 16, 32);
-  $reg->AddField('pass1', 'password', 'passwords must be at least 4 characters long', true, '', _AU_FORM_FIELD_PASSWORD, 16);
-  $reg->AddField('pass2', 'confirm password', 're-type the same password again to confirm', true, '', _AU_FORM_FIELD_PASSWORD, 16);
-  $reg->AddField('email', 'e-mail address', 'optional, but required for resetting passwords or getting e-mail from track7', false, '', _AU_FORM_FIELD_NORMAL, 24, 32);
-  $reg->AddButtons('register', 'sign up for an account');
   unset($_POST['pass1'], $_POST['pass2']);  // clear the passwords so they don't get written out in the form
   $reg->WriteHTML();
 
