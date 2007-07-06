@@ -18,7 +18,7 @@
       }
   }
   // show list of users who should probably be deleted
-  $users = 'select u.login from users as u left join usercontact as c on c.uid=u.uid left join userstats as s on s.uid=u.uid where ' . time() . '-s.since<60 and s.lastlogin-s.since<30 and s.pageload-s.since<60 and u.flags=0 and u.style=1 and u.tzoffset=0 and c.flags=0 and s.signings=0 and s.comments=0 and s.posts=0 and s.discs=0 and s.rounds=0 and c.website is null and c.jabber is null and c.icq is null and c.aim is null order by s.since';
+  $users = 'select u.login from users as u left join usercontact as c on c.uid=u.uid left join userstats as s on s.uid=u.uid where ' . time() . '-s.since>5270400 and s.lastlogin-s.since<30 and s.pageload-s.since<60 and u.flags=0 and u.style=1 and u.tzoffset=0 and c.flags=0 and s.signings=0 and s.comments=0 and s.posts=0 and s.discs=0 and s.rounds=0 and c.website is null and c.jabber is null and c.icq is null and c.aim is null order by s.since';
   if($users = $db->GetSplit($users, 35, 0, '', '', 'error looking up junk users', 'no junk users found')) {
 ?>
       <ul>
