@@ -45,7 +45,8 @@
   }
   
   function remove(&$db, $uid, $table, $field = 'uid') {
-    return false !== $db->Change('delete from ' . $table . ' where ' . $field . '=' . $uid, 'error deleting from ' . $table);
+    $success = false !== $db->Change('delete from ' . $table . ' where ' . $field . '=' . $uid, 'error deleting from ' . $table); 
+    return $success && (false !== $db->Change('alter table ' . $table . ' order by ' . $field, 'error sorting ' . $table));
   }
 
   function shiftAll(&$db, $uid) {
