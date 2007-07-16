@@ -32,10 +32,10 @@
         <tr><th>audio</th><td>creative soundblaster live! value</td></tr>
         <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
         <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet</td></tr>
-        <tr><th>fd0</th><td>generic 3½" floppy</td></tr>
+        <tr><th>fd0</th><td>generic 3Â½" floppy</td></tr>
         <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
         <tr><th>ide1</th><td>lg 8/4/24/4/2/16/12/32x dvd+/-rw</td></tr>
-        <tr><th>operating system</th><td>microsoft windows xp professional, sp2<br />fedora core 6</td></tr>
+        <tr><th>operating system</th><td>microsoft windows vista</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech trackman wheel<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
@@ -58,7 +58,7 @@
         <tr><th>modem</th><td>toshiba software modem</td></tr>
         <tr><th>ide0</th><td>hitachi 100 GB 5k100</td></tr>
         <tr><th>ide1</th><td>matshita dvd-ram</td></tr>
-        <tr><th>operating system</th><td>microsoft windows xp professional tablet edition, sp2</td></tr>
+        <tr><th>operating system</th><td>microsoft windows vista</td></tr>
         <tr><th>keyboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>mouse</th><td>logitech v450 wireless laser</td></tr>
         <tr><th>monitor</th><td>toshiba wide 14.1&quot;</td></tr>
@@ -77,7 +77,7 @@
         <tr><th>audio</th><td>yamaha</td></tr>
         <tr><th>network</th><td>linksys usb 10t ethernet</td></tr>
         <tr><th>modem</th><td>toshiba internal v.90</td></tr>
-        <tr><th>fd0</th><td>generic 3½" floppy</td></tr>
+        <tr><th>fd0</th><td>generic 3Â½" floppy</td></tr>
         <tr><th>ide0</th><td>ibm travelstar 6 GB</td></tr>
         <tr><th>ide1</th><td>teac 24x cd-rom</td></tr>
         <tr><th>operating system</th><td>microsoft windows xp professional</td></tr>
