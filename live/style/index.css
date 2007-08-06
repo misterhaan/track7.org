@@ -12,11 +12,11 @@ span#randomquote {
 	font-style: italic;
 }
 span#randomquote:before {
-  content: '“';
+  content: 'â€œ';
   color: #<?=DARKGREY; ?>;
 }
 span#randomquote:after {
-  content: '”';
+  content: 'â€';
   color: #<?=DARKGREY; ?>;
 }
 div.twocolumn {
