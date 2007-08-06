@@ -15,13 +15,13 @@
     if($user->GodMode) {
       while($day = $daily->NextRecord()) {
 ?>
-          <tr><td class="date"><a href="detail.php?day=<?=$day->date; ?>"><?=date('m穌穀', strtotime($day->date)); ?></a></td><td class="number"><?=$day->raw; ?></td><td class="number"><?=$day->unique; ?></td><td class="number"><?=$day->unique > 0 ? number_format($day->raw / $day->unique, 1) : ''; ?></td><td class="clear"><a href="hits.php?date=<?=$day->date; ?>"><img src="/style/details.png" alt="details" /></a></td></tr>
+          <tr><td class="date"><a href="detail.php?day=<?=$day->date; ?>"><?=date('m路d路Y', strtotime($day->date)); ?></a></td><td class="number"><?=$day->raw; ?></td><td class="number"><?=$day->unique; ?></td><td class="number"><?=$day->unique > 0 ? number_format($day->raw / $day->unique, 1) : ''; ?></td><td class="clear"><a href="hits.php?date=<?=$day->date; ?>"><img src="/style/details.png" alt="details" /></a></td></tr>
 <?
       }
     } else {
       while($day = $daily->NextRecord()) {
 ?>
-          <tr><td class="date"><a href="detail.php?day=<?=$day->date; ?>"><?=date('m穌穀', strtotime($day->date)); ?></a></td><td class="number"><?=$day->raw; ?></td><td class="number"><?=$day->unique; ?></td><td class="number"><?=$day->unique > 0 ? number_format($day->raw / $day->unique, 1) : ''; ?></td></tr>
+          <tr><td class="date"><a href="detail.php?day=<?=$day->date; ?>"><?=date('m路d路Y', strtotime($day->date)); ?></a></td><td class="number"><?=$day->raw; ?></td><td class="number"><?=$day->unique; ?></td><td class="number"><?=$day->unique > 0 ? number_format($day->raw / $day->unique, 1) : ''; ?></td></tr>
 <?
       }
     }
