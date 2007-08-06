@@ -32,12 +32,13 @@
         <tr><th>audio</th><td>creative soundblaster live! value</td></tr>
         <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
         <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet</td></tr>
-        <tr><th>fd0</th><td>generic 3½" floppy</td></tr>
+        <tr><th>fd0</th><td>rosewill 3½" floppy with 7-in-1 card reader</td></tr>
         <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
         <tr><th>ide1</th><td>lg 8/4/24/4/2/16/12/32x dvd+/-rw</td></tr>
-        <tr><th>operating system</th><td>microsoft windows vista</td></tr>
+        <tr><th>ide2</th><td>samsung dvd burner</td></tr>
+        <tr><th>operating system</th><td>microsoft windows xp vista<br />fedora core 7</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
-        <tr><th>mouse</th><td>logitech trackman wheel<br />logitech cordless optical</td></tr>
+        <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
         <tr><th>scanner</th><td>canon n670u</td></tr>
         <tr><th>joystick</th><td>logitech wingman rumblepad</td></tr>
