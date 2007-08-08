@@ -1,0 +1,6 @@
+#!/bin/bash
+
+REPOS="$1"
+REV="$2"
+
+wget -O - http://cgi.track7.org/svnupdate.cgi

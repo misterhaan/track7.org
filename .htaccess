@@ -6,7 +6,9 @@ ErrorDocument 404 /404.php
 ErrorDocument 403 /403.php
 ErrorDocument 401 /401.php
 
-RedirectMatch 403 /\.svn.*$
+RewriteEngine on
+RewriteRule \.svn/ - [F]
+RewriteRule \.ref/ - [F]
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
 RedirectPermanent /track7.php http://www.track7.org/
@@ -29,7 +31,6 @@ RedirectPermanent /av/cd/ http://www.track7.org/output/cd/
 RedirectPermanent /av/ http://www.track7.org/output/gfx/
 RedirectPermanent /album/ http://www.track7.org/output/album/
 
-RewriteEngine on
 RewriteRule ^source/([a-z0-9/\-]+\.(php|css))$ /showsource.php?file=$1
 RewriteRule ^files/(.+\.(zip|wsz|xpi|msi|cab))$ /download.php?file=$1
 RewriteRule ^robots.txt /robots.php
