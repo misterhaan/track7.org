@@ -57,7 +57,7 @@
 ?>
       <h2>your comments</h2>
 <?
-            $editcaddy = new auForm('editcaddy', '?id=' . $_GET['id'] . '&amp;caddy=' . $_GET['caddy'] . '&amp;edit');
+            $editcaddy = new auForm('editcaddy', '?id=' . $_GET['id'] . '&caddy=' . $_GET['caddy'] . '&edit');
             $editcaddy->AddField('comments', 'comments', 'enter any comments you have on this disc', false, auText::HTML2BB($caddy->comments), _AU_FORM_FIELD_BBCODE);
             $editcaddy->AddField('color', 'color', 'enter the color of your disc', false, $caddy->color, _AU_FORM_FIELD_NORMAL, 8, 16);
             $editcaddy->AddField('mass', 'mass', 'enter the mass of your disc in grams', false, $caddy->mass, _AU_FORM_FIELD_INTEGER, 3, 3);
