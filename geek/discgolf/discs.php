@@ -118,7 +118,7 @@
         <tbody>
 <?
         while($d = $discs->NextRecord()) {
-          $d->comments = str_replace(array('<br />', "\n", '&nbsp;'), ' ', $d->comments);
+          $d->comments = str_replace(array('<br />', "\n", '&nbsp;', '</p><p>'), ' ', $d->comments);
           if(strlen($d->comments) < 1)
             $d->comments = '<em>[none]</em>';
 ?>
