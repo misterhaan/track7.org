@@ -71,6 +71,7 @@ create table dgcoursestats (
     'single',
     'doubles - best disc'
   ), index (roundtype),
-  avglist varchar(71),
-  avgscore smallint unsigned
+  totallist varchar(255),
+  totalscore smallint unsigned,
+  rounds tinyint unsigned not null default 0
 );
