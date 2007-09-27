@@ -7,20 +7,36 @@
  * -> '<?=STYLE; ?>' layout style disc golf pages                                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
 \******************************************************************************/
 
-table#golfdiscs td {
-  text-align: center;
+div#parlist tbody td {
+  width: 1.9em;
+}
+div#parlist tbody th {
+  font-weight: normal;
+  text-align: left;
+  background-color: #<?=LIGHT; ?>;
+  color: #000000;
+  border: 1px solid #ffffff;
 }
 
-table#dgformparfront,
-table#dgformparback {
-  margin: 0;
-}
-table#dgformparback {
-  margin-top: .5em;
+h2 span.options {
+  font-weight: normal;
+  font-size: .6em;
+  margin-left: 1.5em;
+  vertical-align: middle;
 }
 
-table#coursepar tr,
-table#coursepar td {
+td.minor {
+  font-size: .8em;
+}
+
+table#parfields tr th {
+  border: none;
   text-align: center;
-  width: 2em;
+}
+table#parfields tr td {
+  border: none;
+  padding: 1px 0 3px;
+}
+table#parfields tr td input {
+  text-align: right;
 }

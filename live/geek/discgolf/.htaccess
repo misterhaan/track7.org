@@ -1,2 +1,2 @@
-AddHandler php5-cgi .rtf
-# AddType application/x-httpd-php .rtf
+RewriteEngine on
+RewriteRule ^(.+)\.rtf$ $1.rtf.php
