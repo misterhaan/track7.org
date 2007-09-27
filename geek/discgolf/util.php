@@ -17,7 +17,7 @@
       $rounds = $scores->NumRecords();
       if(!$rounds)
         if($delempty) {
-          $del = 'delete from dgcoursestats where courseid=\'' . $courseId . '\' and roundtype=\'' . $roundType . '\', and tees=\'' . $tees . '\'';
+          $del = 'delete from dgcoursestats where courseid=\'' . $courseId . '\' and roundtype=\'' . $roundType . '\' and tees=\'' . $tees . '\'';
           return false !== $db->Change($del, 'error deleting old course stats');
         } else
           return true;          
