@@ -1,11 +1,12 @@
 create table dgdiscs (
   id tinyint unsigned auto_increment primary key,
+  approved enum('yes','no') not null default 'no', index(approved),
   mfgr varchar(32),
   name varchar(32),
   `type` enum(
     'distance driver',
     'fairway driver',
-    'multi-purpose',
+    'mid-range',
     'putt / approach',
     'specialty'
   ),
@@ -20,7 +21,12 @@ create table dgcaddy (
   id smallint unsigned auto_increment primary key,
   uid smallint unsigned not null, index (uid),
   discid tinyint unsigned, index (discid),
-  `status` enum ('use', 'lost', 'sold') not null default 'use',
+  `status` enum (
+    'bag',
+    'reserve',
+    'lost',
+    'sold'
+  ) not null default 'bag',
   mass tinyint unsigned,
   color varchar(16),
   comments varchar(255)
@@ -28,9 +34,11 @@ create table dgcaddy (
 
 create table dgcourses (
   id tinyint unsigned auto_increment primary key,
+  approved enum('yes','no') not null default 'no', index(approved),
   name varchar(64),
   location varchar(64),
   holes tinyint unsigned not null default 18,
+  teelist varchar(16),
   parlist varchar(53) not null default '3|3|3|3|3|3|3|3|3|3|3|3|3|3|3|3|3|3',
   par tinyint unsigned not null default 54,
   rounds tinyint unsigned not null default 0,
@@ -45,6 +53,11 @@ create table dgrounds (
     'single',
     'doubles - best disc'
   ), index (roundtype),
+  tees enum(
+    'am',
+    'pro'
+  ), index (tees),
+  entryuid smallint unsigned,
   instant int,
   scorelist varchar(53),
   score tinyint unsigned,
@@ -65,13 +78,17 @@ create table dgplayerstats (
 );
 
 create table dgcoursestats (
-  id tinyint unsigned auto_increment primary key,
-  courseid tinyint unsigned not null, index (courseid),
+  courseid tinyint unsigned not null,
   roundtype enum(
     'single',
     'doubles - best disc'
-  ), index (roundtype),
-  totallist varchar(255),
-  totalscore smallint unsigned,
+  ),
+  tees enum(
+    'am',
+    'pro'
+  ),
+  primary key (courseid, roundtype, tees),
+  avglist varchar(255),
+  avgscore float unsigned,
   rounds tinyint unsigned not null default 0
 );

@@ -9,8 +9,10 @@
   if($golfer) {
 ?>
       <p>
-        welcome back to the disc golf section!&nbsp; the links below should make
-        managing your disc golf information quick and easy.
+        welcome back to the disc golf section!&nbsp; use the links below to
+        enter more information, or visit
+        <a href="players.php?p=<?=$user->Name; ?>">your player profile</a> to
+        see what you&rsquo;ve already entered.
       </p>
 
 <?
@@ -19,17 +21,16 @@
       <p>
         the disc golf section is inspired by
         <a href="http://www.discgolfstats.com/" title="disc golf course statistics">folfscores.com</a>,
-        which can track scores for you but doesn't do everything i was hoping
-        for.&nbsp; beyond just scores, here you can also enter which discs you
-        have in your arsenal.&nbsp; you will need a <a href="/user/">user account</a>
-        before you can save any information, though anyone can request a disc or
-        course to be added.&nbsp; below are previews of some of the disc golf
-        data currently on track7.
+        which can track scores for you but doesn&rsquo;t do everything i was
+        hoping for.&nbsp; beyond just scores, here you can also enter which
+        discs you have in your arsenal.&nbsp; you will need a
+        <a href="/user/">user account</a> before you can save any information.&nbsp;
+        below are previews of some of the disc golf data currently on track7.
       </p>
 
 <?
   }
-  $players = 'select u.login, s.discs, s.rounds from users as u, userstats as s where u.uid=s.uid and (discs>0 or rounds>0) order by rounds desc, discs desc';
+  $players = 'select u.login, s.discs, s.rounds from users as u left join userstats as s on u.uid=s.uid where discs>0 or rounds>0 order by rounds desc, discs desc';
   if($players = $db->GetLimit($players, 0, 5, 'error reading disc golf players', '')) {
     $page->Heading('players');
 ?>
@@ -49,17 +50,17 @@
 <?
   }
 
-  $courses = 'select id, name, location, par, rounds from dgcourses order by rounds desc, name';
+  $courses = 'select id, name, location, holes, par, rounds from dgcourses order by rounds desc, name';
   if($courses = $db->GetLimit($courses, 0, 5, 'error reading disc golf courses', 'there are currently no disc golf courses in the database')) {
     $page->Heading('courses');
 ?>
       <table class="data" cellspacing="0">
-        <thead><tr><th>course</th><th>location</th><th>par</th><th>rounds</th></tr></thead>
+        <thead><tr><th>course</th><th>location</th><th>holes</th><th>par</th><th>rounds</th></tr></thead>
         <tbody>
 <?
     while($course = $courses->NextRecord()) {
 ?>
-          <tr><td><a href="courses.php?id=<?=$course->id; ?>" title="view details for this course"><?=$course->name; ?></a></td><td><?=$course->location; ?></td><td class="number"><?=$course->par; ?></td><td class="number"><?=$course->rounds; ?></td></tr>
+          <tr><td><a href="courses.php?id=<?=$course->id; ?>" title="view details for this course"><?=$course->name; ?></a></td><td><?=$course->location; ?></td><td class="number"><?=$course->holes; ?></td><td class="number"><?=$course->par; ?></td><td class="number"><?=$course->rounds; ?></td></tr>
 <?
     }
     $courses = 'select count(1) as c from dgcourses';
@@ -72,9 +73,7 @@
       $courses = '<em>error</em>';
 ?>
         </tbody>
-        <tfoot class="seemore">
-          <tr><td colspan="4"><a href="courses.php">view more courses (<?=$courses; ?> total)</a></td></tr>
-        </tfoot>
+        <tfoot class="seemore"><tr><td colspan="5"><a href="courses.php">view more courses (<?=$courses; ?> total)</a></td></tr></tfoot>
       </table>
 
 <?
