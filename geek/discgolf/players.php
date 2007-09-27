@@ -93,9 +93,9 @@
         <tbody>
 <?
         while($round = $rounds->NextRecord()) {
-      $round->comments = trim(strip_tags($round->comments));
-      if(strlen($round->comments) > 17)
-        $round->comments = substr($round->comments, 0, 15) . '...';
+          $round->comments = trim(html_entity_decode(strip_tags($round->comments), ENT_COMPAT, _CHARSET));
+          if(strlen($round->comments) > 17)
+            $round->comments = substr($round->comments, 0, 15) . '...';
 ?>
           <tr><td><a href="rounds.php?id=<?=$round->id; ?>"><?=strtolower(auText::SmartDate($round->instant)); ?></a></td><td><a href="courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a></td><td><?=$round->roundtype; ?></td><td><?=$round->tees; ?></td><td class="number"><?=$round->score; ?></td><td><?=$round->comments; ?></td></tr>
 <?
