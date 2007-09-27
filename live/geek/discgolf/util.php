@@ -47,7 +47,7 @@
         }
       }
       $db->Put('replace into dgplayerstats (uid, aces, birds, pars, bogies, doubles, holes) values (\'' . $uid . '\', ' . $score[1] . ', ' . $score[2] . ', ' . $score[3] . ', ' . $score[4] . ', ' . $score[5] . ', ' . $score[0] . ')', 'error saving statistics');
-      $db->Change('update userstats set rounds=\'' . $score[0] . '\' where uid=\'' . $uid . '\'');
+      $db->Change('update userstats set rounds=\'' . $rounds->NumRecords() . '\' where uid=\'' . $uid . '\'');
     }
   }
 ?>
