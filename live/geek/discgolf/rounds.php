@@ -209,7 +209,7 @@
         <tbody>
 <?
     while($round = $rounds->NextRecord()) {
-      $round->comments = trim(strip_tags($round->comments));
+      $round->comments = trim(html_entity_decode(strip_tags($round->comments), ENT_COMPAT, _CHARSET));
       if(strlen($round->comments) > 17)
         $round->comments = substr($round->comments, 0, 15) . '...';
 ?>
