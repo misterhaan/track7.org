@@ -343,10 +343,10 @@
     if(!$uid)
       $uid = $user->ID;
     $values['null'] = '(none)';
-    $discs = 'select dgcaddy.id, dgdiscs.name, dgcaddy.mass, dgcaddy.color from dgcaddy, dgdiscs where dgcaddy.discid=dgdiscs.id and dgcaddy.status=\'bag\' and dgcaddy.uid=\'' . $uid . '\'';
+    $discs = 'select c.id, d.name, c.mass, c.color, c.status from dgcaddy as c left join dgdiscs as d on c.discid=d.id where c.uid=\'' . $uid . '\' order by +c.status, d.name';
     if($discs = $db->Get($discs, 'error reading list of discs'))
       while($disc = $discs->NextRecord())
-        $values[$disc->id] = $disc->name . ' (' . $disc->color . ' ' . $disc->mass . 'g)';
+        $values[$disc->id] = $disc->name . ' (' . $disc->color . ' ' . $disc->mass . 'g, ' . $disc->status . ')';
     return $values;
   }
 
