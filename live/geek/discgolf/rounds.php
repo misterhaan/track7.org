@@ -74,7 +74,7 @@
                 }
             }
           }
-          if($edited) {
+          if(!$edited) {
             if(!$okscores)
               $page->Error('scores for holes 1-' . +$round->holes . ' must be a number between 1 and 9');
             $rf->WriteHTML(true);
@@ -153,7 +153,7 @@
             }
           }
           if($round->worstdisc) {
-            $worst = 'select d.name, c.color, c.mass from dgcaddy as c left join dgdiscs as d on d.id=c.discid where c.id=\'' . $round->worstdisc . '\'';
+            $worst = 'select c.discid, d.name, c.color, c.mass from dgcaddy as c left join dgdiscs as d on d.id=c.discid where c.id=\'' . $round->worstdisc . '\'';
             if($worst = $db->GetRecord($worst, 'error looking up worst disc information', 'worst disc not found', true)) {
 ?>
         <tr><th>worst disc</th><td><a href="discs.php?id=<?=$worst->discid; ?>" title="more information on this disc"><?=$worst->name; ?></a> (<?=$worst->color; ?> <?=$worst->mass; ?>g)</td></tr>
