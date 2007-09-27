@@ -5,7 +5,7 @@
   if($_GET['id'] == 'new') {
     $adddisc = getDiscForm($db);
     if($adddisc->CheckInput(true)) {
-      $ins = 'insert into dgdiscs (name, mfgr, type, speed, glide, turn, fade) values (\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['speed'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['glide'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['turn'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['fade'], ENT_COMPAT, _CHARSET)) . '\')';
+      $ins = 'insert into dgdiscs (name, mfgr, type, speed, glide, turn, fade) values (\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', ' . intOrNull($_POST['speed']) . ', ' . intOrNull($_POST['glide']) . ', ' . intOrNull($_POST['turn']) . ', ' . intOrNull($_POST['fade']) . ')';
       if(false !== $discid = $db->Put($ins, 'error saving disc')) {
         header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $discid);
         die;
@@ -33,7 +33,7 @@
         if(isset($_GET['edit'])) {
           $editdisc = getDiscForm($db, $disc);
           if($editdisc->CheckInput(true)) {
-            $update = 'update dgdiscs set name=\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', mfgr=\'' . addslashes(htmlentities($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', type=\'' . addslashes(htmlentities($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', speed=\'' . addslashes(htmlentities($_POST['speed'], ENT_COMPAT, _CHARSET)) . '\', glide=\'' . addslashes(htmlentities($_POST['glide'], ENT_COMPAT, _CHARSET)) . '\', turn=\'' . addslashes(htmlentities($_POST['turn'], ENT_COMPAT, _CHARSET)) . '\', fade=\'' . addslashes(htmlentities($_POST['fade'], ENT_COMPAT, _CHARSET)) . '\' where id=\'' . addslashes($_GET['id']) . '\'';
+            $update = 'update dgdiscs set name=\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', mfgr=\'' . addslashes(htmlentities($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', type=\'' . addslashes(htmlentities($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', speed=' . intOrNull($_POST['speed']) . ', glide=' . intOrNull($_POST['glide']) . ', turn=' . intOrNull($_POST['turn']) . ', fade=' . intOrNull($_POST['fade']) . ' where id=\'' . addslashes($_GET['id']) . '\'';
             if(false !== $db->Change($update, 'error updating disc')) {
               header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $_GET['id']);
               die;
@@ -79,7 +79,7 @@
 <?
       if($disc->speed) {
 ?>
-        <tr><th>speed rating</th><td><?=$disc->speed; ?> of 10</td></tr>
+        <tr><th>speed rating</th><td><?=$disc->speed; ?> of 12</td></tr>
 <?
       }
       if($disc->glide) {
@@ -312,6 +312,12 @@
         rated from 0 (stable) to +5 (very overstable).
       </p>
 <?
+  }
+
+  function intOrNull($val) {
+    if(is_numeric($val))
+      return $val;
+    return 'null';
   }
 
   die;  //--------------------------------------------------- old script follows
