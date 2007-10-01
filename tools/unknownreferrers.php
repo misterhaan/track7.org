@@ -21,12 +21,15 @@
     }
     
     if($referrer) {
-      $page->Heading($referrer->value . ' (' . $referrer->hits . ' hits)');
+      $page->Heading($referrer->value . ' (' . $referrer->hits . ' hits)', 'referrer');
       $rf = new auForm('addreferrer');
       $rf->AddData('referrer', $referrer->value);
       $rf->AddField('site', 'site', 'enter the url to the site this referrer represents, or &quot;spam&quot; if it\'s spam', true, '', _AU_FORM_FIELD_NORMAL, 60, 128);
       $rf->AddButtons('add', 'add this referrer to the known referrers list');
       $rf->WriteHTML(true);
+?>
+      <div id="refcheckresults"></div>
+<?
     }
   }
   $page->End();
