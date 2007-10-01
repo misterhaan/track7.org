@@ -16,7 +16,7 @@
   $page->AddFeed('track7 site updates', '/feeds/updates.rss');
   $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
   $page->AddFeed('track7 page comments', '/feeds/comments.rss');
-  $page->Start('track7 - ' . $quotetext[$quoteid], '');
+  $page->Start('track7', '');
 ?>
       <h1>
         <img src="/style/<?=$user->Style; ?>/track7.png" alt="track7" />
@@ -29,10 +29,8 @@
 ?>
       <img src="/favicon.png" alt="" class="icon" />
       <p class="iconned">
-        track7 is for me.&nbsp; it&rsquo;s here because i enjoy working on it
-        and it&rsquo;s a good way for me to learn some useful things.&nbsp; if
-        something here ends up being interesting or useful for someone else,
-        then that&rsquo;s even better!  
+        track7 is here because i enjoy working on it and it&rsquo;s a good way
+        for me to learn some useful things.
       </p>
 
 <?
@@ -43,7 +41,7 @@
 <?
     while($sect = $sects->NextRecord()) {
       $sect->name = str_replace(array('analogu', 'pen', 'a/v', 'album', 'forums', 'shop'),
-                                array('the analog underground', 'pen vs. sword', 'audio / video', 'photo album', 'oi (forums)', 'merchandise'), $sect->name);
+                                array('analog underground', 'pen vs. sword', 'audio / video', 'photo album', 'oi (forums)', 'merchandise'), $sect->name);
 ?>
           <li><a href="<?=$sect->urlout; ?>" title="<?=$sect->tooltip; ?>">
             <img src="<?=$sect->urlout; ?>favicon.png" alt="" />
