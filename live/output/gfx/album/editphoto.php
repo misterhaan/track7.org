@@ -98,7 +98,7 @@
         }
         if(!$error) {
           if($photoedit->Submitted() == 'edit') {
-            $update = 'update photos set id=\'' . addslashes($id) . '\', caption=\'' . addslashes(htmlentities($_POST['caption'])) . '\', description=\'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', tags=\'' . addslashes(htmlentities($_POST['tags'])) . '\' where id=\'' . $photo->id . '\'';
+            $update = 'update photos set id=\'' . addslashes($id) . '\', caption=\'' . addslashes(htmlentities($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', description=\'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', tags=\'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\' where id=\'' . $photo->id . '\'';
             if(false === $db->Change($update, 'error updating photo information'))
               $error = true;
             elseif($_POST['tags'] != $photo->tags) {
@@ -119,7 +119,7 @@
               }
             }
           } else {
-            $ins = 'insert into photos (id, caption, description, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'])) . '\', \'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', \'' . addslashes(htmlentities($_POST['tags'])) . '\', \'' . time() . '\')';
+            $ins = 'insert into photos (id, caption, description, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', \'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', \'' . time() . '\')';
             if(false === $db->Put($ins, 'error adding photo information'))
               $error = true;
             else {

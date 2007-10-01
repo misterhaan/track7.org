@@ -4,20 +4,20 @@
   if($user->GodMode)
     $page->Info('<a href="' . dirname($_SERVER['PHP_SELF']) . '/editphoto.php">add a new photo</a>');
   if(isset($_GET['tag'])) {
-    $tag = htmlentities($_GET['tag']);
+    $tag = htmlentities($_GET['tag'], ENT_COMPAT, _CHARSET);
     $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']');
     $photos = addslashes($_GET['tag']); 
     $photos = ' where tags=\'' . $photos . '\' or tags like \'' . $photos . ',%\' or tags like \'%,' . $photos . '\' or tags like \'%,' . $photos . ',%\'';
     $page->heading($tag);
     $page->ShowTagDescription('photos', $tag);
     if($user->GodMode)
-      $page->Info('<a href="/tools/taginfo.php?type=photos&amp;name=' . htmlentities($_GET['tag']) . '">add/edit tag description</a>');
+      $page->Info('<a href="/tools/taginfo.php?type=photos&amp;name=' . $tag . '">add/edit tag description</a>');
   } else {
     $page->Start('photo album');
     $page->TagCloud('photos', $url . 'tag/', 5, 15, 30, 50);
   }
   $photos = 'select id, caption, added from photos' . $photos . ' order by added desc';
-  if($photos = $db->GetSplit($photos, 24, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . htmlentities($_GET['tag']) : 'no photos found')) {
+  if($photos = $db->GetSplit($photos, 24, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . $tag : 'no photos found')) {
 ?>
       <div id="photos">
 <?
