@@ -14,10 +14,9 @@ form#loginform input.field {
 }
 
 ul.elements li {
-  border-left: 1px solid #<?=TEXT; ?>;
-  border-right: 1px solid #<?=TEXT; ?>;
-  padding-left: .5em;
+  padding: .7em;
 }
+
 
 textarea {
   width: 96%;
