@@ -1,7 +1,7 @@
 var refCheckReq = null;
-window.onload = function() { body_onLoad(); };
+window.onload = window_onLoad;
 
-function body_onLoad() {
+function window_onLoad() {
   // add link to check referrer
   var ref = document.getElementById("referrer");
   var a = document.createElement("a");
