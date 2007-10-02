@@ -18,6 +18,7 @@
   }
   $photos = 'select id, caption, added from photos' . $photos . ' order by added desc';
   if($photos = $db->GetSplit($photos, 24, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . $tag : 'no photos found')) {
+    require_once 'auFile.php';
 ?>
       <ul id="photos">
         <li>
@@ -31,7 +32,7 @@
 ?>
           <a href="<?=$url; ?>photo/<?=$photo->id; ?>">
             <span class="photopreview">
-              <img src="<?=$url; ?>photos/<?=$photo->id; ?>.jpg" alt="" />
+              <img src="<?=$url; ?>photos/<?=$photo->id; ?>.jpg" alt="" <?=auFile::ImageSizeCSS(_ROOT . '/output/gfx/album/photos/' . $photo->id . '.jpg'); ?>/>
             </span>
             <span class="caption"><?=$photo->caption; ?></span>
           </a>
