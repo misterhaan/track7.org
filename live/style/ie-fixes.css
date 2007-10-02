@@ -26,3 +26,7 @@ textarea {
 ul#sectnav {
   top: 0;
 }
+
+ul#photos li {
+  display: inline;
+}
