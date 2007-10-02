@@ -19,22 +19,28 @@
   $photos = 'select id, caption, added from photos' . $photos . ' order by added desc';
   if($photos = $db->GetSplit($photos, 24, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . $tag : 'no photos found')) {
 ?>
-      <div id="photos">
+      <ul id="photos">
+        <li>
 <?
     while($photo = $photos->NextRecord()) {
+      if($started) {
 ?>
-        <a class="photoframe" href="<?=$url; ?>photo/<?=$photo->id; ?>">
-          <span class="photopreview">
-            <span class="iefix"></span>
-            <img src="<?=$url; ?>photos/<?=$photo->id; ?>.jpg" alt="" />
-          </span>
-          <span class="caption"><?=$photo->caption; ?></span>
-        </a>
+        </li><li>
 <?
+      }
+?>
+          <a href="<?=$url; ?>photo/<?=$photo->id; ?>">
+            <span class="photopreview">
+              <img src="<?=$url; ?>photos/<?=$photo->id; ?>.jpg" alt="" />
+            </span>
+            <span class="caption"><?=$photo->caption; ?></span>
+          </a>
+<?
+      $started = true;
     }
 ?>
-      </div>
-      <br class="clear" />
+        </li>
+      </ul>
 <?
     $page->SplitLinks();
   }
