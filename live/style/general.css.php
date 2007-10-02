@@ -93,6 +93,17 @@ p.error {
   background-image: url(/style/error.png);
 }
 
+img.icon {
+  float: left;
+  padding-left: 2em;
+  width: 32px;
+  height: 32px;
+}
+p.iconned {
+  padding-left: 32px;
+  margin-left: 2.5em;
+}
+
 div.preview {
   float: right;
   margin-top: .3em;
@@ -772,9 +783,13 @@ div#welcome input.button {
   display: block;
   font-size: .8em;
 }
+form#loginform input#_remember {
+  vertical-align: middle;
+}
 form#loginform label[for="_remember"] {
-  position: absolute;
-  margin-top: 4px;
+/*  position: absolute;
+  margin-top: 4px;*/
+  vertical-align: middle;
 }
 form#resetpassform {
   margin: 0 5px;
