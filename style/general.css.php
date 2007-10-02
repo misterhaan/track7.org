@@ -313,12 +313,13 @@ table.data tbody td.clear a img {
 form {
   margin: 1em 2em; 
 }
-form.textarea table.columns {
+form table.columns {
   margin: 0;
   width: 100%;
 }
-form.textarea table.columns th {
+form table.columns th {
   width: 1%;
+  white-space: nowrap;
 }
 
 /* hide the spam trap fields from people with css */
