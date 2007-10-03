@@ -123,6 +123,7 @@
       }
       $page->Start('error editing comment');
       $page->End();
+      die;
       break;
   }
   if(is_numeric($_GET['edit'])) {
@@ -151,6 +152,7 @@
         $cmtfrm->AddButtons('update', 'save changes to this comment');
         $cmtfrm->WriteHTML(true);
         $page->End();
+        die;
       }
     }
   } elseif(is_numeric($_GET['delete'])) {
@@ -167,6 +169,7 @@
     }
     $page->Start('error deleting comment');
     $page->End();
+    die;
   } else {
     // did not submit a form, so let's show the most recent comments
     if(isset($_GET['user']) && $u = $db->GetRecord('select uid, login from users where login=\'' . addslashes($_GET['user']) . '\'', '', '')) {
