@@ -77,7 +77,7 @@
       }
 
       $page->Heading('recent rounds');
-      $rounds = 'select r.id, r.instant, r.courseid, c.name, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid where r.uid=' . $player->uid . ' order by r.instant desc';
+      $rounds = 'select r.id, r.instant, r.courseid, c.name, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid where r.uid=' . $player->uid . ' and r.entryuid is null order by r.instant desc';
       if($rounds = $db->GetLimit($rounds, 0, 5, 'error looking up recent rounds', 'no rounds found')) {
 ?>
       <table class="data" cellspacing="0">
