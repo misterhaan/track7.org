@@ -29,6 +29,9 @@ td.minor {
   font-size: .8em;
 }
 
+table#parfields {
+  width: 1%;
+}
 table#parfields tr th {
   border: none;
   text-align: center;
