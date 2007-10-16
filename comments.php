@@ -114,7 +114,7 @@
             }
           }
         } else {
-          $update = 'update comments set comments=\'' . addslashes(auText::BB2HTML($_POST['pagecomments'])) . '\' where id=' . +$_POST['id'] . ' and uid=\'' . $user->id . '\'';
+          $update = 'update comments set comments=\'' . addslashes(auText::BB2HTML($_POST['pagecomments'])) . '\' where id=' . +$_POST['id'] . ' and uid=\'' . $user->ID . '\'';
           if(false !== $db->Change($update, 'error updating comment', 'unable to update comment:&nbsp; either you are not logged in or this comment is not yours', true)) {
             header('Location: http://' . $_SERVER['HTTP_HOST'] . $_POST['goback']);
             die;
