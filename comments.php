@@ -158,7 +158,7 @@
   } elseif(is_numeric($_GET['delete'])) {
     $comment = 'select uid from comments where id=' . $_GET['delete'];
     if($comment = $db->GetRecord($comment, 'error checking which user posted this comment', 'unable to find comment', true)) {
-      if($user->godmode || $user->valid && $comment->uid == $user->id) {
+      if($user->GodMode || $user->valid && $comment->uid == $user->id) {
         $del = 'delete from comments where id=' . $_GET['delete'];
         if(false !== $db->Change($del, 'error deleting comment')) {
           $db->Change('update userstats set comments=comments-1 where uid=' . $comment->uid);
