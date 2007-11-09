@@ -1,8 +1,4 @@
 RewriteEngine on
 RewriteOptions inherit
-RewriteRule ^bln/admin/(.+)$ blogadmin.php?$1
-RewriteRule ^bln/?$ blog.php
-RewriteRule ^bln/([a-z0-9\-]+)/?$ blog.php?cat=$1
-RewriteRule ^bln/([a-z0-9\-]+)/([a-z0-9\-]+)/?(#.*)?$ blog.php?cat=$1&entry=$2
 RewriteRule ^[^/]+/(.+)\.php$ story.php?id=$1
 RewriteRule ^(.*)\.html$ story.php?id=$1

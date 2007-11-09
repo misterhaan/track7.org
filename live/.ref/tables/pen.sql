@@ -16,3 +16,11 @@ create table penstories (
   posted varchar(10),
   sort tinyint unsigned not null
 );
+
+create table bln (
+  name varchar(32) primary key not null,
+  instant int, index(instant),
+  tags varchar(255), index(tags),
+  title varchar(128),
+  post text
+);
