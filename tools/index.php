@@ -12,7 +12,7 @@
 <?
   if(strpos($_SERVER['HTTP_HOST'], 'track7.') !== false) {
 ?>
-        <li><a href="/dh_phpmyadmin/mysql.track7.org/">phpmyadmin</a></li>
+        <li><a href="/dh_phpmyadmin/data.track7.org/">phpmyadmin</a></li>
         <li><a href="https://panel.dreamhost.com/">panel</a></li>
 <?
   } else {
