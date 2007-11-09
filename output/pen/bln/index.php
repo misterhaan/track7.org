@@ -11,7 +11,7 @@
 <?
       if($user->GodMode) {
 ?>
-      <ul><li><a href="/tools/taginfo.php?type=entries&name=<?=$tag->name; ?>"></a></li></ul>
+      <ul><li><a href="/tools/taginfo.php?type=entries&amp;name=<?=$tag->name; ?>"></a></li></ul>
 <?
       }
     }
