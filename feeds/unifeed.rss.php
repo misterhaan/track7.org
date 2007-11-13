@@ -23,17 +23,39 @@
   else
     $comment = false;
 
+  if($_GET['bln'])
+    if(substr($_GET['bln'], 0, 1) == '-') {
+      $tags = explode(',', substr($_GET['tags'], 1));
+      foreach($tags as $tag)
+        $entries .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
+      $entries = 'select name, instant, tags, title, post from bln where not (' . $entries . ') order by instant desc';
+    } else {
+      $tags = explode(',', $_GET['bln']);
+      foreach($tags as $tag)
+        $entries .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
+      $entries = 'select name, instant, tags, title, post from bln where' . $entries . ' order by instant desc';
+    }
+  else
+    $entries = 'select name, instant, tags, title, post from bln order by instant desc';
+  if($entries = $db->GetLimit($entries, 0, MAXITEMS, '', ''))
+    $entry = $entries->NextRecord();
+   else
+     $entry = false;
+
   $items = 0;
-  while($items < MAXITEMS && ($update || $post || $comment)) {
-    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant)) {
+  while($items < MAXITEMS && ($update || $post || $comment || $entry)) {
+    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant)) {
       AddUpdate($rss, $update);
       $update = $updates->NextRecord();
-    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant)) {
+    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant)) {
       AddPost($rss, $post);
       $post = $posts->NextRecord();
-    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant)) {
+    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant)) {
       AddComment($rss, $comment);
       $comment = $comments->NextRecord();
+    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant)) {
+      AddEntry($rss, $entry);
+      $entry = $entries->NextRecord();
     }
     $items++;
   }
@@ -56,5 +78,10 @@
     $commentpage = explode('/', $comment->page);
     $commentpage = $commentpage[count($commentpage) - 1];
     $rss->AddItem($comment->comments, '[comment] ' . $commentpage . ' - ' . ($comment->uid ? $comment->login : $comment->name), '/comments.php#c' . $comment->id, $comment->instant, '/comments.php#c' . $comment->id, true);
+  }
+
+  function AddEntry($rss, $entry) {
+    $entry->post = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $entry->post);
+    $rss->AddItem('<p>' . $entry->post . '</p>', $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, $entry->instant, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, true);
   }
 ?>

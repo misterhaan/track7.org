@@ -3,6 +3,7 @@
   if(isset($_GET['tag'])) {
     $tag = 'select name, description from taginfo where type=\'entries\' and name=\'' . addslashes($_GET['tag']) . '\'';
     if($tag = $db->GetRecord($tag, 'error looking up tag information', 'tag not found')) {
+      $page->AddFeed($tag->name . ' entries', '/feeds/entries.rss?tags=' . $tag->name);
       $page->Start('bln/' . $tag->name, 'bln [' . $tag->name . ']');
 ?>
       <p>
@@ -17,6 +18,7 @@
     }
   }
   if(!$tag) {
+    $page->AddFeed('entries', '/feeds/entries.rss');
     $page->Start('bln', 'bln', 'a natural blog');
     $page->TagCloud('entries', 'tag=', 2, 4, 8, 16);
   }
