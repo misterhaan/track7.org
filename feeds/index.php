@@ -4,6 +4,7 @@
   $page->AddFeed('track7 site updates', '/feeds/updates.rss');
   $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
   $page->AddFeed('track7 page comments', '/feeds/comments.rss');
+  $page->AddFeed('track7 bln entries', '/feeds/entries.rss');
   $page->Start('feeds');
 ?>
       <p>
@@ -17,6 +18,7 @@
         <li><a href="updates.rss">site updates</a></li>
         <li><a href="posts.rss">forum posts</a></li>
         <li><a href="comments.rss">page comments</a></li>
+        <li><a href="entries.rss">bln entries</a></li>
       </ul>
 <?
   $page->End();
