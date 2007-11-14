@@ -4,7 +4,7 @@
     $tag = 'select name, description from taginfo where type=\'entries\' and name=\'' . addslashes($_GET['tag']) . '\'';
     if($tag = $db->GetRecord($tag, 'error looking up tag information', 'tag not found')) {
       $page->AddFeed($tag->name . ' entries', '/feeds/entries.rss?tags=' . $tag->name);
-      $page->Start('bln/' . $tag->name, 'bln [' . $tag->name . ']');
+      $page->Start('bln/' . $tag->name, 'bln [' . $tag->name . ']<a class="feed" href="/feeds/entries.rss?tags=' . $tag->name . '" title="rss feed of ' . $tag->name . ' entries"><img src="/style/feed.png" alt="feed" /></a>');
 ?>
       <p>
         <?=$tag->description; ?>
@@ -19,7 +19,7 @@
   }
   if(!$tag) {
     $page->AddFeed('entries', '/feeds/entries.rss');
-    $page->Start('bln', 'bln', 'a natural blog');
+    $page->Start('bln', 'bln<a class="feed" href="/feeds/entries.rss" title="rss feed of all entries"><img src="/style/feed.png" alt="feed" /></a>', 'a natural blog');
     $page->TagCloud('entries', 'tag=', 2, 4, 8, 16);
   }
   if($user->GodMode) {
