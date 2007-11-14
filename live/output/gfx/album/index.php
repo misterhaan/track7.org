@@ -5,7 +5,7 @@
     $page->Info('<a href="' . dirname($_SERVER['PHP_SELF']) . '/editphoto.php">add a new photo</a>');
   if(isset($_GET['tag'])) {
     $tag = htmlentities($_GET['tag'], ENT_COMPAT, _CHARSET);
-    $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']');
+    $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']<a class="feed" href="/feeds/photos.rss?tags=' . $tag . '" title="rss feed of album photos tagged with ' . $tag . '"><img src="/style/feed.png" alt="feed" /></a>');
     $photos = addslashes($_GET['tag']); 
     $photos = ' where tags=\'' . $photos . '\' or tags like \'' . $photos . ',%\' or tags like \'%,' . $photos . '\' or tags like \'%,' . $photos . ',%\'';
     $page->heading($tag);
@@ -13,7 +13,7 @@
     if($user->GodMode)
       $page->Info('<a href="/tools/taginfo.php?type=photos&amp;name=' . $tag . '">add/edit tag description</a>');
   } else {
-    $page->Start('photo album');
+    $page->Start('photo album', 'photo album<a class="feed" href="/feeds/photos.rss" title="rss feed of album photos"><img src="/style/feed.png" alt="feed" /></a>');
     $page->TagCloud('photos', $url . 'tag/', 5, 15, 30, 50);
   }
   $photos = 'select id, caption, added from photos' . $photos . ' order by added desc';
