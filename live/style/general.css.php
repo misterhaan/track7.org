@@ -581,17 +581,23 @@ div#head {
   border-bottom: 1px solid #000000;
 }
 
+div#navhelp,
 a#sitemap {
   float: right;
   display: block;
   margin-top: .4em;
-	margin-right: .7em;
+	margin-right: 1em;
   text-align: right;
   font-size: .8em;
 }
+div#navhelp a {
+  margin-left: 1.25em;
+}
+div#navhelp a:link:hover,
 a#sitemap:link:hover {
   border-bottom: 1px dotted #<?=LINKTEXT; ?>;
 }
+div#navhelp a:visited:hover,
 a#sitemap:visited:hover {
   border-bottom: 1px dotted #<?=DARK; ?>;
 }
