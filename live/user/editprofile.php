@@ -172,6 +172,7 @@
 // next line should replace previous line once i write the scripts for cron
 //        $editprofile->select('messages', 'unread messages', 'choose how track7 should notify you of new messages', array(0, _FLAG_USERCONTACT_NOTIFYMSGWEEKLY, _FLAG_USERCONTACT_NOTIFYMSGDAILY, _FLAG_USERCONTACT_NOTIFYMSGNOW), array('never notify', 'notify weekly', 'notify daily', 'notify immediately'), +$_POST['messages']);
         $prof->AddSelect('updates', 'track7 updates', 'choose how track7 should notify you (by e-mail) of updates to the site', array(0 => 'never notify', _FLAG_USERCONTACT_NOTIFYNEWCONTENT => 'notify when new content is added', _FLAG_USERCONTACT_NOTIFYNEWCONTENT | _FLAG_USERCONTACT_NOTIFYNEWANYTHING => 'always notify'), +$contact->flags & (_FLAG_USERCONTACT_NOTIFYNEWCONTENT | _FLAG_USERCONTACT_NOTIFYNEWANYTHING));
+        $prof->AddHTML('feeds', 'another way to keep up-to-date with track7 is to subscribe to one or more <a href="/feeds/">track7 feeds</a>.&nbsp; many newer e-mail programs and browsers are able to subscribe to feeds and automatically notify you when new content has been added to a feed.&nbsp; note that there is no feed for your personal messages.');
         break;
       case 'password':
         $prof->AddField('oldpass', 'current password', 'enter your current password if you are changing your password or e-mail address', true, '', _AU_FORM_FIELD_PASSWORD, 25);

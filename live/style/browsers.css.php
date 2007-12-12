@@ -10,10 +10,10 @@
 h2.browser {
   padding-left: 42px;
 }
-h2.browser img {
+img.browser {
   position: absolute;
-  margin-top: -5px;
-  margin-left: -37px;
+  margin-top: 9px;
+  margin-left: 1.9em;
   height: 32px;
   width: 32px;
 }

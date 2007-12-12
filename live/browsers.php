@@ -17,7 +17,7 @@
       <table class="text" cellspacing="0">
         <thead class="minor"><tr><th>browser</th><th>version</th><th title="the engine actually displays web pages, and may be used by other browsers as well">engine</th></tr></thead>
         <tbody>
-          <tr class="firstchild"><td><a href="http://www.mozilla.org/products/firefox/">mozilla firefox</a></td><td>2.0.0.9</td><td>gecko</td></tr>
+          <tr class="firstchild"><td><a href="http://www.mozilla.org/products/firefox/">mozilla firefox</a></td><td>2.0.0.11</td><td>gecko</td></tr>
           <tr><td><a href="http://www.opera.com/download/">opera</a></td><td>9.24</td><td>opera</td></tr>
           <tr><td><a href="http://www.microsoft.com/windows/ie/default.mspx?mg_ID=10010">microsoft internet explorer</a></td><td>7.0</td><td>mshtml</td></tr>
           <tr><td><a href="http://www.konqueror.org/">konqueror</a></td><td>3.5</td><td>khtml</td></tr>
@@ -49,11 +49,12 @@
     $issues = 'select issue from browserissues where browser=\'' . $engine . '\'';
     if($issues = $db->Get($issues, 'error getting list of issues for your browser', '')) {
       if(file_exists('style/' . $engine . '-alpha.png'))
-        $browserimg = ' class="browser"><img src="style/' . $engine . '-alpha.png" alt="" /';
+        $browserimg = '<img class="browser" src="style/' . $engine . '-alpha.png" alt="" />';
       else
         $browserimg = '';
 ?>
-      <h2<?=$browserimg; ?>><?=$engine; ?> engine</h2>
+      <?=$browserimg; ?>
+      <h2<?=$browserimg ? ' class="browser"' : ''; ?>><?=$engine; ?> engine</h2>
       <ul>
 <?
       while($issue = $issues->NextRecord()) {
@@ -78,11 +79,12 @@
         $close = '      </ul>' . "\n\n";
         $browser = $issue->browser;
         if(file_exists('style/' . $browser . '-alpha.png'))
-          $browserimg = ' class="browser"><img src="style/' . $browser . '-alpha.png" alt="" /';
+          $browserimg = '<img class="browser" src="style/' . $browser . '-alpha.png" alt="" />';
         else
           $browserimg = '';
 ?>
-      <h2<?=$browserimg; ?>><?=$browser; ?> engine</h2>
+      <?=$browserimg; ?>
+      <h2<?=$browserimg ? ' class="browser"' : ''; ?>><?=$browser; ?> engine</h2>
       <ul>
 <?
       }
