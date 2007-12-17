@@ -1,0 +1,3 @@
+order deny,allow
+allow from .dreamhost.com
+deny from all
