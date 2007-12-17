@@ -8,7 +8,6 @@ ErrorDocument 401 /401.php
 
 RewriteEngine on
 RewriteRule \.svn/ - [F]
-RewriteRule \.ref/ - [F]
 RewriteRule etc/ - [F]
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
