@@ -5,7 +5,7 @@
   $page->heading('hecubus', 'hecubus');
 ?>
       <table class="columns" cellspacing="0">
-        <tr><th>name</th><td>hecubus</td></tr>
+        <tr class="first"><th>name</th><td>hecubus</td></tr>
         <tr><th>purpose</th><td>file / ftp / http server</td></tr>
         <tr><th>mainboard</th><td>gigabyte ga-6vxe7+</td></tr>
         <tr><th>processor</th><td>intel pentium iii 933 MHz</td></tr>
@@ -23,7 +23,7 @@
   $page->heading('tesla', 'tesla');
 ?>
       <table class="columns" cellspacing="0">
-        <tr><th>name</th><td>tesla</td></tr>
+        <tr class="first"><th>name</th><td>tesla</td></tr>
         <tr><th>purpose</th><td>main workstation / <abbr title="personal video recorder">pvr</abbr></td></tr>
         <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2</td></tr>
         <tr><th>processor</th><td>2.66-ghz intel pentium d</td></tr>
@@ -41,14 +41,14 @@
         <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
         <tr><th>scanner</th><td>canon n670u</td></tr>
-        <tr><th>joystick</th><td>logitech wingman rumblepad</td></tr>
+        <tr><th>joystick</th><td>logitech extreme 3d pro<br />logitech wingman rumblepad</td></tr>
       </table>
 
 <?
   $page->heading('galileo', 'galileo');
 ?>
       <table class="columns" cellspacing="0">
-        <tr><th>name</th><td>galileo</td></tr>
+        <tr class="first"><th>name</th><td>galileo</td></tr>
         <tr><th>purpose</th><td>mobile / secondary workstation</td></tr>
         <tr><th>mainboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>processor</th><td>1.6-ghz intel core duo pentium m</td></tr>
@@ -66,10 +66,11 @@
       </table>
 
 <?
-  $page->heading('egan', 'egan');
+  if(false) {  // hidden as no longer used
+    $page->heading('egan', 'egan');
 ?>
       <table class="columns" cellspacing="0">
-        <tr><th>name</th><td>egan</td></tr>
+        <tr class="first"><th>name</th><td>egan</td></tr>
         <tr><th>purpose</th><td>(mostly) retired mobile</td></tr>
         <tr><th>mainboard</th><td>toshiba tecra 8000</td></tr>
         <tr><th>processor</th><td>intel pentium ii 300 MHz</td></tr>
@@ -88,5 +89,6 @@
       </table>
 
 <?
+  }
   $page->End();
 ?>
