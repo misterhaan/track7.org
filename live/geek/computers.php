@@ -6,17 +6,18 @@
 ?>
       <table class="columns" cellspacing="0">
         <tr class="first"><th>name</th><td>hecubus</td></tr>
-        <tr><th>purpose</th><td>file / ftp / http server</td></tr>
+        <tr><th>purpose</th><td>file / ftp / http server / <abbr title="personal video recorder">pvr</abbr></td></tr>
         <tr><th>mainboard</th><td>gigabyte ga-6vxe7+</td></tr>
         <tr><th>processor</th><td>intel pentium iii 933 MHz</td></tr>
         <tr><th>ram</th><td>256 MB pc133 sdram<br />128 MB pc133 sdram</td></tr>
         <tr><th>video</th><td>matrox mystique 220 pci (4 MB)</td></tr>
+        <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
         <tr><th>network</th><td>belkin pci 10/100 ethernet</td></tr>
         <tr><th>ide0</th><td>maxtor 60 GB</td></tr>
-        <tr><th>ide1</th><td>iomega zip 100</td></tr>
+        <tr><th>ide1</th><td>generic dvd rom</td></tr>
         <tr><th>ide2</th><td>western digital caviar 80 GB wd800bb</td></tr>
         <tr><th>ide3</th><td>western digital caviar 250 GB wd2500jb</td></tr>
-        <tr><th>operating system</th><td>fedora core 4</td></tr>
+        <tr><th>operating system</th><td>fedora 8</td></tr>
       </table>
 
 <?
@@ -24,19 +25,19 @@
 ?>
       <table class="columns" cellspacing="0">
         <tr class="first"><th>name</th><td>tesla</td></tr>
-        <tr><th>purpose</th><td>main workstation / <abbr title="personal video recorder">pvr</abbr></td></tr>
+        <tr><th>purpose</th><td>main workstation</td></tr>
         <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2</td></tr>
         <tr><th>processor</th><td>2.66-ghz intel pentium d</td></tr>
         <tr><th>ram</th><td>1 GB pc2 5300 ddr2 sdram</td></tr>
         <tr><th>video</th><td>pny verto nvidia geforce 7300 gt (256 MB)</td></tr>
-        <tr><th>audio</th><td>creative soundblaster live! value</td></tr>
-        <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
-        <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet</td></tr>
+        <tr><th>audio</th><td>realtek high definition audio (onboard)</td></tr>
+        <tr><th>tuner</th><td>easy tv</td></tr>
+        <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet (onboard)</td></tr>
         <tr><th>fd0</th><td>rosewill 3½" floppy with 7-in-1 card reader</td></tr>
         <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
         <tr><th>ide1</th><td>lg 8/4/24/4/2/16/12/32x dvd+/-rw</td></tr>
         <tr><th>ide2</th><td>samsung dvd burner</td></tr>
-        <tr><th>operating system</th><td>microsoft windows vista<br />fedora core 7</td></tr>
+        <tr><th>operating system</th><td>microsoft windows vista<br />fedora 7</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
