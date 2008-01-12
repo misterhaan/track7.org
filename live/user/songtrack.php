@@ -37,7 +37,10 @@
           window.
         </li>
         <li>
-          select &quot;submit a url&quot; in the actions dropdown.
+          make sure &ldquo;disable plugin&rdquo; is not checked.
+        </li>
+        <li>
+          select &ldquo;submit a url&rdquo; in the actions dropdown.
         </li>
         <li>
           enter the following url in the url field that shows up after selecting
