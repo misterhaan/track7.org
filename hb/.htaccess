@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteOptions inherit
+RewriteRule ^newthread$ post.php
+RewriteRule ^thread([0-9]+)/?$ thread.php?id=$1
+RewriteRule ^thread([0-9]+)/edit=([0-9]+)$ post.php?thread=$1&id=$2
+RewriteRule ^thread([0-9]+)/delete=([0-9]+)$ delete.php?id=$2&thread=$1
+RewriteRule ^thread([0-9]+)/reply=([0-9]+)$ post.php?thread=$1&quote=$2
+RewriteRule ^thread([0-9]+)/reply$ post.php?thread=$1
+
+<Files hb.inc>
+order deny,allow
+deny from all
+</Files>
