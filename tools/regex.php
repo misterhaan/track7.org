@@ -7,7 +7,7 @@
 ?>
       <h2>t7code / t7uncode</h2>
 <?
-  $form = new auForm('t7code');
+  $form = new auForm('t7code', null, 'post', true);
   $form->AddField('t7c', 't7code format', 'enter t7code to translate to html', false, strlen($_POST['t7c']) > 0 ? $_POST['t7c'] : auText::HTML2BB($_POST['t7u']), _AU_FORM_FIELD_BBCODE);
   $form->AddField('t7u', 'html format', 'enter html to translate to t7code', false, strlen($_POST['t7u']) > 0 ? $_POST['t7u'] : auText::BB2HTML($_POST['t7c']), _AU_FORM_FIELD_MULTILINE);
   $form->AddButtons('translate', 'fill in the blank field by translating the non-blank field');
