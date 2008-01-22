@@ -151,7 +151,7 @@
         entered.
       </p>
 <?
-    $gf = new auForm('newguide');
+    $gf = new auForm('newguide', null, 'post', true);
     $gf->AddField('title', 'title', 'enter the title of your guide', true, $_SESSION['guide']['title'], _AU_FORM_FIELD_NORMAL, 50, 100);
     $gf->AddField('description', 'description', 'enter a short description of your guide', false, auText::br2EOL($_SESSION['guide']['description']), _AU_FORM_FIELD_MULTILINE, 0, 200);
     $gf->AddField('pages', 'pages', 'enter the number of pages in your guide (must be between 1 and 9)', true, $_SESSION['guide']['pages'], _AU_FORM_FIELD_INTEGER, 1, 1);
@@ -171,7 +171,7 @@
         consider adding an option for that.
       </p>
 <?
-    $pf = new auForm('newpage');
+    $pf = new auForm('newpage', null, 'post', true);
     $pf->AddData('page', $_POST['page']);
     $pf->AddField('heading', 'page ' . $_POST['page'] . ' title', 'enter the title for this page', true, $_SESSION['guide'][$_POST['page']]['heading'], _AU_FORM_FIELD_NORMAL, 50, 100);
     $pf->AddField('content', 'page ' . $_POST['page'] . ' contents', 'enter the content of this page (use t7code)', true, auText::HTML2BB($_SESSION['guide'][$_POST['page']]['content']), _AU_FORM_FIELD_BBCODE);

@@ -6,7 +6,7 @@
   if(is_numeric($_GET['id'])) {
     $thread = 'select id, tags, title from hbthreads where id=\'' . addslashes($_GET['id']) . '\'';
 	  if($thread = $db->GetRecord($thread, 'error looking up thread', 'thread not found')) {
-	  	$page->Start($thread->title . ' - holla back', $thread->title, 'tags:&nbsp; ' . HB::TagLinks($thread->tags));
+	  	$page->Start($thread->title, $thread->title, 'tags:&nbsp; ' . HB::TagLinks($thread->tags));
 	  	$posts = 'select u.login, s.rank, p.id, p.uid, p.instant, p.subject, p.post, p.history, r.signature, r.avatar, c.flags&' . _FLAG_USERCONTACT_SHOWEMAIL . ' as showemail, c.email, c.website, f.frienduid from hbposts as p left join users as u on p.uid=u.uid left join usercontact as c on u.uid=c.uid left join userstats as s on u.uid=s.uid left join userprofiles as r on u.uid=r.uid left join userfriends as f on f.frienduid=u.uid and f.fanuid=\'' . $user->ID . '\' where p.thread=\'' . $thread->id . '\' order by instant';
 	  	if($posts = $db->GetSplit($posts, _FORUM_POSTS_PER_PAGE, 0, '', '', 'error getting posts for this thread', 'this thread is empty!', true, true)) {
         while($post = $posts->NextRecord()) {
@@ -98,6 +98,7 @@
         $page->SplitLinks();
       }
 	  	$page->End();
+	  	die;
 	  }
   }
   $page->Show404();
