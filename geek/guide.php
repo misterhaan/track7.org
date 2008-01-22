@@ -188,7 +188,7 @@
 <?
       while($guide = $guides->NextRecord()) {
 ?>
-        <dt><span class="when"><?=auText::smartTime($guide->dateadded); ?></span><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
+        <dt><span class="when"><?=auText::smartTime($guide->dateadded, $user); ?></span><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
         <dd>
           <div class="guideinfo">
             <span>author:&nbsp; <?=$guide->author ? '<a href="/user/' . $guide->login . '/">' . $guide->login . '</a>' : ''; ?></span>
