@@ -8,12 +8,12 @@
     $threads = ' where t.tags=\'' . addslashes($_GET['tag']) . '\' or t.tags like \'' . addslashes($_GET['tag']) . ',%\' or t.tags like \'%,' . addslashes($_GET['tag']) . '\' or t.tags like \'%,' . addslashes($_GET['tag']) . ',%\'';
   } else {
     $page->Start('threads', 'thread listing');
-    $page->TagCloud('threads', '?tag=', 15, 35, 75, 155);
+    $page->TagCloud('threads', '?tag=', 10, 15, 25, 40);
   }
 ?>
       <ul><li><a href="newthread">start a new thread</a></li></ul>
 <?
-  $threads = 'select t.id, t.tags, t.title, t.instant, tu.login, t.posts, p.subject, p.instant as pinstant, pu.login as plogin from hbthreads as t left join users as tu on tu.uid=t.uid left join hbposts as p on p.id=t.lastpost left join users as pu on pu.uid=p.uid' . $threads . ' order by p.instant desc';
+  $threads = 'select t.id, t.tags, t.title, t.instant, tu.login, t.posts, t.lastpost, p.number, p.subject, p.instant as pinstant, pu.login as plogin from hbthreads as t left join users as tu on tu.uid=t.uid left join hbposts as p on p.id=t.lastpost left join users as pu on pu.uid=p.uid' . $threads . ' order by p.instant desc';
   if($threads = $db->GetSplit($threads, 20, 0, '', '', 'error looking up threads', 'no threads found')) {
 ?>
       <table class="text" id="hbthreadlist" cellspacing="0">
@@ -27,7 +27,7 @@
         $subject = substr($subject, 0, 15) . '...';
       $subject = htmlentities($subject, ENT_COMPAT, _CHARSET);
 ?>
-          <tr><td><a href="/hb/thread<?=$thread->id; ?>/"><?=$thread->title; ?></a></td><td class="detail"><?=HB::TagLinks($thread->tags); ?></td><td class="number"><?=$thread->posts; ?></td><td class="detail"><a href="/hb/thread<?=$thread->id; ?>#p<?=$thread->lastpost; ?>"<?=$subject != $thread->subject ? ' title="' . $thread->subject . '"' : ''; ?>><?=$subject; ?></a> <?=$user->tzdate('Y-m-d g:i a', $thread->pinstant) . ' by ' . ($thread->plogin ? $thread->plogin : 'anonymous'); ?></td><td class="detail"><?=$user->tzdate('Y-m-d g:i a', $thread->instant) . ' by ' . ($thread->login ? $thread->login : 'anonymous'); ?></td></tr>
+          <tr><td><a href="/hb/thread<?=$thread->id; ?>/"><?=$thread->title; ?></a></td><td class="detail"><?=HB::TagLinks($thread->tags); ?></td><td class="number"><?=$thread->posts; ?></td><td class="detail"><a href="/hb/thread<?=$thread->id; ?>/<?=$thread->posts > _FORUM_POSTS_PER_PAGE ? 'skip=' . (floor(($thread->posts - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) : ''; ?>#p<?=$thread->lastpost; ?>"<?=$subject != $thread->subject ? ' title="' . $thread->subject . '"' : ''; ?>><?=$subject; ?></a> <?=$user->tzdate('Y-m-d g:i a', $thread->pinstant) . ' by ' . ($thread->plogin ? $thread->plogin : 'anonymous'); ?></td><td class="detail"><?=$user->tzdate('Y-m-d g:i a', $thread->instant) . ' by ' . ($thread->login ? $thread->login : 'anonymous'); ?></td></tr>
 <?
     }
 ?>

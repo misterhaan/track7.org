@@ -39,10 +39,8 @@
             <div class="subject"><a class="ref" id="p<?=$post->id; ?>" href="#p<?=$post->id; ?>">subject:</a>&nbsp; <span class="response"><?=$post->subject; ?></span></div>
             <div class="time">posted:&nbsp; <span class="response"><?=strtolower($user->tzdate('g:i:s a, M d, Y', $post->instant)); ?></span></div>
           </div>
-          <p>
-            <?=$post->post; ?>
+          <?=$post->post; ?>
 
-          </p>
 <?
           if($post->history) {
 ?>
@@ -95,7 +93,7 @@
 ?>
       <p><a href="/hb/thread<?=$thread->id; ?>/reply">add a reply</a></p>
 <?
-        $page->SplitLinks();
+        $page->SplitLinks('');
       }
 	  	$page->End();
 	  	die;

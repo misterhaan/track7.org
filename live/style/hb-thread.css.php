@@ -4,16 +4,9 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for forum pages                                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> '<?=STYLE; ?>' layout style for forum thread pages                             <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
 \******************************************************************************/
 
-table.post div.head a {
-  font-weight: normal;
-  color: #<?=TEXT; ?>;
-}
-table.post div.head a:hover {
-  border-bottom: none;
-}
 table.post p.history {
   font-size: .8em;
   font-style: italic;
