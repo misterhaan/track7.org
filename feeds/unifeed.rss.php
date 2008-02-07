@@ -105,11 +105,11 @@
   function AddEntry($rss, $entry) {
     $entry->post = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $entry->post);
     $entry->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $entry->title);
-    $rss->AddItem('<p>' . $entry->post . '</p>', '[bln] ' . $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, $entry->instant, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, true);
+    $rss->AddItem('<p>' . $entry->post . '</p>', '[bln] ' . $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, $entry->instant, '/output/pen/bln/' . $entry->name, true);
   }
   
   function AddPhoto($rss, $photo) {
     $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
-    $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, 'http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photo/' . $photo->id, $photo->added, 'http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id, true);
+    $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
   }
 ?>

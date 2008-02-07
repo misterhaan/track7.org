@@ -1,7 +1,4 @@
-var refCheckReq = null;
-window.onload = window_onLoad;
-
-function window_onLoad() {
+window.onload = function() {
   // add link to check referrer
   var ref = document.getElementById("referrer");
   var a = document.createElement("a");
@@ -16,7 +13,7 @@ function checkReferrer() {
   var ref = getSelectedText(document.getElementById("referrer"));
   if(ref == false) {
     alert("select text to search for from within the referrer heading");
-    return;
+    return false;
   }
   var div = document.getElementById("refcheckresults");
   // clear the area
@@ -29,15 +26,14 @@ function checkReferrer() {
   p.appendChild(msg);
   div.appendChild(p);
   // start the asynchronous server request
-  refCheckReq = getAsync("/scripts/tools/unknownreferrers.php?ref=" + ref, refCheckFinished);
+  getAsync("/scripts/tools/unknownreferrers.php?ref=" + ref, refCheckFinished, null);
+  return false;
 }
 
-function refCheckFinished() {
-  if(refCheckReq && (refCheckReq.readyState == 4 || refCheckReq.readyState == "complete")) {
-    var div = document.getElementById("refcheckresults");
-    // clear the area
-    while(div.firstChild)
-      div.removeChild(div.firstChild);
-    div.innerHTML = refCheckReq.responseText;
-  }
+function refCheckFinished(refCheckReq, args) {
+  var div = document.getElementById("refcheckresults");
+  // clear the area
+  while(div.firstChild)
+    div.removeChild(div.firstChild);
+  div.innerHTML = refCheckReq.responseText;
 }
