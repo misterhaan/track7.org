@@ -23,7 +23,7 @@
   if($photos = $db->GetLimit($photos, 0, 15, '', ''))
     while($photo = $photos->NextRecord()) {
       $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
-      $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', $photo->caption, 'http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photo/' . $photo->id, $photo->added, 'http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id, true);
+      $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
     }
   $rss->End();
 ?>

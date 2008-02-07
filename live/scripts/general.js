@@ -1,4 +1,4 @@
-function getAsync(url, stateChanged) {
+function getAsync(url, stateChanged, args) {
   var req = null;
   try {
     // modern browsers and internet explorer 7
@@ -16,12 +16,15 @@ function getAsync(url, stateChanged) {
   }
   if(req == null) {
     alert("your browser supports javascript but not ajax.  please update your browser or try again with javascript off.");
-    return null;
+    return false;
   }
-  req.onreadystatechange = stateChanged;
+  req.onreadystatechange = function() {
+    if(req.readyState == 4)
+      stateChanged(args);
+  }
   req.open("GET", url, true);
   req.send(null);
-  return req;
+  return true;
 }
 
 function getSelectedText(element) {
