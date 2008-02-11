@@ -128,7 +128,7 @@
   $items = 0;
   while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo)) {
     if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added)) {
-      echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($update->instant, $user)) . '</th><td class="type"><img src="/favicon-16.png" alt="update" title="site update" /></td><td>' . $update->change . "</td></tr>\n";
+      echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($update->instant, $user)) . '</th><td class="type"><img src="/style/misterhaan-16.png" alt="update" title="site update" /></td><td>' . $update->change . "</td></tr>\n";
       $update = $updates->NextRecord();
     } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added)) {
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($post->instant, $user)) . '</th><td class="type"><img src="/hb/favicon-16.png" alt="post" title="forum post" /></td><td><a href="/hb/thread' . $post->thread . ($post->number - 1 > _FORUM_POSTS_PER_PAGE ? '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p' : '/#p') . $post->id . '">' . $post->subject . '</a> by ' . ($post->uid ? '<a href="/user/' . $post->login . '/">' . $post->login . '</a>' : 'anonymous') . "</td></tr>\n";
