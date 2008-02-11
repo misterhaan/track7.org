@@ -7,64 +7,65 @@
  * -> '<?=STYLE; ?>' layout style for main index page                                <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
 \******************************************************************************/
 
-span#randomquote {
-	font-size: .55em;
+div#content p#randomquote {
+	font-size: .9em;
 	font-style: italic;
+  text-align: center;
 }
-span#randomquote:before {
+p#randomquote:before {
   content: '“';
   color: #<?=DARKGREY; ?>;
 }
-span#randomquote:after {
+p#randomquote:after {
   content: '”';
   color: #<?=DARKGREY; ?>;
 }
-div.twocolumn {
+div#welcomeabout {
   float: left;
-  width: 49.5%;
+  width: 345px;
   padding-bottom: 1em;
 }
-
-img.icon {
-  float: left;
-  padding-left: 2em;
-  width: 32px;
-  height: 32px;
-}
-p.iconned {
-  padding-left: 32px;
-  margin-left: 2.5em;
+div#features {
+  margin-left: 345px;
 }
 
-ul#sections {
-  list-style-type: none;
-  padding: 4px 4px 1px;
-  margin: 1em 3em .5em 3em;
-  background-color: #<?=LIGHT; ?>
+div#features h2 {
+  clear: none;
 }
-ul#sections li {
-  margin-bottom: 3px;
+div#features dt {
+  margin: 0;
+  padding: 0;
+  background-image: none;
 }
-ul#sections li img {
-  float: left;
-  padding-right: .7em;
+div#features dt img.icon {
+  padding-left: 0;
+  margin-right: .5em;
 }
-ul#sections li a {
-  display: block;
-  line-height: 32px;
-  background-color: #ffffff;
-}
-ul#sections li a:hover {
-  background-color: #<?=LINKTEXT; ?>;
-  color: #ffffff;
-  border: none;
+div#features dd {
+  margin-left: 32px;
+  padding-left: .5em;
 }
 
-table#recentupdates th,
-table#recentposts th,
-table#recentcomments th {
-  white-space: nowrap;
+table#updates th {
   font-size: .8em;
+  white-space: nowrap;
+}
+table#updates td {
+  vertical-align: top;
+  font-size: .9em;
+}
+table#updates td.type {
+  padding-right: 0;
+}
+table#updates img {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+div#content p.links {
+  font-size: .8em;
+  text-align: center;
 }
 
 p#shorturl {

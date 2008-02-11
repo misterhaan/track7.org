@@ -7,13 +7,6 @@
  * -> '<?=STYLE; ?>' layout style for forum thread pages                             <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
 \******************************************************************************/
 
-table.post p.history {
-  font-size: .8em;
-  font-style: italic;
-  color: #<?=DARKGREY; ?>;
-  margin: .625em 1.25em;
-  padding: 0 .2em;
-}
 table.post p.signature {
   font-size: .8em;
   margin: .625em 1.25em;

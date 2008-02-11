@@ -14,3 +14,10 @@ div#content table.post div.head a {
 table.post div.head a:hover {
   border-bottom: none;
 }
+table.post p.history {
+  font-size: .8em;
+  font-style: italic;
+  color: #<?=DARKGREY; ?>;
+  margin: .625em 1.25em;
+  padding: 0 .2em;
+}
