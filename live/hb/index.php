@@ -5,6 +5,8 @@
   if(strlen($_GET['tag'])) {
     $page->Start(htmlentities($_GET['tag']) . ' threads', 'thread listing [' . htmlentities($_GET['tag']) .']');
     $page->ShowTagDescription('threads', addslashes($_GET['tag']));
+    if($user->GodMode)
+      $page->Info('<a href="/tools/taginfo.php?type=threads&amp;name=' . htmlentities($_GET['tag']) . '">add/edit tag description</a>');
     $threads = ' where t.tags=\'' . addslashes($_GET['tag']) . '\' or t.tags like \'' . addslashes($_GET['tag']) . ',%\' or t.tags like \'%,' . addslashes($_GET['tag']) . '\' or t.tags like \'%,' . addslashes($_GET['tag']) . ',%\'';
   } else {
     $page->Start('threads', 'thread listing');

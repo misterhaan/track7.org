@@ -11,7 +11,7 @@
   else
     $update = false;
 
-  $posts = 'select p.id, p.number, p.tid, t.fid, p.subject, p.post, f.title as forum, p.uid, u.login, p.instant from oiposts as p left join oithreads as t on p.tid=t.id left join oiforums as f on t.fid=f.id left join users as u on p.uid=u.uid order by p.instant desc';
+  $posts = 'select p.id, p.number, p.thread, p.subject, p.post, p.uid, u.login, p.instant from hbposts as p left join users as u on p.uid=u.uid order by p.instant desc';
   if($posts = $db->GetLimit($posts, 0, MAXITEMS, '', ''))
     $post = $posts->NextRecord();
   else
@@ -85,15 +85,15 @@
 
   function AddUpdate($rss, $update) {
     $update->change = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $update->change);
-    $rss->AddItem($update->change, '', '', $update->instant, 'update' . $update->id);
+    $rss->AddItem($update->change, '[update]', '', $update->instant, 'update' . $update->id);
   }
 
   function AddPost($rss, $post) {
     $post->number = floor($post->number / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE;
     if(strlen($post->subject) > 27)
       $post->subject = substr($post->subject, 0, 25) . '...';
-    $link = '/oi/f' . $post->fid . '/t' . $post->tid . '/' . ($post->number ? '&amp;skip=' . $post->number : '') . '#p' .$post->id;
-    $rss->AddItem($post->post, '[post in ' . $post->forum . '] ' . $post->subject . ' - ' . ($post->uid ? $post->login : 'anonymous'), $link, $post->instant, $link, true);
+    $link = '/hb/thread' . $post->thread . ($post->number ? '/skip=' . $post->number : '/') . '#p' . $post->id;
+    $rss->AddItem($post->post, '[post] ' . $post->subject . ' - ' . ($post->uid ? $post->login : 'anonymous'), $link, $post->instant, $link, true);
   }
 
   function AddComment($rss, $comment) {

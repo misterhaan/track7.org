@@ -7,7 +7,7 @@
   if($updates = $db->GetLimit($updates, 0, 15, '', ''))
     while($update = $updates->NextRecord()) {
       $update->change = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $update->change); 
-      $rss->AddItem($update->change, '', '', $update->instant, 'update' . $update->id);
+      $rss->AddItem($update->change, '[update]', '', $update->instant, 'update' . $update->id);
     }
   $rss->End();
 ?>

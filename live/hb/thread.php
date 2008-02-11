@@ -41,15 +41,9 @@
           </div>
           <?=$post->post; ?>
 
-<?
-          if($post->history) {
-?>
-          <p class="history">
-<?=substr($post->history, 0, strpos($post->history, "\r") ? -8 : -7); ?>
+          <?=HB::ShowHistory($user, $post->history); ?>
 
-          </p>
 <?
-	        }
 	        if($post->uid > 0 && $post->signature) {
 ?>
           <p class="signature">

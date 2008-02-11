@@ -3,15 +3,72 @@
   require_once 'hb.inc';
 
   if(is_numeric($_GET['thread'])) {
-    $thread = 'select id, title, posts from hbthreads where id=\'' . addslashes($_GET['thread']) . '\'';
+    $thread = 'select id, title, posts, tags from hbthreads where id=\'' . addslashes($_GET['thread']) . '\'';
     if($thread = $db->GetRecord($thread, 'error looking up thread', 'thread not found')) {
       if(is_numeric($_GET['id'])) {
-        // DO:  edit -- need to check user
+        $post = 'select p.id, p.number, p.subject, p.post, p.history, p.instant, p.uid, u.login from hbposts as p left join users as u on u.uid=p.uid where p.id=\'' . addslashes($_GET['id']) . '\'';
+        if($post = $db->GetRecord($post, 'error looking up post to edit', 'post not found'))
+          if($user->Valid && ($user->ID == $post->uid || $user->GodMode)) {
+            $edit = HB::GetPostForm($db, $user, 'edit', $post, $thread);
+            if($edit->CheckInput(true)) {
+              if($edit->Submitted() == 'preview') {
+                $page->Start('edit post &ldquo;' . $post->subject . '&rdquo;');
+                $page->Heading('preview');
+?>
+      <table class="post"><tr>
+        <td class="userinfo">
+          <?=$post->login ? '<a href="/user/' . $post->login . '/">' . $post->login . '</a>' : 'anonymous'; ?>
+
+        </td>
+        <td>
+          <div class="head">
+            <div class="subject">subject:&nbsp; <span class="response"><?=htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET); ?></span></div>
+            <div class="time">posted:&nbsp; <span class="response"><?=strtolower($user->tzdate('g:i:s a, M d, Y', $post->instant)); ?></span></div>
+          </div>
+          <?=auText::BB2HTML($_POST['post'], false, false); ?>
+
+          <?=HB::ShowHistory($user, $post->history . '/' . $user->Name . '|' . time()); ?>
+
+        </td>
+      </tr></table>
+
+<?
+              } else {
+                if($post->number == 1) {
+                  $tags = makeTagList();
+                  $update = 'update hbthreads set title=\'' . addslashes(htmlentities($_POST['title'])) . '\', tags=\'' . $tags . '\' where id=\'' . $thread->id . '\'';
+                  $db->Change($update, 'error updating thread');
+                  $newtags = explode(',', $tags);
+                  $oldtags = explode(',', $thread->tags);
+                  // ignore tags that were there before and are still there
+                  for($i = count($oldtags) - 1; $i >= 0; $i--)
+                    if(in_array($oldtags[$i], $newtags))
+                      unset($oldtags[$i], $newtags[array_search($oldtags[$i], $newtags)]);
+                  if(count($oldtags)) {  // tags were removed
+                    $update = 'update taginfo set count=count-1 where type=\'threads\' and (name=\'' . implode('\' or name=\'', $oldtags) . '\')';
+                    $db->Change($update);
+                  }
+                  if(count($newtags)) {  // tags were added
+                    $ins = 'insert into taginfo (type, name, count) values (\'threads\', \'' . implode('\', 1), (\'threads\', \'', $newtags) . '\', 1) on duplicate key update count=count+1';
+                    $db->Put($ins);
+                  }
+                }
+                $update = 'update hbposts set subject=\'' . addslashes(htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET)) . '\', post=\'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\', history=\'' . $post->history . '/' . $user->Name . '|' . time() . '\' where id=\'' . $post->id . '\'';
+                if(false !== $db->Change($update, 'error updating post')) {
+                  header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread->id . ($post->number > _FORUM_POST_PER_PAGE ? '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) : '/') . '#p' . $post->id);
+                  die;
+                }
+              }
+            }
+            $page->Start('edit post &ldquo;' . $post->subject . '&rdquo;');
+            $edit->WriteHTML(true);
+            $page->End();
+            die;
+          } else
+            $page->Error('you may only edit your own posts.&nbsp; if this is your post, you may need to log in.');
         $page->Start('edit post');
-        $page->Info('sorry, this feature doesn&rsquo;t exist yet');
         $page->End();
         die;
-        $editpost = HB::GetPostForm($db, $user, 'editpost', $id, $thread);
       } else {
         if(is_numeric($_GET['quote'])) {
           $quote = 'select p.subject, p.post, u.login from hbposts as p left join users as u on u.uid=p.uid where id=\'' . addslashes($_GET['quote']) . '\'';
