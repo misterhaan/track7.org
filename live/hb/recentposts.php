@@ -19,7 +19,7 @@
       if(strlen($post->title) > 17)
         $post->title = substr($post->title, 0, 15) . '...';
 ?>
-          <tr><td><?=strtolower(auText::SmartTime($post->instant, $user)); ?></td><td><?=$post->uid ? '<a href="/user/' . $post->login . '"/>' . $post->login . '</a>' : 'anonymous'; ?></td><td><a href="thread<?=$post->thread; ?>/<?=$post->number - 1 > _FORUM_POSTS_PER_THREAD ? 'skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_THREAD) * _FORUM_POSTS_PER_THREAD) : ''; ?>#<?=$post->id; ?>"><?=$post->subject; ?></a></td><td><a href="thread<?=$post->thread; ?>/"><?=$post->title; ?></a></td><td><?=HB::TagLinks($post->tags); ?></td></tr>
+          <tr><td><?=strtolower(auText::SmartTime($post->instant, $user)); ?></td><td><?=$post->uid ? '<a href="/user/' . $post->login . '/">' . $post->login . '</a>' : 'anonymous'; ?></td><td><a href="thread<?=$post->thread; ?>/<?=$post->number - 1 > _FORUM_POSTS_PER_THREAD ? 'skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_THREAD) * _FORUM_POSTS_PER_THREAD) : ''; ?>#<?=$post->id; ?>"><?=$post->subject; ?></a></td><td><a href="thread<?=$post->thread; ?>/"><?=$post->title; ?></a></td><td><?=HB::TagLinks($post->tags); ?></td></tr>
 <?
     }
 ?>
