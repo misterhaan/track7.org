@@ -41,7 +41,7 @@
         you appear to have attempted to use an html link in your comment.&nbsp;
         if you are a real person (meaning not a bot or a spammer) and were
         trying to post a link, please see my post on
-        <a href="/oi/f3/t1/">how to use t7code</a> for instructions and try
+        <a href="/hb/thread1/">how to use t7code</a> for instructions and try
         again.&nbsp; if you are a bot or a spammer, please go away and cease
         your nonsense immediately.
       </p>

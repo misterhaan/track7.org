@@ -8,7 +8,7 @@
         if you've been looking around here for a while, surely you've found
         something that has caused you to have some sort of reaction.&nbsp; well
         you're in luck, because here are a bunch of ways to say what you think!&nbsp;
-        <a href="gb-sign.php">the guestbook</a> or <a href="/oi/">the forums</a>
+        <a href="gb-sign.php">the guestbook</a> or <a href="/hb/">the forums</a>
         are probably best, because then anybody can see what you have to say.&nbsp;
         otherwise you can send me a message through track7 or contact me through
         icq / aim by going to <a href="user/misterhaan/">my profile</a>.&nbsp;
@@ -23,7 +23,7 @@
         you are welcome and encouraged to link to track7.&nbsp; if you don't
         like this graphic, feel free to use any other means of linking to
         this site, and please <a href="gb-sign.php">sign the guestbook</a> or
-        <a href="/oi/">post in the forums</a> to let me know you have a link to
+        <a href="/hb/">post in the forums</a> to let me know you have a link to
         my site.&nbsp; to use the link image below, copy and paste the code next
         to the graphic onto your page.
       </p>
