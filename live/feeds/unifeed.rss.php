@@ -3,7 +3,7 @@
   require_once 'auFeed.php';
   define('MAXITEMS', 15);
   
-  $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, page comments, bln entries, and album photos unifeed', 'copyright 2007 track7');
+  $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, page comments, bln entries, and album photos unifeed', 'copyright 2008 track7');
   
   $updates = 'select id, instant, `change` from updates order by instant desc';
   if($updates = $db->GetLimit($updates, 0, MAXITEMS, '', ''))
@@ -56,28 +56,50 @@
     }
   else
     $photos = 'select id, caption, added, description from photos order by added desc';
-  if($photos = $db->GetLimit($photos, 0, 15, '', ''))
+  if($photos = $db->GetLimit($photos, 0, MAXITEMS, '', ''))
     $photo = $photos->NextRecord();
   else
     $photo = false;
 
+  if($_GET['guides'])
+    if(substr($_GET['guides'], 0, 1) == '-') {
+      $tags = explode(',', substr($_GET['guides'], 1));
+      foreach($tags as $tag)
+        $guides .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
+      $guides = 'select id, dateadded, title, description from guides where status=\'approved\' and not (' . $guides . ') order by dateadded desc';
+    } else {
+      $tags = explode(',', $_GET['guides']);
+      foreach($tags as $tag)
+        $guides .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
+      $guides = 'select id, dateadded, title, description from guides where status=\'approved\' and (' . $guides . ') order by dateadded desc';
+    }
+  else
+    $guides = 'select id, dateadded, title, description from guides order by dateadded desc';
+  if($guides = $db->GetLimit($guides, 0, MAXITEMS, '', ''))
+    $guide = $guides->NextRecord();
+  else
+    $guide = false;
+
   $items = 0;
-  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo)) {
-    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added)) {
+  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide)) {
+    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded)) {
       AddUpdate($rss, $update);
       $update = $updates->NextRecord();
-    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added)) {
+    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded)) {
       AddPost($rss, $post);
       $post = $posts->NextRecord();
-    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added)) {
+    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded)) {
       AddComment($rss, $comment);
       $comment = $comments->NextRecord();
-    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added)) {
+    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded)) {
       AddEntry($rss, $entry);
       $entry = $entries->NextRecord();
-    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant)) {
+    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded)) {
       AddPhoto($rss, $photo);
       $photo = $photos->NextRecord();
+    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added)) {
+      AddGuide($rss, $guide);
+      $guide = $guides->NextRecord();
     }
     $items++;
   }
@@ -111,5 +133,10 @@
   function AddPhoto($rss, $photo) {
     $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
     $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
+  }
+
+  function AddGuide($rss, $guide) {
+    $guide->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $guide->title);
+    $rss->AddItem('<p>' . $guide->description . '</p>', $guide->title, '/geek/guides/' . $guide->id, $guide->dateadded, '/geek/guides/' . $guide->id, true);
   }
 ?>

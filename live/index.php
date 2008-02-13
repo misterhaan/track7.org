@@ -122,28 +122,36 @@
     $photo = $photos->NextRecord();
   else
     $photo = false;
+  $guides = 'select id, dateadded, title from guides order by dateadded desc'; 
+  if($guides = $db->GetLimit($photos, 0, MAXITEMS, 'error looking up guides and tips', ''))
+    $guide = $guides->NextRecord();
+  else
+    $guide = false;
 ?>
         <table id="updates" class="columns" cellspacing="0">
 <?
   $items = 0;
-  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo)) {
-    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added)) {
+  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide)) {
+    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded)) {
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($update->instant, $user)) . '</th><td class="type"><img src="/style/misterhaan-16.png" alt="update" title="site update" /></td><td>' . $update->change . "</td></tr>\n";
       $update = $updates->NextRecord();
-    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added)) {
+    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded)) {
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($post->instant, $user)) . '</th><td class="type"><img src="/hb/favicon-16.png" alt="post" title="forum post" /></td><td><a href="/hb/thread' . $post->thread . ($post->number - 1 > _FORUM_POSTS_PER_PAGE ? '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p' : '/#p') . $post->id . '">' . $post->subject . '</a> by ' . ($post->uid ? '<a href="/user/' . $post->login . '/">' . $post->login . '</a>' : 'anonymous') . "</td></tr>\n";
       $post = $posts->NextRecord();
-    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added)) {
+    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded)) {
       $pagename = explode('/', $comment->page);
       $pagename = $pagename[count($pagename) - 1];
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($comment->instant, $user)) . '</th><td class="type"><img src="/favicon-16.png" alt="comment" title="page comment" /></td><td>comment on <a href="' . $comment->page . '">' . $pagename . '</a> by ' . ($comment->uid ? '<a href="/user/' . $comment->login . '/">' . $comment->login . '</a>' : ($comment->url ? '<a href="' . $comment->url . '">' . $comment->name . '</a>' : $comment->name)) . "</td></tr>\n";
       $comment = $comments->NextRecord();
-    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added)) {
+    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded)) {
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($entry->instant, $user)) . '</th><td class="type"><img src="/output/pen/favicon-16.png" alt="entry" title="bln entry" /></td><td><a href="/output/pen/bln/' . $entry->name . '">' . $entry->title . "</a></td></tr>\n";
       $entry = $entries->NextRecord();
-    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant)) {
+    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded)) {
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($photo->added, $user)) . '</th><td class="type"><img src="/output/gfx/album/favicon-16.png" alt="photo" title="album photo" /></td><td><a href="/output/gfx/album/photo/' . $photo->id . '">' . $photo->caption . "</a></td></tr>\n";
       $photo = $photos->NextRecord();
+    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added)) {
+      echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($guide->dateadded, $user)) . '</th><td class="type"><img src="/geek/favicon-16.png" alt="guide" title="guide" /></td><td><a href="/geek/guides/' . $guide->id . '">' . $guide->title . "</a></td></tr>\n";
+      $guide = $guides->NextRecord();
     }
     $items++;
   }
