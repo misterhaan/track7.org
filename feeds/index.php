@@ -6,6 +6,7 @@
   $page->AddFeed('track7 page comments', '/feeds/comments.rss');
   $page->AddFeed('track7 bln entries', '/feeds/entries.rss');
   $page->AddFeed('track7 album photos', '/feeds/photos.rss');
+  $page->AddFeed('track7 guides', '/feeds/guides.rss');
   $page->Start('feeds');
 ?>
       <p>
@@ -15,13 +16,13 @@
       </p>
       
       <ul class="feeds">
-        <li><a href="unifeed.rss">combined updates, posts, comments, entries, and photos</a></li>
+        <li><a href="unifeed.rss">combined updates, posts, comments, entries, photos, and guides</a></li>
         <li><a href="updates.rss">site updates</a></li>
         <li><a href="posts.rss">forum posts</a></li>
         <li><a href="comments.rss">page comments</a></li>
         <li><a href="entries.rss">bln entries</a></li>
         <li><a href="photos.rss">album photos</a></li>
-        <li><a href="guides.rss">guides and tips</a></li>
+        <li><a href="guides.rss">guides</a></li>
       </ul>
 <?
   $page->End();
