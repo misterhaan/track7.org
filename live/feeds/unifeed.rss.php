@@ -137,6 +137,6 @@
 
   function AddGuide($rss, $guide) {
     $guide->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $guide->title);
-    $rss->AddItem('<p>' . $guide->description . '</p>', $guide->title, '/geek/guides/' . $guide->id, $guide->dateadded, '/geek/guides/' . $guide->id, true);
+    $rss->AddItem('<p>' . $guide->description . '</p>', $guide->title, '/geek/guides/' . $guide->id . '/', $guide->dateadded, '/geek/guides/' . $guide->id . '/', true);
   }
 ?>
