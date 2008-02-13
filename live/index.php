@@ -123,7 +123,7 @@
   else
     $photo = false;
   $guides = 'select id, dateadded, title from guides order by dateadded desc'; 
-  if($guides = $db->GetLimit($photos, 0, MAXITEMS, 'error looking up guides and tips', ''))
+  if($guides = $db->GetLimit($guides, 0, MAXITEMS, 'error looking up guides and tips', ''))
     $guide = $guides->NextRecord();
   else
     $guide = false;
