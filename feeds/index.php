@@ -21,6 +21,7 @@
         <li><a href="comments.rss">page comments</a></li>
         <li><a href="entries.rss">bln entries</a></li>
         <li><a href="photos.rss">album photos</a></li>
+        <li><a href="guides.rss">guides and tips</a></li>
       </ul>
 <?
   $page->End();

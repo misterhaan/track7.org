@@ -131,12 +131,14 @@
     $page->ResetFlag(_FLAG_PAGES_COMMENTS);
     if(strlen($_GET['tag'])) {
       $tag = htmlentities($_GET['tag']);
-      $page->Start($tag . ' - guides', 'guides [' . $tag . ']');
+      $page->AddFeed('guides [' . $tag . ']', '/feeds/guides.rss?tags=' . $tag);
+      $page->Start($tag . ' - guides', 'guides [' . $tag . ']<a class="feed" href="/feeds/guides.rss?tags=' . $tag . '" title="rss feed of ' . $tag . ' guides"><img src="/style/feed.png" alt="feed" /></a>');
       $page->ShowTagDescription('guides', $tag);
       if($user->GodMode)
         $page->Info('<a href="/tools/taginfo.php?type=guides&amp;name=' . htmlentities($_GET['tag']) . '">add/edit tag description</a>');
     } else {
-      $page->Start('guides');
+      $page->AddFeed('guides', '/feeds/guides.rss');
+      $page->Start('guides', 'guides<a class="feed" href="/feeds/guides.rss" title="rss feed of all guides"><img src="/style/feed.png" alt="feed" /></a>');
 ?>
       <p>
         i tend to figure things out on my own as much as i can, but sometimes it
