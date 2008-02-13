@@ -1,7 +1,7 @@
 <?
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   require_once 'auFeed.php';
-  $rss = new auFeed('track7 updates', '/new.php', 'track7 site updates feed', 'copyright 2007 track7');
+  $rss = new auFeed('track7 updates', '/new.php', 'track7 site updates feed', 'copyright 2008 track7');
 
   $updates = 'select id, instant, `change` from updates order by instant desc';
   if($updates = $db->GetLimit($updates, 0, 15, '', ''))

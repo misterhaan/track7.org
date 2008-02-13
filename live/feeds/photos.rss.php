@@ -4,20 +4,20 @@
 
   if($_GET['tags'])
     if(substr($_GET['tags'], 0, 1) == '-') {
-      $rss = new auFeed('track7 photos', '/output/gfx/album/', 'photos posted on track7 not tagged with ' . substr($_GET['tags'], 1), 'copyright 2007 track7');
+      $rss = new auFeed('track7 photos', '/output/gfx/album/', 'photos posted on track7 not tagged with ' . substr($_GET['tags'], 1), 'copyright 2008 track7');
       $tags = explode(',', substr($_GET['tags'], 1));
       foreach($tags as $tag)
         $photos .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
       $photos = 'select id, caption, added, description from photos where not (' . $photos . ') order by added desc';
     } else {
-      $rss = new auFeed('track7 photos', '/output/gfx/album/', 'photos posted on track7 tagged with ' . $_GET['tags'], 'copyright 2007 track7');
+      $rss = new auFeed('track7 photos', '/output/gfx/album/', 'photos posted on track7 tagged with ' . $_GET['tags'], 'copyright 2008 track7');
       $tags = explode(',', $_GET['tags']);
       foreach($tags as $tag)
         $photos .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
       $photos = 'select id, caption, added, description from photos where' . $photos . ' order by added desc';
     }
   else {
-    $rss = new auFeed('all track7 photos', '/output/gfx/album/', 'all photos posted on track7', 'copyright 2007 track7');
+    $rss = new auFeed('all track7 photos', '/output/gfx/album/', 'all photos posted on track7', 'copyright 2008 track7');
     $photos = 'select id, caption, added, description from photos order by added desc';
   }
   if($photos = $db->GetLimit($photos, 0, 15, '', ''))
