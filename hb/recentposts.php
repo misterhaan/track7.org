@@ -2,9 +2,17 @@
   $getvars = array('author');
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
 
-  $posts = 'select p.instant, p.uid, u.login, p.subject, p.thread, t.title, t.tags from hbposts as p left join users as u on u.uid=p.uid left join hbthreads as t on t.id=p.thread order by p.instant desc';
-  $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
-  $page->Start('recent forum posts', 'recent forum posts<a class="feed" href="/feeds/posts.rss" title="rss feed of recent forum posts"><img src="/style/feed.png" alt="feed" /></a>');
+  if($_GET['author'])
+    $posts = ' where u.login=\'' . addslashes($_GET['author']) . '\'';
+  $posts = 'select p.instant, p.uid, u.login, p.subject, p.thread, t.title, t.tags from hbposts as p left join users as u on u.uid=p.uid left join hbthreads as t on t.id=p.thread' . $posts . ' order by p.instant desc';
+  if($_GET['author']) {
+    // DO: add link to feed once feed can filter by user
+    //$page->AddFeed('track7 forum posts', '/feeds/posts.rss');
+    $page->Start(htmlentities($_GET['author'], ENT_COMPAT, _CHARSET) . '&rsquo;s forum posts');
+  } else {
+    $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
+    $page->Start('recent forum posts', 'recent forum posts<a class="feed" href="/feeds/posts.rss" title="rss feed of recent forum posts"><img src="/style/feed.png" alt="feed" /></a>');
+  }
   if($posts = $db->GetSplit($posts, 20, 0, '', '', 'error looking up recent posts', 'no posts found')) {
     require_once 'auText.php';
     require_once 'hb.inc';
