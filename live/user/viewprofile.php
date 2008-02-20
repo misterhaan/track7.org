@@ -164,22 +164,23 @@
           }
         }
         if($stats->posts) {
-          $posts = 'select p.instant, p.id, p.tid, t.fid, p.subject, t.title as thread, f.title as forum from oiposts as p, oithreads as t, oiforums as f where p.tid=t.id and t.fid=f.id and p.uid=' . $u->uid . ' order by instant desc';
+          $posts = 'select p.instant, p.id, t.tags, p.subject, p.thread, t.title from hbposts as p left join hbthreads as t on p.thread=t.id where p.uid=' . $u->uid . ' order by instant desc';
           if($posts = $db->GetLimit($posts, 0, 5, 'error getting list of posts by this user')) {
             $page->Heading('recent forum posts');
+            require_once '../hb/hb.inc';
 ?>
       <table class="data" cellspacing="0">
-        <thead><tr><th>date</th><th>subject</th><th>thread</th><th>forum</th></tr></thead>
+        <thead><tr><th>date</th><th>subject</th><th>thread</th><th>tags</th></tr></thead>
         <tbody>
 <?
             while($post = $posts->NextRecord()) {
 ?>
-          <tr><td><?=auText::SmartTime($post->instant, $user); ?></td><td><a href="/oi/f<?=$post->fid; ?>/t<?=$post->tid; ?>/#p<?=$post->id; ?>"><?=$post->subject; ?></a></td><td><a href="/oi/f<?=$post->fid; ?>/t<?=$post->tid; ?>/"><?=$post->thread; ?></a></td><td><a href="/oi/f<?=$post->fid; ?>/"><?=$post->forum; ?></a></td></tr>
+          <tr><td><?=strtolower(auText::SmartTime($post->instant, $user)); ?></td><td><a href="/hb/thread<?=$post->thread; ?>/#p<?=$post->id; ?>"><?=$post->subject; ?></a></td><td><a href="/hb/thread<?=$post->thread; ?>/"><?=$post->title; ?></a></td><td><?=HB::TagLinks($post->tags); ?></td></tr>
 <?
             }
 ?>
         </tbody>
-        <tfoot class="seemore"><tr><td colspan="4"><a href="/oi/recentposts.php?author=<?=$_GET['login']; ?>">view more of <?=$_GET['login']; ?>'s posts</a></td></tr></tfoot>
+        <tfoot class="seemore"><tr><td colspan="4"><a href="/hb/recentposts.php?author=<?=$_GET['login']; ?>">view more of <?=$_GET['login']; ?>'s posts</a></td></tr></tfoot>
       </table>
 
 <?
