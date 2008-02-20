@@ -45,7 +45,7 @@
       </p>
       <ul>
         <li><a href="http://jmeagher.2ya.com/">joe's index and links</a> *</li>
-        <li><a href="http://adrenaline.shorturl.com/">adrenaline</a> *</li>
+        <li><a href="http://www.thecircumlocution.com/">the circumlocution</a></li>
         <li><a href="http://www.katana.org/" title="visit katana.org">katana.org</a></li>
         <li><a href="http://www.allsyntax.com/">allsyntax.com</a></li>
         <li><a href="http://www.kzoiks.nl/">kzoiks!</a> *</li>
