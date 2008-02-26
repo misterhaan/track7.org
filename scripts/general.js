@@ -20,7 +20,7 @@ function getAsync(url, stateChanged, args) {
   }
   req.onreadystatechange = function() {
     if(req.readyState == 4)
-      stateChanged(args);
+      stateChanged(req, args);
   }
   req.open("GET", url, true);
   req.send(null);
