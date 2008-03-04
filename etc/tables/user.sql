@@ -57,6 +57,7 @@ create table usercontact (
   website varchar(64),
   icq varchar(10),
   aim varchar(32),
+  steam varchar(32),
   flags tinyint unsigned not null default 0
 );
 
