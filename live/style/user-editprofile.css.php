@@ -38,7 +38,7 @@ ul.tabs li a:hover {
 div.tabbed {
   border: 1px solid #<?=DARK; ?>;
   margin: 0 2em 2em;
-  padding: 1em 0;
+  padding: 1em 1.5em;
 }
 div.tabbed form {
   margin: 0;

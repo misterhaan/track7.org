@@ -92,7 +92,7 @@
 
 <?
       }
-      $contact = 'select email, website, jabber, icq, aim, flags from usercontact where uid=' . $u->uid;
+      $contact = 'select email, website, jabber, icq, aim, steam, flags from usercontact where uid=' . $u->uid;
       if($contact = $db->GetRecord($contact, 'error looking up contact information', 'contact information not found')) {
         $page->heading('contact information');
 ?>
@@ -117,6 +117,8 @@
           echo '        <tr><th>icq</th><td><a href="http://web.icq.com/whitepages/message_me?uin=' . $contact->icq . '&amp;action=message" title="contact ' . $_GET['login'] . ' via icq">' . $contact->icq . '</a></td></tr>' . "\n";
         if(strlen($contact->aim) > 0)
           echo '        <tr><th>aim</th><td><a href="aim:goim?screenname=' . $contact->aim . '" title="contact ' . $_GET['login'] . ' via aim">' . $contact->aim . '</a></td></tr>' . "\n";
+        if(strlen($contact->steam) > 0)
+          echo '        <tr><th>steam</th><td><a href="http://steamcommunity.com/id/' . $contact->steam . '" title="view ' . $_GET['login'] . '&rsquo;s steam community profile">' . $contact->steam . '</a></td></tr>' . "\n";
 ?>
       </table>
 
