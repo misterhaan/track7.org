@@ -24,7 +24,7 @@
     switch($_GET['tab']) {
       case 'profile':
         require_once 'auFile.php';
-        $profile = 'select avatar, signature from userprofiles where uid=' . $u->uid;
+        $profile = 'select avatar, signature, location, geekcode, hackerkey from userprofiles where uid=' . $u->uid;
         $profile = $db->GetRecord($profile, 'error reading user profile', 'user profile not found');
         if($_POST['submit'] == 'update') {
           $newavatar = '';
@@ -56,7 +56,7 @@
                 $newavatar = 'avatar=\'' . $newavatar . '\', ';
               }
             }
-          if(false !== $db->Change('update userprofiles set ' . $newavatar . 'signature=\'' . addslashes(auText::BB2HTML(trim($_POST['signature']))) . '\' where uid=' . $u->uid, 'error saving profile'))
+          if(false !== $db->Change('update userprofiles set ' . $newavatar . 'signature=\'' . addslashes(auText::BB2HTML(trim($_POST['signature']))) . '\', location=\'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', geekcode=\'' . addslashes(auText::EOL2br($_POST['geekcode'])) . '\', hackerkey=\'' . addslashes(htmlentities($_POST['hackerkey'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error saving profile'))
             $page->Info('profile successfully updated');
         }
         break;
@@ -122,7 +122,7 @@
 ?>
       <p><a href="/user/<?=$u->login; ?>/">view profile</a></p>
       <ul class="tabs">
-        <li<?=$_GET['tab'] == 'profile' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=profile" title="edit avatar and signature">profile</a></li>
+        <li<?=$_GET['tab'] == 'profile' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=profile" title="edit avatar, signature, and geek code / hacker key">profile</a></li>
         <li<?=$_GET['tab'] == 'display' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=display" title="edit display settings">display</a></li>
         <li<?=$_GET['tab'] == 'contact' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=contact" title="edit contact information">contact</a></li>
         <li<?=$_GET['tab'] == 'notification' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=notification" title="edit notifications">notification</a></li>
@@ -144,6 +144,9 @@
           $prof->AddHTML('current avatar', 'you do not currently have an avatar.&nbsp; to add an avatar, select a jpeg or png image that does not exceed ' . AVATAR_SIZE . ' x ' . AVATAR_SIZE . ' pixels.');
         $prof->AddField('avatar', 'new avatar', 'upload an avatar to display next to your forum posts', false, '', _AU_FORM_FIELD_FILE, 60);
         $prof->AddField('signature', 'signature', 'enter a signature to display below all of your forum posts', false, auText::HTML2BB($profile->signature), _AU_FORM_FIELD_BBCODE);
+        $prof->AddField('location', 'location', 'enter your location', false, $profile->location, _AU_FORM_FIELD_NORMAL, 20, 32);
+        $prof->AddField('geekcode', 'geek code', 'enter your geek code (www.geekcode.com)', false, auText::br2EOL($profile->geekcode), _AU_FORM_FIELD_MULTILINE, 60, 250);
+        $prof->AddField('hackerkey', 'hacker key', 'enter your hacker key (www.hackerkey.com)', false, $profile->hackerkey, _AU_FORM_FIELD_NORMAL, 60, 250);
         break;
       case 'display':
         $prof->AddField('time', 'current time', 'enter the current time so track7 can display dates and times in your time zone', true, $user->tzdate('g:i a'), _AU_FORM_FIELD_NORMAL, 8, 20);
