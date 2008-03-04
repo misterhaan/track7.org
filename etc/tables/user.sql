@@ -14,7 +14,10 @@ create table users (
 create table userprofiles (
   uid smallint unsigned primary key,
   signature text,
-  avatar varchar(50)
+  avatar varchar(50),
+  location varchar(32),
+  geekcode varchar(255),
+  hackerkey varchar(255)
 );
 insert into userprofiles (uid) select uid from users;
 

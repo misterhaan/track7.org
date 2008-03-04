@@ -69,3 +69,6 @@ table#colorchoice img {
 textarea#fldsignature {
   height: 3.5em;
 }
+textarea#fldgeekcode {
+  height: 5.8em;
+}

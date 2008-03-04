@@ -48,24 +48,45 @@
       }
       $song = 'select instant, title, artist, length, filename from usersongs where uid=' . $u->uid . ' order by instant desc';
       $song = $db->GetRecord($song, 'error looking up last song played', '');
-      $profile = 'select avatar, signature from userprofiles where uid=' . $u->uid;
+      $profile = 'select avatar, signature, location, geekcode, hackerkey from userprofiles where uid=' . $u->uid;
       $profile = $db->GetRecord($profile, 'error looking up profile information', 'profile information not found');
         
       if($profile->signature || $profile->avatar || $song->length || $u->uid == $user->ID) {
         $page->Heading('profile');
 ?>
-      <table class="columns" cellspacing="0">
+      <table id="userprofile" class="columns" cellspacing="0">
 <?
         if($profile->avatar) {
 ?>
         <tr><th>avatar</th><td><img src="/user/avatar/<?=$_GET['login']; ?>.<?=$profile->avatar; ?>" alt="" /></td></tr>
 <?
-        } 
+        }
         if($profile->signature) {
 ?>
         <tr><th>signature</th><td><?=$profile->signature; ?></td></tr>
 <?
         }
+        if($profile->location) {
+?>
+        <tr><th>location</th><td><?=$profile->location; ?></td></tr>
+<?
+        } 
+        if($profile->geekcode) {
+          $lines = explode('<br />', $profile->geekcode);
+          if(strtoupper($lines[count($lines) - 1]) == '------END GEEK CODE BLOCK------')
+            unset($lines[count($lines) - 1]);
+          if(strtoupper($lines[0]) == '-----BEGIN GEEK CODE BLOCK-----')
+            unset($lines[0]);
+          $profile->geekcode = implode('<br />', $lines);
+?>
+        <tr><th>geek code</th><td><?=$profile->geekcode; ?></td></tr>
+<?
+        }
+        if($profile->hackerkey) {
+?>
+        <tr><th>hacker key</th><td><?=$profile->hackerkey; ?></td></tr>
+<?
+        } 
         if($song) {
           $time = $song->length;
           if($time) {
