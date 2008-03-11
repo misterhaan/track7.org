@@ -369,11 +369,12 @@ select {
 textarea {
   width: 100%;
 }
-input[type="text"]:active,
-input[type="password"]:active,
-textarea:active,
-select:active {
-  border-color: #<?=DARK; ?>}
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #<?=DARK; ?>
+}
 input.checkbox {
   float: left;
   display: block;
