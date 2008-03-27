@@ -108,17 +108,80 @@
               if(false !== $db->Change($update, 'error linking thread to post')) {
                 $update = 'update userstats set posts=posts+1 where uid=\'' . $user->ID . '\'';
                 $db->Change($update);
-                header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread->id . ($thread->posts + 1 > _FORUM_POSTS_PER_PAGE ? '/skip=' . (floor($thread->posts / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p' : '/#p') . $post);
+                if($_POST['return'] != 'xml')
+                  header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread->id . ($thread->posts + 1 > _FORUM_POSTS_PER_PAGE ? '/skip=' . (floor($thread->posts / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p' : '/#p') . $post);
+                else {
+                  header('Content-Type: text/xml; charset=utf-8');
+                  header('Cache-Control: no-cache');
+                  echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+?>
+<response result="success">
+<post id="<?=$post; ?>">
+<subject><?=htmlspecialchars($_POST['subject'], ENT_NOQUOTES); ?></subject>
+<message><![CDATA[<?=auText::BB2HTML($_POST['post'], false, false); ?>]]></message>
+<time><?=strtolower($user->tzdate('g:i:s a, M d, Y', time())); ?></time>
+<user id="<?=$user->ID; ?>">
+<name><?=$user->Name; ?></name>
+<?
+                  if($user->Valid) {
+                    $userinfo = 'select s.rank, r.signature, r.avatar, c.flags&' . _FLAG_USERCONTACT_SHOWEMAIL . ' as showemail, c.email, c.website, f.frienduid from users as u left join userstats as s on s.uid=u.uid left join userprofiles as r on r.uid=u.uid left join usercontact as c on c.uid=u.uid left join userfriends as f on f.fanuid=u.uid and f.frienduid=u.uid where u.uid=\'' . $user->ID . '\'';
+                    if($userinfo = $db->GetRecord($userinfo, '', '')) {
+                      if($userinfo->frienduid)
+                        echo "<friend/>\n";
+                      if($userinfo->avatar)
+                        echo '<avatar>' . $userinfo->avatar . "</avatar>\n";
+                      echo '<rank>' . $userinfo->rank . "</rank>\n";  // rank is always defined
+                      if($userinfo->signature)
+                        // DO:  translate &nbsp; better
+                        echo '<signature>' . htmlspecialchars(auText::pbr2EOL(str_replace('&nbsp;', ' ', $userinfo->signature)), ENT_NOQUOTES) . "</signature>\n";
+                      if($userinfo->showemail)
+                        echo '<email>' . auText::SafeEmail($userinfo->email) . "</email>\n";
+                      if($userinfo->website)
+                        echo '<website>' . $userinfo->website . "</website>\n";
+                    }
+                  }
+?>
+</user>
+</post>
+</response>
+<?
+                }
                 die;
               }
             }
+            if($_POST['return'] == 'xml')
+              $page->SendXmlErrors();
           }
+        }
+        if($reply->Submitted() != 'preview' && $_POST['return'] == 'xml') {
+          foreach($reply->GetErrors() as $e);
+          $page->Error(html_entity_decode($e, ENT_COMPAT, _CHARSET));
+          $page->SendXmlErrors();
         }
         $page->Start('reply to ' . ($quote ? $quote->subject : $thread->title));
         $reply->WriteHTML($user->Valid);
         $page->End();
       }
     }
+  } elseif(is_numeric($_GET['quote'])) {
+    // ajax request for quoted post
+    $quote = 'select p.subject, p.post, u.login from hbposts as p left join users as u on u.uid=p.uid where id=\'' . addslashes($_GET['quote']) . '\'';
+    if(false !== $quote = $db->GetRecord($quote, 'error looking up post to quote', 'post to quote not found')) {
+      if(!$quote->login)
+        $quote->login = 'anonymous';
+      header('Content-Type: text/xml; charset=utf-8');
+      header('Cache-Control: no-cache');
+      echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+      require_once 'auText.php';
+?>
+<response result="success">
+<subject><?=htmlspecialchars(html_entity_decode(HB::AddRe($quote->subject), ENT_COMPAT, _CHARSET), ENT_NOQUOTES); ?></subject>
+<quote><?=htmlspecialchars('[q=' . $quote->login . ']' . auText::HTML2BB($quote->post) . '[/q]', ENT_NOQUOTES) . "\n"; ?></quote>
+</response>
+<?
+      die;
+    }
+    $page->SendXmlErrors();
   } else {
     // new thread
     $newthread = HB::GetPostForm($db, $user, 'newthread');

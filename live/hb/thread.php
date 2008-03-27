@@ -18,9 +18,14 @@
 ?>
           <a href="/user/<?=$post->login; ?>/"><?=$post->login; ?></a>
 <?
+            if($post->frienduid) {
+?>
+          <img src="/style/friend.png" alt="friend" title="<?=$post->login; ?> is your friend" />
+<?
+            }
             if($post->avatar) {
 ?>
-          <img class="avatar" alt="" src="/user/avatar/<?=$post->login; ?>.<?=$post->avatar; ?>" />
+          <a href="/user/<?=$post->login; ?>/"><img class="avatar" alt="" src="/user/avatar/<?=$post->login; ?>.<?=$post->avatar; ?>" /></a>
 <?
             }
 ?>
@@ -58,40 +63,60 @@
 	        if($post->uid > 0) {
 ?>
             <div class="userlinks">
-              <a href="/user/sendmessage.php?to=<?=$post->login; ?>" title="send <?=$post->login; ?> a private message">pm</a>
+              <a href="/user/sendmessage.php?to=<?=$post->login; ?>" title="send <?=$post->login; ?> a private message"><img src="/style/pm.png" alt="" />pm</a>
 <?
 	          if($post->showemail)
-	            echo '              | <a href="mailto:' . TEXT::safemail($post->email) . '" title="send ' . $post->login . ' an e-mail">e-mail</a>' . "\n";
+	            echo '              <a href="mailto:' . auText::SafeEmail($post->email) . '" title="send ' . $post->login . ' an e-mail"><img src="/style/email.png" alt="" />e-mail</a>' . "\n";
 	          if($post->website)
-	            echo '              | <a href="' . $post->website . '" title="visit ' . $post->login . '\'s website">www</a>' . "\n";
+	            echo '              <a href="' . $post->website . '" title="visit ' . $post->login . '\'s website"><img src="/style/www.png" alt="" />www</a>' . "\n";
 	          if($user->Valid && !$post->frienduid)
-	            echo '              | <a href="/user/friends.php?add=' . $post->login . '" title="add ' . $post->login . ' to your friend list">+friend</a>' . "\n";
+	            echo '              <a href="/user/friends.php?add=' . $post->login . '" title="add ' . $post->login . ' to your friend list"><img src="/style/friend-add.png" alt="" />add friend</a>' . "\n";
 ?>
             </div>
 <?
           }
           if($user->Valid && $user->id == $post->uid || $user->GodMode) {
 ?>
-            <a href="/hb/thread<?=$thread->id; ?>/edit=<?=$post->id; ?>" title="edit the above post">edit</a> |
-            <a href="/hb/thread<?=$thread->id; ?>/delete=<?=$post->id; ?>" title="delete the above post">delete</a> |
+            <a href="/hb/thread<?=$thread->id; ?>/edit=<?=$post->id; ?>" title="edit the above post"><img src="/style/edit.png" alt="" />edit</a>
+            <a href="/hb/thread<?=$thread->id; ?>/delete=<?=$post->id; ?>" title="delete the above post"><img src="/style/del.png" alt="" />delete</a>
 <?
           }
 ?>
-            <a href="/hb/thread<?=$thread->id; ?>/reply<?=$post->id; ?>" title="quote the above post in a new reply">reply</a>
+            <a href="/hb/thread<?=$thread->id; ?>/reply<?=$post->id; ?>" title="quote the above post in a new reply" class="quote"><img src="/style/reply-quote.png" alt="" />quote</a>
           </div>
         </td>
       </tr></table>
 
 <?
         }
+        $page->SplitLinks('', '/hb/thread' . $thread->id . '/');
+        // DO:  show add reply link for all but last page; form on last page
+        if(isLastPage($db)) {
+          $page->Heading("add a reply", "reply");
+          $form = HB::GetPostForm($db, $user, 'reply', null, $thread, null, '/hb/thread' . $thread->id . '/reply');
+          $form->WriteHTML($user->Valid);
+        } else {
+          // DO:  go to last page reply form
 ?>
-      <p><a href="/hb/thread<?=$thread->id; ?>/reply">add a reply</a></p>
+      <p><a href="/hb/thread<?=$thread->id; ?>/skip=<?=getLastPageSkip($db); ?>#reply">add a reply</a></p>
 <?
-        $page->SplitLinks('');
+        }
       }
 	  	$page->End();
 	  	die;
 	  }
   }
   $page->Show404();
+
+  function isLastPage(&$db) {
+    $skip = is_numeric($_GET[$db->split_skip]) ? $_GET[$db->split_skip] : $db->split_dskip;
+    $show = is_numeric($_GET[$db->split_show]) ? $_GET[$db->split_show] : $db->split_dshow;
+    return $db->split_count <= $skip + $show;
+  }
+
+  function getLastPageSkip(&$db) {
+    $show = is_numeric($_GET[$db->split_show]) ? $_GET[$db->split_show] : $db->split_dshow;
+    $count = $db->split_count - 1;
+    return $count - $count % $show;
+  }
 ?>

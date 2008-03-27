@@ -14,10 +14,12 @@
         return '<em>(none)</em>';
     }
 
-    function GetPostForm(&$db, &$user, $formid, $post = null, $thread = null, $quote = null) {
+    function GetPostForm(&$db, &$user, $formid, $post = null, $thread = null, $quote = null, $action = null) {
       require_once 'auForm.php';
       require_once 'auText.php';
-      $f = new auForm($formid, $_SERVER['REQUEST_URI']);
+      if($action == null)
+        $action = $_SERVER['REQUEST_URI'];
+      $f = new auForm($formid, $action);
       if($post)
         $f->AddText('posted by', $post->uid ? $post->login : 'anonymous');
       elseif($user->Valid)
@@ -26,7 +28,7 @@
         $f->AddHTML('posting as', 'anonymous (<a href="/user/login.php">log in</a> or <a href="/user/register.php">register</a>)');
       if(!$thread || $post->number == 1)
         $f->AddField('title', 'thread title', 'enter a title for this thread', true, $thread->title, _AU_FORM_FIELD_NORMAL, 40, 255);
-      $f->AddField('subject', 'post subject', 'enter a subject for this post', false, $post ? $post->subject : ($quote ? HB::AddRe($quote->subject) : ($thread ? AddRe($thread->title) : '')), _AU_FORM_FIELD_NORMAL, 40, 255);
+      $f->AddField('subject', 'post subject', 'enter a subject for this post', false, $post ? $post->subject : ($quote ? HB::AddRe($quote->subject) : ($thread ? HB::AddRe($thread->title) : '')), _AU_FORM_FIELD_NORMAL, 40, 255);
       if(!$thread || $post->number == 1) {
         $tags = 'select name from taginfo where type=\'threads\' order by name';
         if($tags = $db->Get($tags, '', '')) {
