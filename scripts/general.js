@@ -1,4 +1,59 @@
-function getAsync(url, stateChanged, args) {
+function getAsync(url, finished, args) {
+  var req = ajaxRequestObject();
+  if(req == null) {
+    alert("your browser supports javascript but not ajax.  please update your browser or try again with javascript off.");
+    return false;
+  }
+  req.onreadystatechange = function() {
+    if(req.readyState == 4)
+      finished(req, args);
+  }
+  req.open("GET", url, true);
+  req.send(null);
+  return true;
+}
+
+function postFormAsync(submit, finished, args) {
+  var params = new Array();
+  var p = 0;
+  var form = submit.form;
+  var inputs = form.getElementsByTagName("input");
+  for(var i = 0; i < inputs.length; i++)
+    if(inputs[i].name && (inputs[i].type != "submit" || inputs[i] == submit))
+      params[p++] = uriParam(inputs[i].name, inputs[i].value);
+  var selects = form.getElementsByTagName("select");
+  for(var i = 0; i < selects.length; i++)
+    if(selects[i].name)
+      params[p++] = uriParam(selects[i].name, selects[i].options[selects[i].selectedIndex].value);
+  var textareas = form.getElementsByTagName("textarea");
+  for(var i = 0; i < textareas.length; i++)
+    if(textareas[i].name)
+      params[p++] = uriParam(textareas[i].name, textareas[i].value);
+  return postAsync(form.action, finished, args, params);
+}
+
+function postAsync(url, finished, args, params) {
+  var req = ajaxRequestObject();
+  if(req == null) {
+    alert("your browser supports javascript but not ajax.  please update your browser or try again with javascript off.");
+    return false;
+  }
+  req.onreadystatechange = function() {
+    if(req.readyState == 4)
+      finished(req, args);
+  }
+  req.open("POST", url, true);
+  var data = params instanceof Array ? params.join("&") : params;
+  req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  req.send(data);
+  return true;
+}
+
+function uriParam(name, value) {
+  return encodeURIComponent(name) + "=" + encodeURIComponent(value);
+}
+
+function ajaxRequestObject() {
   var req = null;
   try {
     // modern browsers and internet explorer 7
@@ -14,17 +69,7 @@ function getAsync(url, stateChanged, args) {
       } catch(e) {}  // couldn't get an http request object
     }
   }
-  if(req == null) {
-    alert("your browser supports javascript but not ajax.  please update your browser or try again with javascript off.");
-    return false;
-  }
-  req.onreadystatechange = function() {
-    if(req.readyState == 4)
-      stateChanged(req, args);
-  }
-  req.open("GET", url, true);
-  req.send(null);
-  return true;
+  return req;
 }
 
 function getSelectedText(element) {

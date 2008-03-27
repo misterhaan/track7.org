@@ -393,6 +393,13 @@ input[type="submit"]:hover {
   background-color: #<?=LIGHT; ?>;
   color: #000000;
 }
+input[type="submit"][disabled],
+input[type="submit"][disabled]:hover {
+  cursor: default;
+  border-color: #<?=LIGHTGREY; ?>;
+  color: #<?=TEXT; ?>;
+  background-color: #<?=LIGHTGREY; ?>;
+}
 
 
 /* ===========================================================[ pagelinks ]== */
@@ -473,16 +480,26 @@ table.post p {
 }
 table.post div.foot {
   font-size: .8em;
-  padding: 0 .5em;
+  padding: 1px .5em 0;
   border-top: 1px dashed #<?=MEDIUM; ?>;
   text-align: right;
+  line-height: 16px;
+  height: 16px;
 }
 table.post div.foot div.userlinks {
   float: left;
   padding-right: 1.5em;
 }
 table.post div.foot a {
-  font-weight: normal;
+  margin-left: .5em;
+  vertical-align: middle;
+}
+table.post div.foot div.userlinks a {
+  margin-left: 0;
+  margin-right: .5em;
+}
+table.post div.foot a img {
+  vertical-align: middle;
 }
 
 

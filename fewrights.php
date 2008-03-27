@@ -83,8 +83,30 @@
           respectively on images from <a href="http://en.wikipedia.org/wiki/Zero_Wing">zero wing</a>,
           an <a href="http://www.mcescher.com/">m.c. escher</a> sketch, a
           mandelbrot set from a university math or science page,
-          <a href="http://www.asterix.tm.fr/">ast�rix</a>, and
+          <a href="http://www.asterix.tm.fr/">astérix</a>, and
           <a href="http://www.imdb.com/title/tt0111161/">the shawshank redemption</a>.
+        </li>
+        <li>
+          icons from the <a href="http://tango.freedesktop.org/">tango desktop project</a>:&nbsp;
+          edit (<img src="/style/edit.png" />) and www (<img src="/style/www.png" />).&nbsp;
+          these icons are free for anyone to use under the
+          <a href="http://creativecommons.org/licenses/by-sa/2.5/">creative commons attribution share-alike license</a>.
+        </li>
+        <li>
+          icon from <a href="http://www.iconbuffet.com/freedelivery/packages/tower-grove-telecom?ref=misterhaan">iconbuffet</a>:&nbsp;
+          private message (<img src="/style/pm.png" />).&nbsp; these icons are
+          free to use by anyone who has a free iconbuffet account and has
+          collected the appropriate icon sets.
+        </li>
+        <li>
+          icons from the <a href="http://arvidaxelsson.se/qute/">qute</a> and
+          <a href="http://arvidaxelsson.se/kempelton/">kempelton</a> icon sets:&nbsp;
+          delete (<img src="/style/del.png" />), friend (<img src="/style/friend.png" />),
+          and quote (<img src="/style/reply-quote.png" />).&nbsp; kempleton
+          icons are free for anyone to use under the
+          <a href="http://creativecommons.org/licenses/by-sa/2.5/se/deed.en_US">creative commons attribution-share alike 2.5 sweden license</a>.&nbsp;
+          qute icons don’t list a license so i assume it to be under the same
+          license as kempleton. 
         </li>
       </ul>
       <p>

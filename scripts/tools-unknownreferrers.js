@@ -26,7 +26,7 @@ function checkReferrer() {
   p.appendChild(msg);
   div.appendChild(p);
   // start the asynchronous server request
-  getAsync("/scripts/tools/unknownreferrers.php?ref=" + ref, refCheckFinished, null);
+  getAsync("/scripts/tools/unknownreferrers.php?ref=" + ref, refCheckFinished);
   return false;
 }
 
