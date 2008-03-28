@@ -16,7 +16,7 @@
       <ul><li><a href="newthread">start a new thread</a></li></ul>
 <?
   $threads = 'select t.id, t.tags, t.title, t.instant, tu.login, t.posts, t.lastpost, p.number, p.subject, p.instant as pinstant, pu.login as plogin from hbthreads as t left join users as tu on tu.uid=t.uid left join hbposts as p on p.id=t.lastpost left join users as pu on pu.uid=p.uid' . $threads . ' order by p.instant desc';
-  if($threads = $db->GetSplit($threads, 20, 0, '', '', 'error looking up threads', 'no threads found')) {
+  if($threads = $db->GetSplit($threads, 20, 0, '', '', 'error looking up threads', 'no threads found', false, true)) {
 ?>
       <table class="text" id="hbthreadlist" cellspacing="0">
         <thead class="minor"><tr><th>thread</th><th>tags</th><th>posts</th><th>last post</th><th>started</th></tr></thead>

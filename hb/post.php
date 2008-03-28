@@ -132,8 +132,7 @@
                         echo '<avatar>' . $userinfo->avatar . "</avatar>\n";
                       echo '<rank>' . $userinfo->rank . "</rank>\n";  // rank is always defined
                       if($userinfo->signature)
-                        // DO:  translate &nbsp; better
-                        echo '<signature>' . htmlspecialchars(auText::pbr2EOL(str_replace('&nbsp;', ' ', $userinfo->signature)), ENT_NOQUOTES) . "</signature>\n";
+                        echo '<signature>' . htmlspecialchars(auText::pbr2EOL(str_replace('&nbsp;', chr(0xc2) . chr(0xa0), $userinfo->signature)), ENT_NOQUOTES) . "</signature>\n";
                       if($userinfo->showemail)
                         echo '<email>' . auText::SafeEmail($userinfo->email) . "</email>\n";
                       if($userinfo->website)
