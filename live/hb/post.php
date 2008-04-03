@@ -53,7 +53,8 @@
                     $db->Put($ins);
                   }
                 }
-                $update = 'update hbposts set subject=\'' . addslashes(htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET)) . '\', post=\'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\', history=\'' . $post->history . '/' . $user->Name . '|' . time() . '\' where id=\'' . $post->id . '\'';
+                $posttext = addslashes(auText::BB2HTML($_POST['post'], false, false));
+                $update = 'update hbposts set subject=\'' . addslashes(htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET)) . ($post->post == $posttext ? '' : '\', post=\'' . $posttext . '\', history=\'' . $post->history . '/' . $user->Name . '|' . time()) . '\' where id=\'' . $post->id . '\'';
                 if(false !== $db->Change($update, 'error updating post')) {
                   header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread->id . ($post->number > _FORUM_POST_PER_PAGE ? '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) : '/') . '#p' . $post->id);
                   die;
