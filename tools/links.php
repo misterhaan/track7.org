@@ -70,7 +70,7 @@
           } else
             $_POST['page'] = 'null';
         }
-        $ins = 'insert into linkcats (id, pageid, title) values (' . $_POST['page'] . ', \'' . addslashes($_POST['title']) . '\')';
+        $ins = 'insert into linkcats (pageid, title) values (' . $_POST['page'] . ', \'' . addslashes($_POST['title']) . '\')';
         if(false !== ($db->Put($ins, 'error saving new category')))
           $page->Info('category added successfully');
         break;
