@@ -161,7 +161,7 @@
     $catformset->AddField('page', 'page', 'url or id -- leave blank to show on neighborhood page)', false, $cat->pageid > 1 ? $cat->urlout : '', _AU_FORM_FIELD_NORMAL, 30, 64);
     if($action == 'edit')
       $action = 'update';
-    $catformset->AddButton($action, $action . ' this category');
+    $catformset->AddButtons($action, $action . ' this category');
     $catform->AddFieldSet($catformset);
     $catform->WriteHTML(true);
   }
