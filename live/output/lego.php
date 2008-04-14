@@ -61,7 +61,7 @@
     }
   }
   $legos = 'select l.id, l.name, l.notes, l.pieces, l.minifigs, l.adddate, r.rating, r.votes from legos as l left join ratings as r on r.type=\'lego\' and r.selector=l.id order by rating desc, adddate desc';
-  if($legos = $db->GetSplit($legos, 10, 0, '', '', 'error looking up listing of lego models', 'no lego models found')) {
+  if($legos = $db->GetSplit($legos, 10, 0, '', '', 'error looking up listing of lego models', 'no lego models found', false, true)) {
     while($lego = $legos->NextRecord()) {
       $page->Heading($lego->name);
 ?>
