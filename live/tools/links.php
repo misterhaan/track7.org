@@ -18,6 +18,7 @@
         } else {
           $catchk = 'select 1 from linkcats where id=' . $_POST['catid'];
           if($db->Get($catchk, 'error verifying that category exists', 'could not find category for that id', true)) {
+            require_once 'auText.php';
             $update = 'update links set url=\'' . addslashes($_POST['url']) . '\', title=\'' . addslashes($_POST['title']) . '\', tooltip=\'' . addslashes($_POST['tooltip']) . '\', description=\'' . addslashes(auText::BB2HTML($_POST['description'])) . '\', catid=' . $_POST['catid'] . ' where id=' . $_POST['id'];
             if($db->Change($update, 'error updating link'))
               $page->Info('link updated successfully');
@@ -28,6 +29,7 @@
         if(!is_numeric($_POST['catid']))
           $page->Error('cannot add link to non-numeric category id');
         else {
+          require_once 'auText.php';
           $ins = 'insert into links (catid, url, title, tooltip, description) values (' . $_POST['catid'] . ', \'' . addslashes($_POST['url']) . '\', \'' . addslashes($_POST['title']) . '\', \'' . addslashes($_POST['tooltip']) . '\', \'' . addslashes(auText::BB2HTML($_POST['description'])) . '\')';
           if(false !== ($db->Put($ins, 'error adding new link')))
             $page->Info('new link added successfully');
@@ -167,6 +169,7 @@
   }
 
   function linkform($link, $catid = null) {
+    require_once 'auText.php';
     $action = $link === null ? 'add' : 'edit';
     $linkform = new auForm($action . 'link');
     if($link !== null)
