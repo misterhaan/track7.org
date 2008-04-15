@@ -70,6 +70,13 @@
         <div><?=auFile::ImageSize('lego/' . $lego->id . '.png'); ?></div>
       </div>
       <div class="thumbed">
+<?
+      if($lego->id == "stalker") {
+?>
+        <a href="http://naughtynestor.com/080415-stalker.php" class="award" title="see naughty nestor blow up this model"><img src="lego/award-nestor-destruction.png" alt="worthy of destruction award" title="" /></a>
+<?
+      }
+?>
         <table cellspacing="0" class="columns">
           <tr class="firstchild"><th>pieces</th><td><?=$lego->pieces; ?></td></tr>
           <tr><th>minifigs</th><td><?=$lego->minifigs; ?></td></tr>

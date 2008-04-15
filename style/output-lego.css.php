@@ -38,3 +38,11 @@ div.thumbed {
   padding-left: 150px;
   margin-left: 3.5em;
 }
+
+a.award {
+  float: right;
+  margin: 2em 2em 0 -1.5em;
+}
+a.award img {
+  display: block;
+}
