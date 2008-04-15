@@ -173,7 +173,7 @@
     $action = $link === null ? 'add' : 'edit';
     $linkform = new auForm($action . 'link');
     if($link !== null)
-      $linkform->data('id', $link->id);
+      $linkform->AddData('id', $link->id);
     $linkformset = new auFormFieldSet($action . ($link === null ? ' new' : '') . ' link');
     $linkformset->AddField('title', 'title', 'enter the title of this link', true, $link->title, _AU_FORM_FIELD_NORMAL, 30, 64);
     $linkformset->AddField('url', 'url', 'enter the url for this link', true, $link->url, _AU_FORM_FIELD_NORMAL, 50, 255);
