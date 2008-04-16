@@ -68,7 +68,7 @@
           <dd>
             find out what i think.
           </dd>
-          <dt><a href="/output/lego.php"><img class="icon" src="/output/favicon.png" alt="" />lego models</a></dt>
+          <dt><a href="/output/lego.php"><img class="icon" src="/output/lego/favicon.png" alt="" />lego models</a></dt>
           <dd>
             download instructions to build lego models.
           </dd>

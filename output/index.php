@@ -17,7 +17,8 @@
 <?
   $page->Heading('lego models', 'lego');
 ?>
-      <p>
+      <img class="icon" src="lego/favicon.png" alt="" />
+      <p class="iconned">
         i have a few lego models i built years ago that i've kept together and
         have displayed in my office at work.&nbsp; thanks to the
         <a href="http://www.ldraw.org/">ldraw utilities</a>, i have been able to
