@@ -27,7 +27,7 @@
         you have the right legos, of course).
       </p>
 <?
-  echo '      <ul>' . "\n" . '        <li><a href="lego.php">original lego models</a>';
+  echo '      <ul>' . "\n" . '        <li><a href="lego/">original lego models</a>';
   $legos = 'select name from legos order by adddate desc';
   if($legos = $db->GetLimit($legos, 0, 5, 'error looking up listing of lego models', '')) {
     echo "<ul>\n";
