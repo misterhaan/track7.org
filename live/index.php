@@ -4,8 +4,8 @@
   define('MAXITEMS', 7);
 
   $quotetext[] = 'dudes love it but chicks at best endure it';
-  $quotetext[] = 'there&rsquo;s no i in team &mdash; there&rsquo;s a me though if you jumble it up';
-  $quotetext[] = 'there&rsquo;s no pecans in this!';
+  $quotetext[] = 'there’s no i in team — there’s a me though if you jumble it up';
+  $quotetext[] = 'there’s no pecans in this!';
   $quotetext[] = 'in wine there is wisdom; in beer there is freedom; in water there is bacteria';
   $quotetext[] = 'always put salt in your eyes';
   $quoteby[] = 'r. smuckles';
@@ -34,21 +34,20 @@
   $page->Heading('welcome to track7');
 ?>
         <p>
-          i&rsquo;m <a href="/user/misterhaan/">misterhaan</a>, and track7 is my
+          i’m <a href="/user/misterhaan/">misterhaan</a>, and track7 is my
           personal site to host whatever i feel like putting out there and so i
           can play around with apache, php, and mysql.
         </p><p>
-          if you find something here useful or interesting, i&rsquo;d like to
-          hear about it!&nbsp; consider commenting on the page if it&rsquo;s
-          enabled for comments, posting about it on the forums, sending me a
-          message.
+          if you find something here useful or interesting, i’d like to hear
+          about it!&nbsp; consider commenting on the page if it’s enabled for
+          comments, posting about it on the forums, or sending me a message.
         </p><p>
           i also like helping people.&nbsp; if you come across a guide that
-          doesn&rsquo;t have as much information as you&rsquo;d like, or you
-          just have a question you think i might have an answer for, i&rsquo;ll
-          do my best to help.&nbsp; posting your question in the forums is the
-          best approach since other people can also help you, but if you prefer
-          to keep your question private you can also send it to me in a message. 
+          doesn’t have as much information as you’d like, or you just have a
+          question you think i might have an answer for, i’ll do my best to
+          help.&nbsp; posting your question in the forums is the best approach
+          since other people can also help you, but if you prefer to keep your
+          question private you can also send it to me in a message. 
         </p>
       </div>
       <div id="features">
@@ -68,7 +67,7 @@
           <dd>
             find out what i think.
           </dd>
-          <dt><a href="/output/lego.php"><img class="icon" src="/output/lego/favicon.png" alt="" />lego models</a></dt>
+          <dt><a href="/output/lego/"><img class="icon" src="/output/lego/favicon.png" alt="" />lego models</a></dt>
           <dd>
             download instructions to build lego models.
           </dd>
@@ -165,7 +164,7 @@
       </div>
 
       <p id="shorturl">
-        thanks to <a href="http://www.shorturl.com/ref/in.cgi?track7.vze.com">shorturl.com</a>&rsquo;s
+        thanks to <a href="http://www.shorturl.com/ref/in.cgi?track7.vze.com">shorturl.com</a>’s
         free service, this site can be accessed through track7.vze.com without
         popups or any sort of ads, and at no cost to me.&nbsp; you can continue
         to use track7.vze.com as long as this service remains free.

@@ -1,3 +1,5 @@
+RedirectPermanent /output/lego.php http://www.track7.org/output/lego/
+
 RewriteEngine On
 RewriteOptions inherit
 RewriteRule ^cd/([a-z]+)\.php$ compilations.php?cd=$1
