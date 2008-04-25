@@ -37,7 +37,7 @@
         <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
         <tr><th>ide1</th><td>lg 8/4/24/4/2/16/12/32x dvd+/-rw</td></tr>
         <tr><th>ide2</th><td>samsung dvd burner</td></tr>
-        <tr><th>operating system</th><td>microsoft windows vista<br />ubuntu 7.10 gutsy gibbon</td></tr>
+        <tr><th>operating system</th><td>microsoft windows vista<br />ubuntu 8.04 hardy heron</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>

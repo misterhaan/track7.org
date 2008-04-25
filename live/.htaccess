@@ -29,7 +29,8 @@ RedirectPermanent /av/lego/ http://www.track7.org/output/lego/
 RedirectPermanent /av/compilations.php http://www.track7.org/output/compilations.php
 RedirectPermanent /av/cd/ http://www.track7.org/output/cd/
 RedirectPermanent /av/ http://www.track7.org/output/gfx/
-RedirectPermanent /album/ http://www.track7.org/output/album/
+RedirectPermanent /album/ http://www.track7.org/output/gfx/album/
+RedirectPermanent /output/album/ http://www.track7.org/output/gfx/album/
 
 RewriteRule ^source/([a-z0-9/\-]+\.(php|css))$ /showsource.php?file=$1
 RewriteRule ^files/(.+\.(zip|wsz|xpi|msi|cab))$ /download.php?file=$1
