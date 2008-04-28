@@ -7,6 +7,12 @@
  * -> '<?=STYLE; ?>' layout style for photo album thumbnail pages                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
 \******************************************************************************/
 
+div#sortoptions {
+  text-align: right;
+  margin: -2em 2.5em 0;
+  font-size: .8em;
+}
+
 ul#photos {
   margin: .5em 1.5em;
   padding: 0;

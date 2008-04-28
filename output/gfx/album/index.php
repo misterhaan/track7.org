@@ -16,10 +16,23 @@
     $page->Start('photo album', 'photo album<a class="feed" href="/feeds/photos.rss" title="rss feed of album photos"><img src="/style/feed.png" alt="feed" /></a>');
     $page->TagCloud('photos', $url . 'tag/', 5, 15, 30, 50);
   }
-  $photos = 'select id, caption, added from photos' . $photos . ' order by added desc';
+  switch($_GET['sort']) {
+    case 'oldest':
+      $sortadj = 'oldest';
+      $sortsql = 'added';
+      break;
+    default:
+      $sortadj = 'newest';
+      $sortsql = 'added desc';
+      break;
+  }
+  $photos = 'select id, caption, added from photos' . $photos . ' order by ' . $sortsql;
   if($photos = $db->GetSplit($photos, 24, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . $tag : 'no photos found')) {
-    require_once 'auFile.php';
 ?>
+      <p>showing <?=$db->split_count; ?> photos (<?=$_GET['show']; ?> at a time)</p>
+      <?=getSortLinks($db); ?>
+
+
       <ul id="photos">
         <li>
 <?
@@ -43,7 +56,41 @@
         </li>
       </ul>
 <?
-    $page->SplitLinks();
+    $url = false;
+    $q = '?';
+    if($_GET['tag']) {
+      $url .= $_GET['tag'];
+      $q = '&amp;';
+    }
+    if($_GET['sort']) {
+      $url .= $q . 'sort=' . $_GET['sort'];
+      $q = '&amp;';
+    }
+    $page->SplitLinks($q, $url);
   }
   $page->End();
+
+  /**
+   * gets HTML with linked options for how to sort thumbnails.
+   */
+  function getSortLinks(&$db) {
+    $url = '?';
+    if($_GET['tag'])
+      $url = $_GET['tag'] . '&amp;';
+    if($_GET[$db->split_show] && $_GET[$db->split_show] != $db->split_dshow)
+      $url .= 'show=' . $_GET['show'] . '&amp;';
+    if($_GET['skip'])
+      $url .= 'skip=' . $_GET['skip'] . '&amp;';
+    $url .= 'sort=';
+    $ret = '<div id="sortoptions">sort by:&nbsp; ';
+    if(!$_GET['sort'])
+      $ret .= 'newest';
+    else
+      $ret .= '<a href="' . $url . '" title="show newest photos first">newest</a>';
+    if($_GET['sort'] == 'oldest')
+      $ret .= ' | oldest';
+    else
+      $ret .= ' | <a href="' . $url . 'oldest" title="show oldest photos first">oldest</a>';
+    return $ret . '</div>';
+  }
 ?>
