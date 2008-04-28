@@ -26,6 +26,8 @@ ul#shopitems li div {
 ul#shopitems li div h2 {
   margin: 0;
   padding: 0 .5em;
+  border: none;
+  border-bottom: 1px solid #<?=HEADDARK; ?>;
 }
 ul#shopitems li div img {
   display: block;
