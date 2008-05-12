@@ -1,3 +1,31 @@
+create table rpgchars (
+  id smallint unsigned auto_increment primary key,
+  uid smallint unsigned, index(uid),
+  name varchar(63),
+  game tinyint unsigned, index(game),
+  class tinyint unsigned,
+  level tinyint unsigned
+);
+
+create table rpghistory (
+  id mediumint unsigned auto_increment primary key,
+  `char` smallint unsigned, index(`char`),
+  instant int, index(instant),
+  level tinyint unsigned
+);
+
+create table rpgames (
+  id tinyint unsigned auto_increment primary key,
+  name varchar(127),
+  expansionbase tinyint unsigned
+);
+
+create table rpgclasses (
+  id tinyint unsigned auto_increment primary key,
+  name varchar(63),
+  game tinyint unsigned, index(game)
+);
+
 create table diablo2chars (
   id smallint unsigned auto_increment primary key,
   owner smallint unsigned,
