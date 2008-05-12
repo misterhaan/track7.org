@@ -75,7 +75,7 @@
             </div>
 <?
           }
-          if($user->Valid && $user->id == $post->uid || $user->GodMode) {
+          if($user->Valid && $user->ID == $post->uid || $user->GodMode) {
 ?>
             <a href="/hb/thread<?=$thread->id; ?>/edit=<?=$post->id; ?>" title="edit the above post"><img src="/style/edit.png" alt="" />edit</a>
             <a href="/hb/thread<?=$thread->id; ?>/delete=<?=$post->id; ?>" title="delete the above post"><img src="/style/del.png" alt="" />delete</a>
