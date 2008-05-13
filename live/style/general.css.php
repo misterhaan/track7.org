@@ -376,9 +376,7 @@ select:focus {
   border-color: #<?=DARK; ?>
 }
 input.checkbox {
-  float: left;
-  display: block;
-  margin: .7em .7em 0 0;
+  vertical-align: middle;
 }
 
 input[type="submit"] {

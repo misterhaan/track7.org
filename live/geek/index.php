@@ -5,10 +5,10 @@
   $page->Heading('guides', 'guides');
 ?>
       <p>
-        i've been using (and programming) computers for 15 to 20 years now, and
-        by doing so i've managed to learn quite a bit.&nbsp; it also didn't hurt
+        i’ve been using (and programming) computers for 15 to 20 years now, and
+        by doing so i’ve managed to learn quite a bit.&nbsp; it also didn’t hurt
         to take courses in computer architecture.&nbsp; anyway, here you will
-        find some (hopefully useful) tips that i'll write down whenever
+        find some (hopefully useful) tips that i’ll write down whenever
         something seems widely useful enough.&nbsp; along with that, other
         track7 users can submit their own guides.
       </p>
@@ -20,7 +20,7 @@
       <p>
         the disc golf section is inspired by
         <a href="http://www.discgolfstats.com/" title="disc golf course statistics">folfscores.com</a>,
-        which can track scores for you but doesn't do everything i was hoping
+        which can track scores for you but doesn’t do everything i was hoping
         for.&nbsp; beyond just scores, here you can also enter which discs you
         have in your arsenal.&nbsp; you will need a <a href="/user/">user account</a>
         before you can save any information, though anyone can request a disc or
@@ -38,7 +38,7 @@
   $page->Heading('games', 'games');
 ?>
       <p>
-        i've posted a thing or two about some of the games i've played.&nbsp;
+        i’ve posted a thing or two about some of the games i’ve played.&nbsp;
         currently you can look at my <em>darkstone</em> and <em>diablo ii</em>
         characters (or post your own), and read my reviews on fan missions for
         <em>thief:&nbsp; the dark project</em>.
@@ -49,7 +49,7 @@
             <li><a href="rpg/?game=2">characters</a></li>
           </ul></li>
           <li>diablo ii (lord of destruction)<ul>
-            <li><a title="see my characters' progress through the game" href="rpg/?game=4">characters</a></li>
+            <li><a href="rpg/?game=4">characters</a></li>
           </ul></li>
         </ul></li>
         <li>thief:&nbsp; the dark project<ul>
@@ -62,7 +62,7 @@
 ?>
       <p>
         i probably have too many computer parts.&nbsp; the following is a list
-        of the computers i have running and what i'm using them for . . . click
+        of the computers i have running and what i’m using them for . . . click
         on them for detailed specs.
       </p>
       <ul>
