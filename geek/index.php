@@ -19,7 +19,7 @@
 ?>
       <p>
         the disc golf section is inspired by
-        <a href="http://www.folfscores.com/" title="disc golf course statistics">folfscores.com</a>,
+        <a href="http://www.discgolfstats.com/" title="disc golf course statistics">folfscores.com</a>,
         which can track scores for you but doesn't do everything i was hoping
         for.&nbsp; beyond just scores, here you can also enter which discs you
         have in your arsenal.&nbsp; you will need a <a href="/user/">user account</a>
@@ -38,14 +38,19 @@
   $page->Heading('games', 'games');
 ?>
       <p>
-        every now and then i'll start playing a game, and usually that means i
-        end up playing it through to the end.&nbsp; i guess i'll just list some
-        of my favorites here or something--maybe some day i'll do something more
-        interesting.
+        i've posted a thing or two about some of the games i've played.&nbsp;
+        currently you can look at my <em>darkstone</em> and <em>diablo ii</em>
+        characters (or post your own), and read my reviews on fan missions for
+        <em>thief:&nbsp; the dark project</em>.
       </p>
       <ul>
-        <li>diablo ii<ul>
-          <li><a title="see my characters' progress through the game" href="diablo2.php">characters</a></li>
+        <li><a href="rpg/">role-playing games</a><ul>
+          <li>darkstone<ul>
+            <li><a href="rpg/?game=2">characters</a></li>
+          </ul></li>
+          <li>diablo ii (lord of destruction)<ul>
+            <li><a title="see my characters' progress through the game" href="rpg/?game=4">characters</a></li>
+          </ul></li>
         </ul></li>
         <li>thief:&nbsp; the dark project<ul>
           <li><a title="my reviews of fan missions (with download links)" href="thief-tdp.php">fan missions</a></li>

@@ -14,3 +14,4 @@ RedirectPermanent /geek/objects.php http://www.track7.org/geek/guides/objects/
 RedirectPermanent /geek/stats/ http://www.track7.org/geek/hits/
 RedirectPermanent /geek/analogu.html http://www.track7.org/analogu/
 RedirectPermanent /geek/fewrights.php http://www.track7.org/fewrights.php
+RedirectPermanent /geek/diablo2.php http://www.track7.org/geek/rpg/?game=4
