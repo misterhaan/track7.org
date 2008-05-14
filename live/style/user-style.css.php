@@ -32,7 +32,7 @@ ul#colorchoice a img {
   border: 1px solid #<?=MEDIUM; ?>;
   margin: 0 auto 5px;
   width: 200px;
-  height: 144px;
+  height: 114px;
 }
 ul#colorchoice a:hover,
 ul#colorchoice a:hover img {
