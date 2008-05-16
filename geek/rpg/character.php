@@ -64,6 +64,7 @@
         $char = 'insert into rpgchars (uid, name, game, class, level) values (\'' . $user->ID . '\', \'' . addslashes(htmlspecialchars($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', ' . +$_POST['game'] . ', ' . +$_POST['class'] . ', ' . +$_POST['level'] . ')';
         if(false !== $char = $db->Put($char, 'error saving character')) {
           $db->Put('insert into rpghistory (`char`, instant, level) values (\'' . addslashes($char) . '\', ' . time() . ', ' . +$_POST['level'] . ')');
+          $db->Change('update userstats set rpgchars=rpgchars+1 where uid=\'' . $user->ID . '\'');
           header('Location: http://' . $_SERVER['HTTP_HOST'] . '/geek/rpg/character.php?id=' . $char);
           die;
         }

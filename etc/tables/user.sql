@@ -31,6 +31,7 @@ create table userstats (
   posts smallint unsigned not null default 0,
   discs tinyint unsigned not null default 0,
   rounds tinyint unsigned not null default 0,
+  rpgchars tinyint unsigned not null default 0,
   customrank varchar(16) default null,
   rank enum(
     'am radio',
