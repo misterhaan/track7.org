@@ -7,7 +7,6 @@
   // -----------------------------------------------[ display a profile ]-- //
   if(isset($_GET['login'])) {
     require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-    require_once 'auText.php';
 
     $page->Start(htmlentities($_GET['login']) . '\'s profile', 'profile for ' . htmlspecialchars($_GET['login']));
 
@@ -145,7 +144,7 @@
 
 <?
       }
-      $stats = 'select since, lastlogin, signings, rank, posts, comments, discs, rounds, fans from userstats where uid=' . $u->uid;
+      $stats = 'select since, lastlogin, signings, rank, posts, comments, discs, rounds, fans, rpgchars from userstats where uid=' . $u->uid;
       if($stats = $db->GetRecord($stats, 'error looking up statistics for user')) {
         $page->Heading('statistics');
 ?>
@@ -162,6 +161,8 @@
         echo '        <tr><th>discs</th><td>' . $stats->discs . '</td></tr>' . "\n";
       if($stats->rounds > 0)
         echo '        <tr><th>rounds</th><td>' . $stats->rounds . '</td></tr>' . "\n";
+      if($stats->rounds > 0)
+        echo '        <tr><th>characters</th><td>' . $stats->rpgchars . '</td></tr>' . "\n";
 ?>
       </table>
 
@@ -231,11 +232,22 @@
 <?
           }
         }
-        if($stats->discs > 0 || $stats->rounds > 0) {
+        if($stats->discs > 0 || $stats->rounds > 0 || $stats->rpgchars > 0) {
           $page->Heading('more information');
 ?>
       <ul>
+<?
+          if($stats->discs > 0 || $stats->rounds > 0) {
+?>
         <li><a href="/geek/discgolf/players.php?p=<?=$_GET['login']; ?>">disc golf player profile</a></li>
+<?
+          }
+          if($stats->rpgchars > 0) {
+?>
+        <li><a href="/geek/rpg/?player=<?=$_GET['login']; ?>">rpg characters</a></li>
+<?
+          }
+?>
       </ul>
 <?
         }
