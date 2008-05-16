@@ -169,21 +169,38 @@
 <?
         if($user->ID == $u->uid || $user->GodMode) {
           $page->Heading('friends (only visible to you)', 'friends');
-          $friends = 'select u.login from userfriends as f left join users as u on u.uid=f.frienduid where fanuid=\'' . $u->uid . '\' order by login';
-          if($friends = $db->Get($friends, 'error looking up friends', 'you don\'t currently have any <a href="/user/friends.php">friends</a>.&nbsp; visit <a href="/user/list.php">other users\'</a> profiles to add them to your list.')) {
+          $friends = 'select u.login, p.avatar from userfriends as f left join users as u on u.uid=f.frienduid left join userprofiles as p on p.uid=u.uid where fanuid=\'' . $u->uid . '\' order by login';
+          if($friends = $db->Get($friends, 'error looking up friends', 'you don’t currently have any <a href="/user/friends.php">friends</a>.&nbsp; visit <a href="/user/list.php">other users’</a> profiles to add them to your list.')) {
 ?>
-      <table class="text" cellspacing="0">
+<!--      <table class="text" cellspacing="0">
         <thead class="minor"><tr><th>name</th><th>profile</th><th>send</th><th>remove</th></tr></thead>
-        <tbody>
+        <tbody>-->
+      <ul id="friends">
 <?
             while($friend = $friends->NextRecord()) {
+              if($friend->avatar)
+                $friend->avatar = '/user/avatar/' . $friend->login . '.' . $friend->avatar;
+              else
+                $friend->avatar = '/style/noavatar.jpg';
 ?>
-          <tr><td><?=$friend->login; ?></td><td><a href="/user/<?=$friend->login; ?>/">profile</a></td><td><a href="/user/sendmessage.php?to=<?=$friend->login; ?>">send</a></td><td><a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>%23friends">remove</a></td></tr>
+<!--          <tr><td><?=$friend->login; ?></td><td><a href="/user/<?=$friend->login; ?>/">profile</a></td><td><a href="/user/sendmessage.php?to=<?=$friend->login; ?>">send</a></td><td><a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>%23friends">remove</a></td></tr>-->
+        <li><div class="friend">
+          <a class="profile" href="/user/<?=$friend->login; ?>/" title="view <?=$friend->login; ?>’s profile">
+            <img alt="" src="<?=$friend->avatar; ?>" />
+            <?=$friend->login; ?>
+
+          </a>
+          <div class="actions">
+            <a href="/user/sendmessage.php?to=<?=$friend->login; ?>" title="send <?=$friend->login; ?> a message"><img src="/style/pm.png" alt="pm" /></a>
+            <a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=/user/<?=$u->login; ?>/%23friends" title="remove <?=$friend->login; ?> from your friends list"><img src="/style/del.png" alt="remove" /></a>
+          </div>
+        </div></li>
 <?
             }
 ?>
-        </tbody>
-      </table>
+      </ul>
+<!--        </tbody>
+      </table>-->
 <?
           }
         }

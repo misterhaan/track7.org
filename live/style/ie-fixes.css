@@ -26,3 +26,27 @@ ul#sectnav {
 ul#photos li {
   display: inline;
 }
+
+ul#friends li {
+  display: inline;
+  vertical-align: middle;
+}
+ul#friends li div.friend {
+  display: inline;
+  vertical-align: middle;
+  margin-top: 1em;
+  white-space: nowrap;
+}
+div.friend a.profile {
+  vertical-align: middle;
+  display: inline;
+  padding: 5px;
+}
+div.friend a.profile img {
+  vertical-align: middle;
+  display: inline;
+}
+div.friend div {
+  vertical-align: middle;
+  display: inline;
+}
