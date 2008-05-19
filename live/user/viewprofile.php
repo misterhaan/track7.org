@@ -161,7 +161,7 @@
         echo '        <tr><th>discs</th><td>' . $stats->discs . '</td></tr>' . "\n";
       if($stats->rounds > 0)
         echo '        <tr><th>rounds</th><td>' . $stats->rounds . '</td></tr>' . "\n";
-      if($stats->rounds > 0)
+      if($stats->rpgchars > 0)
         echo '        <tr><th>characters</th><td>' . $stats->rpgchars . '</td></tr>' . "\n";
 ?>
       </table>
