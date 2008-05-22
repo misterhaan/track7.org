@@ -38,8 +38,14 @@
                   $tags = makeTagList();
                   $update = 'update hbthreads set title=\'' . addslashes(htmlentities($_POST['title'])) . '\', tags=\'' . $tags . '\' where id=\'' . $thread->id . '\'';
                   $db->Change($update, 'error updating thread');
-                  $newtags = explode(',', $tags);
-                  $oldtags = explode(',', $thread->tags);
+                  if($tags)
+                    $newtags = explode(',', $tags);
+                  else
+                    $newtags = array();
+                  if($thread->tags)
+                    $oldtags = explode(',', $thread->tags);
+                  else
+                    $oldtags = array();
                   // ignore tags that were there before and are still there
                   for($i = count($oldtags) - 1; $i >= 0; $i--)
                     if(in_array($oldtags[$i], $newtags))
@@ -217,7 +223,8 @@
             if(false !== $db->Change($update, 'error linking thread to post')) {
               $update = 'update userstats set posts=posts+1 where uid=\'' . $user->ID . '\'';
               $db->Change($update);
-              $ins = 'insert into taginfo (type, name, count) values (\'threads\', \'' . implode('\', 1), (\'threads\', \'', explode(',', $tags)) . '\', 1) on duplicate key update count=count+1';
+              if($tags)
+                $ins = 'insert into taginfo (type, name, count) values (\'threads\', \'' . implode('\', 1), (\'threads\', \'', explode(',', $tags)) . '\', 1) on duplicate key update count=count+1';
               $db->Put($ins);
               header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread);
               die;
