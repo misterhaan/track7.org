@@ -112,6 +112,7 @@
 
   function AddPost($rss, $post) {
     $post->number = floor($post->number / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE;
+    $post->subject = html_entity_decode($post->subject, ENT_COMPAT, _CHARSET);
     if(strlen($post->subject) > 27)
       $post->subject = substr($post->subject, 0, 25) . '...';
     $link = '/hb/thread' . $post->thread . ($post->number ? '/skip=' . $post->number : '/') . '#p' . $post->id;
