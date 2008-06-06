@@ -37,8 +37,8 @@
         <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet (onboard)</td></tr>
         <tr><th>reader</th><td>rosewill multi card reader</td></tr>
         <tr><th>sata0</th><td>western digital caviar 80 GB wd800jd</td></tr>
-        <tr><th>sata1</th><td>samsung dvd burner</td></tr>
-        <tr><th>operating system</th><td>ubuntu 8.04 hardy heron 64-bit<br />microsoft windows vista 32-bit</td></tr>
+        <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
+        <tr><th>operating system</th><td>ubuntu 8.04 hardy heron 64-bit<br />microsoft windows vista sp1 32-bit</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
