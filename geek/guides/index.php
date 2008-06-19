@@ -47,7 +47,7 @@
     $tags = 'and (g.tags=\'' . $tags . '\' or g.tags like \'' . $tags . ',%\' or g.tags like \'%,' . $tags . '\' or g.tags like \'%,' . $tags . ',%\') ';
   }
   $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.pages, g.author, u.login, r.rating, r.votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
-  if($guides = $db->Get($guides, 20, 0, '', '', 'error getting list of guides', 'no guides found')) {
+  if($guides = $db->GetSplit($guides, 20, 0, '', '', 'error getting list of guides', 'no guides found')) {
     $page->Heading($sort . ' guides');
 ?>
       <div id="sortoptions">
@@ -82,4 +82,20 @@
     $page->SplitLinks();
   }
   $page->End();
+
+  /**
+   * Turn a list of tags into HTML links.
+   *
+   * @param string $tags comma-separated list of tags
+   * @return HTML tag links
+   */
+  function TagLinks($tags) {
+    if(!$tags)
+      return '<em>(none)</em>';
+    $tags = explode(',', $tags);
+    foreach($tags as $tag)
+      if($tag)
+        $links[] = '<a href="tag=' . $tag . '">' . $tag . '</a>';
+    return implode(', ', $links);
+  }
 ?>
