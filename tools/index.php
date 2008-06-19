@@ -2,11 +2,17 @@
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   $page->Start('track7 administrative tools');
 ?>
+      <h2>manage code</h2>
+      <ul>
+        <li><a href="svn-update.php">update track7 from svn</a></li>
+        <li><a href="svn-update-lib.php">update auLib from svn</a></li>
+      </ul>
+
       <h2>manage data</h2>
       <ul>
+        <li><a href="guidereview.php">guide review</a></li>
         <li><a href="votes.php">votes</a></li>
         <li><a href="unknownreferrers.php">unknown referrers</a></li>
-        <li><a href="guidereview.php">guide review</a></li>
         <li><a href="taginfo.php">tag info</a></li>
         <li><a href="links.php">related links</a></li>
 <?
