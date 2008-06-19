@@ -1,12 +1,6 @@
 RewriteEngine on
 RewriteOptions inherit
 RewriteRule ^guides/contribute$ guide-add.php
-RewriteRule ^guides/tag=([^/]+)$ guide.php?tag=$1
-RewriteRule ^guides/([^/]+)/all$ guide.php?guide=$1&page=all
-RewriteRule ^guides/([^/]+)/page([1-9])$ guide.php?guide=$1&page=$2
-RewriteRule ^guides/([^/]+)/$ guide.php?guide=$1
-RewriteRule ^guides/sort=(.+)$ guide.php?sort=$1
-RewriteRule ^guides/$ guide.php
 
 RedirectPermanent /geek/dualxp98.php http://www.track7.org/geek/guides/dualxp98/
 RedirectPermanent /geek/installxp.php http://www.track7.org/geek/guides/installxp/
