@@ -28,12 +28,12 @@
       <p>this guide has been rated <?=+$guide->rating; ?> after <?=+$guide->votes; ?> votes.</p>
 <?
       // DO:  enable voting for all-pages view
-      /*$rating = 'select v.vote from votes as v, ratings as r where r.id=v.ratingid and r.type=\'guide\' and r.selector=\'' . $_GET['guide'] . '\' and (v.uid=' . $user->ID . ' or v.ip=\'' . $_SERVER['REMOTE_ADDR'] . '\') order by v.ip';
-      $rating = $db->GetValue($rating, 'error checking to see if you have already voted', '');
-      $vote = new auForm('vote');
-      $vote->AddSelect('vote', 'rating', 'choose your rating of this guide', array(-3 => '-3 (worst)', -2 => '-2', -1 => '-1', 0 => '0 (average)', 1 => '1', 2 => '2', 3 => '3 (best)'), +$rating);
-      $vote->AddButtons('vote', 'cast your vote for this guide');
-      $vote->WriteHTML($user->Valid);*/
+      //$rating = 'select v.vote from votes as v, ratings as r where r.id=v.ratingid and r.type=\'guide\' and r.selector=\'' . $_GET['guide'] . '\' and (v.uid=' . $user->ID . ' or v.ip=\'' . $_SERVER['REMOTE_ADDR'] . '\') order by v.ip';
+      //$rating = $db->GetValue($rating, 'error checking to see if you have already voted', '');
+      //$vote = new auForm('vote');
+      //$vote->AddSelect('vote', 'rating', 'choose your rating of this guide', array(-3 => '-3 (worst)', -2 => '-2', -1 => '-1', 0 => '0 (average)', 1 => '1', 2 => '2', 3 => '3 (best)'), +$rating);
+      //$vote->AddButtons('vote', 'cast your vote for this guide');
+      //$vote->WriteHTML($user->Valid);
 
       $page->End();
       die;
@@ -104,6 +104,7 @@
       $vote->AddSelect('vote', 'rating', 'choose your rating of this guide', array(-3 => '-3 (worst)', -2 => '-2', -1 => '-1', 0 => '0 (average)', 1 => '1', 2 => '2', 3 => '3 (best)'), +$rating);
       $vote->AddButtons('vote', 'cast your vote for this guide');
       $vote->WriteHTML($user->Valid);*/
+      $page->End();
     } else {
       $page->Start('guides');
       $page->End();

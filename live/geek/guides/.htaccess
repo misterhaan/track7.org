@@ -3,6 +3,6 @@ RewriteOptions inherit
 RewriteRule ^contribute$ edit.php
 RewriteRule ^tag=([^/]+)$ ?tag=$1
 RewriteRule ^sort=(.+)$ ?sort=$1
-RewriteRule ^([^/]+)/all$ guide.php?guide=$1&page=all
-RewriteRule ^([^/]+)/page([1-9])$ guide.php?guide=$1&page=$2
-RewriteRule ^([^/]+)/$ guide.php?guide=$1
+RewriteRule ^([^/]+)/all$ view.php?guide=$1&page=all
+RewriteRule ^([^/]+)/page([1-9])$ view.php?guide=$1&page=$2
+RewriteRule ^([^/]+)/$ view.php?guide=$1
