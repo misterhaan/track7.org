@@ -27,7 +27,7 @@
           // important:  this should only be done for new guides!
           $update = 'update guides set status=\'pending\' where id=\'' . $guide->id . '\'';
           if(false !== $db->Change($update, 'error submitting guide for approval')) {
-            header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SEVRER['PHP_SELF']) . '/' . $guide->id);
+            header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/');
             die;
           }
         }
@@ -41,13 +41,13 @@
             $content = $_POST['format'] == 't7code' ? auText::BB2HTML($_POST['content']) :  $_POST['content'];
             $ins = 'replace into guidepages (guideid, pagenum, version, entrytype, heading, content) values (\'' . $guide->id . '\', \'' . +$_GET['page'] . '\', -1, \'' . addslashes($_POST['format']) . '\', \'' . addslashes(htmlspecialchars($_POST['heading'])) . '\', \'' . addslashes($content) . '\')';
             if(false !== $db->Put($ins, 'error saving page')) {
-              if($guide->pages >= +$_GET['page'])
+              if(+$_GET['page'] >= $guide->pages)
                 if($guide->status == 'new')
-                  header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SEVRER['PHP_SELF']) . '/contribute?id=' . $guide->id . '&page=end');
+                  header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/contribute?id=' . $guide->id . '&page=end');
                 else
-                  header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SEVRER['PHP_SELF']) . '/' . $guide->id);
+                  header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/');
               else
-                header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SEVRER['PHP_SELF']) . '/contribute?id=' . $guides>id . '&page=' . (1 + $_GET['page']));
+                header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/contribute?id=' . $guide->id . '&page=' . (1 + $_GET['page']));
               die;
             }
           }
@@ -64,7 +64,7 @@
       $id = date('Ymd') . 'uid' . $user->ID;
       $ins = 'insert into guides (id, tags, title, description, dateupdated, pages, author) values (\'' . $id . '\', \'\', \'' . addslashes(htmlspecialchars($_POST['title'])) . '\', \'' . addslashes(htmlspecialchars($_POST['description'])) . '\', \'' . time() . '\', \'' . +$_POST['pages'] . '\', \'' . $user->ID . '\')';
       if(false !== $db->Put($ins, 'error saving guide information')) {
-        header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SEVRER['PHP_SELF']) . '/contribute?id=' . $id . '&page=1');
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/contribute?id=' . $id . '&page=1');
         die;
       }
     }
