@@ -1,6 +1,5 @@
 RewriteEngine on
 RewriteOptions inherit
-RewriteRule ^guides/contribute$ guide-add.php
 
 RedirectPermanent /geek/dualxp98.php http://www.track7.org/geek/guides/dualxp98/
 RedirectPermanent /geek/installxp.php http://www.track7.org/geek/guides/installxp/
