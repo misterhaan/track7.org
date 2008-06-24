@@ -1,10 +1,11 @@
 create table guides (
   id varchar(32) not null primary key,
   status enum(
+    'new',
     'pending',
     'approved',
     'rejected'
-  ) not null default 'pending', index(status),
+  ) not null default 'new', index(status),
   tags varchar(255) not null,
   title varchar(128) not null,
   description text not null,
