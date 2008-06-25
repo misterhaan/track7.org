@@ -8,17 +8,18 @@
         <tr class="first"><th>name</th><td>hecubus</td></tr>
         <tr><th>class</th><td>workstation</td></tr>
         <tr><th>purpose</th><td>file / ftp / http server / dvr</td></tr>
-        <tr><th>mainboard</th><td><!-- gigabyte ga-945gzm-s2 -->gigabyte ga-6vxe7+</td></tr>
-        <tr><th>processor</th><td><!-- intel pentium d 2.66 GHz -->intel pentium iii 933 MHz</td></tr>
-        <tr><th>ram</th><td><!-- g.skill 1 GB pc2 5300 ddr2 sdram -->256 MB pc133 sdram<br />128 MB pc133 sdram</td></tr>
-        <tr><th>video</th><td>matrox mystique 220 pci (4 MB)</td></tr>
+        <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2<!-- gigabyte ga-6vxe7+ --></td></tr>
+        <tr><th>processor</th><td>intel pentium d 2.66 GHz<!-- intel pentium iii 933 MHz --></td></tr>
+        <tr><th>ram</th><td>g.skill 1 GB pc2 5300 ddr2 sdram<!-- 256 MB pc133 sdram<br />128 MB pc133 sdram --></td></tr>
+        <tr><th>video</th><td>intel gma950 (onboard)</td></tr>
+        <tr><th>audio</th><td>realtek alc883 (onboard, disabled)</td></tr>
         <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
-        <tr><th>network</th><td>belkin pci 10/100 ethernet</td></tr>
-        <tr><th>ide0</th><td>maxtor 60 GB</td></tr>
-        <tr><th>ide1</th><td>generic dvd rom</td></tr>
-        <tr><th>ide2</th><td>western digital caviar 80 GB wd800bb</td></tr>
-        <tr><th>ide3</th><td>western digital caviar 250 GB wd2500jb</td></tr>
-        <tr><th>operating system</th><td>fedora 8</td></tr>
+        <tr><th>network</th><td>realtek 8110sc 10/100/1000 ethernet (onboard)</td></tr>
+        <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
+        <tr><th>ide1</th><td>iomega zip100</td></tr>
+        <tr><th>sata2</th><td>western digital caviar 400 GB wd4000aaks</td></tr>
+        <tr><th>sata3</th><td>lite-on dvd-rom dh-16d2s-04</td></tr>
+        <tr><th>operating system</th><td>fedora 9 64-bit</td></tr>
       </table>
 
 <?
