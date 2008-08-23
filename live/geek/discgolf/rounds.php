@@ -270,7 +270,7 @@
       echo '<td>' . $par[$i] . '</td>';
     echo "</tr>\n";
     if(is_array($avg)) {
-      echo '            <tr><th>avgerage</th>';
+      echo '            <tr><th>average</th>';
       for($i = $start; $i < $end; $i++)
         echo '<td>' . number_format($avg[$i], 1) . '</td>';
       echo "</tr>\n";
