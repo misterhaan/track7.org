@@ -83,8 +83,7 @@ RewriteCond %{HTTP_REFERER} ^http://(www\.)?wr18\.com.*$ [NC,OR]
 RewriteCond %{REMOTE_ADDR} ^195\.225\.176\.87$ [OR]
 RewriteCond %{REMOTE_ADDR} ^81\.95\.146\.162$ [OR]
 RewriteCond %{REMOTE_ADDR} ^78\.129\.202\.15$ [OR]
-RewriteCond %{REMOTE_ADDR} ^85\.255\.120\.(74|210)$ [OR]
-RewriteCond %{REMOTE_ADDR} ^92\.48\.122\.3$ [OR]
+RewriteCond %{REMOTE_ADDR} ^85\.255\.120\.210$ [OR]
 # RewriteCond %{REMOTE_ADDR} ^12\.175\.5\.133$ [OR]
 RewriteCond %{REMOTE_ADDR} ^84\.1(10|08)\.[0-9]+\.[0-9]+$ [OR]
 RewriteCond %{HTTP_USER_AGENT} ^Mozilla/4\.0\ \(compatible;\ MSIE\ 6\.0;\ Windows\ NT\ 5\.1$ [NC,OR]
@@ -98,6 +97,15 @@ RewriteCond %{HTTP_USER_AGENT} ^Mozilla/3\.0\ (compatible;\ Indy\ Library)$ [NC,
 RewriteCond %{HTTP_USER_AGENT} ^SurveyBot/[0-9]\.[0-9]\ (Whois\ Source)$ [NC,OR]
 RewriteCond %{HTTP_USER_AGENT} ^[a-z]+(\ [a-z]+)*(\ ([0-9]+\.)*[0-9]+)?$ [NC]
 RewriteRule !(403\.php|\.css|\.png|\.ico) - [F,L]
+
+RewriteCond %{HTTP_REFERER} ^http://([^\.]+\.)?myspace\.com/.*$ [NC]
+RewriteRule \.(png|jpe?g) http://www.track7.org/hotlink.png [L]
+
+order allow,deny
+deny from 92.48.122.3
+deny from 193.37.152.242
+deny from 85.255.120.74
+allow from all
 
 # AddHandler application/x-httpd-php .php
 AddType application/x-xpinstall .xpi

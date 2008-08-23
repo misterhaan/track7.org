@@ -17,7 +17,7 @@ create table guides (
   dateadded int,
   dateupdated int,
   pages tinyint unsigned not null default 0,
-  author tinyint unsigned
+  author smallint unsigned
 )
 
 create table guidepages (

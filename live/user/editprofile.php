@@ -145,11 +145,11 @@
           $prof->AddHTML('current avatar', '<img src="/user/avatar/' . $u->login . '.' . $profile->avatar . '" class="avatar" alt="" /> to keep your current avatar, leave the new avatar field blank.&nbsp; to change your avatar, select a jpeg or png image that does not exceed ' . AVATAR_SIZE . ' x ' . AVATAR_SIZE . ' pixels.');
         else
           $prof->AddHTML('current avatar', 'you do not currently have an avatar.&nbsp; to add an avatar, select a jpeg or png image that does not exceed ' . AVATAR_SIZE . ' x ' . AVATAR_SIZE . ' pixels.');
-        $prof->AddField('avatar', 'new avatar', 'upload an avatar to display next to your forum posts', false, '', _AU_FORM_FIELD_FILE, 60);
+        $prof->AddField('avatar', 'new avatar', 'upload an avatar to display next to your forum posts', false, '', _AU_FORM_FIELD_FILE, 38);
         $prof->AddField('signature', 'signature', 'enter a signature to display below all of your forum posts', false, auText::HTML2BB($profile->signature), _AU_FORM_FIELD_BBCODE);
         $prof->AddField('location', 'location', 'enter your location', false, $profile->location, _AU_FORM_FIELD_NORMAL, 20, 32);
         $prof->AddField('geekcode', 'geek code', 'enter your geek code (www.geekcode.com)', false, auText::br2EOL($profile->geekcode), _AU_FORM_FIELD_MULTILINE, 60, 250);
-        $prof->AddField('hackerkey', 'hacker key', 'enter your hacker key (www.hackerkey.com)', false, $profile->hackerkey, _AU_FORM_FIELD_NORMAL, 60, 250);
+        $prof->AddField('hackerkey', 'hacker key', 'enter your hacker key (www.hackerkey.com)', false, $profile->hackerkey, _AU_FORM_FIELD_NORMAL, 48, 250);
         break;
       case 'display':
         $prof->AddField('time', 'current time', 'enter the current time so track7 can display dates and times in your time zone', true, $user->tzdate('g:i a'), _AU_FORM_FIELD_NORMAL, 8, 20);
