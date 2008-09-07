@@ -60,13 +60,13 @@
     $q = '?';
     if($_GET['tag']) {
       $url .= $_GET['tag'];
-      $q = '&amp;';
+      $q = '&';
     }
     if($_GET['sort']) {
       $url .= $q . 'sort=' . $_GET['sort'];
-      $q = '&amp;';
+      $q = '&';
     }
-    $page->SplitLinks($q, $url);
+    $page->SplitLinks(htmlspecialchars($q), $url);
   }
   $page->End();
 
