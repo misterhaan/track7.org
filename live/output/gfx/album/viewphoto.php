@@ -19,6 +19,7 @@
       </div>
       <p><?=$photo->description; ?></p>
 <?
+    ShowTagPrevNext($db, $photo->tags, $photo->added, $url);
     $page->SetFlag(_FLAG_PAGES_COMMENTS);
     $page->End();
     die;
@@ -31,5 +32,28 @@
       $links[] = '<a href="' . $url . '/tag/' . $tag . '">' . $tag . '</a>';
     }
     return implode(', ', $links);
+  }
+  
+  function ShowTagPrevNext(&$db, $tags, $added, $url) {
+    $tags = explode(',', $tags);
+    if(count($tags)) {
+      echo "\n" . '      <table id="tagnav" class="columns" cellspacing="0">' . "\n";
+      foreach($tags as $tag) {
+        echo '        <tr><th>' . $tag . '</th><td>';
+        $prev = 'select id from photos where added<' . $added . ' and (tags=\'' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . '\' or tags like \'%,' . $tag . ',%\') order by added desc';
+        if(false !== $prev = $db->GetValue($prev, 'error looking up previous photo for ' . $tag, ''))
+          echo '<a title="view the previous photo tagged with ' . $tag . '" href="' . $url . '/photo/' . $prev . '">previous</a>';
+        else
+          echo 'previous';
+        echo '</td><td><a title="view all photos tagged with ' . $tag . '" href="' . $url . '/tag/' . $tag . '">all</a></td><td>';
+        $next = 'select id from photos where added>' . $added . ' and (tags=\'' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . '\' or tags like \'%,' . $tag . ',%\') order by added';
+        if(false !== $next = $db->GetValue($next, 'error looking up next photo tagged ' . $tag, ''))
+          echo '<a title="view the next photo tagged with ' . $tag . '" href="' . $url . '/photo/' . $next . '">next</a>';
+        else
+          echo 'next';
+        echo "</td></tr>\n";
+      }
+      echo "      </table>\n";
+    }
   }
 ?>
