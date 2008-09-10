@@ -3,8 +3,9 @@
   if(!$user->GodMode)
     $page->Show404();
   $page->Start('auLib update from svn');
+  exec('svn update ' . dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/', $output)
 ?>
-      <samp><?=htmlspecialchars(exec('svn update ' . dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/')); ?></samp>
+      <samp><?=auText::EOL2br(implode("\n", $output)); ?></samp>
 <?
   $page->End();
 ?>

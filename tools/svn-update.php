@@ -8,8 +8,9 @@
     $path .= '/' . $_GET['path'];
   if(isset($_GET['update'])) {
     $page->Heading('updating track.org/' . htmlspecialchars($_GET['path']));
+    exec('svn update ' . $path, $output);
 ?>
-      <samp><?=htmlspecialchars(exec('svn update ' . $path)); ?></samp>
+      <samp><?=auText::EOL2br(implode("\n", $output)); ?></samp>
 <?
   }
   $page->Heading('select directory / file to update');
