@@ -19,7 +19,7 @@
   }
 
   if(isset($_GET['id'])) {
-    $guide = 'select id, status, title, description, pages, tags, author from guides where id=\'' . addslashes($_GET['id']) . '\'' . ($user->GodMode ? '' : ' and author=\'' . $user->ID . '\'');
+    $guide = 'select id, skill, status, title, description, pages, tags, author from guides where id=\'' . addslashes($_GET['id']) . '\'' . ($user->GodMode ? '' : ' and author=\'' . $user->ID . '\'');
     if($guide = $db->GetRecord($guide, 'error looking up guide information', 'guide not found or you are not the author')) {
       if($_GET['page'] == 'end') {
         $submitform = GetSubmitForm($guide->id);
