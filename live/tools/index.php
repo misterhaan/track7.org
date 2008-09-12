@@ -10,7 +10,6 @@
 
       <h2>manage data</h2>
       <ul>
-        <li><a href="guidereview.php">guide review</a></li>
         <li><a href="votes.php">votes</a></li>
         <li><a href="unknownreferrers.php">unknown referrers</a></li>
         <li><a href="taginfo.php">tag info</a></li>

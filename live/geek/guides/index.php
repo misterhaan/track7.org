@@ -37,21 +37,75 @@
       $sort = 'highest rated';
       $guides = 'r.rating';
       break;
-    default:
+    case 'added':
       $sort = 'newest';
       $guides = 'g.dateadded';
+    default:
+      $sort = 'last updated';
+      $guides = 'g.dateupdated';
       break;
   }
   if($tag) {
     $tags = addslashes($_GET['tag']);
     $tags = 'and (g.tags=\'' . $tags . '\' or g.tags like \'' . $tags . ',%\' or g.tags like \'%,' . $tags . '\' or g.tags like \'%,' . $tags . ',%\') ';
+  } elseif($user->GodMode) {
+    $pendguides = 'select g.id, g.title, g.description, g.status, g.pages, u.login from guides as g left join users as u on u.uid=g.author where status=\'new\' or status=\'pending\'';
+    if($pendguides = $db->Get($pendguides, 'error checking for pending guides', '')) {
+      $page->Heading('pending guides');
+?>
+      <dl class="guides">
+<?
+      while($guide = $pendguides->NextRecord()) {
+?>
+        <dt><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
+        <dd>
+          <div class="guideinfo">
+            <span>status:&nbsp; <?=$guide->status; ?></span>
+            <span>author:&nbsp; <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></span>
+            <span>pages:&nbsp; <?=$guide->pages; ?></span>
+          </div>
+          <?=$guide->description; ?>
+
+        </dd>
+<?
+      }
+?>
+      </dl>
+<?
+    }
+  } elseif($user->Valid) {
+    $userguides = 'select id, title, description, status, pages from guides where author=\'' . $user->ID . '\' and (status=\'new\' or status=\'pending\')';
+    if($userguides = $db->Get($userguides, 'error checking for your pending guides', '')) {
+      $page->Heading($user->Name . '’s pending guides');
+?>
+      <dl class="guides">
+<?
+      while($guide = $userguides->NextRecord()) {
+?>
+        <dt><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
+        <dd>
+          <div class="guideinfo">
+            <span>status:&nbsp; <?=$guide->status; ?></span>
+            <span>author:&nbsp; <a href="/user/<?=$user->Name; ?>/"><?=$user->Name; ?></a></span>
+            <span>pages:&nbsp; <?=$guide->pages; ?></span>
+          </div>
+          <?=$guide->description; ?>
+
+        </dd>
+<?
+      }
+?>
+      </dl>
+<?
+    }
   }
-  $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.pages, g.author, u.login, r.rating, r.votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
+  $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.dateupdated, g.pages, g.author, u.login, r.rating, r.votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
   if($guides = $db->GetSplit($guides, 20, 0, '', '', 'error getting list of guides', 'no guides found')) {
     $page->Heading($sort . ' guides');
 ?>
       <div id="sortoptions">
         sort guides by:&nbsp;
+        <?=$sort == 'last updated' ? 'last updated' : '<a href="/geek/guides/">last updated</a>'; ?>  |
         <?=$sort == 'newest' ? 'newest' : '<a href="/geek/guides/">newest</a>'; ?> |
         <?=$sort == 'highest rated' ? 'highest rated' : '<a href="sort=rating">highest rated</a>'; ?> |
         <?=$sort == 'most viewed' ? 'most viewed' : '<a href="sort=views">most viewed</a>'; ?>
@@ -61,7 +115,7 @@
 <?
     while($guide = $guides->NextRecord()) {
 ?>
-        <dt><span class="when"><?=auText::smartTime($guide->dateadded, $user); ?></span><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
+        <dt><span class="when"><?=GuideDate($user, $guide->dateadded, $guide->dateupdated); ?></span><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
         <dd>
           <div class="guideinfo">
             <span>author:&nbsp; <?=$guide->author ? '<a href="/user/' . $guide->login . '/">' . $guide->login . '</a>' : ''; ?></span>
@@ -97,5 +151,21 @@
       if($tag)
         $links[] = '<a href="tag=' . $tag . '">' . $tag . '</a>';
     return implode(', ', $links);
+  }
+
+  /**
+   * Show the date added (and updated, if different) for a guide.
+   *
+   * @param auUserTrack7 $user user viewing the page
+   * @param int $added Unix timestamp of when the guide was added to track7
+   * @param int $updated Unix timestamp of when the guide was last updated
+   * @return formatted date the guide was added and possibly updated.
+   */
+  function GuideDate($user, $added, $updated) {
+    $added = strtolower(auText::SmartTime($added, $user));
+    $updated = strtolower(auText::SmartTime($updated, $user));
+    if($added == $updated)
+      return $added;
+    return $added . ' (updated ' . $updated . ')';
   }
 ?>
