@@ -5,7 +5,7 @@
 
   $page->Start('register', 'track7 registration');
 
-  if($reg->Submitted) {
+  if($reg->Submitted()) {
     if($user->RegisterMessage == _AU_USER_REGISTER_SUCCESS) {
 ?>
       <p>
