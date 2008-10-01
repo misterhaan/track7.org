@@ -33,7 +33,7 @@
     $page->Start($_GET['platform'] . ' - hits', $_GET['platform'], 'all requests');
   } elseif(isset($_GET['ip']) && $user->GodMode) {
     $where = 'h.ip=\'' . addslashes($_GET['ip']) . '\'';
-    $page->Start($_GET['ip'] . ' -hits', $_GET['ip'], 'all requests');
+    $page->Start($_GET['ip'] . ' - hits', $_GET['ip'], 'all requests');
   } elseif(is_numeric($_GET['uid']) && $user->GodMode) {
     $where = 'h.uid=' . $_GET['uid'];
     $u = 'select login from users where uid=' . $_GET['uid'];
