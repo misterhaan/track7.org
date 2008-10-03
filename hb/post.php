@@ -86,6 +86,15 @@
           $quote = false;
         $reply = HB::GetPostForm($db, $user, 'reply', null, $thread, $quote);
         if($reply->CheckInput($user->Valid)) {
+          if(!$user->Valid && preg_match('/<a href= http:\/\/[^ ]+\.com >/', $_POST['post']))
+            if($_POST['return'] == 'xml') {
+              $page->Error('your post looks like spam!');
+              $page->SendXmlErrors();
+            } else {
+              header('HTTP/1.0 403 Forbidden');
+              @include $_SERVER['DOCUMENT_ROOT'] . '/403.php';
+              die;
+            }
           if(!$_POST['subject'])
             $_POST['subject'] = $quote ? (strtolower(substr($quote->subject, 0, 3)) != 're:' ? 're: ' . $quote->subject : $quote->subject) : (strtolower(substr($thread->title, 0, 3)) != 're:' ? 're: ' . $thread->title : $thread->title);
           if($reply->Submitted() == 'preview') {
