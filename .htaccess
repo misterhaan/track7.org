@@ -105,6 +105,7 @@ order allow,deny
 deny from 92.48.122.3
 deny from 94.100.29.250
 deny from 94.102.49.34
+deny from 94.102.60.11
 deny from 193.34.144.72
 deny from 193.34.144.83
 deny from 193.37.152.242
