@@ -156,7 +156,7 @@ h2 .when {
 }
 
 code, samp {
-  font-family: bitstream vera sans mono, lucida console, monospace;
+  font-family: dejavu sans mono, bitstream vera sans mono, consolas, lucida console, monospace;
 }
 samp {
   display: block;
@@ -311,7 +311,7 @@ table.data tbody td.clear a img {
 /* ==============================================================[ forms ]== */
 
 form {
-  margin: 1em 2em; 
+  margin: 1em 2em;
 }
 form table.columns {
   margin: 0;
@@ -359,7 +359,7 @@ input[type="password"],
 input[type="file"],
 textarea,
 select {
-  font-family: bitstream vera sans, verdana, arial, sans-serif;
+  font-family: dejavu sans, bitstream vera sans, corbel, verdana, arial, sans-serif;
   font-size: 1em;
   border: 1px solid #<?=DARKMEDGREY; ?>;
   color: #<?=TEXT; ?>;
@@ -541,7 +541,7 @@ div.tagcloud a.tagtons {
 /* ==============================================================[ layout ]== */
 
 html {
-  font-family: bitstream vera sans, verdana, arial, sans-serif;
+  font-family: dejavu sans, bitstream vera sans, corbel, verdana, arial, sans-serif;
   margin: 0;
   padding: 0;
   background-color: #<?=DARK; ?>;
