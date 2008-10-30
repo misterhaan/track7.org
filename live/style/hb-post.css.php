@@ -10,6 +10,7 @@
 form td div {
   display: inline;
   padding-right: 1.25em;
+  white-space: nowrap;
 }
 td div input,
 td div label {

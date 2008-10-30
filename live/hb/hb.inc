@@ -8,7 +8,7 @@
     function TagLinks($tags) {
       if(strlen($tags)) {
       	foreach(explode(',', $tags) as $tag)
-      	  $ret[] = '<a href="/hb/?tag=' . $tag . '" title="view threads tagged with &ldquo;' . $tag . '&rdquo;">' . $tag . '</a>';
+      	  $ret[] = '<a href="/hb/?tag=' . str_replace('#', '%23', $tag) . '" title="view threads tagged with &ldquo;' . $tag . '&rdquo;">' . $tag . '</a>';
       	return implode(', ', $ret);
       } else
         return '<em>(none)</em>';
@@ -43,7 +43,7 @@
       $f->AddButtons(array('preview', $user->Valid ? ($post ? 'edit' : 'post') . ' as ' . $user->Name : 'post anonymously'), array('preview your message before actually posting it', 'add your message'));
       return $f;
     }
-  
+
     function AddRe($subject) {
       if(substr(strtolower($subject), 0, 4) == 're: ')
         return $subject;
