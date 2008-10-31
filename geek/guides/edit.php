@@ -12,7 +12,7 @@
         have an account, you will need to <a href="/user/login.php">log in</a>
         — if you do not have an account you will need to <a href="/user/register.php">register</a>.
       </p>
-      
+
 <?
     $page->End();
     die;
@@ -90,7 +90,7 @@
             $oldtags = explode(',', $guide->tags);
             for($i = count($oldtags) - 1; $i >= 0; $i--)
               if(in_array($oldtags[$i], $newtags))
-                unset($oldtags[$i], $newtags[array_search($oldtags[$i], $newtags)]);
+                unset($newtags[array_search($oldtags[$i], $newtags)], $oldtags[$i]);
             if(count($oldtags))  // tags were removed
               $db->Change('update taginfo set count=count-1 where type=\'guides\' and (name=\'' . implode('\' or name=\'', $oldtags) . '\')');
             if(count($newtags))  // tags were added
@@ -194,7 +194,7 @@
     $f->Add(new auFormButtons('save', 'save guide information'));
     return $f;
   }
-  
+
   /**
    * Gets the edit page form.
    *
