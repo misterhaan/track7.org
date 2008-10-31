@@ -49,7 +49,7 @@
                   // ignore tags that were there before and are still there
                   for($i = count($oldtags) - 1; $i >= 0; $i--)
                     if(in_array($oldtags[$i], $newtags))
-                      unset($oldtags[$i], $newtags[array_search($oldtags[$i], $newtags)]);
+                      unset($newtags[array_search($oldtags[$i], $newtags)], $oldtags[$i]);
                   if(count($oldtags)) {  // tags were removed
                     $update = 'update taginfo set count=count-1 where type=\'threads\' and (name=\'' . implode('\' or name=\'', $oldtags) . '\')';
                     $db->Change($update);
@@ -254,7 +254,7 @@
   $page->Start('add / edit post');
   $page->End();
   die;
-  
+
   function makeTagList() {
     if($_POST['taglist'])
       return $_POST['taglist'];
@@ -262,5 +262,5 @@
       if(substr($name, 0, 5) == 'tags_')
         $tags[] = $val;
     return implode(',', $tags);
-  } 
+  }
 ?>
