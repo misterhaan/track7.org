@@ -109,6 +109,7 @@ deny from 94.102.60.11
 deny from 193.34.144.72
 deny from 193.34.144.83
 deny from 193.37.152.242
+deny from 195.190.13.242
 deny from 85.255.120.74
 deny from 85.12.25.66
 allow from all
