@@ -1,16 +1,19 @@
 <?
 /*----------------------------------------------------------------------------*\
- | creates an image which is a chart of monthly hits.  used by the yearly     |
+ | creates an image which is a chart of daily hits.  used by the monthly      |
  | stats page.                                                                |
  |                                                                            |
+ | 2008.11.11:                                                                |
+ |  - fixed maxy to include oldest day                                        |
  | 2007.01.23:                                                                |
  |  - changed to new layout classes                                           |
  | 2006.04.21:                                                                |
- |  - changed to highlight current year                                       |
  |  - changed to new hits tables                                              |
  |  - increased default width to 450 (from 400)                               |
  | 2005.06.23:                                                                |
  |  - changed to new layout classes                                           |
+ |  - increased default width to 400 (from 275)                               |
+ |  - don't do transparent bars, set bar color from style in querystring      |
  | 2004.06.25:                                                                |
  |  - added comments                                                          |
  |                                                                            |
@@ -27,9 +30,9 @@
   // default height is 250 pixels
   if(!isset($_GET['h']))
     $_GET['h'] = 250;
-  // default / max number of months is the number of available pixels
-  if(!isset($_GET['m']) || $_GET['m'] + 2 > $_GET['w'])
-    $_GET['m'] = $_GET['w'] - 2;
+  // default / max number of days is the number of available pixels
+  if(!isset($_GET['d']) || $_GET['d'] + 2 > $_GET['w'])
+    $_GET['d'] = $_GET['w'] - 2;
 
   $png = imageCreate($_GET['w'], $_GET['h']);
 
@@ -54,42 +57,44 @@
   imageFilledRectangle($png, 0, 0, $_GET['w'] - 1, $_GET['h'] - 1, $white);
   imageRectangle($png, 0, 0, $_GET['w'] - 1, $_GET['h'] - 16, $grey);
 
-  $stats = 'select date as month from hitcounts where date like \'%-%\' and not (date like \'%-%-%\') order by date desc';
-  $stats = $db->GetLimit($stats, 0, $_GET['m']);
+  if(isset($_GET['month'])) {
+    $where = date('Y-m', strtotime($_GET['month'] . '-01') + 2764800);  // 2764800 seconds == 32 days
+    $where = ' where `date`<\'' . $where . '-31\'';
+  }
+  $stats = 'select `date` from hitcounts' . $where . ' and date like \'%-%-%\' order by `date` desc';
+  $stats = $db->GetLimit($stats, 0, $_GET['d']);
   if($stats->IsError())
-    imageString($png, 2, 3, 3, 'error reading month statistics', $grey);
+    imageString($png, 2, 3, 3, 'error reading day statistics', $grey);
   else {
-    $months = $stats->NumRecords();
+    $days = $stats->NumRecords();
 
-    // write the first and last month on the graph
-    $month = $stats->NextRecord();
-    imageString($png, 2, $_GET['w'] - 42, $_GET['h'] - 15, $month->month, $grey);
-    while($nextmonth = $stats->NextRecord())
-      $month = $nextmonth;
-    imageString($png, 2, 1, $_GET['h'] - 15, $month->month, $grey);
+    // write the first and last day on the graph
+    $day = $stats->NextRecord();
+    imageString($png, 2, $_GET['w'] - 60, $_GET['h'] - 15, $day->date, $grey);
+    while($nextday = $stats->NextRecord())
+      $day = $nextday;
+    imageString($png, 2, 1, $_GET['h'] - 15, $day->date, $grey);
 
-    // get highest number of average hits
-    $maxy = 'select max(`unique`/days) as hits from hitcounts where date like \'%-%\' and not (date like \'%-%-%\') and date>\'' . $month->month . '\'';
+    // get highest number of hits
+    $maxy = 'select max(`unique`) as maxhits from hitcounts where date like \'%-%-%\' and `date`>=\'' . $day->date . '\'';
     $maxy = $db->Get($maxy);
     if($maxy->IsError())
       imageString($png, 2, 3, 3, 'error trying to find max number of hits', $grey);
     else {
       $maxy = $maxy->NextRecord();
-      $maxy = $maxy->hits;
-      if($maxy == 0)
-        $maxy = 1;
+      $maxy = $maxy->maxhits;
 
       $h = $_GET['h'] - 17;
-      $w = ($_GET['w'] - 2) / $months;
+      $w = ($_GET['w'] - 2) / $days;
       $l = $_GET['w'] - 1 - $w;
 
-      $stats = 'select date, (`unique`/days) as hits from hitcounts where date like \'%-%\' and not (date like \'%-%-%\') order by date desc';
-      $stats = $db->GetLimit($stats, 0, $_GET['m']);
+      $stats = 'select `date`, `unique` as uhits from hitcounts' . $where . ' and date like \'%-%-%\' order by `date` desc';
+      $stats = $db->GetLimit($stats, 0, $_GET['d']);
       if($stats->IsError())
-        imageString($png, 2, 3, 3, 'error reading month statistics', $grey);
+        imageString($png, 2, 3, 3, 'error reading day statistics', $grey);
       else {
-        while($month = $stats->NextRecord()) {
-          imageFilledRectangle($png, $l, 1 + $h * (1 - $month->hits / $maxy), $l + $w - 1, $h, substr($month->date, 0, 4) == $_GET['year'] ? $bars : $greybars);
+        while($day = $stats->NextRecord()) {
+          imageFilledRectangle($png, $l, 1 + $h * (1 - $day->uhits / $maxy), $l + $w - 1, $h, substr($day->date, 0, 7) == $_GET['month'] ? $bars : $greybars);
           $l -= $w;
         }
       }
@@ -104,6 +109,6 @@
   header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastmod) . ' GMT');
   header('Content-type: image/png');
   header('Cache-Control: public');  // allow caching
-  imageInterlace($png, 1);
+  imageInterlace($png,1);
   imagePNG($png);
 ?>

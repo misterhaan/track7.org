@@ -62,7 +62,7 @@
         <li><table class="columns" cellspacing="0">
           <tr class="firstchild"><th>time</th><td><?=$user->tzdate('Y-m-d g:i:s a', $hit->instant); ?></td></tr>
           <tr><th>ip</th><td><?=$hit->ip; ?><?=$hit->uid ? ' (' . $hit->login . ')' : ''; ?></td></tr>
-          <tr><th>request</th><td><?=$hit->request; ?> (<?=$hit->status; ?>)</td></tr>
+          <tr><th>request</th><td><?=$hit->request . ($hit->status == 200 ? '' : ' (' . $hit->status . ')'); ?></td></tr>
           <tr><th>referrer</th><td><?=$hit->referrer ? '<a href="' . str_replace('%', '%25', $hit->referrer) . '">' . $hit->referrer . '</a>' : ''; ?></td></tr>
           <tr><th>useragent</th><td title="<?=$hit->useragent; ?>"><?=$hit->browsername && $hit->browsername != 'default browser' ? $hit->browsername . ' ' . $hit->browserversion . ($hit->platform ? ' on ' . $hit->platform : '') : '(unknown)'; ?></td></tr>
         </table></li>
