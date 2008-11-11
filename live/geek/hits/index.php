@@ -37,6 +37,7 @@
   if($weekly = $db->GetLimit($weekly, 0, 4, 'error reading weekly statistics', '')) {
     $page->Heading('weekly statistics');
 ?>
+      <img class="hitchart" src="graph-weeks.png?k=52&amp;style=<?=$user->Style; ?>" alt="" />
       <table class="data" id="datestats" cellspacing="0">
         <thead><tr><th>week</th><th title="average hits per day">raw</th><th title="average hits per day excluding hits from the same ip within 6 hours">unique</th><th title="average number of pages viewed per visit (raw / unique)">pages</th></tr></thead>
         <tbody>

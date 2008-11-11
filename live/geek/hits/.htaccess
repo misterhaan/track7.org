@@ -1,2 +1,2 @@
-# AddHandler php5-cgi .png
-AddType application/x-httpd-php .png
+RewriteEngine on
+RewriteRule ^(.+)\.png$ $1.png.php

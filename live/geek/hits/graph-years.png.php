@@ -3,6 +3,8 @@
  | creates an image which is a chart of yearly hits.  used by the overall     |
  | stats page.                                                                |
  |                                                                            |
+ | 2008.11.11:                                                                |
+ |  - fixed max height to include oldest year                                 |
  | 2007.01.23:                                                                |
  |  - changed to new layout classes                                           |
  | 2006.04.21:                                                                |
@@ -63,7 +65,7 @@
     imageString($png, 2, 1, $_GET['h'] - 15, $year->date, $grey);
 
     // get highest number of average hits
-    $maxy = 'select max(`unique`/days) as hits from hitcounts where not (date like \'%-%\' or date like \'%-%-%\' or date like \'%w%\') and date>\'' . $year->year . '\'';
+    $maxy = 'select max(`unique`/days) as hits from hitcounts where not (date like \'%-%\' or date like \'%-%-%\' or date like \'%w%\') and date>=\'' . $year->year . '\'';
     $maxy = $db->Get($maxy);
     if($maxy->IsError())
       imageString($png, 2, 3, 3, 'error trying to find max number of hits', $grey);
