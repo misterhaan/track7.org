@@ -3,6 +3,8 @@
  | creates an image which is a chart of weekly hits.  used by the yearly      |
  | stats page.                                                                |
  |                                                                            |
+ | 2008.11.12:                                                                |
+ |  - highlight current year                                                  |
  | 2008.11.11:                                                                |
  |  - copied from graph-months file                                           |
  |                                                                            |
@@ -82,7 +84,7 @@
         imageString($png, 2, 3, 3, 'error reading week statistics', $grey);
       else {
         while($week = $stats->NextRecord()) {
-          imageFilledRectangle($png, $l, 1 + $h * (1 - $week->hits / $maxy), $l + $w - 1, $h, $greybars);
+          imageFilledRectangle($png, $l, 1 + $h * (1 - $week->hits / $maxy), $l + $w - 1, $h, substr($week->date, 0, 4) == $_GET['year'] ? $bars : $greybars);
           $l -= $w;
         }
       }
