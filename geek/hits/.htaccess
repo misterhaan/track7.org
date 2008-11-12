@@ -1,2 +1,3 @@
 RewriteEngine on
+RewriteOptions inherit
 RewriteRule ^(.+)\.png$ $1.png.php
