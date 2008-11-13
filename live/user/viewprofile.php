@@ -49,8 +49,8 @@
       $song = $db->GetRecord($song, 'error looking up last song played', '');
       $profile = 'select avatar, signature, location, geekcode, hackerkey from userprofiles where uid=' . $u->uid;
       $profile = $db->GetRecord($profile, 'error looking up profile information', 'profile information not found');
-        
-      if($profile->signature || $profile->avatar || $song->length || $u->uid == $user->ID) {
+
+      if($profile->signature || $profile->avatar || $profile->location || $profile->geekcode || $profile->hackerkey || $song->length || $u->uid == $user->ID) {
         $page->Heading('profile');
 ?>
       <table id="userprofile" class="columns" cellspacing="0">
@@ -69,7 +69,7 @@
 ?>
         <tr><th>location</th><td><?=$profile->location; ?></td></tr>
 <?
-        } 
+        }
         if($profile->geekcode) {
           $lines = explode('<br />', $profile->geekcode);
           if(strtoupper($lines[count($lines) - 1]) == '------END GEEK CODE BLOCK------')
@@ -85,7 +85,7 @@
 ?>
         <tr><th>hacker key</th><td><?=$profile->hackerkey; ?></td></tr>
 <?
-        } 
+        }
         if($song) {
           $time = $song->length;
           if($time) {
@@ -131,7 +131,7 @@
         if(strlen($contact->website) > 0)
           echo '        <tr><th>website</th><td><a href="' . $contact->website . '" title="visit ' . $_GET['login'] . '\'s website">' . $contact->website . '</a></td></tr>' . "\n";
         if(strlen($contact->jabber) > 0) {
-          echo '        <tr><th>jabber</th><td>' . $contact->jabber . '</td></tr>' . "\n"; 
+          echo '        <tr><th>jabber</th><td>' . $contact->jabber . '</td></tr>' . "\n";
         }
         if(strlen($contact->icq) > 0)
           echo '        <tr><th>icq</th><td><a href="http://web.icq.com/whitepages/message_me?uin=' . $contact->icq . '&amp;action=message" title="contact ' . $_GET['login'] . ' via icq">' . $contact->icq . '</a></td></tr>' . "\n";
