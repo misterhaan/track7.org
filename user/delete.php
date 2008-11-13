@@ -18,7 +18,7 @@
       }
   }
   // show list of users who should probably be deleted
-  $users = 'select u.login from users as u left join usercontact as c on c.uid=u.uid left join userstats as s on s.uid=u.uid where ' . time() . '-s.since>5270400 and s.lastlogin-s.since<30 and s.pageload-s.since<60 and u.flags=0 and u.style=1 and u.tzoffset=0 and c.flags=0 and s.signings=0 and s.comments=0 and s.posts=0 and s.discs=0 and s.rounds=0 and c.website is null and c.jabber is null and c.icq is null and c.aim is null order by s.since';
+  $users = 'select u.login from users as u left join usercontact as c on c.uid=u.uid left join userstats as s on s.uid=u.uid where ' . time() . '-s.since>5270400 and s.lastlogin-s.since<30 and s.pageload-s.since<60 and u.flags=0 and u.style=1 and u.tzoffset=0 and c.flags=0 and s.signings=0 and s.comments=0 and s.posts=0 and s.discs=0 and s.rounds=0 and c.jabber is null and c.icq is null and c.aim is null order by s.since';
   if($users = $db->GetSplit($users, 35, 0, '', '', 'error looking up junk users', 'no junk users found')) {
 ?>
       <ul>
@@ -43,9 +43,9 @@
     $success &= remove($db, $uid, 'userstats');
     return $success;
   }
-  
+
   function remove(&$db, $uid, $table, $field = 'uid') {
-    $success = false !== $db->Change('delete from ' . $table . ' where ' . $field . '=' . $uid, 'error deleting from ' . $table); 
+    $success = false !== $db->Change('delete from ' . $table . ' where ' . $field . '=' . $uid, 'error deleting from ' . $table);
     return $success && (false !== $db->Change('alter table ' . $table . ' order by ' . $field, 'error sorting ' . $table));
   }
 
@@ -64,11 +64,11 @@
     $success &= shift($db, $uid, 'dgcaddy');
     $success &= shift($db, $uid, 'dgplayerstats');
     $success &= shift($db, $uid, 'dgrounds');
-    $success &= shift($db, $uid, 'diablo2chars', 'owner');
+    $success &= shift($db, $uid, 'rpgchars');
     $success &= shift($db, $uid, 'guides', 'author');
     $success &= shift($db, $uid, 'hits');
-    $success &= shift($db, $uid, 'oiposts');
-    $success &= shift($db, $uid, 'oithreads');
+    $success &= shift($db, $uid, 'hbposts');
+    $success &= shift($db, $uid, 'hbthreads');
     $success &= shift($db, $uid, 'votes');
     return $success;
   }
