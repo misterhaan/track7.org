@@ -383,6 +383,7 @@ input[type="submit"] {
   border: 1px solid #<?=TEXT; ?>;
   background-color: #<?=LIGHTGREY; ?>;
   color: #<?=DARK; ?>;
+  font-size: 1em;  /* buttons don't seem to inherit font size without something like this */
   font-weight: bold;
 }
 input[type="submit"]:hover {
@@ -569,14 +570,13 @@ div#body {
 }
 div#content {
   background-color: #ffffff;
-  margin: 0 .5em 0 13.5em;
+  margin: 0 .5em;
   border: 1px solid #<?=DARK; ?>;
   border-top: none;
   padding-bottom: 1.5em;
 }
 div#dynamic {
-  width: 13.5em;
-  float: left;
+  clear: both;
 }
 br.clear {
   clear: both;
@@ -584,8 +584,10 @@ br.clear {
   height: 0;
 }
 div#foot {
+  clear: both;
   font-size: .8em;
-  padding: .3em .75em .5em 17em;
+  padding: 20px .75em .5em;
+  background: url(/style/<?=STYLE; ?>/lightknot.png) repeat-x top center;
 }
 
 
@@ -597,12 +599,68 @@ div#head {
   border-bottom: 1px solid #000000;
 }
 
-div#navhelp,
-a#sitemap {
+div#welcome {
   float: right;
+  height: 100px;
+  font-size: .8em;
+  background-color: #<?=LIGHT; ?>;
+  border-left: 1px solid #000000;
+  overflow: auto;
+}
+div#welcome p {
+  margin: 0 .5em;
+  line-height: 18px;
+  text-align: center;
+}
+div#welcome p.welcomeguest {
+  width: 10em;
+  margin: .75em auto;
+  padding-left: 1em;
+  white-space: normal;
+  line-height: 1.3em;
+  text-align: left;
+}
+div#welcome div.avatar {
+  text-align: center;
+}
+div#welcome div.avatar img {
+  line-height: 64px;
+  vertical-align: middle;
+}
+
+form#loginform {
+  margin: 0 .5em .5em;
+  padding-top: .5em;
+}
+form#loginform fieldset {
+  padding: 5px;
+  margin: 0;
+}
+form#loginform label {
+  vertical-align: middle;
+  text-align: right;
   display: block;
-  margin-top: .4em;
-	margin-right: 1em;
+}
+form#loginform label#loginremember {
+  display: inline;
+  margin-right: .5em;
+}
+form#loginform input {
+  vertical-align: middle;
+}
+form#loginform input.field {
+  width: 7em;
+  padding: 1px 0;
+}
+form#resetpassform {
+  margin: .5em;
+  text-align: center;
+}
+
+div#navhelp {
+  float: right;
+  margin-top: .5em;
+	margin-right: 1.5em;
   text-align: right;
   font-size: .8em;
 }
@@ -635,7 +693,7 @@ ul#sectnav {
   padding: 0;
   list-style-type: none;
   display: inline;
-  margin-left: 1.2em;
+  margin: 0;
   position: relative;
   top: -1px;
   vertical-align: bottom;
@@ -725,103 +783,20 @@ div#content ul.elements a {
 
 /* =====================================================[ dynamic content ]== */
 
-div#nearbypages {
-  float: right;
-  border: 1px solid #<?=DARK; ?>;
-  border-top: 0;
-  border-right: 0;
-  background-color: #<?=MEDIUM; ?>;
-  margin-bottom: .7em;
-}
-div#dynamic div#nearbypages ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  font-size: .9em;
-}
-div#nearbypages li {
-  margin: 3px;
-  margin-right: 0;
-}
-div#nearbypages a {
-  display: block;
-  text-align: right;
-  padding: .1em .5em;
-  background-color: #<?=LIGHT; ?>;
-}
-div#nearbypages li.active a {
-  border: 1px solid #<?=DARK; ?>;
-  border-right: none;
-  background-color: #ffffff;
-  color: #000000;
-  position: relative;
-  right: -1px;
-}
-div#dynamic div#nearbypages a:hover {
-  color: #ffffff;
-  background-color: #<?=DARK; ?>;
-  border: none;
-}
-div#dynamic div#nearbypages li.active a:hover {
-  background-color: #<?=LIGHT; ?>;
-  color: #000000;
-  border: 1px solid #<?=DARK; ?>;
-  border-right: none;
-}
-
-div#welcome {
-  clear: both;
-  text-align: center;
-  margin: 0 7px;
-  border: 1px solid #<?=MEDIUM; ?>;
-  background-color: #ffffff;
-}
-div#welcome img.avatar {
-  display: block;
+div#dynamic {
+  width: 62em;
   margin: 0 auto;
 }
-div#dynamic div#welcome p {
-  margin: .5em 0;
-}
-
-form#loginform {
-  margin: 0 5px;
-  text-align: left;
-}
-form#loginform fieldset {
-  padding: 5px;
-  margin: 0;
-  background-color: #<?=LIGHT; ?>;
-}
-form#loginform label,
-form#loginform input {
-  font-size: .8em;
-}
-form#loginform input.field {
-  width: 116px;
-  display: block;
-}
-div#welcome input.button {
-  margin: 5px auto 0;
-  display: block;
-  font-size: .8em;
-}
-form#loginform input#_remember {
-  vertical-align: middle;
-}
-form#loginform label[for="_remember"] {
-/*  position: absolute;
-  margin-top: 4px;*/
-  vertical-align: middle;
-}
-form#resetpassform {
-  margin: 0 5px;
-  text-align: center;
+div.dynsec {
+  float: left;
+  width: 12em;
+  padding: 0 .2em;
 }
 
 div#dynamic h2 {
   margin: 1em 0 .5em;
   font-size: 1em;
+  border: 1px solid #<?=HEADDARK; ?>;
 }
 div#dynamic ul {
   font-size: .8em;
@@ -840,25 +815,25 @@ div#dynamic a:visited:hover {
   border-bottom: 1px dotted #<?=DARK; ?>;
 }
 
-ul#poweredby {
+div#poweredby ul {
   list-style-type: none;
   margin: 1em 0;
   padding: 0;
 }
-ul#poweredby li {
+div#poweredby li {
   width: 80px;
-  margin: .5em auto;
+  margin: .25em auto;
   padding: 0;
   text-align: center;
 }
-ul#poweredby li a {
+div#poweredby li a {
   display: block;
   border: none;
 }
-div#dynamic ul#poweredby a:hover {
+div#dynamic div#poweredby a:hover {
   border: none;
 }
-ul#poweredby img {
+div#poweredby img {
   width: 80px;
   height: 15px;
   display: block;

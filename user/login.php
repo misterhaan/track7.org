@@ -2,25 +2,7 @@
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   require_once 'auForm.php';
 
-  if(isset($_POST['submit']) && $_POST['submit'] == 'login') {
-    $_POST['login'] = trim($_POST['login']);
-    $_POST['password'] = md5(trim(TEXT::unslash($_POST['password'])));
-    $id = 'select uid from users where login=\'' . addslashes($_POST['login']) . '\'';
-    if($id = $db->query($id, 'error looking up user id', 'user \'' . htmlspecialchars($_POST['login']) . '\' not found', true)) {
-      $id = $id->nextrow();
-      $id = $id->uid;
-      $user->loginmsg = array();
-      $user->login($id, $_POST['password'], isset($_POST['remember']));
-      if(!$user->valid && is_array($user->loginmsg))
-        $page->error(implode('<br />', $user->loginmsg));
-      else {
-        if(!isset($_POST['goback']))
-          $_POST['goback'] = '/';
-        header('Location: http://' . $_SERVER['HTTP_HOST'] . $_POST['goback']);
-        die();
-      }
-    }
-  } elseif(isset($_POST['submit']) && $_POST['submit'] == 'reset password') {
+  if(isset($_POST['submit']) && $_POST['submit'] == 'reset password') {
     $page->Start('reset password - login', 'reset password', 'track7 login');
     if(isset($_POST['email']))
       $user->ResetPassword(trim($_POST['login']), trim($_POST['email']));
