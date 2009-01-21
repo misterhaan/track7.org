@@ -3,6 +3,8 @@
  | creates an image which is a chart of daily hits.  used by the monthly      |
  | stats page.                                                                |
  |                                                                            |
+ | 2008.11.14:                                                                |
+ |  - don't put days with 0 hits on the graph                                 |
  | 2008.11.11:                                                                |
  |  - fixed maxy to include oldest day                                        |
  | 2007.01.23:                                                                |
@@ -94,7 +96,8 @@
         imageString($png, 2, 3, 3, 'error reading day statistics', $grey);
       else {
         while($day = $stats->NextRecord()) {
-          imageFilledRectangle($png, $l, 1 + $h * (1 - $day->uhits / $maxy), $l + $w - 1, $h, substr($day->date, 0, 7) == $_GET['month'] ? $bars : $greybars);
+          if($day->uhits > 0)
+            imageFilledRectangle($png, $l, 1 + $h * (1 - $day->uhits / $maxy), $l + $w - 1, $h, substr($day->date, 0, 7) == $_GET['month'] ? $bars : $greybars);
           $l -= $w;
         }
       }

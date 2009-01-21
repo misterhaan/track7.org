@@ -22,11 +22,10 @@ p#randomquote:after {
 }
 div#welcomeabout {
   float: left;
-  width: 345px;
-  padding-bottom: 1em;
+  width: 50%;
 }
 div#features {
-  margin-left: 345px;
+  margin-left: 50%;
 }
 
 div#features h2 {

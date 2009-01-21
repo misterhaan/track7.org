@@ -47,7 +47,7 @@
           question you think i might have an answer for, i’ll do my best to
           help.&nbsp; posting your question in the forums is the best approach
           since other people can also help you, but if you prefer to keep your
-          question private you can also send it to me in a message. 
+          question private you can also send it to me in a message.
         </p>
       </div>
       <div id="features">
@@ -57,7 +57,7 @@
         <dl>
           <dt><a href="/analogu/"><img class="icon" src="/analogu/favicon.png" alt="" />the analog underground</a></dt>
           <dd>
-            download free software with source code. 
+            download free software with source code.
           </dd>
           <dt><a href="/output/pen/"><img class="icon" src="/output/pen/favicon.png" alt="" />pen vs. sword</a></dt>
           <dd>
@@ -121,7 +121,7 @@
     $photo = $photos->NextRecord();
   else
     $photo = false;
-  $guides = 'select id, dateadded, title from guides order by dateadded desc'; 
+  $guides = 'select id, dateadded, title from guides order by dateadded desc';
   if($guides = $db->GetLimit($guides, 0, MAXITEMS, 'error looking up guides and tips', ''))
     $guide = $guides->NextRecord();
   else
@@ -162,13 +162,6 @@
           <a href="comments.php">comments</a>
         ]</p>
       </div>
-
-      <p id="shorturl">
-        thanks to <a href="http://www.shorturl.com/ref/in.cgi?track7.vze.com">shorturl.com</a>’s
-        free service, this site can be accessed through track7.vze.com without
-        popups or any sort of ads, and at no cost to me.&nbsp; you can continue
-        to use track7.vze.com as long as this service remains free.
-      </p>
 <?
   $page->End();
 ?>
