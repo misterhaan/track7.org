@@ -6,7 +6,7 @@
   $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments from comments as c left join users as u on c.uid=u.uid order by instant desc';
   if($comments = $db->GetLimit($comments, 0, 15, '', ''))
     while($comment = $comments->NextRecord()) {
-      $commentpage = explode('/', $comment->page);
+      $commentpage = explode('/', rtrim($comment->page, '/'));
       $commentpage = $commentpage[count($commentpage) - 1];
       $rss->AddItem($comment->comments, '[comment] ' . $commentpage . ' - ' . ($comment->uid ? $comment->login : $comment->name), '/comments.php#c' . $comment->id, $comment->instant, '/comments.php#c' . $comment->id, true);
     }

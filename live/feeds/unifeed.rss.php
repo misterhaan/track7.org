@@ -2,9 +2,9 @@
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   require_once 'auFeed.php';
   define('MAXITEMS', 15);
-  
+
   $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, page comments, bln entries, and album photos unifeed', 'copyright 2008 track7');
-  
+
   $updates = 'select id, instant, `change` from updates order by instant desc';
   if($updates = $db->GetLimit($updates, 0, MAXITEMS, '', ''))
     $update = $updates->NextRecord();
@@ -120,7 +120,7 @@
   }
 
   function AddComment($rss, $comment) {
-    $commentpage = explode('/', $comment->page);
+    $commentpage = explode('/', rtrim($comment->page, '/'));
     $commentpage = $commentpage[count($commentpage) - 1];
     $rss->AddItem($comment->comments, '[comment] ' . $commentpage . ' - ' . ($comment->uid ? $comment->login : $comment->name), '/comments.php#c' . $comment->id, $comment->instant, '/comments.php#c' . $comment->id, true);
   }
@@ -130,7 +130,7 @@
     $entry->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $entry->title);
     $rss->AddItem('<p>' . $entry->post . '</p>', '[bln] ' . $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, $entry->instant, '/output/pen/bln/' . $entry->name, true);
   }
-  
+
   function AddPhoto($rss, $photo) {
     $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
     $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
