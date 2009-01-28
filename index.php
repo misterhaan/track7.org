@@ -138,7 +138,7 @@
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($post->instant, $user)) . '</th><td class="type"><img src="/hb/favicon-16.png" alt="post" title="forum post" /></td><td><a href="/hb/thread' . $post->thread . ($post->number - 1 > _FORUM_POSTS_PER_PAGE ? '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p' : '/#p') . $post->id . '">' . $post->subject . '</a> by ' . ($post->uid ? '<a href="/user/' . $post->login . '/">' . $post->login . '</a>' : 'anonymous') . "</td></tr>\n";
       $post = $posts->NextRecord();
     } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded)) {
-      $pagename = explode('/', $comment->page);
+      $pagename = explode('/', rtrim($comment->page, '/'));
       $pagename = $pagename[count($pagename) - 1];
       echo '          <tr' . ($items ? ' class="first"' : '') . '><th>' . strtolower(auText::SmartTime($comment->instant, $user)) . '</th><td class="type"><img src="/favicon-16.png" alt="comment" title="page comment" /></td><td>comment on <a href="' . $comment->page . '">' . $pagename . '</a> by ' . ($comment->uid ? '<a href="/user/' . $comment->login . '/">' . $comment->login . '</a>' : ($comment->url ? '<a href="' . $comment->url . '">' . $comment->name . '</a>' : $comment->name)) . "</td></tr>\n";
       $comment = $comments->NextRecord();
