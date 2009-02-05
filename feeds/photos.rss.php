@@ -18,12 +18,15 @@
     }
   else {
     $rss = new auFeed('all track7 photos', '/output/gfx/album/', 'all photos posted on track7', 'copyright 2008 track7');
-    $photos = 'select id, caption, added, description from photos order by added desc';
+    $photos = 'select id, youtubeid, caption, added, description from photos order by added desc';
   }
   if($photos = $db->GetLimit($photos, 0, 15, '', ''))
     while($photo = $photos->NextRecord()) {
       $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
-      $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
+      if($photo->youtubeid)
+        $rss->AddItem('<p><a href="http://www.youtube.com/watch?v=' . $photo->youtubeid . '">watch this video on youtube</a></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
+      else
+        $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
     }
   $rss->End();
 ?>
