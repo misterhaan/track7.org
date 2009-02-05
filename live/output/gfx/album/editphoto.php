@@ -11,25 +11,24 @@
   }
 
   if(strlen($_GET['id'])) {
-    $photo = 'select id, caption, description, tags from photos where id=\'' . addslashes($_GET['id']) . '\'';
+    $photo = 'select id, caption, description, taken, tags from photos where id=\'' . addslashes($_GET['id']) . '\'';
     if(false === $photo = $db->GetRecord($photo, 'error looking up photo information', 'photo not found'))
       unset($photo);
   }
-  require_once 'auForm.php';
-  require_once 'auText.php';
   $photoedit = new auForm('photoedit', '?id=' . $_GET['id']);
-  $photoedit->AddField('id', 'id', 'enter an id for this photo (only filename characters allowed)', true, $photo->id, _AU_FORM_FIELD_NORMAL, 10, 30);
+  $photoedit->Add(new auFormString('id', 'id', 'enter an id for this photo (only filename characters allowed)', true, $photo->id, 10, 30));
   if($photo)
-    $photoedit->AddField('photo', 'photo', 'choose a jpeg image to replace this photo with', false, '', _AU_FORM_FIELD_FILE);
+    $photoedit->Add(new auFormFile('photo', 'photo', 'choose a jpeg image to replace this photo with', false));
   else
-    $photoedit->AddField('photo', 'photo', 'choose a jpeg image to upload', true, '', _AU_FORM_FIELD_FILE);
-  $photoedit->AddField('caption', 'caption', 'enter a caption for this photo', false, $photo->caption, _AU_FORM_FIELD_NORMAL, 15, 30);
-  $photoedit->AddField('desc', 'description', 'enter a description of this photo', false, auText::HTML2BB($photo->description), _AU_FORM_FIELD_BBCODE);
-  $photoedit->AddField('tags', 'tags', 'enter tags for this photo, separated by commas', false, $photo->tags, _AU_FORM_FIELD_NORMAL, 20, 255);
+    $photoedit->Add(new auFormFile('photo', 'photo', 'choose a jpeg image to upload', true));
+  $photoedit->Add(new auFormString('caption', 'caption', 'enter a caption for this photo', false, $photo->caption, 15, 30));
+  $photoedit->Add(new auFormMultiString('desc', 'description', 'enter a description of this photo', false, auText::HTML2BB($photo->description), true));
+  $photoedit->Add(new auFormString('taken', 'taken', 'enter the date (or year) this photo was taken', false, $photo->taken < 2010 ? $photo->taken : date('Y-m-d', $photo->taken), 10));
+  $photoedit->Add(new auFormString('tags', 'tags', 'enter tags for this photo, separated by commas', false, $photo->tags, 20, 255));
   if($photo)
-    $photoedit->AddButtons(array('edit', 'delete'), array('save changes to this photo', 'delete this photo'));
+    $photoedit->Add(new auFormButtons(array('edit', 'delete'), array('save changes to this photo', 'delete this photo')));
   else
-    $photoedit->AddButtons('add', 'add this photo to the album');
+    $photoedit->Add(new auFormButtons('add', 'add this photo to the album'));
   if($photoedit->Submitted() == 'delete') {
     $del = 'delete from photos where id=\'' . addslashes($photo->id) . '\'';
     if($db->Remove($del, 'error removing photo')) {
@@ -42,7 +41,7 @@
       die;
     }
   } elseif($photoedit->CheckInput(true)) {
-    require_once 'auFile.php';
+    $error = false;
     $id = auFile::NiceName($_POST['id']);
     if($id != $_GET['id']) {
       $chk = 'select id from photos where id=\'' . addslashes($id) . '\'';
@@ -50,11 +49,20 @@
       if(!$chk)
         $error = true;
       elseif($chk->NumRecords()) {
-        $page->Error('photo id already in use &mdash; please choose a different id');
+        $page->Error('photo id already in use — please choose a different id');
         $error = true;
       }
     }
     if(!$error) {
+      // need to determine date taken before calling SaveUploadImage so the temp file is still available
+      if(!$_POST['taken']) {
+        $exif = exif_read_data($_FILES['photo']['tmp_name'], 'EXIF', true);
+        $taken = $exif['EXIF']['DateTimeOriginal'];
+        $taken = $taken ? strtotime($taken) : time();
+      } elseif(is_numeric($_POST['taken']) && +$_POST['taken'] < 2010)
+        $taken = +$_POST['taken'];
+      else
+        $taken = strtotime($_POST['taken']);
       $dirname = _ROOT . dirname($_SERVER['PHP_SELF']) . '/photos/';
       $upload = auFile::SaveUploadImage('photo', $dirname, _AU_FILE_IMAGE_JPEG, $id . '.jpeg', MAXWIDTH, MAXWIDTH, true);
       if(!$upload['found'] && $photoedit->Submitted() == 'add')
@@ -98,7 +106,7 @@
         }
         if(!$error) {
           if($photoedit->Submitted() == 'edit') {
-            $update = 'update photos set id=\'' . addslashes($id) . '\', caption=\'' . addslashes(htmlentities($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', description=\'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', tags=\'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\' where id=\'' . $photo->id . '\'';
+            $update = 'update photos set id=\'' . addslashes($id) . '\', caption=\'' . addslashes(htmlspecialchars($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', description=\'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', taken=\'' . $taken . '\', tags=\'' . addslashes(htmlspecialchars($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\' where id=\'' . $photo->id . '\'';
             if(false === $db->Change($update, 'error updating photo information'))
               $error = true;
             elseif($_POST['tags'] != $photo->tags) {
@@ -119,7 +127,7 @@
               }
             }
           } else {
-            $ins = 'insert into photos (id, caption, description, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', \'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', \'' . time() . '\')';
+            $ins = 'insert into photos (id, caption, description, taken, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', \'' . $taken . '\', \'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', \'' . time() . '\')';
             if(false === $db->Put($ins, 'error adding photo information'))
               $error = true;
             else {

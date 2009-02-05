@@ -614,7 +614,7 @@ div#welcome p {
 }
 div#welcome p.welcomeguest {
   width: 10em;
-  margin: .75em auto;
+  margin: .75em 0;
   padding-left: 1em;
   white-space: normal;
   line-height: 1.3em;

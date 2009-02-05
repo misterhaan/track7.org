@@ -4,17 +4,45 @@
     $page->Show404();
     die;
   }
-  $photo = 'select id, caption, description, added, tags from photos where id=\'' . addslashes($_GET['id']) . '\'';
+  $photo = 'select id, youtubeid, caption, description, taken, added, tags from photos where id=\'' . addslashes($_GET['id']) . '\'';
   if($photo = $db->GetRecord($photo, 'Error looking up photo', '')) {
     $page->Start($photo->caption . ' - photo album', $photo->caption);
     $url = dirname($_SERVER['PHP_SELF']);
     if($user->GodMode)
-      $page->Info('<a href="' . $url . '/editphoto.php?id=' . $photo->id . '">edit this photo</a>');
-    require_once 'auText.php';
+      $page->Info('<a href="' . $url . '/edit' . ($photo->youtubeid ? 'video' : 'photo') . '.php?id=' . $photo->id . '">edit this ' . ($photo->youtubeid ? 'video' : 'photo') . '</a>');
+    if($photo->youtubeid) {
+?>
+      <object id="photo">
+        <param name="movie" value="http://www.youtube.com/v/<?=$photo->youtubeid; ?>&amp;hl=en&amp;fs=1"></param>
+        <param name="allowFullScreen" value="true"></param>
+        <param name="allowscriptaccess" value="always"></param>
+        <noscript><p class="info">enable javascript to see this <a href="http://www.youtube.com/watch?v=<?=$photo->youtubeid; ?>">youtube video</a> here</p></noscript>
+      </object>
+<?
+      if(file_exists(_ROOT . $url . '/photos/' . $photo->id . '.avi')) {
+?>
+      <ul id="avidownload"><li><a href="<?=$url; ?>/photos/<?=$photo->id; ?>.avi">download this video</a> (avi with xvid / mp3)</li></ul>
+<?
+      }
+    } else {
 ?>
       <img id="photo" src="<?=$url; ?>/photos/<?=$photo->id; ?>.jpeg" />
+<?
+    }
+?>
       <div id="photometa">
-        <span id="added">added:&nbsp; <?=auText::HowLongAgo($photo->added); ?> ago</span>
+<?
+    if($photo->taken > 2010) {
+?>
+        <span id="taken" title="<?=strtolower($user->tzdate('g:i a, D M j, Y', $photo->taken)); ?>">taken:&nbsp; <?=auText::HowLongAgo($photo->taken); ?> ago</span>
+<?
+    } else {
+?>
+        <span id="taken">taken:&nbsp; <?=$photo->taken; ?></span>
+<?
+    }
+?>
+        <span id="added" title="<?=strtolower($user->tzdate('g:i a, D M j, Y', $photo->added)); ?>">added:&nbsp; <?=auText::HowLongAgo($photo->added); ?> ago</span>
         <span id="tags">tags:&nbsp; <?=TagLinks($photo->tags, $url); ?></span>
       </div>
       <p><?=$photo->description; ?></p>
