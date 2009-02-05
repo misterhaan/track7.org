@@ -58,7 +58,7 @@
       if(is_numeric($_POST['taken']) && +$_POST['taken'] < 2010)
         $taken = +$_POST['taken'];
       else
-        $taken = strtotime($_POST['taken']);
+        $taken = $user->tzstrtotime($_POST['taken']);
       $dirname = _ROOT . dirname($_SERVER['PHP_SELF']) . '/photos/';
       $upload = auFile::SaveUploadImage('photo', $dirname, _AU_FILE_IMAGE_JPEG, $id . '.jpg', PREVIEW, PREVIEW, true);
       if(!$upload['found'] && $videoedit->Submitted() == 'add')
@@ -114,9 +114,9 @@
     }
   }
   if($photo)
-    $page->Start('edit photo - photo album', 'edit photo');
+    $page->Start('edit video - photo album', 'edit video');
   else
-    $page->Start('add photo - photo album', 'add photo');
+    $page->Start('add video - photo album', 'add video');
   $videoedit->WriteHTML(true);
   $page->End();
 ?>

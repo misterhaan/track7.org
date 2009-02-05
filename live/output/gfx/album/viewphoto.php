@@ -13,7 +13,7 @@
     if($photo->youtubeid) {
 ?>
       <object id="photo">
-        <param name="movie" value="http://www.youtube.com/v/<?=$photo->youtubeid; ?>&amp;hl=en&amp;fs=1"></param>
+        <param name="movie" value="http://www.youtube.com/v/<?=$photo->youtubeid; ?>&amp;hl=en&amp;fs=1&amp;rel=0"></param>
         <param name="allowFullScreen" value="true"></param>
         <param name="allowscriptaccess" value="always"></param>
         <noscript><p class="info">enable javascript to see this <a href="http://www.youtube.com/watch?v=<?=$photo->youtubeid; ?>">youtube video</a> here</p></noscript>
@@ -32,15 +32,16 @@
 ?>
       <div id="photometa">
 <?
-    if($photo->taken > 2010) {
+    if($photo->taken)
+      if($photo->taken > 2010) {
 ?>
         <span id="taken" title="<?=strtolower($user->tzdate('g:i a, D M j, Y', $photo->taken)); ?>">taken:&nbsp; <?=auText::HowLongAgo($photo->taken); ?> ago</span>
 <?
-    } else {
+      } else {
 ?>
         <span id="taken">taken:&nbsp; <?=$photo->taken; ?></span>
 <?
-    }
+      }
 ?>
         <span id="added" title="<?=strtolower($user->tzdate('g:i a, D M j, Y', $photo->added)); ?>">added:&nbsp; <?=auText::HowLongAgo($photo->added); ?> ago</span>
         <span id="tags">tags:&nbsp; <?=TagLinks($photo->tags, $url); ?></span>
