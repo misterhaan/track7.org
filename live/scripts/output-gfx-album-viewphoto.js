@@ -12,6 +12,6 @@ function windowLoad() {
         embed.setAttribute("src", params[i].value);
       else
         embed.setAttribute(params[i].name, params[i].value);
-    photo.appendChild(embed);
+    try { photo.appendChild(embed); } catch(e) { }  // ie cannot append a child to an object element, so this line fails in ie, where it happens to be not needed anyway
   }
 }
