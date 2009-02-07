@@ -16,14 +16,14 @@
       unset($photo);
   }
   $photoedit = new auForm('photoedit', '?id=' . $_GET['id']);
-  $photoedit->Add(new auFormString('id', 'id', 'enter an id for this photo (only filename characters allowed)', true, $photo->id, 10, 30));
+  $photoedit->Add(new auFormString('id', 'id', 'enter an id for this photo (only filename characters allowed)', true, $photo->id, 15, 30));
   if($photo)
     $photoedit->Add(new auFormFile('photo', 'photo', 'choose a jpeg image to replace this photo with', false));
   else
     $photoedit->Add(new auFormFile('photo', 'photo', 'choose a jpeg image to upload', true));
   $photoedit->Add(new auFormString('caption', 'caption', 'enter a caption for this photo', false, $photo->caption, 15, 30));
   $photoedit->Add(new auFormMultiString('desc', 'description', 'enter a description of this photo', false, auText::HTML2BB($photo->description), true));
-  $photoedit->Add(new auFormString('taken', 'taken', 'enter the date (or year) this photo was taken', false, $photo->taken < 2010 ? $photo->taken : date('Y-m-d', $photo->taken), 10));
+  $photoedit->Add(new auFormString('taken', 'taken', 'enter the date (or year) this photo was taken', false, $photo->taken < 2010 ? $photo->taken : date('Y-m-d g:i:s a', $photo->taken), 20));
   $photoedit->Add(new auFormString('tags', 'tags', 'enter tags for this photo, separated by commas', false, $photo->tags, 20, 255));
   if($photo)
     $photoedit->Add(new auFormButtons(array('edit', 'delete'), array('save changes to this photo', 'delete this photo')));
@@ -58,7 +58,7 @@
       if(!$_POST['taken']) {
         $exif = exif_read_data($_FILES['photo']['tmp_name'], 'EXIF', true);
         $taken = $exif['EXIF']['DateTimeOriginal'];
-        $taken = $taken ? strtotime($taken) : time();
+        $taken = $taken ? $user->tzstrtotime($taken) : time();
       } elseif(is_numeric($_POST['taken']) && +$_POST['taken'] < 2010)
         $taken = +$_POST['taken'];
       else

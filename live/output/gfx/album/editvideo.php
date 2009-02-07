@@ -15,7 +15,7 @@
       unset($photo);
   }
   $videoedit = new auForm('videoedit', '?id=' . $_GET['id']);
-  $videoedit->Add(new auFormString('id', 'id', 'enter an id for this video (only filename characters allowed)', true, $photo->id, 10, 30));
+  $videoedit->Add(new auFormString('id', 'id', 'enter an id for this video (only filename characters allowed)', true, $photo->id, 15, 30));
   $videoedit->Add(new auFormString('youtubeid', 'youtube id', 'enter the id that appears after v= at the end of the youtube url', true, $photo->youtubeid, 10, 16));
   if($photo)
     $videoedit->Add(new auFormFile('photo', 'thumbnail', 'choose a jpeg image to replace this thumbnail with', false));
@@ -24,7 +24,7 @@
   $videoedit->Add(new auFormFile('video', 'video', 'choose an avi video file to upload, if 7 meg or less', false));
   $videoedit->Add(new auFormString('caption', 'caption', 'enter a caption for this video', false, $photo->caption, 15, 30));
   $videoedit->Add(new auFormMultiString('desc', 'description', 'enter a description of this video', false, auText::HTML2BB($photo->description), true));
-  $videoedit->Add(new auFormString('taken', 'taken', 'enter the date (or year) this video was taken', false, $photo->taken < 2010 ? $photo->taken : date('Y-m-d', $photo->taken), 10));
+  $videoedit->Add(new auFormString('taken', 'taken', 'enter the date (or year) this video was taken', false, $photo->taken < 2010 ? $photo->taken : date('Y-m-d g:i:s a', $photo->taken), 20));
   $videoedit->Add(new auFormString('tags', 'tags', 'enter tags for this video, separated by commas', false, $photo->tags, 20, 255));
   if($photo)
     $videoedit->Add(new auFormButtons(array('edit', 'delete'), array('save changes to this video', 'delete this video')));
