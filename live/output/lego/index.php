@@ -1,8 +1,5 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
-  require_once 'auText.php';
-  require_once 'auFile.php';
 
   $page->Start('original lego models');
 ?>
@@ -66,7 +63,7 @@
       $page->Heading($lego->name);
 ?>
       <div class="thumb">
-        <a class="img" href="?=$lego->id; ?>.png" title="click to view full-size image"><img src="<?=$lego->id; ?>-thumb.png" alt="full-size image" /></a>
+        <a class="img" href="<?=$lego->id; ?>.png" title="click to view full-size image"><img src="<?=$lego->id; ?>-thumb.png" alt="full-size image" /></a>
         <div><?=auFile::ImageSize($lego->id . '.png'); ?></div>
       </div>
       <div class="thumbed">
@@ -79,8 +76,8 @@
 ?>
         <table cellspacing="0" class="columns">
           <tr class="firstchild"><th>pieces</th><td><?=$lego->pieces; ?></td></tr>
-          <tr><th>minifigs</th><td><?=$lego->minifigs; ?></td></tr>
-          <tr><th>downloads</th><td><a href="/files/output/lego/<?=$lego->id; ?>-img.zip"><?=$lego->id; ?> instruction images</a> <em>(<?=auFile::Size($lego->id . '-img.zip'); ?>)</em><br /><a href="/files/output/lego/<?=$lego->id; ?>-ldr.zip"><?=$lego->id; ?> ldraw data file</a> <em>(<?=auFile::Size($lego->id . '-ldr.zip'); ?>)</em></td></tr>
+          <tr><th>mans</th><td><?=$lego->minifigs; ?></td></tr>
+          <tr><th>downloads</th><td><a href="/files/output/lego/<?=$lego->id; ?>-img.zip"><?=$lego->name; ?> instruction images</a> <em>(<?=auFile::Size($lego->id . '-img.zip'); ?>)</em><br /><a href="/files/output/lego/<?=$lego->id; ?>-ldr.zip"><?=$lego->name; ?> ldraw data file</a> <em>(<?=auFile::Size($lego->id . '-ldr.zip'); ?>)</em></td></tr>
           <tr><th>notes</th><td><?=$lego->notes; ?></td></tr>
           <tr><th>added</th><td><?=auText::HowLongAgo($lego->adddate); ?> ago</td></tr>
           <tr><th>rating</th><td><?=+$lego->rating; ?> (from <?=+$lego->votes; ?> vote<?=$lego->votes == 1 ? '' : 's'; ?>)<?=$_GET['vote'] == $lego->id ? '' : ' <a href="?vote=' . $lego->id . ($_GET['skip'] ? '&amp;skip=' . $_GET['skip'] : '') . '#frmvote">cast vote</a>'; ?></td></tr>
