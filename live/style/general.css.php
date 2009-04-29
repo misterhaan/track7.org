@@ -206,7 +206,9 @@ ul {
   padding: 0 4em;
 }
 ol ol,
-ul ul {
+ul ul,
+ol ul,
+ul ol {
   margin: 0;
   padding: 0 0 0 2em;
 }
