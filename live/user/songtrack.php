@@ -11,12 +11,14 @@
         track7 can keep track of what song you are listening to in
         <a href="http://www.winamp.com/">winamp 5</a>,
         <a href="http://www.oldversion.com/program.php?n=winamp" title="winamp on oldversion.com, since winamp.com no longer provides winamp 2">winamp 2</a>,
+        <a href="http://audacious-media-player.org/">audacious</a>,
         <a href="http://www.xmms.org/">xmms</a>,
         or any other player that can request a web page every time a new song
         starts playing.&nbsp; instructions for winamp 5 or 2 setup are below,
-        with instructions for xmms below that.&nbsp; to use another player, you
-        will probably need to change the url listed in the winamp setup so that
-        the stuff like %%URL_CURRENTSONGTITLE%% are recognized by your player.
+        with instructions for audacious and xmms below that.&nbsp; to use
+        another player, you will probably need to change the url listed in the
+        winamp setup so that the stuff like %%URL_CURRENTSONGTITLE%% are
+        recognized by your player.
       </p>
 
 <?
@@ -64,14 +66,15 @@
       </ol>
 
 <?
-    $page->Heading('xmms setup');
+    $page->Heading('audacious / xmms setup');
 ?>
       <ol>
         <li>
-          xmms comes with a generic song change plugin, which basically runs
-          anything.&nbsp; to give it something to run, copy the following code
-          into a script, named something like songtrack.pl, and make sure it has
-          execute permissions (chmod 755 songtrack.pl).
+          both audacious and xmms come with a generic song change plugin, which
+          basically runs anything.&nbsp; to give it something to run, copy the
+          following code into a script, named something like songtrack.pl, and
+          make sure it has execute permissions (chmod 700 songtrack.pl — no
+          access to anyone but you since it will contain your password).
 <?
     if($user->Valid) {
 ?>
@@ -92,7 +95,7 @@ get($submiturl . '?' . join('&amp;', @args));<br />
 <br />
 sub pushArg {<br />
 &nbsp; push @args, uri_escape(shift @_) . '=' . uri_escape(shift @_);<br />
-}<br /></samp> 
+}<br /></samp>
 <?
     } else
       $page->Error('this feature is for registered users only, and you are not logged in.&nbsp; you will need to <a href="/user/login.php">log in</a> or <a href="/user/register.php">register</a> before you can use this feature.');
@@ -103,16 +106,27 @@ sub pushArg {<br />
           password.
         </li>
         <li>
-          open up xmms, go to preferences and choose general plugins, then
-          select song change from the list.
+          open up audacious / xmms, go to preferences.
         </li>
         <li>
-          make sure the enable plugin box is checked, then click the configure
-          button to get the song change configuration window.
+          get to the song change preferences.  the path is different between
+          audacious and xmms.
+          <ul>
+            <li>
+              for audacious, select plugins, then check the box for song change,
+              then choose song change on the left.
+            </li>
+            <li>
+              for xmms, choose general plugins, then select song change from the
+              list, then click the configure button to get the song change
+              configuration window.
+            </li>
+          </ul>
         </li>
         <li>
-          in the first command box (under song change, not playlist end), enter
-          <code>/path/to/songtrack.pl %l &quot;%s&quot;</code> and click ok.
+          in the first command box (in xmms it’s under song change, not playlist
+          end), enter <code>/path/to/songtrack.pl %l &quot;%s&quot;</code> and
+          click close / ok.
         </li>
         <li>
           play a song, then look at your profile!
