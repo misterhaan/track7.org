@@ -5,11 +5,6 @@
 \******************************************************************************/
 
 
-form#loginform input.field {
-  margin-left: -12px;
-  margin-right: -12px;
-}
-
 ul.elements li {
   padding: .7em;
 }

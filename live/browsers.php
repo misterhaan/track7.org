@@ -1,26 +1,26 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('known browser issues with track7');
+  $page->Start('known browser issues affecting track7');
 ?>
       <p>
         track7 uses cascading style sheets (css) to present its layout and
-        style.&nbsp; this works great in browsers such as firefox and opera, but 
+        style.&nbsp; this works great in browsers such as firefox and opera, but
         internet explorer and other older browsers tend to have problems with
         parts of it.&nbsp; often all this means is that people visiting track7
         with internet explorer will miss out on some of the more advanced
         features.&nbsp; track7 should look &ldquo;good enough&rdquo; in any
         recent browser.&nbsp; if you have problems, try upgrading to one of the
         following (preferably not internet explorer, however).&nbsp; track7 is
-        tested in each of them, and any issues found but not worked around are
-        listed below:
+        tested in the latest version of each of them, and any issues found but
+        not worked around are listed below:
       </p>
       <table class="text" cellspacing="0">
-        <thead class="minor"><tr><th>browser</th><th>version</th><th title="the engine actually displays web pages, and may be used by other browsers as well">engine</th></tr></thead>
+        <thead class="minor"><tr><th>browser</th><th title="the engine actually displays web pages, and may be used by other browsers as well">engine</th></tr></thead>
         <tbody>
-          <tr class="firstchild"><td><a href="http://www.mozilla.org/products/firefox/">mozilla firefox</a></td><td>3.0.2</td><td>gecko</td></tr>
-          <tr><td><a href="http://www.opera.com/download/">opera</a></td><td>9.25</td><td>opera</td></tr>
-          <tr><td><a href="http://www.microsoft.com/windows/ie/default.mspx?mg_ID=10010">microsoft internet explorer</a></td><td>7.0</td><td>mshtml</td></tr>
-          <tr><td><a href="http://www.konqueror.org/">konqueror</a></td><td>3.5.9</td><td>khtml</td></tr>
+          <tr class="firstchild"><td><a href="http://www.getfirefox.com/">mozilla firefox</a></td><td>gecko</td></tr>
+          <tr><td><a href="http://www.opera.com/download/">opera</a></td><td>opera</td></tr>
+          <tr><td><a href="http://www.microsoft.com/windows/ie/default.mspx?mg_ID=10010">microsoft internet explorer</a></td><td>trident</td></tr>
+          <tr><td><a href="http://www.google.com/chrome/">google chrome</a></td><td>webkit</td></tr>
         </tbody>
       </table>
 
