@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for photo album thumbnail pages                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for photo album thumbnail pages                            *
 \******************************************************************************/
 
 div#sortoptions {
@@ -33,7 +33,7 @@ ul#photos a {
   margin: 1px;
 }
 ul#photos a:hover {
-  border: 1px solid #<?=MEDIUM; ?>;
+  border: 1px solid #<?=LINKMEDIUM; ?>;
 }
 
 span.photopreview {
@@ -47,7 +47,7 @@ span.photopreview img {
   margin: auto;
   padding: 3px;
   background-color: #ffffff;
-  border: 1px solid #<?=LINK; ?>;
+  border: 1px solid #<?=LINKDARK; ?>;
 }
 span.caption {
   display: block;

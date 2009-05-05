@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style common to the entire site                          <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style common to the entire site                                  *
 \******************************************************************************/
 
 
@@ -17,14 +17,14 @@ div#content a {
   font-weight: bold;
 }
 a:link {
-  color: #<?=LINKTEXT; ?>;
+  color: #<?=LINKDARK; ?>;
 }
 a:visited {
-  color: #<?=DARK; ?>;
+  color: #<?=LINKVERYDARK; ?>;
 }
 a:link:hover,
 a:visited:hover {
-  background-color: #<?=LIGHT; ?>;
+  background-color: #<?=LINKLIGHT; ?>;
 }
 a img {
   border: none;
@@ -45,10 +45,13 @@ h2 {
   clear: both;
   font-size: 1.2em;
   margin: 1em 1.2em .5em;
-  padding: 0 .3em;
-  background-color: #<?=HEADLIGHT; ?>;
+  padding: 0 .5em;
+  background-color: #<?=HEADMEDIUM; ?>;
   color: #000000;
-  border-top: 1px solid #<?=HEADDARK; ?>;
+  -khtml-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-radius: .5em;
 }
 h3 {
   clear: both;
@@ -56,7 +59,7 @@ h3 {
   margin: 1em 1.75em .7em;
   padding: 0 .25em;
   color: #000000;
-  border-bottom: 2px solid #<?=HEADDARK; ?>;
+  border-bottom: 2px solid #<?=HEADMEDIUM; ?>;
   line-height: .8em;
 }
 div.minorline,
@@ -66,7 +69,7 @@ hr.minor {
   border: none;
   margin: 0;
   height: 27px;
-  background-image: url(/style/<?=STYLE; ?>/lightknot.png);
+  background-image: url(/style/lightknot.png);
 }
 p {
   margin: .5em 2em;
@@ -81,14 +84,19 @@ p.error {
   background-repeat: no-repeat;
   background-position: 4px 4px;
   min-height: 18px;
+  -khtml-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
 }
 p.info {
-  border: 1px dotted #<?=MEDIUM; ?>;
+  border: 1px solid #<?=BGMEDIUM; ?>;
+  background-color: #<?=BGLIGHT; ?>;
   background-image: url(/style/info.png);
 }
 p.error {
-  border: 1px solid #000000;
-  background-color: #<?=ERROR; ?>;
+  border: 1px solid #<?=ERRORDARK; ?>;
+  background-color: #<?=ERRORMEDIUM; ?>;
   color: #000000;
   background-image: url(/style/error.png);
 }
@@ -166,8 +174,8 @@ samp {
   overflow: auto;
   text-align: left;
   max-height: 20em;
-  border: 1px dotted #<?=DARK; ?>;
-  background-color: #<?=LIGHTGREY; ?>;
+  border: 1px solid #<?=BGLIGHT; ?>;
+  background-color: #<?=BGVERYLIGHT; ?>;
 }
 
 
@@ -182,8 +190,12 @@ q:after {content: '';}
 q {
   display: block;
   margin: .5em 1em;
-  border: 1px dotted #<?=TEXT; ?>;
+  border: 1px solid #<?=BGMEDIUM; ?>;
   padding: .2em .5em;
+  -khtml-border-radius: .75em;
+  -webkit-border-radius: .75em;
+  -moz-border-radius: .75em;
+  border-radius: .75em;
 }
 q q,
 q q q q,
@@ -194,7 +206,7 @@ q,
 q q q,
 q q q q q,
 q q q q q q q {
-  background-color: #<?=LIGHTGREY; ?>;
+  background-color: #<?=BGLIGHT; ?>;
 }
 
 
@@ -243,9 +255,9 @@ table.columns th {
   text-align: right;
   padding: 1px .5em;
   vertical-align: top;
-  background-color: #<?=LIGHT; ?>;
-  border-right: 1px solid #<?=DARK; ?>;
-  border-top: 1px dotted #<?=DARK; ?>;
+  background-color: #<?=BGLIGHT; ?>;
+  border-right: 1px solid #<?=BGMEDIUM; ?>;
+  border-top: 1px dotted #<?=BGMEDIUM; ?>;
   color: #000000;
   font-weight: normal;
 }
@@ -263,9 +275,9 @@ table.columns td th {
 table.text thead th {
   text-align: center;
   line-height: 80%;
-  border-bottom: 1px solid #<?=DARK; ?>;
+  border-bottom: 1px solid #<?=BGMEDIUM; ?>;
   color: #000000;
-  background-color: #<?=LIGHT; ?>;
+  background-color: #<?=BGLIGHT; ?>;
   padding-left: 1em;
 }
 table.text thead.minor th {
@@ -279,7 +291,7 @@ table.text thead.minor th:first-child {
 }
 table.text tbody td {
   padding-left: 1em;
-  border-top: 1px dashed #<?=MEDGREY; ?>;
+  border-top: 1px dashed #<?=BGLIGHT; ?>;
 }
 table.text tbody tr td:first-child {
   padding-left: 0;
@@ -292,13 +304,13 @@ table.text tbody tr:first-child td {
 table.data thead th {
   text-align: center;
   padding: .1em .5em;
-  border: 1px solid #<?=MEDIUM; ?>;
-  background-color: #<?=LIGHT; ?>;
+  border: 1px solid #<?=HEADMEDIUM; ?>;
+  background-color: #<?=HEADLIGHT; ?>;
   color: #000000;
 }
 table.data tbody td {
   padding: .1em .3em;
-  background-color: #<?=VERYLIGHTGREY; ?>;
+  background-color: #<?=BGVERYLIGHT; ?>;
   border: 1px solid #ffffff;
 }
 table.data td.clear {
@@ -336,15 +348,19 @@ div#content form table textarea {
 }
 
 fieldset {
-  padding: 0 .5em 1em;
+  padding: 1em;
   margin: 1em 0;
-  border: 1px solid #<?=DARK; ?>;
+  border: 1px solid #<?=HEADDARK; ?>;
+  -khtml-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  -moz-border-radius: 1em;
+  border-radius: 1em;
 }
 fieldset legend {
   padding: 0 .5em;
-  border-left: 3px solid #<?=DARK; ?>;
-  border-right: 3px solid #<?=DARK; ?>;
-  background-color: #<?=MEDIUM; ?>;
+  border-left: 3px solid #<?=HEADDARK; ?>;
+  border-right: 3px solid #<?=HEADDARK; ?>;
+  background-color: #<?=HEADMEDIUM; ?>;
   color: #000000;
   font-weight: bold;
 }
@@ -363,9 +379,9 @@ textarea,
 select {
   font-family: dejavu sans, bitstream vera sans, corbel, verdana, arial, sans-serif;
   font-size: 1em;
-  border: 1px solid #<?=DARKMEDGREY; ?>;
+  border: 1px solid #<?=BGLIGHT; ?>;
   color: #<?=TEXT; ?>;
-  background-color: #<?=VERYLIGHTGREY; ?>;
+  background-color: #ffffff;
   padding: .1em .2em;
 }
 textarea {
@@ -375,31 +391,36 @@ input[type="text"]:focus,
 input[type="password"]:focus,
 textarea:focus,
 select:focus {
-  border-color: #<?=DARK; ?>
+  border-color: #<?=BGDARK; ?>;
+  background-color: #<?=BGVERYLIGHT; ?>;
 }
 input.checkbox {
   vertical-align: middle;
 }
 
 input[type="submit"] {
-  border: 1px solid #<?=TEXT; ?>;
-  background-color: #<?=LIGHTGREY; ?>;
-  color: #<?=DARK; ?>;
+  border: 1px solid #<?=BGDARK; ?>;
+  background-color: #<?=BGLIGHT; ?>;
+  color: #<?=LINKDARK; ?>;
   font-size: 1em;  /* buttons don't seem to inherit font size without something like this */
   font-weight: bold;
+  -khtml-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-radius: .5em;
 }
 input[type="submit"]:hover {
   cursor: pointer;
   border-color: #000000;
-  background-color: #<?=LIGHT; ?>;
-  color: #000000;
+  background-color: #<?=LINKDARK; ?>;
+  color: #ffffff;
 }
 input[type="submit"][disabled],
 input[type="submit"][disabled]:hover {
   cursor: default;
-  border-color: #<?=LIGHTGREY; ?>;
-  color: #<?=TEXT; ?>;
-  background-color: #<?=LIGHTGREY; ?>;
+  border-color: #<?=BGLIGHT; ?>;
+  color: #<?=BGMEDIUM; ?>;
+  background-color: #<?=BGLIGHT; ?>;
 }
 
 
@@ -412,7 +433,7 @@ div.pagelinks {
 }
 div.pagelinks span.active {
   padding: 0 .2em;
-  border: 1px solid #<?=DARK; ?>;
+  border: 1px solid #<?=LINKDARK; ?>;
 }
 div.pagelinks a {
   padding: 0 .2em;
@@ -444,8 +465,10 @@ dl.relatedlinks dd {
 
 div#usercomments {
   margin: 2em 5em 1em;
-  border: 1px solid #<?=DARK; ?>;
+  border: 1px solid #<?=HEADMEDIUM; ?>;
   clear: both;
+  -moz-border-radius: .8em;
+  border-radius: .8em;
 }
 div#usercomments h2 {
   margin: 0;
@@ -462,8 +485,8 @@ table.post td {
 table.post td.userinfo {
   padding: .3em .5em;
   height: 100%;
-  background-color: #<?=LIGHT; ?>;
-  border-right: 1px solid #<?=MEDIUM; ?>;
+  background-color: #<?=BGLIGHT; ?>;
+  border-right: 1px solid #<?=BGMEDIUM; ?>;
 }
 table.post td.userinfo img.avatar {
   display: block;
@@ -474,7 +497,7 @@ table.post td.userinfo div {
 table.post div.head {
   font-size: .8em;
   padding: 0 .5em;
-  border-bottom: 1px dashed #<?=MEDIUM; ?>;
+  border-bottom: 1px dashed #<?=BGMEDIUM; ?>;
 }
 table.post p {
   margin: .5em 1em;
@@ -482,7 +505,7 @@ table.post p {
 table.post div.foot {
   font-size: .8em;
   padding: 1px .5em 0;
-  border-top: 1px dashed #<?=MEDIUM; ?>;
+  border-top: 1px dashed #<?=BGMEDIUM; ?>;
   text-align: right;
   line-height: 16px;
   height: 16px;
@@ -509,11 +532,13 @@ table.post div.foot a img {
 div.tagcloud {
   margin: .5em 2em;
   padding: 3px 6px 3px 26px;
-  background-repeat: no-repeat;
-  background-position: 4px 4px;
+  background: #<?=BGLIGHT; ?> url(/style/tag.png) no-repeat 4px 4px;
   min-height: 18px;
-  border: 1px dotted #<?=MEDIUM; ?>;
-  background-image: url(/style/tag.png);
+  border: 1px solid #<?=BGMEDIUM; ?>;
+  -khtml-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
 }
 div#content div.tagcloud a {
   margin: 0 .2em;
@@ -547,20 +572,13 @@ html {
   font-family: dejavu sans, bitstream vera sans, corbel, verdana, arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #<?=DARK; ?>;
-  background-image: url(/style/<?=STYLE; ?>/html-tile.png);
-  background-position: center top;
-  background-attachment: fixed;
-  background-repeat: repeat-x;
+  background: #<?=BGDARK; ?> url(/style/html-tile.png) repeat-x fixed center top;
   font-size: 76%;
 }
 body {
   margin: 0 auto;
   padding: 0;
-  background-color: #<?=LIGHT; ?>;
-  background-image: url(/style/<?=STYLE; ?>/body-tile.png);
-  background-position: center top;
-  background-repeat: repeat-x;
+  background: #<?=BGLIGHT; ?> url(/style/body-tile.png) repeat-x center top;
   max-width: 74.5em;
   border: 1px solid #000000;
   color: #<?=TEXT; ?>;
@@ -573,7 +591,7 @@ div#body {
 div#content {
   background-color: #ffffff;
   margin: 0 .5em;
-  border: 1px solid #<?=DARK; ?>;
+  border: 1px solid #<?=BGDARK; ?>;
   border-top: none;
   padding-bottom: 1.5em;
 }
@@ -589,7 +607,7 @@ div#foot {
   clear: both;
   font-size: .8em;
   padding: 20px .75em .5em;
-  background: url(/style/<?=STYLE; ?>/lightknot.png) repeat-x top center;
+  background: url(/style/lightknot.png) repeat-x top center;
 }
 
 
@@ -605,7 +623,7 @@ div#welcome {
   float: right;
   height: 100px;
   font-size: .8em;
-  background-color: #<?=LIGHT; ?>;
+  background-color: #<?=BGLIGHT; ?>;
   border-left: 1px solid #000000;
   overflow: auto;
 }
@@ -670,12 +688,8 @@ div#navhelp a {
   margin-left: 1.25em;
 }
 div#navhelp a:link:hover,
-a#sitemap:link:hover {
-  border-bottom: 1px dotted #<?=LINKTEXT; ?>;
-}
-div#navhelp a:visited:hover,
-a#sitemap:visited:hover {
-  border-bottom: 1px dotted #<?=DARK; ?>;
+div#navhelp a:visited:hover {
+  border-bottom: 1px dotted #<?=LINKDARK; ?>;
 }
 
 img#punkhead {
@@ -706,10 +720,13 @@ ul#sectnav li {
 ul#sectnav li a {
   padding: 2px .3em 1px;
   font-weight: bold;
-  background-color: #<?=LIGHT; ?>;
+  border: 1px solid #<?=BGDARK; ?>;
+  border-bottom: none;
+  background-color: #<?=BGLIGHT; ?>;
 }
 ul#sectnav li a:hover {
-  background-color: #<?=DARK; ?>;
+  border-color: #000000;
+  background-color: #<?=LINKDARK; ?>;
   color: #ffffff;
 }
 ul#sectnav li.active a {
@@ -720,7 +737,7 @@ ul#sectnav li.active a {
   color: #2c2c2c;
 }
 ul#sectnav li.active a:hover {
-  background-color: #<?=LIGHT; ?>;
+  background-color: #<?=LINKLIGHT; ?>;
   color: #000000;
 }
 div#location {
@@ -786,7 +803,7 @@ div#content ul.elements a {
 /* =====================================================[ dynamic content ]== */
 
 div#dynamic {
-  width: 62em;
+  width: 62.01em;
   margin: 0 auto;
 }
 div.dynsec {
@@ -810,11 +827,9 @@ div#dynamic p {
   font-size: .8em;
   margin: .3em 1em;
 }
-div#dynamic a:link:hover {
-  border-bottom: 1px dotted #<?=LINKTEXT; ?>;
-}
+div#dynamic a:link:hover,
 div#dynamic a:visited:hover {
-  border-bottom: 1px dotted #<?=DARK; ?>;
+  border-bottom: 1px dotted #<?=LINKDARK; ?>;
 }
 
 div#poweredby ul {

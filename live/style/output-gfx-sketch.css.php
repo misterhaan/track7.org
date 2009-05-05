@@ -4,12 +4,9 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for diablo 2 characters page                       <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for sketch gallery page                                    *
 \******************************************************************************/
 
-img#d2charpic {
-  float: right;
-  display: block;
-  margin-right: 3em;
-  border: 1px solid #000000;
+h2 {
+  border-bottom: 1px solid #<?=HEADMEDIUM; ?>;
 }

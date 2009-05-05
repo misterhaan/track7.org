@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for guestbook                                      <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for guestbook                                              *
 \******************************************************************************/
 
 div.gbintro {
@@ -16,7 +16,7 @@ div.gbintro div.gbtime {
   margin-bottom: -1em;
 }
 div.gbintro div.gbnum {
-  border-bottom: 1px solid #<?=TEXT; ?>;
+  border-bottom: 1px solid #<?=HEADMEDIUM; ?>;
   margin-bottom: .5em;
 }
 div.gbintro div.gbnum:before {
@@ -26,13 +26,12 @@ div.gbintro div.gbnum:after {
   content: "]";
 }
 span.response {
-  color: #<?=DARK; ?>;
+  border-bottom: 1px dotted #<?=HEADMEDIUM; ?>;
 }
 div.comments,
 p.comments {
   margin: .5em 4em;
   overflow: hidden;
-  color: #<?=DARK; ?>;
 }
 div.madlib {
   margin: .5em 2em;

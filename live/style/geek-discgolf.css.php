@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style disc golf pages                                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style disc golf pages                                            *
 \******************************************************************************/
 
 div#parlist tbody td {
@@ -13,7 +13,7 @@ div#parlist tbody td {
 div#parlist tbody th {
   font-weight: normal;
   text-align: left;
-  background-color: #<?=LIGHT; ?>;
+  background-color: #<?=HEADLIGHT; ?>;
   color: #000000;
   border: 1px solid #ffffff;
 }

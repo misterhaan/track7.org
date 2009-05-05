@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for pen vs. sword index page                       <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for pen vs. sword index page                               *
 \******************************************************************************/
 
 dd ul {

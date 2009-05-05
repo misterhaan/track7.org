@@ -4,13 +4,13 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for forum thread pages                             <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for forum thread pages                                     *
 \******************************************************************************/
 
 table.post p.signature {
   font-size: .8em;
   margin: .625em 1.25em;
-  border-top: 1px solid #<?=LIGHTGREY; ?>;
+  border-top: 1px solid #<?=BGLIGHT; ?>;
   padding: .15em .5em 0;
   max-height: 3.5em;
   overflow: auto;

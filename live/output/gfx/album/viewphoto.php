@@ -26,7 +26,7 @@
       }
     } else {
 ?>
-      <img id="photo" src="<?=$url; ?>/photos/<?=$photo->id; ?>.jpeg" />
+      <img id="photo" src="<?=$url; ?>/photos/<?=$photo->id; ?>.jpeg" alt="" />
 <?
     }
 ?>
@@ -62,7 +62,7 @@
     }
     return implode(', ', $links);
   }
-  
+
   function ShowTagPrevNext(&$db, $tags, $added, $url) {
     $tags = explode(',', $tags);
     if(count($tags)) {

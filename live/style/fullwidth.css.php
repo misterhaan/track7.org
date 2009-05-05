@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style to use most of the with of the browser             <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style to use most of the with of the browser                     *
 \******************************************************************************/
 
 body {

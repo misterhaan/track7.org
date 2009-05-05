@@ -23,9 +23,6 @@
 
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
 
-  // default style is water
-  if(!isset($_GET['style']))
-    $_GET['style'] = 'water';
   // default width is 450 pixels
   if(!isset($_GET['w']))
     $_GET['w'] = 450;
@@ -41,19 +38,7 @@
   $white = imageColorAllocate($png, 255, 255, 255);
   $grey = imageColorAllocate($png, 102, 102, 102);
   $greybars = imageColorAllocate($png, 204, 204, 204);
-  switch($_GET['style']) {
-    case 'air':
-      $bars = imageColorAllocate($png, 104, 104, 104);
-      break;
-    case 'earth':
-      $bars = imageColorAllocate($png, 153, 102, 85);
-      break;
-    case 'fire':
-      $bars = imageColorAllocate($png, 204, 76, 60);
-      break;
-    default:
-      $bars = imageColorAllocate($png, 51, 119, 170);
-  }
+  $bars = imageColorAllocate($png, 153, 102, 85);
 
   // draw the main graph area
   imageFilledRectangle($png, 0, 0, $_GET['w'] - 1, $_GET['h'] - 1, $white);

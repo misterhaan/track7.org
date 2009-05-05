@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for cd compilations page                           <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for cd compilations page                                   *
 \******************************************************************************/
 
 div#covers {
@@ -17,10 +17,10 @@ div#covers a {
   height: 175px;
   float: left;
   margin: 5px;
-  border: 1px solid #<?=LIGHTMEDGREY; ?>;
+  border: 1px solid #<?=LINKLIGHT; ?>;
 }
 div#covers a:hover {
-  border: 1px solid #000000;
+  border: 1px solid #<?=LINKDARK; ?>;
 }
 div#covers a img {
   width: 175px;
@@ -42,5 +42,5 @@ table#tracklist td.total {
   text-align: right;
 }
 td.total {
-  border-top: 1px solid #<?=TEXT; ?>;
+  border-top: 1px solid #<?=HEADMEDIUM; ?>;
 }

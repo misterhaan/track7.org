@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style hit statistics pages                               <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style hit statistics pages                                       *
 \******************************************************************************/
 
 ol#hits {

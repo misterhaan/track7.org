@@ -7,7 +7,7 @@
   if($daily = $db->GetLimit($daily, 0, 7, 'error reading daily statistics', '')) {
     $page->Heading('daily statistics');
 ?>
-      <img class="hitchart" src="graph-days.png?d=93&amp;month=<?=date('Y-m'); ?>&amp;style=<?=$user->Style; ?>" alt="" />
+      <img class="hitchart" src="graph-days.png?d=93&amp;month=<?=date('Y-m'); ?>" alt="" />
       <table class="data" id="datestats" cellspacing="0">
         <thead><tr><th>date</th><th title="total hits">raw</th><th title="total hits excluding hits from the same ip within 6 hours">unique</th><th title="average number of pages viewed per visit (raw / unique)">pages</th></tr></thead>
         <tbody>
@@ -37,7 +37,7 @@
   if($weekly = $db->GetLimit($weekly, 0, 4, 'error reading weekly statistics', '')) {
     $page->Heading('weekly statistics');
 ?>
-      <img class="hitchart" src="graph-weeks.png?k=78&amp;year=<?=date('Y'); ?>&amp;style=<?=$user->Style; ?>" alt="" />
+      <img class="hitchart" src="graph-weeks.png?k=78&amp;year=<?=date('Y'); ?>" alt="" />
       <table class="data" id="datestats" cellspacing="0">
         <thead><tr><th>week</th><th title="average hits per day">raw</th><th title="average hits per day excluding hits from the same ip within 6 hours">unique</th><th title="average number of pages viewed per visit (raw / unique)">pages</th></tr></thead>
         <tbody>
@@ -59,7 +59,7 @@
   if($monthly = $db->GetLimit($monthly, 0, 6, 'error reading monthly statistics', '')) {
     $page->Heading('monthly statistics');
 ?>
-      <img class="hitchart" src="graph-months.png?year=<?=date('Y'); ?>&amp;style=<?=$user->Style; ?>" alt="" />
+      <img class="hitchart" src="graph-months.png?year=<?=date('Y'); ?>" alt="" />
       <table class="data" id="datestats" cellspacing="0">
         <thead><tr><th>month</th><th title="average hits per day">raw</th><th title="average hits per day excluding hits from the same ip within 6 hours">unique</th><th title="average number of pages viewed per visit (raw / unique)">pages</th></tr></thead>
         <tbody>
@@ -81,7 +81,7 @@
   if($yearly = $db->Get($yearly, 'error reading yearly statistics', '')) {
     $page->Heading('yearly statistics');
 ?>
-      <img class="hitchart" src="graph-years.png?style=<?=$user->Style; ?>" alt=""/>
+      <img class="hitchart" src="graph-years.png" alt="" />
       <table class="data" id="datestats" cellspacing="0">
         <thead><tr><th>year</th><th title="average hits per day">raw</th><th title="average hits per day excluding hits from the same ip within 6 hours">unique</th><th title="average number of pages viewed per visit (raw / unique)">pages</th></tr></thead>
         <tbody>
@@ -97,7 +97,7 @@
 
 <?
   }
-  
+
   // forever, from totalling all years
   $forever = 'select sum(raw)/sum(days) as raw, sum(`unique`)/sum(days) as `unique` from hitcounts where not (date like \'%-%\' or date like \'%w%\')';
   if($forever = $db->GetRecord($forever, 'error reading forever statistics', '')) {

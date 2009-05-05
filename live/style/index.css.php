@@ -4,37 +4,30 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for main index page                                <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for main index page                                        *
 \******************************************************************************/
 
-div#content p#randomquote {
-	font-size: .9em;
-	font-style: italic;
-  text-align: center;
-}
-p#randomquote:before {
-  content: '“';
-  color: #<?=DARKGREY; ?>;
-}
-p#randomquote:after {
-  content: '”';
-  color: #<?=DARKGREY; ?>;
-}
-div#welcomeabout {
-  float: left;
-  width: 50%;
-}
 div#features {
-  margin-left: 50%;
+  float: right;
+  width: 350px;
+  background-color: #<?=BGLIGHT; ?>;
+  margin: 0 1em;
+  padding: .5em;
+  border: 1px solid #<?=BGMEDIUM; ?>;
+  -webkit-border-radius: .75em;
+  -moz-border-radius: .75em;
+  border-radius: .75em;
 }
 
-div#features h2 {
-  clear: none;
+div#features dl {
+  margin: 0;
+  padding: 0;
 }
 div#features dt {
   margin: 0;
   padding: 0;
   background-image: none;
+  clear: left;
 }
 div#features dt img.icon {
   padding-left: 0;
@@ -43,6 +36,80 @@ div#features dt img.icon {
 div#features dd {
   margin-left: 32px;
   padding-left: .5em;
+}
+
+div.feed {
+  clear: left;
+  margin: 1em 0;
+}
+
+div.typedate {
+  clear: left;
+  float: left;
+  margin: 0 .5em .5em 2em;
+  padding: 54px 0 0;
+  text-align: center;
+  width: 60px;
+  background: #<?=HEADMEDIUM; ?> no-repeat 6px 6px;
+  -khtml-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+div.typedate div.date {
+  font-size: .8em;
+  line-height: 1.5em;
+  color:  #000000;
+}
+div.update div.typedate {
+  background-image: url(/images/storytype/update.png);
+}
+div.post div.typedate {
+  background-image: url(/images/storytype/post.png);
+}
+div.comment div.typedate {
+  background-image: url(/images/storytype/comment.png);
+}
+div.entry div.typedate {
+  background-image: url(/images/storytype/entry.png);
+}
+div.photo div.typedate {
+  background-image: url(/images/storytype/photo.png);
+}
+div.guide div.typedate {
+  background-image: url(/images/storytype/guide.png);
+}
+
+img.photothumb {
+  display: block;
+  border: 1px solid #000000;
+  margin: .5em 2em;
+}
+
+h2.feed {
+  clear: none;
+  border: none;
+  font-size: 1.25em;
+  margin: 0 1.6em .2em;
+  background: #<?=HEADMEDIUM; ?>;
+  line-height: 1.4em;
+  -khtml-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+h2.feed a.feed {
+  float: right;
+  display: block;
+  margin-top: .1em;
+  height: 1.25em;
+  width: 1.25em;
+  background: url(/style/feed.png) no-repeat center center;
+}
+
+div#content p.links {
+  font-size: .8em;
+  text-align: center;
 }
 
 table#updates th {
@@ -60,21 +127,4 @@ table#updates img {
   display: block;
   width: 16px;
   height: 16px;
-}
-
-div#content p.links {
-  font-size: .8em;
-  text-align: center;
-}
-
-p#shorturl {
-  clear: both;
-  margin-top: 2em;
-  font-size: .8em;
-  border-top: 1px dashed #<?=MEDIUM; ?>;
-  padding: .2em .5em;
-  margin-bottom: 0;
-}
-p#shorturl a {
-  font-weight: normal;
 }

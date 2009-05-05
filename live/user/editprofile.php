@@ -61,20 +61,19 @@
         }
         break;
       case 'display':
-        if($_POST['submit'] == 'update' && is_numeric($_POST['style'])) {
+        if($_POST['submit'] == 'update') {
           if(isset($_POST['dst']))
             $now = strtotime($_POST['time'] . date(' T'));
           else
             $now = strtotime($_POST['time'] . ' GMT');
-          $style = $_POST['style'];
+          $style = $u->style % 2 ? $u->style : $u->style - 1;
           if(isset($_POST['fullwidth']))
             $style++;
           $update = round(($now - time()) / 1800) * 1800;  // round to nearest half hour (1800 seconds)
           $update = 'update users set tzoffset=' . $update . ', flags=flags' . (isset($_POST['dst']) ? '|' . _FLAG_USERS_DST : '&' . (_FLAG_USERS ^ _FLAG_USERS_DST)) . ', style=' . $style . ' where uid=' . $u->uid;
           if(false !== $db->Change($update, 'error updating display preferences'))
             $page->Info('display preferences successfully updated.&nbsp; changes will take effect the next time a page is loaded');
-        } else
-          $_POST['style'] = $u->style;
+        }
         break;
       case 'contact':
         $contact = 'select flags, website, jabber, icq, aim, steam, email from usercontact where uid=' . $u->uid;
@@ -154,15 +153,6 @@
       case 'display':
         $prof->AddField('time', 'current time', 'enter the current time so track7 can display dates and times in your time zone', true, $user->tzdate('g:i a'), _AU_FORM_FIELD_NORMAL, 8, 20);
         $prof->AddField('dst', 'dst', 'adjust for daylight saving time', false, +$u->flags & _FLAG_USERS_DST, _AU_FORM_FIELD_CHECKBOX);
-        $prof->AddHTML('style', '<table cellspacing="0" id="colorchoice">'
-                       . "\n" . '              <tr class="firstchild">'
-                       . "\n" . '                <td><label for="fldstylewater"><img src="/style/water/thumb.png" alt="" /><input type="radio" id="fldstylewater" name="style" value="1" ' . ($_POST['style'] == 1 || $_POST['style'] == 2 ? 'checked="checked" ' : '') . '/>water</label></td>'
-                       . "\n" . '                <td><label for="fldstylefire"><img src="/style/fire/thumb.png" alt="" /><input type="radio" id="fldstylefire" name="style" value="3" ' . ($_POST['style'] == 3 || $_POST['style'] == 4 ? 'checked="checked" ' : '') . '/>fire</label></td>'
-                       . "\n" . '              </tr><tr>'
-                       . "\n" . '                <td><label for="fldstyleearth"><img src="/style/earth/thumb.png" /><input type="radio" id="fldstyleearth" name="style" value="5" ' . ($_POST['style'] == 5 || $_POST['style'] == 6 ? 'checked="checked" ' : '') . '/>earth</label></td>'
-                       . "\n" . '                <td><label for="fldstyleair"><img src="/style/air/thumb.png" /><input type="radio" id="fldstyleair" name="style" value="7" ' . ($_POST['style'] == 7 || $_POST['style'] == 8 ? 'checked="checked" ' : '') . '/>air</label></td>'
-                       . "\n" . '              </tr>'
-                       . "\n" . '            </table>');
         $prof->Add(new auFormCheckbox('fullwidth', 'width', 'force pages to use the full width of the browser window', $u->style && $u->style % 2 == 0));
         break;
       case 'contact':

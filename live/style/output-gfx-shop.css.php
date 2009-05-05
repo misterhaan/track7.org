@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for shop page                                      <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for shop page                                              *
 \******************************************************************************/
 
 ul#shopitems {
@@ -21,19 +21,20 @@ ul#shopitems li.start {
   clear: left;
 }
 ul#shopitems li div {
-  border: 1px solid #<?=MEDIUM; ?>;
+  border: 1px solid #<?=HEADMEDIUM; ?>;
+  -khtml-border-radius: .8em;
+  -webkit-border-radius: .8em;
+  -moz-border-radius: .8em;
+  border-radius: .8em;
 }
 ul#shopitems li div h2 {
   margin: 0;
   padding: 0 .5em;
-  border: none;
-  border-bottom: 1px solid #<?=HEADDARK; ?>;
 }
 ul#shopitems li div img {
   display: block;
   margin: .5em auto;
 }
 ul#shopitems li div p {
-  font-size: .8em;
-  margin: .625em 1.25em;
+  margin: .5em 1em;
 }

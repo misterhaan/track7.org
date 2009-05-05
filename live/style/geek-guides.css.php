@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for guide pages                                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for guide pages                                            *
 \******************************************************************************/
 
 div#sortoptions {
@@ -22,17 +22,21 @@ dl.guides {
 dl.guides dt {
   float: none;
   padding: 0;
-  margin-top: .5em;
+  margin: 1em 0 0;
   background-image: none;
 }
 dl.guides dd {
-  margin: 0 1em;
+  margin: 0;
 }
 div.guideinfo {
-  background-color: #<?=LIGHT; ?>;
+  background-color: #<?=BGLIGHT; ?>;
   padding: .1em .5em;
   margin: .2em 0;
   font-size: .8em;
+  -khtml-border-radius: .5em;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-radius: .5em;
 }
 div.guideinfo span {
   margin: 0 1.5em 0 0;
