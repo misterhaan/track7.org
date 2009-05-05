@@ -68,7 +68,7 @@
         </li>
       </ul>
 
-      <p class="note">*these programs for TI·86 only</p>
+      <p class="note">*these programs for TI-86 only</p>
 
 <?
   $page->End();

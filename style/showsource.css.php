@@ -4,17 +4,17 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for showing php source                             <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for showing php source                                     *
 \******************************************************************************/
 
 div.source {
-  font-family: bitstream vera sans mono, lucida console, monospace;
+  font-family: dejavu sans mono, bitstream vera sans mono, consolas, lucida console, monospace;
   margin: 1em 2%;
   width: 96%;
   height: 30em;
   overflow: auto;
-  border: 1px dashed #<?=DARK; ?>;
-  background-color: #<?=LIGHTGREY; ?>;
+  border: 1px solid #<?=BGLIGHT; ?>;
+  background-color: #<?=BGVERYLIGHT; ?>;
 }
 div.source ol {
   padding-left: 1.5em;

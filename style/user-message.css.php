@@ -4,8 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for user messages page                             <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
- * slackers leave this banner here if you copy it                             *
+ * -> layout style for user messages page                                     *
 \******************************************************************************/
 
 a.msgunread,
@@ -17,11 +16,11 @@ a.msgreplied {
   padding-left: 22px;
 }
 a.msgunread {
-  background-image: url(/style/msg-unread.png);
+  background-image: url(/images/message/unread.png);
 }
 a.msgread {
-  background-image: url(/style/msg-read.png);
+  background-image: url(/images/message/read.png);
 }
 a.msgreplied {
-  background-image: url(/style/msg-replied.png);
+  background-image: url(/images/message/replied.png);
 }

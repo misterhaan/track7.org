@@ -4,13 +4,16 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for guide view pages                               <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for guide view pages                                       *
 \******************************************************************************/
 
 div#guidetools {
-  background-color: #<?=LIGHTGREY; ?>;
-  border: 1px solid #<?=MEDGREY; ?>;
+  background-color: #<?=BGLIGHT; ?>;
+  border: 1px solid #<?=BGMEDIUM; ?>;
+  -khtml-border-radius: 1em;
+  -webkit-border-radius: 1em;
   -moz-border-radius: 1em;
+  border-radius: 1em;
   margin: 1.5em 2em;
 }
 div#guidetools ol,

@@ -4,29 +4,30 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for the site map (tree) page                       <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for the site map (tree) page                               *
 \******************************************************************************/
 
 ul#treelinks {
-  margin-left: 0;
+  margin-left: 2em;
+  padding-left: 0;
+  list-style-type: none;
+}
+ul#treelinks ul {
+  padding-left: 0;
+  list-style-type: none;
+}
+ul#treelinks li {
+  background-repeat: no-repeat;
+  background-position: top left;
+  line-height: 16px;
+  padding-left: 20px;
 }
 li.folder {
-  list-style-image: url(/style/folder.png);
+  background-image: url(/images/treetype/folder.png);
 }
 li.anchor {
-  list-style-image: url(/style/anchor.png);
+  background-image: url(/images/treetype/anchor.png);
 }
 li.page {
-  list-style-image: url(/style/html-<?=(OPERA ? 'opera' : (MSIE ? 'ie' : 'firefox')); ?>.png);
+  background-image: url(/images/treetype/file.png);
 }
-<?
-  if(OPERA || MSIE) {
-?>
-li.folder,
-li.anchor,
-li.page {
-  padding-left: .5em;
-}
-<?
-  }
-?>

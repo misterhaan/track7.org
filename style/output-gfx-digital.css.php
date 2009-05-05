@@ -4,10 +4,9 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> layout style hit statistics pages                                       *
+ * -> layout style for digital art page                                       *
 \******************************************************************************/
 
-img.hitchart {
-  display: block;
-  margin: 1em auto;
+h2 {
+  border-bottom: 1px solid #<?=HEADMEDIUM; ?>;
 }

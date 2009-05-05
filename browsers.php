@@ -48,8 +48,8 @@
 <?
     $issues = 'select issue from browserissues where browser=\'' . $engine . '\'';
     if($issues = $db->Get($issues, 'error getting list of issues for your browser', '')) {
-      if(file_exists('style/' . $engine . '-alpha.png'))
-        $browserimg = '<img class="browser" src="style/' . $engine . '-alpha.png" alt="" />';
+      if(file_exists('images/htmlengine/' . $engine . '-alpha.png'))
+        $browserimg = '<img class="browser" src="images/htmlengine/' . $engine . '-alpha.png" alt="" />';
       else
         $browserimg = '';
 ?>
@@ -78,8 +78,8 @@
         echo $close;
         $close = '      </ul>' . "\n\n";
         $browser = $issue->browser;
-        if(file_exists('style/' . $browser . '-alpha.png'))
-          $browserimg = '<img class="browser" src="style/' . $browser . '-alpha.png" alt="" />';
+        if(file_exists('images/htmlengine/' . $browser . '-alpha.png'))
+          $browserimg = '<img class="browser" src="images/htmlengine/' . $browser . '-alpha.png" alt="" />';
         else
           $browserimg = '';
 ?>

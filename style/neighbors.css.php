@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for neighborhood page                              <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for neighborhood page                                      *
 \******************************************************************************/
 
 div#linkoptions {
@@ -12,7 +12,7 @@ div#linkoptions {
 }
 div#linkoptions a.preview {
   float: left;
-  margin: 0;
+  margin: 0 1em;
   padding: 0;
   border: none;
 }
@@ -21,14 +21,9 @@ div#linkoptions a.preview img {
   width: 110px;
   height: 50px;
 }
-div#linkoptions code {
-  font-family: lucida console, monospace;
+div#linkoptions samp {
   font-size: .8em;
-  display: block;
-  margin-left: 1.5em;
-  text-align: left;
-  padding: 2px;
+  white-space: normal;
+  padding: 2px .5em;
   height: 44px;  /* 50px height of img, minus 1px *2 for border, minus 2px *2 for padding */
-  overflow: auto;
-  border: 1px solid #DARKMEDGREY;
 }

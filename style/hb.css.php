@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for forum pages                                    <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * ->  layout style for forum pages                                           *
 \******************************************************************************/
 
 div#content table.post div.head a {
@@ -17,7 +17,6 @@ table.post div.head a:hover {
 table.post p.history {
   font-size: .8em;
   font-style: italic;
-  color: #<?=DARKGREY; ?>;
   margin: .625em 1.25em;
   padding: 0 .2em;
 }

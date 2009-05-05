@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for svn update page                                <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for svn update page                                        *
 \******************************************************************************/
 
 a.update {
@@ -15,11 +15,11 @@ a.update:hover {
 }
 
 ul.path li.up {
-  list-style-image: url(/style/folder.png);
+  list-style-image: url(/images/treetype/folder.png);
 }
 ul.path li.dir {
-  list-style-image: url(/style/folder-closed.png);
+  list-style-image: url(/images/treetype/folder.png);
 }
 ul.path li.file {
-  list-style-image: url(/style/file.png);
+  list-style-image: url(/images/treetype/file.png);
 }

@@ -29,9 +29,9 @@
       </p>
       <div id="linkoptions">
         <a class="preview" href="http://www.track7.org/" title="track7"><img src="t7logo.png" alt="track7" style="width: 110px; height: 50px;" /></a>
-        <code>
+        <samp>
           &lt;a href=&quot;http://<?=$_SERVER['HTTP_HOST']; ?>/&quot; title=&quot;track7&quot;&gt;&lt;img src=&quot;http://<? echo $_SERVER['HTTP_HOST']; ?>/t7logo.png&quot; alt=&quot;track7&quot; style=&quot;width: 110px; height: 50px;&quot; /&gt;&lt;/a&gt;
-        </code>
+        </samp>
       </div>
 
 <?

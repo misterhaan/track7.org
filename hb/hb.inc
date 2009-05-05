@@ -37,7 +37,7 @@
           $f->AddMultiSelect('tags', 'tags', 'choose any categories this thread belongs in', $tagvalues, explode(',', $thread->tags));
         }
         if($user->GodMode)
-          $f->AddField('taglist', 'tags', 'enter any tags at all, even if they don&rsquo;t exist yet', false, $thread->tags, _AU_FORM_FIELD_NORMAL, 40, 250);
+          $f->AddField('taglist', 'tags', 'enter any tags at all, even if they don’t exist yet (overrides checkboxes; comma-separated)', false, $thread->tags, _AU_FORM_FIELD_NORMAL, 40, 250);
       }
       $f->AddField('post', 'message', 'enter your post (you may use t7code)', true, $quote ? '[q=' . $quote->login . ']' . auText::HTML2BB($quote->post) . '[/q]' : auText::HTML2BB($post->post), _AU_FORM_FIELD_BBCODE);
       $f->AddButtons(array('preview', $user->Valid ? ($post ? 'edit' : 'post') . ' as ' . $user->Name : 'post anonymously'), array('preview your message before actually posting it', 'add your message'));

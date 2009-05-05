@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> '<?=STYLE; ?>' layout style for audio / visual pages                           <? for($i = strlen(STYLE); $i < 5; $i++) echo ' '; ?>*
+ * -> layout style for audio / visual pages                                   *
 \******************************************************************************/
 
 div.thumb {
@@ -20,13 +20,13 @@ div.thumb div {
   font-size: .8em;
 }
 div.thumb a.img {
-  border: 1px solid #<?=LIGHTMEDGREY; ?>;
+  border: 1px solid #<?=LINKLIGHT; ?>;
   margin: 0 0 .5em;
   padding: 0;
   display: block;
 }
 div.thumb a.img:hover {
-  border: 1px solid #000000;
+  border: 1px solid #<?=LINKDARK; ?>;
   margin: 0 0 .5em;
   padding: 0;
 }
