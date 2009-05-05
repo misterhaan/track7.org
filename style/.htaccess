@@ -1,2 +1,4 @@
 RewriteEngine On
-RewriteRule ^([^/]+)/(.+)\.css$ $2.css.php?style=$1
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php 
