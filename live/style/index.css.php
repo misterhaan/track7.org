@@ -81,9 +81,8 @@ div.guide div.typedate {
 }
 
 img.photothumb {
-  display: block;
   border: 1px solid #000000;
-  margin: .5em 2em;
+  vertical-align: bottom;
 }
 
 h2.feed {
@@ -105,6 +104,10 @@ h2.feed a.feed {
   height: 1.25em;
   width: 1.25em;
   background: url(/style/feed.png) no-repeat center center;
+}
+
+div.feed p {
+  margin-left: 7.5em;
 }
 
 div#content p.links {
