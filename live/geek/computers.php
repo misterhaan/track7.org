@@ -64,7 +64,7 @@
         <tr><th>reader</th><td>sd card reader</td></tr>
         <tr><th>ide0</th><td>hitachi 100 GB 5k100</td></tr>
         <tr><th>ide1</th><td>matshita dvd-ram</td></tr>
-        <tr><th>operating system</th><td>microsoft windows 7 beta 32-bit<br />ubuntu 9.04 jaunty jackalope 32-bit</td></tr>
+        <tr><th>operating system</th><td>microsoft windows 7 rc 32-bit<br />ubuntu 9.04 jaunty jackalope 32-bit</td></tr>
         <tr><th>keyboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>mouse</th><td>logitech v450 wireless laser</td></tr>
         <tr><th>monitor</th><td>toshiba wide 14.1″</td></tr>

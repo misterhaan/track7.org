@@ -18,7 +18,7 @@ ul#friends {
   list-style-type: none;
 }
 ul#friends li {
-  display: -moz-inline-box;
+  display: inline-block;
   margin: 0.3em;
   padding: 0;
 }
