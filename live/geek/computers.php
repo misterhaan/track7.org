@@ -39,7 +39,7 @@
         <tr><th>reader</th><td>rosewill multi card reader</td></tr>
         <tr><th>sata0</th><td>western digital caviar 80 GB wd800jd</td></tr>
         <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
-        <tr><th>operating system</th><td>ubuntu 9.04 jaunty jackalope 64-bit<br />microsoft windows vista sp1 32-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 9.04 jaunty jackalope 64-bit<br />microsoft windows 7 rc 64-bit</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
@@ -64,7 +64,7 @@
         <tr><th>reader</th><td>sd card reader</td></tr>
         <tr><th>ide0</th><td>hitachi 100 GB 5k100</td></tr>
         <tr><th>ide1</th><td>matshita dvd-ram</td></tr>
-        <tr><th>operating system</th><td>microsoft windows 7 rc 32-bit<br />ubuntu 9.04 jaunty jackalope 32-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 9.04 jaunty jackalope 32-bit<br />microsoft windows 7 rc 32-bit</td></tr>
         <tr><th>keyboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>mouse</th><td>logitech v450 wireless laser</td></tr>
         <tr><th>monitor</th><td>toshiba wide 14.1″</td></tr>
