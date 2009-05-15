@@ -7,21 +7,43 @@
  * -> layout style for main index page                                        *
 \******************************************************************************/
 
+div#title {
+  display: none;
+}
+
 div#features {
   float: right;
-  width: 350px;
+  width: 28em;
   background-color: #<?=BGLIGHT; ?>;
   margin: 0 1em;
-  padding: .5em;
+  padding: 0;
   border: 1px solid #<?=BGMEDIUM; ?>;
   -webkit-border-radius: .75em;
   -moz-border-radius: .75em;
   border-radius: .75em;
 }
+div#features h2 {
+  color: #000000;
+  text-align: center;
+  background-color: #<?=BGMEDIUM; ?>;
+  -khtml-border-radius: .3em;
+  -khtml-border-radius-bottomleft: 0;
+  -khtml-border-radius-bottomright: 0;
+  -webkit-border-radius: .3em;
+  -webkit-border-radius-bottomleft: 0;
+  -webkit-border-radius-bottomright: 0;
+  -moz-border-radius: .3em;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-bottomright: 0;
+  border-radius: .3em;
+  border-radius-bottomleft: 0;
+  border-radius-bottomright: 0;
+  margin: 0;
+}
 
 div#features dl {
   margin: 0;
-  padding: 0;
+  padding: .5em;
 }
 div#features dt {
   margin: 0;

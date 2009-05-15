@@ -11,10 +11,10 @@
   $page->AddFeed('track7 bln entries', '/feeds/entries.rss');
   $page->AddFeed('track7 album photos', '/feeds/photos.rss');
 
-  $page->Start('track7', '');
+  $page->Start('track7');
 ?>
       <div id="features">
-        <h1><img src="/style/track7-alpha.png" alt="track7" /></h1>
+        <h2>features</h2>
         <dl>
           <dt><a href="/analogu/"><img class="icon" src="/analogu/favicon.png" alt="" />the analog underground</a></dt>
           <dd>
