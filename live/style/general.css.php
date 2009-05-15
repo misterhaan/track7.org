@@ -473,6 +473,10 @@ div#usercomments {
 div#usercomments h2 {
   margin: 0;
   border: none;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-bottomright: 0;
+  border-radius-bottomleft: 0;
+  border-radius-bottomright: 0;
 }
 
 table.post {
@@ -718,11 +722,19 @@ ul#sectnav li {
   display: inline;
 }
 ul#sectnav li a {
-  padding: 2px .3em 1px;
+  padding: .15em .3em 1px;
   font-weight: bold;
   border: 1px solid #<?=BGDARK; ?>;
   border-bottom: none;
   background-color: #<?=BGLIGHT; ?>;
+  -khtml-border-radius-topleft: .5em;
+  -khtml-border-radius-topright: .5em;
+  -webkit-border-radius-topleft: .5em;
+  -webkit-border-radius-topright: .5em;
+  -moz-border-radius-topleft: .5em;
+  -moz-border-radius-topright: .5em;
+  border-radius-topleft: .5em;
+  border-radius-topright: .5em;
 }
 ul#sectnav li a:hover {
   border-color: #000000;
