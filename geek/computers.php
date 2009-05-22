@@ -31,7 +31,7 @@
         <tr><th>purpose</th><td>main workstation / gaming</td></tr>
         <tr><th>mainboard</th><td>gigabyte ga-ep35-ds3l</td></tr>
         <tr><th>processor</th><td>intel core 2 quad q9300 2.5 GHz</td></tr>
-        <tr><th>ram</th><td>g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram</td></tr>
+        <tr><th>ram</th><td>g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram</td></tr>
         <tr><th>video</th><td>evga 384-p3-n851-ar nvidia geforce 8800 gs (384 MB)</td></tr>
         <tr><th>audio</th><td>realtek high definition audio (onboard)</td></tr>
         <tr><th>tuner</th><td>easy tv</td></tr>
