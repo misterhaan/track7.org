@@ -8,10 +8,10 @@
   if(isset($_GET['login'])) {
     require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
 
-    $page->Start(htmlentities($_GET['login']) . '\'s profile', 'profile for ' . htmlspecialchars($_GET['login']));
+    $page->Start(htmlspecialchars($_GET['login'], ENT_QUOTES, _CHARSET) . '’s profile', 'profile for ' . htmlspecialchars($_GET['login'], ENT_QUOTES, _CHARSET));
 
     $u = 'select uid from users where login=\'' . addslashes($_GET['login']) . '\'';
-    if($u = $db->GetRecord($u, 'error looking up basic profile information', 'could not find a user named \'' . htmlspecialchars($_GET['login']) .'\'', true)) {
+    if($u = $db->GetRecord($u, 'error looking up basic profile information', 'could not find a user named \'' . htmlspecialchars($_GET['login'], ENT_QUOTES, _CHARSET) .'\'', true)) {
       if($user->Valid) {
         $isfriend = 'select 1 from userfriends where fanuid=\'' . $user->ID . '\' and frienduid=\'' . $u->uid . '\'';
         $isfriend = $db->Get($isfriend, 'error checking if you are already friends', '');
@@ -96,7 +96,7 @@
                 echo '        <tr><th>current track</th><td>none <span class="detail">(<a href="/user/songtrack.php">music tracking instructions</a>)</span></td></tr>' . "\n";
             } else {
               if($song->title) {
-                $song->title = '&quot;' . $song->title . '&quot;';
+                $song->title = '“' . $song->title . '”';
                 if($song->artist)
                   $song->title .= ' by ' . $song->artist;
                 $song = $song->title;
@@ -138,7 +138,7 @@
         if(strlen($contact->aim) > 0)
           echo '        <tr><th>aim</th><td><a href="aim:goim?screenname=' . $contact->aim . '" title="contact ' . $_GET['login'] . ' via aim">' . $contact->aim . '</a></td></tr>' . "\n";
         if(strlen($contact->steam) > 0)
-          echo '        <tr><th>steam</th><td><a href="http://steamcommunity.com/id/' . $contact->steam . '" title="view ' . $_GET['login'] . '&rsquo;s steam community profile">' . $contact->steam . '</a></td></tr>' . "\n";
+          echo '        <tr><th>steam</th><td><a href="http://steamcommunity.com/id/' . $contact->steam . '" title="view ' . $_GET['login'] . '’s steam community profile">' . $contact->steam . '</a></td></tr>' . "\n";
 ?>
       </table>
 
