@@ -128,7 +128,8 @@ h2.feed a.feed {
   background: url(/style/feed.png) no-repeat center center;
 }
 
-div.feed p {
+div.feed p,
+div.feed samp {
   margin-left: 7.5em;
 }
 
