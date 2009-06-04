@@ -8,7 +8,7 @@
         some of the scripts available here are no longer being used on track7,
         but everything at least was used at some time.&nbsp; note that
         practically every one of them will require some modification before it
-        will work for a different site -- read the directions after choosing a
+        will work for a different site — read the directions after choosing a
         script to find out see what needs to be changed.
       </p>
       <p>
@@ -17,6 +17,13 @@
         automatically work if you just upload it to your site.&nbsp; in other
         words, <em>you should have at least some php experience</em> if you want
         to use these scripts.
+      </p>
+      <p>
+        i’m also starting to put up some javascripts, which may or may not have
+        anything to do with track7 (for example, MoreSPORE is a greasemonkey
+        script for spore.com).&nbsp; greasemonkey scripts should be usable
+        exactly as they are, but the others expect some level of javascript
+        knowledge in order to use them.
       </p>
 
 <?
