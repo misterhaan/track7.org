@@ -129,7 +129,9 @@ h2.feed a.feed {
 }
 
 div.feed p,
-div.feed samp {
+div.feed samp,
+div.feed ul,
+div.feed ol {
   margin-left: 7.5em;
 }
 

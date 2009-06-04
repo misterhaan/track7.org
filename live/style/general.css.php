@@ -215,7 +215,7 @@ q q q q q q q {
 ol,
 ul {
   margin: .5em 0 0 2em;
-  padding: 0 4em;
+  padding: 0 3em;
 }
 ol ol,
 ul ul,
