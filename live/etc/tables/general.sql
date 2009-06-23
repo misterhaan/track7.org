@@ -36,7 +36,8 @@ create table ratings (
     'lego',
     'sketch',
     'digital',
-    'task'
+    'task',
+    'guide'
   ),
   selector varchar(50),
   unique (type, selector),
