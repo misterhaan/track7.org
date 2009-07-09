@@ -48,7 +48,7 @@ function addReplyFinished(req, submit) {
     var lastpost = document.getElementById("frmreply");
     while(lastpost && lastpost.nodeName.toLowerCase() != "table")
       lastpost = lastpost.previousSibling;
-    lastpost.parentNode.insertBefore(buildPostTable(response), lastpost.nextSibling);
+    buildPostTable(lastpost, response);
     // clear form; re-enable buttons
     var field = document.getElementsByName("subject");
     if(field.length)
@@ -62,12 +62,15 @@ function addReplyFinished(req, submit) {
   }
 }
 
-function buildPostTable(response) {
+function buildPostTable(lastpost, response) {
   var table = document.createElement("table");
+  lastpost.parentNode.insertBefore(table, lastpost.nextSibling);
   table.className = "post";
   table.cellSpacing = 0;
   var tr = document.createElement("tr");
+  table.appendChild(tr);
   var td = document.createElement("td");
+  tr.appendChild(td);
   td.className = "userinfo";
   var user = response.getElementsByTagName("user")[0];
   var uid = user.attributes.getNamedItem("id").value;
@@ -75,72 +78,51 @@ function buildPostTable(response) {
   var friend = true;
   if(uid == "0")
     td.appendChild(document.createTextNode("anonymous"));
-  else {
-    var a = document.createElement("a");
-    a.href = "/user/" + username + "/";
-    a.appendChild(document.createTextNode(username));
-    td.appendChild(a);
-    if(friend = user.getElementsByTagName("friend").length) {
-      var img = document.createElement("img");
-      img.src = "/style/friend.png";
-      img.alt = "friend";
-      img.title = username + " is your friend";
-      td.appendChild(img);
-    }
-    var avatar = user.getElementsByTagName("avatar");
-    if(avatar.length) {
-      avatar = avatar[0].firstChild.nodeValue;
-      a = document.createElement("a");
-      a.href = "/user/" + username + "/";
-      var img = document.createElement("img");
-      img.className = "avatar";
-      img.alt = "";
-      img.src = "/user/avatar/" + username + "." + avatar;
-      a.appendChild(img);
-      td.appendChild(a);
-    }
-    var div = document.createElement("div");
-    div.className = "frequency";
-    div.title = "frequency";
-    div.appendChild(document.createTextNode(user.getElementsByTagName("rank")[0].firstChild.nodeValue));
-    td.appendChild(div);
-  }
-  tr.appendChild(td);
+  else
+    buildUserInfo(username, td, user);
   td = document.createElement("td");
+  tr.appendChild(td);
   var div = document.createElement("div");
+  td.appendChild(div);
   div.className = "head";
   var div2 = document.createElement("div");
+  div.appendChild(div2);
   div2.className = "subject";
   var a = document.createElement("a");
+  div2.appendChild(a);
+  div2.appendChild(document.createTextNode(" "));
   var pid = response.getElementsByTagName("post")[0].attributes.getNamedItem("id").value;
   a.id = "p" + pid;
   a.className = "ref";
   a.href = "#p" + pid;
   a.appendChild(document.createTextNode("subject:"));
-  div2.appendChild(a);
-  div2.appendChild(document.createTextNode(" "));
   var span = document.createElement("span");
+  div2.appendChild(span);
   span.className = "response";
   span.appendChild(document.createTextNode(response.getElementsByTagName("subject")[0].firstChild.nodeValue));
-  div2.appendChild(span);
-  div.appendChild(div2);
   div2 = document.createElement("div");
+  div.appendChild(div2);
   div2.className = "time";
   div2.appendChild(document.createTextNode("posted: "));
   span = document.createElement("span");
+  div2.appendChild(span);
   span.className = "response";
   span.appendChild(document.createTextNode(response.getElementsByTagName("time")[0].firstChild.nodeValue));
-  div2.appendChild(span);
-  div.appendChild(div2);
-  td.appendChild(div);
   div = document.createElement("div");
-  div.innerHTML = response.getElementsByTagName("message")[0].firstChild.nodeValue;
   td.appendChild(div);
+  try {
+    div.innerHTML = response.getElementsByTagName("message")[0].firstChild.nodeValue;
+  } catch(whatever) {
+    // failed to show the post, so reload the page instead.
+    location.href = "#p" + pid;
+    location.reload();
+  }
   var sig = response.getElementsByTagName("signature");
   if(sig.length) {
     sig = sig[0].firstChild.nodeValue.split("\n\n");
     for(var i = 0; i < sig.length; i++) {
       var p = document.createElement("p");
+      td.appendChild(p);
       p.className = "signature";
       lines = sig[i].split("\n");
       for(var j = 0; j < lines.length; j++) {
@@ -148,13 +130,14 @@ function buildPostTable(response) {
           p.appendChild(document.createElement("br"));
         p.appendChild(document.createTextNode(lines[j]));
       }
-      td.appendChild(p);
     }
   }
   div = document.createElement("div");
+  td.appendChild(div);
   div.className = "foot";
   if(uid != "0") {
     div2 = document.createElement("div");
+    div.appendChild(div2);
     div2.className = "userlinks";
     div2.appendChild(buildImageLink("/user/sendmessage.php?to=" + username, "send " + username + " a privane message", "/style/pm.png", "pm"));
     var email = response.getElementsByTagName("email");
@@ -165,18 +148,44 @@ function buildPostTable(response) {
       div2.appendChild(buildImageLink(website[0].firstChild.nodeValue, "visit " + username + "'s website", "/style/www.png", "www"));
     if(!friend)
       div2.appendChild(buildImageLink("/user/friends.php?add=" + username, "add " + username + " to your friend list", "/style/friend-add.png", "add friend"));
-    div.appendChild(div2);
     div.appendChild(buildImageLink("edit=" + pid, "edit the above post", "/style/edit.png", "edit"));
     div.appendChild(buildImageLink("delete=" + pid, "delete the above post", "/style/del.png", "delete"));
   }
   var quotelink = buildImageLink("reply" + pid, "quote the above post in a new reply", "/style/reply-quote.png", "quote");
+  div.appendChild(quotelink);
   quotelink.className = "quote";
   quotelink.onclick = replyQuoteClick;
-  div.appendChild(quotelink);
+}
+
+function buildUserInfo(username, td, user) {
+  var a = document.createElement("a");
+  td.appendChild(a);
+  a.href = "/user/" + username + "/";
+  a.appendChild(document.createTextNode(username));
+  if(friend = user.getElementsByTagName("friend").length) {
+    var img = document.createElement("img");
+    td.appendChild(img);
+    img.src = "/style/friend.png";
+    img.alt = "friend";
+    img.title = username + " is your friend";
+  }
+  var avatar = user.getElementsByTagName("avatar");
+  if(avatar.length) {
+    avatar = avatar[0].firstChild.nodeValue;
+    a = document.createElement("a");
+    td.appendChild(a);
+    a.href = "/user/" + username + "/";
+    var img = document.createElement("img");
+    a.appendChild(img);
+    img.className = "avatar";
+    img.alt = "";
+    img.src = "/user/avatar/" + username + "." + avatar;
+  }
+  var div = document.createElement("div");
   td.appendChild(div);
-  tr.appendChild(td);
-  table.appendChild(tr);
-  return table;
+  div.className = "frequency";
+  div.title = "frequency";
+  div.appendChild(document.createTextNode(user.getElementsByTagName("rank")[0].firstChild.nodeValue));
 }
 
 function buildImageLink(href, title, imgsrc, text) {
