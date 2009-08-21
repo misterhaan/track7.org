@@ -17,7 +17,7 @@
   $sketches = 'select a.id, a.description, a.adddate, r.rating, r.votes from art as a left join ratings as r on r.selector=a.id and r.type=\'sketch\' where a.type=\'sketch\' order by r.rating desc, a.adddate desc';
   if($sketches = $db->Get($sketches, 'error looking up sketches', 'no sketches found'))
     while($sketch = $sketches->NextRecord()) {
-      $page->Heading('');
+      $page->Heading('', $sketch->id);
       if($_GET['vote'] == $sketch->id) {
         $rating = 'select v.vote from votes as v right join ratings as r on r.id=v.ratingid and r.type=\'sketch\' and r.selector=\'' . $sketch->id . '\' where (v.uid=\'' . $user->ID . '\' or v.ip=\'' . $_SERVER['REMOTE_ADDR'] . '\') order by v.ip';
         $rating = $db->GetValue($rating, 'error checking to see if you have already voted', '');

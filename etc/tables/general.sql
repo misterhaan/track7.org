@@ -1,6 +1,6 @@
-# t7pages flags:
-# 0x01 - hide from not logged-in users
-# 0x02 - hide from logged-in users
+-- t7pages flags:
+-- 0x01 - hide from not logged-in users
+-- 0x02 - hide from logged-in users
 create table t7pages (
   id smallint unsigned primary key auto_increment,
   parent smallint unsigned,
@@ -11,12 +11,13 @@ create table t7pages (
   tooltip varchar(255),
   flags tinyint unsigned default 0
 );
-# pages flags:
-# 0x01 - hide from not logged-in users
-# 0x02 - hide from logged-in users
-# 0x04 - don't log hits for this page
-# 0x08 - enabled for comments
-# 0x10 - has children
+
+-- pages flags:
+-- 0x01 - hide from not logged-in users
+-- 0x02 - hide from logged-in users
+-- 0x04 - don't log hits for this page
+-- 0x08 - enabled for comments
+-- 0x10 - has children
 create table pages (
   id smallint unsigned primary key auto_increment,
   parent smallint unsigned,

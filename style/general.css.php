@@ -178,6 +178,19 @@ samp {
   background-color: #<?=BGVERYLIGHT; ?>;
 }
 
+/* =============================================================[ ratings ]== */
+
+div.rating {
+  text-align: center;
+  white-space: nowrap;
+}
+div.rating a.votepartner {
+  background-color: #<?=LINKLIGHT; ?>;
+}
+div.rating img {
+  vertical-align: middle;
+}
+
 
 /* ==============================================================[ t7code ]== */
 
