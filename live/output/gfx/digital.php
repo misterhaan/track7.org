@@ -33,7 +33,7 @@
   $digitals = 'select a.id, a.description, a.adddate, r.rating, r.votes from art as a left join ratings as r on r.selector=a.id and r.type=\'digital\' where a.type=\'digital\' order by r.rating desc, a.adddate desc';
   if($digitals = $db->Get($digitals, 'error looking up digital art', 'no digital art found'))
     while($digital = $digitals->NextRecord()) {
-      $page->Heading('');
+      $page->Heading('', $digital->id);
 ?>
       <div class="thumb">
         <a class="img" href="<?=$digital->id; ?>.png" title="click to view full-size image"><img src="<?=$digital->id; ?>-prev.png" alt="" /></a>
