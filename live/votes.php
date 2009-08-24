@@ -38,7 +38,6 @@
                 header('Content-Type: text/xml; charset=utf-8');
                 header('Cache-Control: no-cache');
                 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-                // DO:  return vote success result
 ?>
 <response result="success">
 <vote><?=$_POST['vote']; ?></vote>
@@ -159,9 +158,9 @@
     $type = addslashes($type);
     $selector = addslashes($selector);
     $rating = $db->GetValue('select id from ratings where type=\'' . $type . '\' and selector=\'' . $selector . '\'', '', '');
-    if($rating)
-      return $rating;
-    $rating = $db->Put('insert into ratings (type, selector) values (\'' . $type . '\', \'' . $selector . '\')');
+    if(!$rating)
+      $rating = $db->Put('insert into ratings (type, selector) values (\'' . $type . '\', \'' . $selector . '\')');
+    return $rating;
   }
 
   /**

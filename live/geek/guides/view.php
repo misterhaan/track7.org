@@ -31,20 +31,10 @@
       <div id="guidetools">
 <?
     ShowTableOfContents($db, $user, $guide, $_GET['page']);
-    // DO:  improve rating display
-?>
-        <p>this entire guide has been rated <?=+$guide->rating; ?> after <?=+$guide->votes; ?> votes.</p>
-<?
-    // DO:  enable voting
-    //$rating = 'select v.vote from votes as v, ratings as r where r.id=v.ratingid and r.type=\'guide\' and r.selector=\'' . $_GET['guide'] . '\' and (v.uid=' . $user->ID . ' or v.ip=\'' . $_SERVER['REMOTE_ADDR'] . '\') order by v.ip';
-    //$rating = $db->GetValue($rating, 'error checking to see if you have already voted', '');
-    //$vote = new auForm('vote');
-    //$vote->AddSelect('vote', 'rating', 'choose your rating of this guide', array(-3 => '-3 (worst)', -2 => '-2', -1 => '-1', 0 => '0 (average)', 1 => '1', 2 => '2', 3 => '3 (best)'), +$rating);
-    //$vote->AddButtons('vote', 'cast your vote for this guide');
-    //$vote->WriteHTML($user->Valid);
 ?>
       </div>
 <?
+    auRating::Show('guide', $guide->id, $guide->rating, $guide->votes, $guide->vote);
     $page->End();
   } else {  // couldn't read guide
     $page->Start('guides');
@@ -67,10 +57,10 @@
       $where .= ' or g.author=\'' . $user->ID . '\' and (g.status=\'new\' or g.status=\'pending\'))';
     else
       $where .= ')';
-    $guide = 'select g.id, g.pages, g.status, g.tags, g.title, g.description, g.author, g.dateadded, g.dateupdated, u.login, r.rating, r.votes from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector where ' . $where;
+    $guide = 'select g.id, g.pages, g.status, g.tags, g.title, g.description, g.author, g.dateadded, g.dateupdated, u.login, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, v.vote from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join votes as v on v.ratingid=r.id and (v.uid=' . $user->ID . ' or v.ip=\'' . addslashes($_SERVER['REMOTE_ADDR']) . '\') where ' . $where;
     return $db->GetRecord($guide, 'error looking up guide content', 'guide content not found', true);
   }
-  
+
   /**
    * Get a page of the guide from the database and display it.
    *
@@ -141,7 +131,7 @@
 <?
     }
   }
-  
+
   /**
    * Show the date added (and updated, if different) for a guide.
    *

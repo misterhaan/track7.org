@@ -38,7 +38,7 @@
 ?>
       <table class="columns" cellspacing="0">
         <tr><th>status</th><td colspan="2"><?=$task->status; ?></td></tr>
-        <tr><th>rating</th><td><? showVoteRating('task', $task->id, $task->rating, $task->votes, $task->vote); ?></td><td width="100%"></td></tr>
+        <tr><th>rating</th><td><? auRating::Show('task', $task->id, $task->rating, $task->votes, $task->vote); ?></td><td width="100%"></td></tr>
         <tr><th>area</th><td colspan="2"><?=$task->area; ?><?=($task->parentarea != $task->area ? ' (' . $task->parentarea . ')' : ''); ?></td></tr>
         <tr><th>age</th><td colspan="2"><?=auText::HowLongAgo($task->instant); ?></td></tr>
       </table>
@@ -88,7 +88,7 @@
       echo '"><td>';
       echo $task->status;
       echo '</td><td>';
-      showVoteRating('task', $task->id, $task->rating, $task->votes, $task->vote);
+      auRating::Show('task', $task->id, $task->rating, $task->votes, $task->vote);
       echo '</td><td>';
       echo '<a href="?id=' . $task->id . '">' . $task->title . '</a>';
       echo '</td><td>';
@@ -182,69 +182,5 @@
 
   function getArea(&$db, $id) {
     return $db->GetRecord('select id, name, parent from t7taskarea where id=\'' . addslashes($id) . '\'', 'error looking up area', 'area not found');
-  }
-
-  /**
-   * Show the current rating and the user's vote, with links to cast a vote.
-   * @param string $type Type of rating (must be a value in the enum for the type column of the ratings table).
-   * @param string $selector Unique identifier for this rating within its type.
-   * @param float $rating Average rating to display.
-   * @param integer $votes Number of votes this rating has been determined by.
-   * @param integer $uservote Vote on record from this user (or null if user hasn't voted in this rating).
-   */
-  function showVoteRating($type, $selector, $rating = null, $votes = 0, $uservote = null) {
-    if(!$votes)
-      $rating = null;
-    $link = '/votes.php?type=' . $type . '&amp;selector=' . $selector . '&amp;vote=';
-    echo '<div class="rating" id="' . $type . ':' . $selector . '">';
-    echo '<a href="' . $link . '-3" title="vote three thumbs down — impossibly intolerable"><img src="/images/vote/' . voteImage(-3, $rating, $uservote) . '" alt="-3" /></a>';
-    echo '<a href="' . $link . '-2" title="vote two thumbs down — fully intolerable"><img src="/images/vote/' . voteImage(-2, $rating, $uservote) . '" alt="-2" /></a>';
-    echo '<a href="' . $link . '-1" title="vote one thumb down — partly intolerable"><img src="/images/vote/' . voteImage(-1, $rating, $uservote) . '" alt="-1" /></a>';
-    echo '<a href="' . $link . '0" title="vote no thumbs — indifferent"><img src="/images/vote/' . voteImage(0, $rating, $uservote) . '" alt="0" /></a>';
-    echo '<a href="' . $link . '1" title="vote one thumb up — partly amazing"><img src="/images/vote/' . voteImage(1, $rating, $uservote) . '" alt="1" /></a>';
-    echo '<a href="' . $link . '2" title="vote two thumbs up — fully amazing"><img src="/images/vote/' . voteImage(2, $rating, $uservote) . '" alt="2" /></a>';
-    echo '<a href="' . $link . '3" title="vote three thumbs up — impossibly amazing"><img src="/images/vote/' . voteImage(3, $rating, $uservote) . '" alt="3" /></a>';
-    echo '<div class="detail">(' . $votes . ' vote';
-    if($votes != 1)
-      echo 's';
-    echo ')</div>';
-    echo '</div>';
-  }
-
-  /**
-   * Show the appropriate image to vote the specified value when the rating and user's vote are as specified.
-   * @param integer $value Number of thumbs that will be voted for this item if this image is clicked.
-   * @param float $rating Average rating for this item.
-   * @param integer $uservote Vote on record from this user.
-   * @return string Image filename to use.
-   */
-  function voteImage($value, $rating, $uservote) {
-    if(!$value) {
-      if($uservote === '0') {
-        if($rating !== null && $rating < .05 && $rating > -.05)
-          return 'current/none0.png';
-        return 'current/none.png';
-      }
-      if($rating !== null && $rating < .05 && $rating > -.05)
-        return 'none0.png';
-      return 'none.png';
-    }
-    if($value < 0) {
-      $img = 'down';
-      $value = -$value;
-      $rating = -$rating;
-      $uservote = -$uservote;
-    } else
-      $img = 'up';
-    if($uservote >= $value)
-      $img = 'current/' . $img;
-    if($rating >= $value)
-      $img .= '10';
-    else {
-      $rating = round(($rating + 1 - $value) * 10);
-      if($rating > 0)
-        $img .= $rating;
-    }
-    return $img . '.png';
   }
 ?>
