@@ -9,28 +9,6 @@
         model file and as a collection of instruction images.
       </p>
 <?
-  if($_POST['submit'] == 'vote' && is_numeric($_POST['vote']) && $_POST['vote'] >= -3 && $_POST['vote'] <= 3) {
-    $ratingid = 'select id from ratings where type=\'lego\' and selector=\'' . addslashes($_POST['model']) . '\'';
-    if($ratingid = $db->Get($ratingid, 'error looking up rating id')) {
-      if($ratingid = $ratingid->NextRecord())
-        $ratingid = $ratingid->id;
-      else {
-        $ins = 'insert into ratings (type, selector) values (\'lego\', \'' . addslashes(htmlspecialchars($_POST['model'])) . '\')';
-        $ratingid = $db->Put($ins, 'error initializing rating');
-      }
-      if($ratingid) {
-        $vote = 'replace into votes (ratingid, vote, uid, ip, time) values (' . $ratingid . ', ' . $_POST['vote'] . ', ' . $user->ID . ', \'' . ($user->Valid ? '' : $_SERVER['REMOTE_ADDR']) . '\', ' . time() . ')';
-        if(false !== $db->Change($vote, 'error adding vote')) {
-          $rating = 'select sum(vote) ratesum, count(1) ratecnt from votes where ratingid=' . $ratingid;
-          if($rating = $db->GetRecord($rating, 'error calculating new rating', 'no votes found')) {
-            $rating = 'update ratings set rating=' . ($rating->ratesum / $rating->ratecnt) . ', votes=' . $rating->ratecnt . ' where id=' . $ratingid;
-            if(false !== $db->Change($rating, 'error updating new rating'))
-              $page->Info('vote sucessfully added or updated');
-          }
-        }
-      }
-    }
-  }
   if($user->GodMode) {
     if(isset($_GET['add'])) {
       if($_POST['submit'] == 'save') {
@@ -57,7 +35,7 @@
 <?
     }
   }
-  $legos = 'select l.id, l.name, l.notes, l.pieces, l.minifigs, l.adddate, r.rating, r.votes from legos as l left join ratings as r on r.type=\'lego\' and r.selector=l.id order by rating desc, adddate desc';
+  $legos = 'select l.id, l.name, l.notes, l.pieces, l.minifigs, l.adddate, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, v.vote from legos as l left join ratings as r on r.type=\'lego\' and r.selector=l.id left join votes as v on v.ratingid=r.id and (v.uid=' . $user->ID . ' or v.ip=\'' . addslashes($_SERVER['REMOTE_ADDR']) . '\') order by rating desc, votes desc, adddate desc';
   if($legos = $db->GetSplit($legos, 10, 0, '', '', 'error looking up listing of lego models', 'no lego models found', false, true)) {
     while($lego = $legos->NextRecord()) {
       $page->Heading($lego->name, $lego->id);
@@ -65,6 +43,7 @@
       <div class="thumb">
         <a class="img" href="<?=$lego->id; ?>.png" title="click to view full-size image"><img src="<?=$lego->id; ?>-thumb.png" alt="full-size image" /></a>
         <div><?=auFile::ImageSize($lego->id . '.png'); ?></div>
+        <? auRating::Show('lego', $lego->id, $lego->rating, $lego->votes, $lego->vote); ?>
       </div>
       <div class="thumbed">
 <?
@@ -80,7 +59,6 @@
           <tr><th>downloads</th><td><a href="/files/output/lego/<?=$lego->id; ?>-img.zip"><?=$lego->name; ?> instruction images</a> <em>(<?=auFile::Size($lego->id . '-img.zip'); ?>)</em><br /><a href="/files/output/lego/<?=$lego->id; ?>-ldr.zip"><?=$lego->name; ?> ldraw data file</a> <em>(<?=auFile::Size($lego->id . '-ldr.zip'); ?>)</em></td></tr>
           <tr><th>notes</th><td><?=$lego->notes; ?></td></tr>
           <tr><th>added</th><td><?=auText::HowLongAgo($lego->adddate); ?> ago</td></tr>
-          <tr><th>rating</th><td><?=+$lego->rating; ?> (from <?=+$lego->votes; ?> vote<?=$lego->votes == 1 ? '' : 's'; ?>)<?=$_GET['vote'] == $lego->id ? '' : ' <a href="?vote=' . $lego->id . ($_GET['skip'] ? '&amp;skip=' . $_GET['skip'] : '') . '#frmvote">cast vote</a>'; ?></td></tr>
         </table>
 <?
       if($_GET['vote'] == $lego->id) {

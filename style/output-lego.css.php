@@ -30,7 +30,7 @@ div.thumb a.img:hover {
   margin: 0 0 .5em;
   padding: 0;
 }
-div.thumb a img {
+div.thumb a.img img {
   display: block;
   width: 150px;
 }

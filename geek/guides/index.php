@@ -35,7 +35,7 @@
       break;
     case 'rating':
       $sort = 'highest rated';
-      $guides = 'r.rating';
+      $guides = 'rating';
       break;
     case 'added':
       $sort = 'newest';
@@ -99,7 +99,7 @@
 <?
     }
   }
-  $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.dateupdated, g.pages, g.author, u.login, r.rating, r.votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
+  $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.dateupdated, g.pages, g.author, u.login, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/geek/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
   if($guides = $db->GetSplit($guides, 20, 0, '', '', 'error getting list of guides', 'no guides found')) {
     $page->Heading($sort . ' guides');
 ?>
