@@ -665,35 +665,6 @@ div#welcome div.avatar img {
   vertical-align: middle;
 }
 
-form#loginform {
-  margin: 0 .5em .5em;
-  padding-top: .5em;
-}
-form#loginform fieldset {
-  padding: 5px;
-  margin: 0;
-}
-form#loginform label {
-  vertical-align: middle;
-  text-align: right;
-  display: block;
-}
-form#loginform label#loginremember {
-  display: inline;
-  margin-right: .5em;
-}
-form#loginform input {
-  vertical-align: middle;
-}
-form#loginform input.field {
-  width: 7em;
-  padding: 1px 0;
-}
-form#resetpassform {
-  margin: .5em;
-  text-align: center;
-}
-
 div#navhelp {
   float: right;
   margin-top: .5em;
@@ -775,7 +746,37 @@ div#location a {
 }
 
 
-/* ==============================================================[ title ]== */
+/* ===============================================================[ login ]== */
+
+
+div#loginmask {
+  background-color: #000000;
+  opacity: .7;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+form#loginform {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  margin: 0;
+  margin-top: -7.5em;
+  width: 100%;
+}
+form#loginform fieldset {
+  background-color: #ffffff;
+  margin: 0 auto;
+  width: 20em;
+}
+
+form#loginform input[type="submit"] {
+  margin-top: .45em;
+}
+
+/* ===============================================================[ title ]== */
 
 div#title {
   padding-bottom: 30px;

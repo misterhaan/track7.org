@@ -1,6 +1,6 @@
-window.onload = windowLoad;
+addStartupFunction(handleVideo);
 
-function windowLoad() {
+function handleVideo() {
   // for photos that are actually videos, there's an object tag that needs an embed tag added inside it
   var photo = document.getElementById("photo");
   if(photo && photo.nodeName.toLowerCase() == "object") {

@@ -1,9 +1,5 @@
-window.onload = windowLoad;
-
-function windowLoad() {
-  enableAjaxPost();
-  enableAjaxQuote();
-}
+addStartupFunction(enableAjaxPost);
+addStartupFunction(enableAjaxQuote);
 
 function enableAjaxPost() {
   var form = document.getElementById("frmreply");

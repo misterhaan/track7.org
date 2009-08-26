@@ -1,7 +1,27 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
 
+  if(isset($_POST['return']) && $_POST['return'] == 'xml' && isset($_POST['submit']) && $_POST['submit'] == 'login') {
+    header('Content-Type: text/xml; charset=utf-8');
+    header('Cache-Control: no-cache');
+    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    if($user->Valid) {
+?>
+<response result="success" />
+<?
+    } else {
+?>
+<response result="failure">
+<?
+      echo '<error>';
+      echo $user->LoginMessage;
+      echo "</error>\n";
+?>
+</response>
+<?
+    }
+    die;
+  }
   if(isset($_POST['submit']) && $_POST['submit'] == 'reset password') {
     $page->Start('reset password - login', 'reset password', 'track7 login');
     if(isset($_POST['email']))
