@@ -1,4 +1,6 @@
-window.onload = function() {
+addStartupFunction(enableCheckReferrer);
+
+function enableCheckReferrer() {
   // add link to check referrer
   var ref = document.getElementById("referrer");
   var a = document.createElement("a");
