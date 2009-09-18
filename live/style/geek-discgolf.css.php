@@ -15,6 +15,8 @@ div#parlist tbody th {
   text-align: left;
   background-color: #<?=HEADLIGHT; ?>;
   color: #000000;
+  padding-left: .3em;
+  padding-right: .3em;
   border: 1px solid #ffffff;
 }
 

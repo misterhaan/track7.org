@@ -129,7 +129,7 @@
         played this <?=$round->roundtype; ?> round <?=$round->tees ? 'from the ' . $round->tees . ' tees ' : ''; ?>
         at <a href="courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>.
       </p>
-      
+
 <?
       if($round->comments || $round->bestdisc || $round->worstdisc) {
         $page->Heading($round->login . '&rsquo;s comments');
@@ -243,10 +243,28 @@
   function showRoundHoles($holes, $score, $par, $avg) {
 ?>
       <div id="parlist">
+        <table class="data" cellspacing="0">
 <?
-    for($start = 0; $start < $holes; $start += 9)
-      showNineHoles($start, $score, $par, $avg);
+    echo '          <thead><tr><td></td>';
+    for($i = 1; $i <= $holes; $i++)
+      echo '<th>' . $i . '</th>';
+    echo "<th>total</th></tr></thead>\n          <tbody>\n";
+    echo '            <tr><th>score</th>';
+    for($i = 0; $i < $holes; $i++)
+      echo '<td>' . $score[$i] . '</td>';
+    echo '<th>' . array_sum($score) . "</th></tr>\n            <tr><th>par</th>";
+    for($i = 0; $i < $holes; $i++)
+      echo '<td>' . $par[$i] . '</td>';
+    echo '<th>' . array_sum($par) . "</th></tr>\n";
+    if(is_array($avg)) {
+      echo '            <tr><th>average</th>';
+      for($i = 0; $i < $holes; $i++)
+        echo '<td>' . number_format($avg[$i], 1) . '</td>';
+      echo '<th>' . number_format(array_sum($avg), 1) . "</th></tr>\n";
+    }
 ?>
+          </tbody>
+        </table>
       </div>
 
 <?
