@@ -335,29 +335,16 @@
   function showCourseHoles($holes, $par, $avg, $hastees) {
 ?>
       <div id="parlist">
-<?
-    for($start = 0; $start < $holes; $start += 9)
-      showNineHoles($start, $par, $avg, $hastees);
-?>
-      </div>
-
-<?
-  }
-  
-  // --------------------------------------------------------[ showNineHoles ]--
-  function showNineHoles($start, $par, $avg, $hastees) {
-?>
         <table class="data" cellspacing="0">
 <?
-    $end = $start + 9;
     echo '          <thead><tr><td></td>';
-    for($i = $start + 1; $i <= $end; $i++)
+    for($i = 1; $i <= $holes; $i++)
       echo '<th>' . $i . '</th>';
-    echo "</tr></thead>\n          <tbody>\n";
+    echo "<th>total</th></tr></thead>\n          <tbody>\n";
     echo '            <tr><th>course par</th>';
-    for($i = $start; $i < $end; $i++)
+    for($i = 0; $i < $holes; $i++)
       echo '<td>' . $par[$i] . '</td>';
-    echo "</tr>\n";
+    echo '<th>' . array_sum($par) . "</th></tr>\n";
     if(is_array($avg))
       foreach($avg as $type => $v)
         foreach($v as $tee => $values) {
@@ -369,13 +356,15 @@
             echo '-tee';
           }
           echo '</th>';
-          for($i = $start; $i < $end; $i++)
+          for($i = 0; $i < $holes; $i++)
             echo '<td>' . number_format($values->avglist[$i], 1) . '</td>';
-          echo "</tr>\n";
+          echo '<th>' . number_format(array_sum($values->avglist), 1) . "</th></tr>\n";
         }
 ?>
           </tbody>
         </table>
+      </div>
+
 <?
   }
 
