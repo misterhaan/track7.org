@@ -28,7 +28,7 @@
         }
         if(isset($_GET['calcAverages'])) {
           require_once 'util.php';
-          if(calcAllAvgScores($db, $_GET['id']))
+          if(countRounds($db, $_GET['id']) && calcAllAvgScores($db, $_GET['id']))
             $page->Info('average scores calculated successfully');
         }
         if(isset($_GET['approve'])) {
