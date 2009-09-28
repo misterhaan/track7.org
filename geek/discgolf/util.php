@@ -1,4 +1,12 @@
 <?
+  function countRounds(&$db, $courseId) {
+    $count = 'select count(1) from dgrounds where courseid=\'' . addslashes($courseId) . '\'';
+    if(false === $count = $db->GetValue($count, 'error counting rounds for course ' . $courseId, ''))
+      return false;
+    $count = 'update dgcourses set rounds=\'' . $count . '\' where id=\'' . addslashes($courseId) . '\'';
+    return false !== $db->Change($count, 'error updating round count for course ' . $courseId);
+  }
+
   function calcAllAvgScores(&$db, $courseId) {
     $success = true;
     $del = 'delete from dgcoursestats where courseid=\'' . $courseId . '\'';
@@ -20,7 +28,7 @@
           $del = 'delete from dgcoursestats where courseid=\'' . $courseId . '\' and roundtype=\'' . $roundType . '\' and tees=\'' . $tees . '\'';
           return false !== $db->Change($del, 'error deleting old course stats');
         } else
-          return true;          
+          return true;
       while($score = $scores->NextRecord()) {
         $totalscore += $score->score;
         $scorelist = explode('|', $score->scorelist);
@@ -28,7 +36,7 @@
           $totallist[$i] += $scorelist[$i];
       }
       for($i = count($totallist) - 1; $i >= 0; $i--)
-        $totallist[$i] = round($totallist[$i] / $rounds, 1); 
+        $totallist[$i] = round($totallist[$i] / $rounds, 1);
       $ins = 'replace into dgcoursestats (courseid, roundtype, tees, avglist, avgscore, rounds) values (\'' . $courseId . '\', \'' . $roundType . '\', \'' . $tees . '\', \'' . implode('|', $totallist) . '\', \'' . round($totalscore / $rounds, 1) . '\', \'' . $rounds . '\')';
       return false !== $db->Put($ins, 'error saving average scores of ' . $roundType . ' rounds for course ' . $courseId);
     }

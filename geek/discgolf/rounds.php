@@ -17,6 +17,7 @@
           $ins = 'insert into dgrounds (uid, courseid, roundtype, tees, entryuid, instant, scorelist, score' . ($playerid == $user->ID ? ', bestdisc, worstdisc, comments' : '') . ') values (\'' . $playerid . '\', \'' . addslashes($_GET['course']) . '\', ' . ($_POST['type'] == 'null' ? 'null' : '\'' . addslashes($_POST['type']) . '\'') . ', ' . (!$_POST['tees'] || $_POST['tees'] == 'null' ? 'null' : '\'' . addslashes($_POST['tees']) . '\'') . ', ' . ($playerid == $user->ID ? 'null' : '\'' . $user->ID . '\'') . ', \'' . $user->tzstrtotime($_POST['date']) . '\', \'' . implode('|', $_POST['score']) . '\', \'' . array_sum($_POST['score']) . '\'' . ($playerid == $user->ID ? ', ' . $_POST['bestdisc'] . ', ' . $_POST['worstdisc'] . ', \'' . auText::BB2HTML($_POST['comments']) . '\'' : '') . ')';
           if(false !== $roundid = $db->Put($ins, 'error saving round')) {
             require_once 'util.php';
+            countRounds($db, $_GET['course']);
             if(calcAvgScores($db, $_GET['course'], $_POST['roundtype'] == 'null' ? null : $_POST['roundtype'], $_POST['tees'] && $_POST['tees'] != 'null' ? $_POST['tees'] : null)) {
               calcPlayerStats($db, $playerid);
               header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $roundid);
