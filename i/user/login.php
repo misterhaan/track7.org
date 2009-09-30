@@ -1,5 +1,5 @@
 <?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
+  require_once dirname(dirname($_SERVER['DOCUMENT_ROOT'])) . '/lib/track7.php';
 
   if(isset($_POST['return']) && $_POST['return'] == 'xml' && isset($_POST['submit']) && $_POST['submit'] == 'login') {
     header('Content-Type: text/xml; charset=utf-8');
@@ -33,7 +33,7 @@
         just accidentally hit the wrong button!), please enter the e-mail
         address stored with your account.&nbsp; if you have not specified an
         e-mail address, you will not be able to reset your password and will
-        need to <a href="sendmessage.php?to=misterhaan">contact me</a> so i can
+        need to <a href="http://www.track7.org/user/sendmessage.php?to=misterhaan">contact me</a> so i can
         manually reset your password.
       </p>
 <?
@@ -58,7 +58,7 @@
       <p>
         if you have registered for a user account at track7, you can sign in
         here.&nbsp; if you don’t have a user account, you can
-        <a href="register.php">register</a> for one.
+        <a href="http://www.track7.org/user/register.php">register</a> for one.
       </p>
       <p>
         forget your password?&nbsp; if you have entered an e-mail address, just
