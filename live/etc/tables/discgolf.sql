@@ -37,6 +37,8 @@ create table dgcourses (
   approved enum('yes','no') not null default 'no', index(approved),
   name varchar(64),
   location varchar(64),
+  latitude float,
+  longitude float,
   holes tinyint unsigned not null default 18,
   teelist varchar(16),
   parlist varchar(53) not null default '3|3|3|3|3|3|3|3|3|3|3|3|3|3|3|3|3|3',
