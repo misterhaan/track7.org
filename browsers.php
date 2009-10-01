@@ -8,8 +8,8 @@
         internet explorer and other older browsers tend to have problems with
         parts of it.&nbsp; often all this means is that people visiting track7
         with internet explorer will miss out on some of the more advanced
-        features.&nbsp; track7 should look &ldquo;good enough&rdquo; in any
-        recent browser.&nbsp; if you have problems, try upgrading to one of the
+        features.&nbsp; track7 should look “good enough” in any recent browser.&nbsp;
+        if you have problems, try upgrading to the latest version one of the
         following (preferably not internet explorer, however).&nbsp; track7 is
         tested in the latest version of each of them, and any issues found but
         not worked around are listed below:
@@ -18,7 +18,7 @@
         <thead class="minor"><tr><th>browser</th><th title="the engine actually displays web pages, and may be used by other browsers as well">engine</th></tr></thead>
         <tbody>
           <tr class="firstchild"><td><a href="http://www.getfirefox.com/">mozilla firefox</a></td><td>gecko</td></tr>
-          <tr><td><a href="http://www.opera.com/download/">opera</a></td><td>opera</td></tr>
+          <tr><td><a href="http://www.opera.com/download/">opera</a></td><td>presto</td></tr>
           <tr><td><a href="http://www.microsoft.com/windows/ie/default.mspx?mg_ID=10010">microsoft internet explorer</a></td><td>trident</td></tr>
           <tr><td><a href="http://www.google.com/chrome/">google chrome</a></td><td>webkit</td></tr>
         </tbody>

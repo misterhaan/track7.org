@@ -1,25 +1,10 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> fixes for internet explorer 6                                           *
+ * -> fixes for internet explorer                                             *
 \******************************************************************************/
 
 
-img {
-  behavior: url(/style/pngalpha.htc);
-}
-
-samp {
-  margin-right: 0;
-  width: 42em;
-  height: 10em;
-}
-
 div#loginmask {
-  position: absolute;
-  z-index: -100;
-}
-
-form#loginform {
-  position: absolute;
+  filter: alpha(opacity=70);
 }
