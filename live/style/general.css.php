@@ -750,6 +750,7 @@ div#location a {
 
 
 div#loginmask {
+  display: none;
   background-color: #000000;
   opacity: .7;
   width: 100%;
@@ -759,6 +760,7 @@ div#loginmask {
   left: 0;
 }
 form#loginform {
+  display: none;
   position: fixed;
   left: 0;
   top: 50%;

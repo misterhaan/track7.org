@@ -12,65 +12,45 @@ function enableLogin() {
   var loginlink = document.getElementById("headerloginlink");
   if(loginlink)
     loginlink.onclick = showLoginForm;
+  var loginform = document.getElementById("loginform");
+  if(loginform) {
+    var fieldset = loginform.getElementsByTagName("fieldset");
+    if(fieldset.length) {
+      fieldset = fieldset[0];
+      formAddData(fieldset, "return", "xml");
+      formAddData(fieldset, "formid", "userlogin");
+      formAddData(fieldset, "website", "DO NOT CHANGE THIS");
+      formAddData(fieldset, "comment", "");
+    }
+  }
+  var loginbutton = document.getElementById("loginbutton");
+  if(loginbutton)
+    loginbutton.onclick = submitLogin;
+  var logincancel = document.getElementById("logincancel");
+  if(logincancel)
+    logincancel.onclick = cancelLogin;
 }
 
 function showLoginForm() {
-  // create mask to shade out the rest of the page
-  var mask = document.createElement("div");
-  var body = document.getElementsByTagName("body")[0];
-  body.appendChild(mask);
-  mask.id = "loginmask";
-  // create login form
-  var form = createElementAttributes("form", ["id=loginform", "method=post", "action=/user/login.php"]);
-  body.appendChild(form);
-  form.mask = mask;  // save mask so it can easily be removed if the cancel button is selected
-  var fieldset = document.createElement("fieldset");
-  form.appendChild(fieldset);
-  formAddData(fieldset, "return", "xml");
-  formAddData(fieldset, "formid", "userlogin");
-  formAddData(fieldset, "website", "DO NOT CHANGE THIS");
-  formAddData(fieldset, "comment", "");
-  var table = document.createElement("table");
-  fieldset.appendChild(table);
-  table.className = "columns";
-  table.cellSpacing = "0";
-  formAddField(table, "loginfield", "login", "text", "string", "username", 20, 32).focus();
-  formAddField(table, "passfield", "password", "password", "password", "password", 20);
-  var tr = document.createElement("tr");
-  table.appendChild(tr);
-  var th = document.createElement("th");
-  tr.appendChild(th);
-  var td = document.createElement("td");
-  tr.appendChild(td);
-  var input = createElementAttributes("input", ["id=rememberbox", "className=checkbox", "type=checkbox", "name=remember", "value=remember"]);
-  td.appendChild(input);
-  label = document.createElement("label");
-  td.appendChild(label);
-  label.htmlFor = "rememberbox";
-  label.appendChild(document.createTextNode("remember this (sends a cookie)"));
-  tr = document.createElement("tr");
-  table.appendChild(tr);
-  tr.appendChild(document.createElement("td"));
-  td = document.createElement("td");
-  tr.appendChild(td);
-  input = createElementAttributes("input", ["type=submit", "name=submit", "value=login", "title=log in to track7"]);
-  td.appendChild(input);
-  input.onclick = submitLogin;
-  td.appendChild(document.createTextNode(" "));
-  input = createElementAttributes("input", ["type=submit", "name=submit", "value=cancel", "title=don't log in after all"]);
-  td.appendChild(input);
-  input.onclick = cancelLogin;
-  td.appendChild(document.createTextNode(" "));
-  input = createElementAttributes("input", ["type=submit", "name=submit", "value=reset password", "title=have your password reset and e-mailed to you"]);
-  td.appendChild(input);
-  return false;
+  var mask = document.getElementById("loginmask");
+  if(mask)
+    mask.style.display = "block";
+  var loginform = document.getElementById("loginform");
+  if(loginform) {
+    loginform.style.display = "block";
+    var loginfield = document.getElementById("loginfield");
+    if(loginfield)
+      loginfield.focus();
+    return false;
+  }
 }
 
 function cancelLogin() {
   if(this.form) {
-    if(this.form.mask)
-      this.form.mask.parentNode.removeChild(this.form.mask);
-    this.form.parentNode.removeChild(this.form);
+    this.form.style.display = "";
+    var loginmask = document.getElementById("loginmask");
+    if(loginmask)
+      loginmask.style.display = "";
     return false;
   }
 }
@@ -299,36 +279,8 @@ function getSelectedText(element) {
 
 function formAddData(parent, name, value) {
   var input = document.createElement("input");
+  input.type = "hidden";  // IE seems to crash doing this if it's already been added to the document
   parent.appendChild(input);
-  input.type = "hidden";
   input.name = name;
   input.value = value;
-}
-
-function formAddField(table, id, name, type, className, prompt, size, maxLength) {
-  var tr = document.createElement("tr");
-  table.appendChild(tr);
-  var th = document.createElement("th");
-  tr.appendChild(th);
-  var label = document.createElement("label");
-  th.appendChild(label);
-  label.htmlFor = id;
-  label.appendChild(document.createTextNode(prompt));
-  var td = document.createElement("td");
-  tr.appendChild(td);
-  var props = ["id=" + id, "name=" + name, "className=" + className, "type=" + type, "size=" + size];
-  if(maxLength)
-    props[props.length] = "maxLength=" + maxLength;
-  var input = createElementAttributes("input", props);
-  td.appendChild(input);
-  return input;
-}
-
-function createElementAttributes(name, attrs) {
-  var el = document.createElement(name);
-  for(var i = 0; i < attrs.length; i++) {
-    attr = attrs[i].split("=");
-    el[attr[0]] = attr[1];
-  }
-  return el;
 }
