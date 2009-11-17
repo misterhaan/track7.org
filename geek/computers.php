@@ -19,7 +19,7 @@
         <tr><th>ide1</th><td>iomega zip100</td></tr>
         <tr><th>sata2</th><td>western digital caviar 400 GB wd4000aaks</td></tr>
         <tr><th>sata3</th><td>lite-on dvd-rom dh-16d2s-04</td></tr>
-        <tr><th>operating system</th><td>fedora 9 64-bit</td></tr>
+        <tr><th>operating system</th><td>fedora 11 64-bit</td></tr>
       </table>
 
 <?
