@@ -17,7 +17,7 @@
         <tr><th>network</th><td>realtek 8110sc 10/100/1000 ethernet (onboard)</td></tr>
         <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
         <tr><th>ide1</th><td>iomega zip100</td></tr>
-        <!-- western digital caviar 80 GB wd800jd -->
+        <!-- adding new sata when upgrading to fedora 12:  western digital caviar 80 GB wd800jd -->
         <tr><th>sata2</th><td>western digital caviar 400 GB wd4000aaks</td></tr>
         <tr><th>sata3</th><td>lite-on dvd-rom dh-16d2s-04</td></tr>
         <tr><th>operating system</th><td>fedora 11 64-bit</td></tr>
