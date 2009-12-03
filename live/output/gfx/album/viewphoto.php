@@ -12,7 +12,7 @@
       $page->Info('<a href="' . $url . '/edit' . ($photo->youtubeid ? 'video' : 'photo') . '.php?id=' . $photo->id . '">edit this ' . ($photo->youtubeid ? 'video' : 'photo') . '</a>');
     if($photo->youtubeid) {
 ?>
-      <object id="photo" width="480" height="385" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
+      <object id="photo" width="640" height="385" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
         <param name="movie" value="http://www.youtube.com/v/<?=$photo->youtubeid; ?>&amp;hl=en&amp;fs=1&amp;rel=0"></param>
         <param name="allowFullScreen" value="true"></param>
         <param name="allowscriptaccess" value="always"></param>
