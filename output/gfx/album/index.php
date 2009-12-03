@@ -16,7 +16,7 @@
       $page->Info('<a href="/tools/taginfo.php?type=photos&amp;name=' . $tag . '">add/edit tag description</a>');
   } else {
     $page->Start('photo album', 'photo album<a class="feed" href="/feeds/photos.rss" title="rss feed of album photos"><img src="/style/feed.png" alt="feed" /></a>');
-    $page->TagCloud('photos', $url . 'tag/', 5, 15, 30, 50);
+    $page->TagCloud('photos', $url . 'tag/', 4, 7, 17, 40, 3);
   }
   switch($_GET['sort']) {
     case 'oldest':
