@@ -134,9 +134,9 @@
   function AddPhoto($rss, $photo) {
     $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
     if($photo->youtubeid)
-      $rss->AddItem('<p><a href="http://www.youtube.com/watch?v=' . $photo->youtubeid . '">watch this video on youtube</a></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
+      $rss->AddItem('<p><a href="http://www.youtube.com/watch?v=' . $photo->youtubeid . '">watch this video on youtube</a></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photo/' . $photo->id, true);
     else
-      $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photos/' . $photo->id, true);
+      $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', $photo->caption, '/output/gfx/album/photo/' . $photo->id, $photo->added, '/output/gfx/album/photo/' . $photo->id, true);
   }
 
   function AddGuide($rss, $guide) {
