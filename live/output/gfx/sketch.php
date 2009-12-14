@@ -20,7 +20,7 @@
       <div class="thumb">
         <a class="img" href="<?=$sketch->id; ?>.png" title="click to view full-size image"><img src="<?=$sketch->id; ?>-prev.png" alt="" /></a>
         <div><?=auFile::ImageSize($sketch->id . '.png'); ?></div>
-        <? auRating::Show('digital', $sketch->id, $sketch->rating, $sketch->votes, $sketch->vote); ?>
+        <? auRating::Show('sketch', $sketch->id, $sketch->rating, $sketch->votes, $sketch->vote); ?>
       </div>
       <div class="thumbed">
         <p>
