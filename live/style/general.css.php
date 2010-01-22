@@ -480,16 +480,20 @@ div#usercomments {
   margin: 2em 5em 1em;
   border: 1px solid #<?=HEADMEDIUM; ?>;
   clear: both;
+  -khtml-border-radius: .8em;
+  -webkit-border-radius: .8em;
   -moz-border-radius: .8em;
   border-radius: .8em;
 }
 div#usercomments h2 {
   margin: 0;
   border: none;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
   -moz-border-radius-bottomleft: 0;
   -moz-border-radius-bottomright: 0;
-  border-radius-bottomleft: 0;
-  border-radius-bottomright: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 table.post {
@@ -711,14 +715,12 @@ ul#sectnav li a {
   border: 1px solid #<?=BGDARK; ?>;
   border-bottom: none;
   background-color: #<?=BGLIGHT; ?>;
-  -khtml-border-radius-topleft: .5em;
-  -khtml-border-radius-topright: .5em;
-  -webkit-border-radius-topleft: .5em;
-  -webkit-border-radius-topright: .5em;
+  -webkit-border-top-left-radius: .5em;
+  -webkit-border-top-right-radius: .5em;
   -moz-border-radius-topleft: .5em;
   -moz-border-radius-topright: .5em;
-  border-radius-topleft: .5em;
-  border-radius-topright: .5em;
+  border-top-left-radius: .5em;
+  border-top-right-radius: .5em;
 }
 ul#sectnav li a:hover {
   border-color: #000000;

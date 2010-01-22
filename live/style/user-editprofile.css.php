@@ -20,14 +20,12 @@ ul.tabs li a {
   background-color: #<?=BGLIGHT; ?>;
   border: 1px solid #<?=BGMEDIUM; ?>;
   border-bottom: none;
-  -khtml-border-radius-topleft: .5em;
-  -khtml-border-radius-topright: .5em;
-  -webkit-border-radius-topleft: .5em;
-  -webkit-border-radius-topright: .5em;
+  -webkit-border-top-left-radius: .5em;
+  -webkit-border-top-right-radius: .5em;
   -moz-border-radius-topleft: .5em;
   -moz-border-radius-topright: .5em;
-  border-radius-topleft: .5em;
-  border-radius-topright: .5em;
+  border-top-left-radius: .5em;
+  border-top-right-radius: .5em;
 }
 ul.tabs li.active a {
   border: 1px solid #<?=BGDARK ?>;
