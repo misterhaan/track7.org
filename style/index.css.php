@@ -26,18 +26,15 @@ div#features h2 {
   color: #000000;
   text-align: center;
   background-color: #<?=BGMEDIUM; ?>;
-  -khtml-border-radius: .3em;
-  -khtml-border-radius-bottomleft: 0;
-  -khtml-border-radius-bottomright: 0;
   -webkit-border-radius: .3em;
-  -webkit-border-radius-bottomleft: 0;
-  -webkit-border-radius-bottomright: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
   -moz-border-radius: .3em;
   -moz-border-radius-bottomleft: 0;
   -moz-border-radius-bottomright: 0;
   border-radius: .3em;
-  border-radius-bottomleft: 0;
-  border-radius-bottomright: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   margin: 0;
 }
 
