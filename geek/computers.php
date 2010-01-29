@@ -13,13 +13,14 @@
         <tr><th>ram</th><td>g.skill 1 GB pc2 5300 ddr2 sdram<!-- 256 MB pc133 sdram<br />128 MB pc133 sdram --></td></tr>
         <tr><th>video</th><td>intel gma950 (onboard)</td></tr>
         <tr><th>audio</th><td>realtek alc883 (onboard, disabled)</td></tr>
-        <tr><th>tuner</th><td>hauppage wintv-pvr 150</td></tr>
+        <tr><th>tuner</th><td>hauppage wintv-hvr-2250<br />hauppage wintv-pvr 150</td></tr>
         <tr><th>network</th><td>realtek 8110sc 10/100/1000 ethernet (onboard)</td></tr>
         <tr><th>ide0</th><td>western digital caviar 80 GB wd800jb</td></tr>
         <tr><th>ide1</th><td>iomega zip100</td></tr>
         <!-- adding new sata when upgrading to fedora 12:  western digital caviar 80 GB wd800jd -->
         <tr><th>sata2</th><td>western digital caviar 400 GB wd4000aaks</td></tr>
-        <tr><th>sata3</th><td>lite-on dvd-rom dh-16d2s-04</td></tr>
+        <!-- dvd drive will become active again:  lite-on dvd-rom dh-16d2s-04 -->
+        <tr><th>sata3</th><td>western digital caviar black 1 TB wd1001fals</td></tr>
         <tr><th>operating system</th><td>fedora 11 64-bit</td></tr>
       </table>
 
