@@ -181,7 +181,7 @@
     <div class="feed comment">
       <div class="typedate" title="page comment at <?=strtolower($user->tzdate(LONGDATEFMT, $comment->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($comment->instant, $user)); ?></div></div>
       <h2 class="feed"><a href="/feeds/comments.rss" class="feed" title="track7 comments"></a>comment on <a href="<?=$comment->page; ?>"><?=$pagename; ?></a> by <?=($comment->uid ? '<a href="/user/' . $comment->login . '/">' . $comment->login . '</a>' : ($comment->url ? '<a href="' . $comment->url . '">' . $comment->name . '</a>' : $comment->name)); ?></h2>
-      <p><?=$comment->comments; ?></p>
+      <?=$comment->comments; ?>
     </div>
 
 <?
