@@ -10,7 +10,7 @@
 
     $page->Start(htmlspecialchars($_GET['login'], ENT_QUOTES, _CHARSET) . '’s profile', 'profile for ' . htmlspecialchars($_GET['login'], ENT_QUOTES, _CHARSET));
 
-    $u = 'select uid from users where login=\'' . addslashes($_GET['login']) . '\'';
+    $u = 'select uid, login from users where login=\'' . addslashes($_GET['login']) . '\'';
     if($u = $db->GetRecord($u, 'error looking up basic profile information', 'could not find a user named \'' . htmlspecialchars($_GET['login'], ENT_QUOTES, _CHARSET) .'\'', true)) {
       if($user->Valid) {
         $isfriend = 'select 1 from userfriends where fanuid=\'' . $user->ID . '\' and frienduid=\'' . $u->uid . '\'';
@@ -172,9 +172,6 @@
           $friends = 'select u.login, p.avatar from userfriends as f left join users as u on u.uid=f.frienduid left join userprofiles as p on p.uid=u.uid where fanuid=\'' . $u->uid . '\' order by login';
           if($friends = $db->Get($friends, 'error looking up friends', 'you don’t currently have any <a href="/user/friends.php">friends</a>.&nbsp; visit <a href="/user/list.php">other users’</a> profiles to add them to your list.')) {
 ?>
-<!--      <table class="text" cellspacing="0">
-        <thead class="minor"><tr><th>name</th><th>profile</th><th>send</th><th>remove</th></tr></thead>
-        <tbody>-->
       <ul id="friends">
 <?
             while($friend = $friends->NextRecord()) {
@@ -183,7 +180,6 @@
               else
                 $friend->avatar = '/style/noavatar.jpg';
 ?>
-<!--          <tr><td><?=$friend->login; ?></td><td><a href="/user/<?=$friend->login; ?>/">profile</a></td><td><a href="/user/sendmessage.php?to=<?=$friend->login; ?>">send</a></td><td><a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=<?=$_SERVER['REQUEST_URI']; ?>%23friends">remove</a></td></tr>-->
         <li><div class="friend">
           <a class="profile" href="/user/<?=$friend->login; ?>/" title="view <?=$friend->login; ?>’s profile">
             <img alt="" src="<?=$friend->avatar; ?>" />
@@ -199,8 +195,6 @@
             }
 ?>
       </ul>
-<!--        </tbody>
-      </table>-->
 <?
           }
         }
