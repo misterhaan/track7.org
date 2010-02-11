@@ -523,6 +523,14 @@ table.post div.head {
 table.post p {
   margin: .5em 1em;
 }
+table.post p.signature {
+  font-size: .8em;
+  margin: .625em 1.25em;
+  border-top: 1px solid #<?=BGLIGHT; ?>;
+  padding: .15em .5em 0;
+  max-height: 3.5em;
+  overflow: auto;
+}
 table.post div.foot {
   font-size: .8em;
   padding: 1px .5em 0;
