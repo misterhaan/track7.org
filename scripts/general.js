@@ -71,7 +71,7 @@ function loginFinished(req, form) {
     for(var error = response.firstChild; error; error = error.nextSibling)
       if(error.firstChild)  // it will find the line breaks
         errors += "\n" + error.firstChild.nodeValue;
-    alert("error(s) encountered casting your vote:\n" + errors);
+    alert("login attempt failed:\n" + errors);
     return;
   }
   // login worked, so reload the current page
