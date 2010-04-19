@@ -106,7 +106,7 @@
                 $page->Error('your password must be at least 4 characters -- not changing password');
               elseif($_POST['pass1'] != trim($_POST['pass2']))
                 $page->Error('passwords do not match!&nbsp; not changing password');
-              elseif(false !== $db->Change('update users set pass=\'' . addslashes(auUser::EncryptedPassword($_POST['pass1'])) . '\' where uid=' . $u->uid, 'error updating password'))
+              elseif(false !== $db->Change('update users set pass=\'' . addslashes(auUser::EncryptPassword($_POST['pass1'])) . '\' where uid=' . $u->uid, 'error updating password'))
                 $page->Info('password successfully changed');
             }
             if($_POST['email'] != $contact->email) {
