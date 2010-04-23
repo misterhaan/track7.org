@@ -188,6 +188,7 @@ html {
   margin: 0;
   padding: 0;
   font-size: 76%;
+  -webkit-text-size-adjust: none;
 }
 body {
   margin: 0;
