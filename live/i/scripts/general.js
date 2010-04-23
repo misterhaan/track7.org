@@ -1,3 +1,4 @@
+addStartupFunction(setPageWidth);
 addStartupFunction(enableLogin);
 
 function addStartupFunction(func) {
@@ -5,6 +6,18 @@ function addStartupFunction(func) {
     window.addEventListener("load", func, false);
   else if(window.attachEvent)  // MS
     window.attachEvent("onload", func);
+}
+
+window.onorientationchange = setPageWidth;
+
+function setPageWidth() {
+  if(window.orientation == 90 || window.orientation == -90) {
+    //document.body.width = 480;
+    document.getElementById("viewport").content = "width=device-width; initial-scale=1.0";
+  } else {
+    //document.body.width = 320;
+    document.getElementById("viewport").content = "width=device-width; initial-scale=1.0";
+  }
 }
 
 function enableLogin() {
