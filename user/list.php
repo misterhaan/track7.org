@@ -1,7 +1,29 @@
 <?
+  define('MAX_SUGGEST', 8);
+
   $getvars = array('showall');
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auText.php';
+
+  if($_GET['return'] == 'suggest') {
+    $count = 0;
+    $us = 'select login from users where login like \'' . addslashes($_GET['match']) . '%\' order by login';
+    if($us = $db->Get($us, '', '', true))
+      while($u = $us->NextRecord()) {
+        echo "\n" . $u->login;
+        if(++$count >= MAX_SUGGEST)
+          die("\n<more>");
+      }
+    $us = 'select login from users where not login like \'' . addslashes($_GET['match']) . '%\' and login like \'%' . addslashes($_GET['match']) . '%\' order by login';
+    if($us = $db->Get($us, '', '', true))
+      while($u = $us->NextRecord()) {
+        echo "\n" . $u->login;
+        if(++$count >= MAX_SUGGEST)
+          die("\n<more>");
+      }
+    if(!$count)
+      die('<no matches>');
+    die;
+  }
 
   $page->Start('user list', 'track7 users');
 ?>

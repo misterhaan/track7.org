@@ -178,6 +178,32 @@ samp {
   background-color: #<?=BGVERYLIGHT; ?>;
 }
 
+ol.suggestdrop {
+  background-color: #ffffff;
+  border: 1px solid #<?=BGMEDIUM; ?>;
+  border-top: none;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  position: absolute;
+}
+ol.suggestdrop li {
+  padding: .2em .5em;
+  cursor: pointer;
+}
+ol.suggestdrop li.current,
+ol.suggestdrop li:hover {
+  color: #000000;
+  background-color: #<?=LINKLIGHT; ?>;
+}
+ol.suggestdrop li.message,
+ol.suggestdrop li.message:hover {
+  color: #<?=DISABLED; ?>;
+  background-color: transparent;
+  cursor: auto;
+  border-top: 1px solid #<?=DISABLED; ?>;
+}
+
 /* =============================================================[ ratings ]== */
 
 div.rating {
@@ -623,8 +649,14 @@ div#content {
   border: 1px solid #<?=BGDARK; ?>;
   border-top: none;
   padding-bottom: 1.5em;
+  -webkit-border-bottom-left-radius: .75em;
+  -webkit-border-bottom-right-radius: .75em;
+  -moz-border-radius-bottomleft: .75em;
+  -moz-border-radius-bottomright: .75em;
+  border-bottom-left-radius: .75em;
+  border-bottom-right-radius: .75em;
 }
-div#dynamic {
+div.dynamic {
   clear: both;
 }
 br.clear {
@@ -841,7 +873,7 @@ div#content ul.elements a {
 
 /* =====================================================[ dynamic content ]== */
 
-div#dynamic {
+div.dynamic {
   width: 62.01em;
   margin: 0 auto;
 }
@@ -851,23 +883,23 @@ div.dynsec {
   padding: 0 .2em;
 }
 
-div#dynamic h2 {
+div.dynamic h2 {
   margin: 1em 0 .5em;
   font-size: 1em;
   border: 1px solid #<?=HEADDARK; ?>;
 }
-div#dynamic ul {
+div.dynamic ul {
   font-size: .8em;
   padding-left: .3em;
   padding-right: 1em;
 }
-div#dynamic table,
-div#dynamic p {
+div.dynamic table,
+div.dynamic p {
   font-size: .8em;
   margin: .3em 1em;
 }
-div#dynamic a:link:hover,
-div#dynamic a:visited:hover {
+div.dynamic a:link:hover,
+div.dynamic a:visited:hover {
   border-bottom: 1px dotted #<?=LINKDARK; ?>;
 }
 
@@ -886,7 +918,7 @@ div#poweredby li a {
   display: block;
   border: none;
 }
-div#dynamic div#poweredby a:hover {
+div.dynamic div#poweredby a:hover {
   border: none;
 }
 div#poweredby img {

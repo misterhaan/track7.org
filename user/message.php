@@ -1,6 +1,5 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
 
   if(isset($_GET['view']) && is_numeric($_GET['view'])) {
     $message = 'select m.instant, m.subject, m.message, u.login, m.name, m.contact from usermessages as m left join users as u on u.uid=m.fromuid where m.id=' . $_GET['view'] . ' and m.touid=' . $user->ID;
