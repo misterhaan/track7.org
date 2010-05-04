@@ -1,6 +1,29 @@
 <?
+  define('MAX_SUGGEST', 8);
+
   $getvars = array('sort', 'id');
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
+
+  if($_GET['return'] == 'suggest') {
+    $count = 0;
+    $mfgrs = 'select distinct mfgr from dgdiscs where mfgr like \'' . addslashes($_GET['match']) . '%\' order by mfgr';
+    if($mfgrs = $db->Get($mfgrs, '', '', true))
+      while($mfgr = $mfgrs->NextRecord()) {
+        echo "\n" . $mfgr->mfgr;
+        if(++$count >= MAX_SUGGEST)
+          die("\n<more>");
+      }
+    $mfgrs = 'select distinct mfgr from dgdiscs where not mfgr like \'' . addslashes($_GET['match']) . '%\' and mfgr like \'%' . addslashes($_GET['match']) . '%\' order by mfgr';
+    if($mfgrs = $db->Get($mfgrs, '', '', true))
+      while($mfgr = $mfgrs->NextRecord()) {
+        echo "\n" . $mfgr->mfgr;
+        if(++$count >= MAX_SUGGEST)
+          die("\n<more>");
+      }
+    if(!$count)
+      die('<no matches>');
+    die;
+  }
 
   if($_GET['id'] == 'new') {
     $adddisc = getDiscForm($db);
@@ -259,7 +282,7 @@
       $ret .= 'under';
     return $ret . 'stable';
   }
-  
+
   function getDiscForm(&$db, $disc = false) {
     require_once 'auForm.php';
     if($disc)
@@ -289,7 +312,7 @@
     }
     return auFormSelect::ArrayIndex($types);
   }
-  
+
   function getStableOptions($low, $high, $unknown = true) {
     if($unknown)
       $ret[''] = '(unknown)';
@@ -303,7 +326,7 @@
       <p>
         name is required and manufacturer is extremely helpful, and anything
         else you can add is also useful.&nbsp; speed, glide, turn, and fade
-        are all numeric (the following definitions come from 
+        are all numeric (the following definitions come from
         <a href="http://www.innovadiscs.com/">innovadiscs.com</a>):&nbsp;
         speed (1-10) is how quickly a disc cuts through the air, where 12 is
         the fastest.&nbsp; glide (1-7) is how much carry or float a disc has
@@ -545,7 +568,7 @@
         use this form to request that a disc be added to track7's database.&nbsp;
         name is required and manufacturer is extremely helpful, and anything
         else you can add is also useful.&nbsp; speed, glide, turn, and fade
-        are all numeric (the following definitions come from 
+        are all numeric (the following definitions come from
         <a href="http://www.innovadiscs.com/">innovadiscs.com</a>):&nbsp;
         speed (1-10) is how quickly a disc cuts through the air, where 10 is
         the fastest.&nbsp; glide (1-7) is how much carry or float a disc has

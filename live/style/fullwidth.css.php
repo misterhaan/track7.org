@@ -4,7 +4,7 @@
 /******************************************************************************\
  * track7 style sheet by misterhaan of http://www.track7.org/                 *
  *                                                                            *
- * -> layout style to use most of the with of the browser                     *
+ * -> layout style to use most of the width of the browser                    *
 \******************************************************************************/
 
 body {
