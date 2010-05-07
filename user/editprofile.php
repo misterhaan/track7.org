@@ -5,8 +5,6 @@
 \*----------------------------------------------------------------------------*/
   define('AVATAR_SIZE', 64);
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
-  require_once 'auText.php';
 
   if($user->GodMode && isset($_GET['user'])) {
     $u = $_GET['user'];
@@ -189,10 +187,10 @@
     $page->Error('cannot edit your profile because you are not logged in!');
 ?>
       <p>
-        if you have an account, please <a href="login.php">log in</a> and you
-        will be able to edit your profile when you come back.&nbsp; if you don't
-        have an account, you will need to <a href="register.php">register</a> so
-        that you have a profile to edit!
+        if you have an account, please <a id="messageloginlink" href="login.php">log in</a>
+        and you will be able to edit your profile when you come back.&nbsp; if
+        you don't have an account, you will need to <a href="register.php">register</a>
+        so that you have a profile to edit!
       </p>
 <?
   }

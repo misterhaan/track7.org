@@ -54,7 +54,7 @@
           <samp>http://<?=$_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']; ?>?user=<?=$user->Name; ?>&amp;pass=&lt;SECRET&gt;&amp;song=%%URL_CURRENTSONGTITLE%%&amp;artist=%%URL_CURRENTARTIST%%&amp;album=%%URL_CURRENTALBUM%%&amp;length=%%URL_CURRENTSONGLENGTH%%&amp;file=%%URL_CURRENTSONG%%</samp>
 <?
     } else
-      $page->Error('this feature is for registered users only, and you are not logged in.&nbsp; you will need to <a href="/user/login.php">log in</a> or <a href="/user/register.php">register</a> before you can use this feature.');
+      $page->Error('this feature is for registered users only, and you are not logged in.&nbsp; you will need to <a id="messageloginlink" href="/user/login.php">log in</a> or <a href="/user/register.php">register</a> before you can use this feature.');
 ?>
         </li>
         <li>
@@ -98,7 +98,7 @@ sub pushArg {<br />
 }<br /></samp>
 <?
     } else
-      $page->Error('this feature is for registered users only, and you are not logged in.&nbsp; you will need to <a href="/user/login.php">log in</a> or <a href="/user/register.php">register</a> before you can use this feature.');
+      $page->Error('this feature is for registered users only, and you are not logged in.&nbsp; you will need to <a id="messageloginlink2" href="/user/login.php">log in</a> or <a href="/user/register.php">register</a> before you can use this feature.');
 ?>
         </li>
         <li>

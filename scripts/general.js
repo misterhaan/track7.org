@@ -24,10 +24,19 @@ function setPageWidth() {
 }
 
 /**
- * Enables the ajax login feature.
+ * Enables the ajax login feature for the header login link and message login link.
  */
 function enableLogin() {
-  var loginlink = document.getElementById("headerloginlink");
+  enableLoginLink("headerloginlink");
+  enableLoginLink("messageloginlink");
+  enableLoginLink("messageloginlink2");
+}
+
+/**
+ * Enables the ajax login feature for the specified login link.
+ */
+function enableLoginLink(linkid) {
+  var loginlink = document.getElementById(linkid);
   if(loginlink)
     loginlink.onclick = showLoginForm;
   var loginform = document.getElementById("loginform");
