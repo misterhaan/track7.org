@@ -757,6 +757,7 @@ div#welcome div.avatar img {
 div#welcome ul.elements {
   font-size: 1em;
   margin: 0 .5em;
+  line-height: 18px;
 }
 div#welcome ul.elements:before,
 div#welcome ul.elements:after {
@@ -778,6 +779,9 @@ div#welcome ul.elements:after {
   }
   div#welcome p.loginreg {
     display: none;
+  }
+  div#welcome ul.elements {
+    line-height: normal;
   }
   div#welcome ul.elements li {
     display: block;
