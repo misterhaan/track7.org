@@ -9,7 +9,7 @@
 ?>
       <p>
         guides may only be contributed by registered users.&nbsp; if you already
-        have an account, you will need to <a href="/user/login.php">log in</a>
+        have an account, you will need to <a id="messageloginlink" href="/user/login.php">log in</a>
         — if you do not have an account you will need to <a href="/user/register.php">register</a>.
       </p>
 

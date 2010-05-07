@@ -39,8 +39,8 @@
         can send you messages here, nor can you track messages that you've sent
         to other track7 users.&nbsp; you will need to either
         <a href="register.php">register</a> or
-        <a href="login.php">log in</a> before this page will be of any use to
-        you.
+        <a id="messageloginlink" href="login.php">log in</a> before this page
+        will be of any use to you.
       </p>
 
 <?

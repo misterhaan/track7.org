@@ -23,7 +23,7 @@
         you are not currently logged in.
       </p>
       <ul>
-        <li><a href="login.php">log in</a></li>
+        <li><a id="messageloginlink" href="login.php">log in</a></li>
         <li><a href="register.php">register</a></li>
         <li><a href="list.php">user list</a></li>
       </ul>

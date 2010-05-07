@@ -13,9 +13,9 @@
         logged in!&nbsp; if you entered an e-mail address, an e-mail has been
         sent with your login details.&nbsp; you may want to go
         <a href="editprofile.php">fill out your profile</a>.&nbsp; next time you
-        visit track7 you will need to <a href="login.php">log in</a>, at which
-        point you can have a cookie sent to your browser so that you will be
-        logged in automatically.
+        visit track7 you will need to <a id="messageloginlink" href="login.php">log in</a>,
+        at which point you can have a cookie sent to your browser so that you
+        will be logged in automatically.
       </p>
 <?
       $page->End();
