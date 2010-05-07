@@ -11,6 +11,14 @@
     if($user->GodMode)
       $page->Info('<a href="' . $url . '/edit' . ($photo->youtubeid ? 'video' : 'photo') . '.php?id=' . $photo->id . '">edit this ' . ($photo->youtubeid ? 'video' : 'photo') . '</a>');
     if($photo->youtubeid) {
+      if($page->Mobile) {
+?>
+        <p class="photo"><a href="http://www.youtube.com/watch?v=<?=$photo->youtubeid; ?>">
+          <img id="photo"  src="/output/gfx/album/photos/<?=$photo->id; ?>.jpg" />
+          watch this video on youtube
+        </a></p>
+<?
+      } else {
 ?>
       <object id="photo" width="640" height="385" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
         <param name="movie" value="http://www.youtube.com/v/<?=$photo->youtubeid; ?>&amp;hl=en&amp;fs=1&amp;rel=0"></param>
@@ -19,10 +27,11 @@
         <noscript><p class="info">enable javascript to see this <a href="http://www.youtube.com/watch?v=<?=$photo->youtubeid; ?>">youtube video</a> here</p></noscript>
       </object>
 <?
-      if(file_exists(_ROOT . $url . '/photos/' . $photo->id . '.avi')) {
+        if(file_exists(_ROOT . $url . '/photos/' . $photo->id . '.avi')) {
 ?>
       <ul id="avidownload"><li><a href="<?=$url; ?>/photos/<?=$photo->id; ?>.avi">download this video</a> (avi with xvid / mp3)</li></ul>
 <?
+        }
       }
     } else {
 ?>

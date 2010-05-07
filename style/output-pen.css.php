@@ -32,3 +32,7 @@ div#main table.ready td p {
   padding: .2em .7em 1em;
   text-align: left;
 }
+
+h1 img {
+  max-width: 99%;
+}

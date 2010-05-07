@@ -15,6 +15,13 @@ div.thumb {
   width: 152px;
   text-align: center;
 }
+@media all and (max-width: 480px) {
+  div.thumb {
+    float: none;
+    margin: .4em auto 1em;
+    padding: 0;
+  }
+}
 div.thumb div {
   font-style: italic;
   font-size: .8em;
@@ -38,10 +45,24 @@ div.thumbed {
   padding-left: 150px;
   margin-left: 3.5em;
 }
+@media all and (max-width: 480px) {
+  div.thumbed {
+    padding-left: 0;
+    margin-left: 0;
+  }
+}
 
 a.award {
   float: right;
   margin: 2em 2em 0 -1.5em;
+}
+@media all and (max-width: 480px) {
+  a.award {
+    float: none;
+    display: block;
+    width: 100px;
+    margin: .5em auto;
+  }
 }
 a.award img {
   display: block;

@@ -12,15 +12,21 @@ div#title {
 }
 
 div#features {
-  float: right;
-  width: 28em;
   background-color: #<?=BGLIGHT; ?>;
   margin: 0 1em;
   padding: 0;
+  float: right;
+  width: 28em;
   border: 1px solid #<?=BGMEDIUM; ?>;
   -webkit-border-radius: .75em;
   -moz-border-radius: .75em;
   border-radius: .75em;
+}
+@media all and (max-width: 50em) {
+  div#features {
+    float: none;
+    width: auto;
+  }
 }
 div#features h2 {
   color: #000000;
@@ -116,6 +122,7 @@ h2.feed {
   -moz-border-radius: 8px;
   border-radius: 8px;
 }
+
 h2.feed a.feed {
   float: right;
   display: block;
@@ -131,25 +138,16 @@ div.feed ul,
 div.feed ol {
   margin-left: 7.5em;
 }
+@media all and (max-width: 45em) {
+  div.feed p,
+  div.feed samp,
+  div.feed ul,
+  div.feed ol {
+    margin-left: 2em;
+  }
+}
 
 div#content p.links {
   font-size: .8em;
   text-align: center;
-}
-
-table#updates th {
-  font-size: .8em;
-  white-space: nowrap;
-}
-table#updates td {
-  vertical-align: top;
-  font-size: .9em;
-}
-table#updates td.type {
-  padding-right: 0;
-}
-table#updates img {
-  display: block;
-  width: 16px;
-  height: 16px;
 }

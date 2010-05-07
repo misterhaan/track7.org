@@ -11,6 +11,16 @@ div#covers {
   margin: 1em auto;
   width: 561px;
 }
+@media all and (max-width: 480px) {
+  div#covers {
+    width: 374px;
+  }
+}
+@media all and (max-width: 320px) {
+  div#covers {
+    width: 187px;
+  }
+}
 div#covers a {
   display: block;
   width: 175px;

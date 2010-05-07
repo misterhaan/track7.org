@@ -78,6 +78,11 @@ p {
 div#content p {
   text-align: justify;
 }
+@media all and (max-width: 25em) {
+  div#content p {
+    text-align: left;
+  }
+}
 p.info,
 p.error {
   padding: 3px 6px 3px 26px;
@@ -116,6 +121,7 @@ div.preview {
   float: right;
   margin-top: .3em;
   padding-right: 2.5em;
+  padding-left: 1em;
   width: 152px;
   text-align: center;
 }
@@ -132,6 +138,12 @@ div.thumb div {
 p.previewed {
   padding-right: 152px;
   margin-right: 4em;
+}
+@media all and (max-width: 480px) {
+  p.previewed {
+    padding-right: 0;
+    margin-right: 2em;
+  }
 }
 
 .seemore {
@@ -174,6 +186,7 @@ samp {
   overflow: auto;
   text-align: left;
   max-height: 20em;
+  max-width: 80%;
   border: 1px solid #<?=BGLIGHT; ?>;
   background-color: #<?=BGVERYLIGHT; ?>;
 }
@@ -426,6 +439,14 @@ select {
 textarea {
   width: 100%;
 }
+@media all and (max-width: 40em) {
+  input[type="text"],
+  input[type="password"],
+  input[type="file"],
+  select {
+    width: 100%;
+  }
+}
 input[type="text"]:focus,
 input[type="password"]:focus,
 textarea:focus,
@@ -521,6 +542,19 @@ div#usercomments h2 {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
+@media all and (max-width: 40em) {
+  div#usercomments {
+    margin: 2em 0 1em;
+    border: none;
+  }
+  div#usercomments h2 {
+    margin: 1em 1.2em .5em;
+    -khtml-border-radius: .5em;
+    -webkit-border-radius: .5em;
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+  }
+}
 
 table.post {
   margin: 1.5em 2em;
@@ -528,6 +562,7 @@ table.post {
 table.post td {
   vertical-align: top;
   padding: 0;
+  background-color: #ffffff;  /* in case it is wider than the page background */
 }
 table.post td.userinfo {
   padding: .3em .5em;
@@ -638,6 +673,17 @@ body {
   border: 1px solid #000000;
   color: #<?=TEXT; ?>;
 }
+@media all and (max-width: 50em) {
+  html {
+    background: none;
+    -webkit-text-size-adjust: none;
+  }
+  body {
+    max-width: none;
+    border: none;
+    margin: 0;
+  }
+}
 div#body {
   width: 100%;
   float: right;
@@ -707,6 +753,39 @@ div#welcome div.avatar {
 div#welcome div.avatar img {
   line-height: 64px;
   vertical-align: middle;
+}
+div#welcome ul.elements {
+  font-size: 1em;
+  margin: 0 .5em;
+}
+div#welcome ul.elements:before,
+div#welcome ul.elements:after {
+  content: '';
+}
+@media all and (max-width: 320px) {
+  div#welcome p {
+    line-height: normal;
+    margin: .7em .5em;
+  }
+  div#welcome span.username {
+    display: block;
+  }
+  div#welcome div.avatar {
+    display: none;
+  }
+  div#welcome p.welcomeguest {
+    width: 77px;
+  }
+  div#welcome p.loginreg {
+    display: none;
+  }
+  div#welcome ul.elements li {
+    display: block;
+    margin: .3em;
+  }
+  div#welcome ul.elements li:before {
+    content: '';
+  }
 }
 
 div#navhelp {
@@ -933,4 +1012,10 @@ div#poweredby img {
 div#copyright {
   margin-top: -1.2em;
   float: right;
+}
+@media all and (max-width: 40em;) {
+  div#copyright {
+    margin-top: 0;
+    float: none;
+  }
 }
