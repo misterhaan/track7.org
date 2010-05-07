@@ -15,6 +15,11 @@ div.thumb {
   width: 152px;
   text-align: center;
 }
+@media all and (max-width: 480px) {
+  div.thumb {
+    padding-right: 1em;
+  }
+}
 div.thumb div {
   font-style: italic;
   font-size: .8em;
@@ -40,8 +45,16 @@ div.thumbed {
   padding-left: 150px;
   margin-left: 3.5em;
 }
+@media all and (max-width: 480px) {
+  p.thumbed,
+  div.thumbed {
+    padding-left: 0;
+    margin-left: 0;
+  }
+}
 
 img.comic {
   display: block;
   margin: 1em auto;
+  max-width: 95%;
 }

@@ -12,6 +12,12 @@ div#sortoptions {
   margin: -2em 2.5em 0;
   font-size: .8em;
 }
+@media all and (max-width: 45em) {
+  div#sortoptions {
+    text-align: left;
+    margin-top: 0;
+  }
+}
 
 ul#photos {
   margin: .5em 1.5em;
@@ -31,6 +37,10 @@ ul#photos a {
   border: 1px solid #ffffff;
   padding: 4px;
   margin: 1px;
+  -khtml-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
 }
 ul#photos a:hover {
   border: 1px solid #<?=LINKMEDIUM; ?>;

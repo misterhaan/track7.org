@@ -11,6 +11,7 @@ img#photo {
   display: block;
   margin: .5em auto;
   border: 1px solid #000000;
+  max-width: 95%;
 }
 
 object#photo {

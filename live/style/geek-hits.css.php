@@ -10,4 +10,5 @@
 img.hitchart {
   display: block;
   margin: 1em auto;
+  max-width: 95%;
 }

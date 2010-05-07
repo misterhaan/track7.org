@@ -7,6 +7,10 @@
  * -> layout style for photo album photo view pages                           *
 \******************************************************************************/
 
+div#content p.photo {
+  text-align: center;
+}
+
 div#photometa {
   margin: .5em 3em;
   font-size: .8em;
