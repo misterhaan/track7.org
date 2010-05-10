@@ -14,12 +14,12 @@
 ?>
       <p><?=$count; ?> unknown referrer<?=$count == 1 ? '' : 's'; ?> found</p>
 <?
-    for($referrer = $referrers->NextRecord(); $referrer && preg_match('/http:\/\/(www\.)?' . _HOST . '(:[0-9]+)?\//', $referrer->value); $referrer = $referrers->NextRecord()) {
+    for($referrer = $referrers->NextRecord(); $referrer && preg_match('/http:\/\/(www\.)?(m\.)?' . _HOST . '(:[0-9]+)?\//', $referrer->value); $referrer = $referrers->NextRecord()) {
       $ins = 'insert into knownreferrers (referrer, site) values (\'' . addslashes($referrer->value) . '\', \'http://' . $_SERVER['HTTP_HOST'] . '/\')';
       if(false !== $db->Put($ins, 'error automatically adding track7 referrer'))
         $page->Info('track7 referrer ' . $referrer->value . ' added automatically');
     }
-    
+
     if($referrer) {
       $page->Heading($referrer->value . ' (' . $referrer->hits . ' hits)', 'referrer');
       $rf = new auForm('addreferrer');
