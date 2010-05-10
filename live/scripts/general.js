@@ -547,6 +547,10 @@ function uriParam(name, value) {
   return encodeURIComponent(name) + "=" + encodeURIComponent(value);
 }
 
+/**
+ * Get an XMLHttpRequest object from the best available of three options.
+ * @return XMLHttpRequest object.
+ */
 function ajaxRequestObject() {
   var req = null;
   try {
