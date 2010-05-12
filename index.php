@@ -232,7 +232,7 @@
 ?>
     <div class="feed guide">
       <div class="typedate" title="guide at <?=strtolower($user->tzdate(LONGDATEFMT, $guide->dateadded)); ?>"><div class="date"><?=strtolower(auText::SmartTime($guide->dateadded, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/guides.rss" class="feed" title="track7 guides" /><a href="/geek/guides/<?=$guide->id; ?>"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></h2>
+      <h2 class="feed"><a href="/feeds/guides.rss" class="feed" title="track7 guides" /><a href="/geek/guides/<?=$guide->id; ?>/"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></h2>
       <p><?=$guide->description; ?></p>
     </div>
 
