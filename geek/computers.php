@@ -55,13 +55,13 @@
         <tr><th>purpose</th><td>mobile / secondary workstation</td></tr>
         <tr><th>mainboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>processor</th><td>1.6-ghz intel core duo pentium m</td></tr>
-        <tr><th>ram</th><td>512 MB pc4300 ddr2 sdram<br />512 MB pc4300 ddr2 sdram</td></tr>
+        <tr><th>ram</th><td>g.skill 2 GB pc4300 ddr2 sdram<br />g.skill 2 GB pc4300 ddr2 sdram</td></tr>
         <tr><th>video</th><td>intel 945gm (128 MB)</td></tr>
         <tr><th>audio</th><td>intel 82801gbm ich7-m</td></tr>
         <tr><th>network</th><td>intel pro/100 ve<br />intel pro/wireless 3945abg</td></tr>
         <tr><th>modem</th><td>toshiba software modem</td></tr>
         <tr><th>reader</th><td>sd card reader</td></tr>
-        <tr><th>ide0</th><td>hitachi 100 GB 5k100</td></tr>
+        <tr><th>ide0</th><td>western digital siliconedge 128 GB ssc-d0128sc-2100</td></tr>
         <tr><th>ide1</th><td>matshita dvd-ram</td></tr>
         <tr><th>operating system</th><td>ubuntu 10.04 lucid lynx 32-bit<br />microsoft windows 7 32-bit</td></tr>
         <tr><th>keyboard</th><td>toshiba satellite r25</td></tr>
