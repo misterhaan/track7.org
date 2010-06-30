@@ -1,14 +1,45 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
 
+  if($user->GodMode) {
+    if(isset($_GET['new'])) {
+      $new = getSketchForm();
+      if($new->Submitted(true)) {
+        $ins = 'insert into art (id, type, description, adddate) values (\'' . addslashes($_POST['id']) . '\', \'sketch\', \'' . addslashes(auText::BB2HTML($_POST['description'], false, false)) . '\', \'' . time() . '\')';
+        if(false !== $db->Put($ins, 'error adding sketch'))
+          header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+      }
+      $page->ResetFlag(_FLAG_PAGES_COMMENTS);
+      $page->Start('add pen / pencil sketch');
+      $new->WriteHTML(true);
+      $page->End();
+      die;
+    }
+    if($_GET['edit']) {
+      $sketch = 'select id, description from art where id=\'' . addslashes($_GET['edit']) . '\' and type=\'sketch\'';
+      if(false !== $sketch = $db->GetRecord($sketch, 'error looking up sketch to edit', 'unable to find sketch for editing', true)) {
+        $edit = getSketchForm($sketch);
+        if($edit->Submitted(true)) {
+          $update = 'update art set id=\'' . addslashes($_POST['id']) . '\', description=\'' . addslashes(auText::BB2HTML($_POST['description'], false, false)) . '\' where id=\'' . $sketch->id . '\'';
+          if(false !== $db->Change($update, 'error updating sketch'))
+            header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+        }
+        $page->ResetFlag(_FLAG_PAGES_COMMENTS);
+        $page->Start('edit pen / pencil sketch');
+        $edit->WriteHTML(true);
+        $page->End();
+        die;
+      }
+    }
+    $page->info('<a href="?new">add a sketch</a>');
+  }
   $page->Start('pen / pencil sketch gallery');
 ?>
       <p>
-        the following are most of the pen and pencil sketches i've done
-        throughout my years (and haven't thrown out or lost).&nbsp; the newest
-        ones are at the top, as best as i can remember when i drew them.&nbsp;
-        the previews don't show the whole sketch -- click on them to bring up a
-        large version.
+        the following are most of the pen and pencil sketches i’ve done
+        throughout my years (and haven’t thrown out or lost).&nbsp; the previews
+        are cropped and don’t show the whole sketch — click on them to bring up
+        a large version.
       </p>
 
 <?
@@ -23,13 +54,26 @@
         <? auRating::Show('sketch', $sketch->id, $sketch->rating, $sketch->votes, $sketch->vote); ?>
       </div>
       <div class="thumbed">
-        <p>
-          <?=$sketch->description; ?>
+        <?=$sketch->description; ?>
 
-        </p>
+<?
+      if($user->GodMode) {
+?>
+        <p class="info"><a href="?edit=<?=$sketch->id; ?>">edit this sketch</a></p>
+<?
+      }
+?>
       </div>
 <?
     }
 
   $page->End();
+
+  function getSketchForm($sketch = false) {
+    $frm = new auForm('sketch', $sketch ? '?edit=' . $sketch->id : '?new');
+    $frm->Add(new auFormString('id', 'id', 'unique identifier (also filename) for this sketch', true, $sketch->id, 20, 32));
+    $frm->Add(new auFormMultiString('description', 'description', 'description of this sketch', true, auText::HTML2BB($sketch->description), true));
+    $frm->Add(new auFormButtons('save', 'save this sketch'));
+    return $frm;
+  }
 ?>
