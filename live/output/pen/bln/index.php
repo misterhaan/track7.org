@@ -20,7 +20,7 @@
   if(!$tag) {
     $page->AddFeed('entries', '/feeds/entries.rss');
     $page->Start('bln', 'bln<a class="feed" href="/feeds/entries.rss" title="rss feed of all entries"><img src="/style/feed.png" alt="feed" /></a>', 'a natural blog');
-    $page->TagCloud('entries', 'tag=', 2, 4, 8, 16);
+    $page->TagCloud('entries', 'tag=', 2, 4, 8, 16);  // keep in sync with ../index.php
   }
   if($user->GodMode) {
 ?>

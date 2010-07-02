@@ -12,27 +12,20 @@
     $page->Heading('bln', 'bln');
 ?>
       <p>
-        bln is a &lsquo;natural blog&rsquo; because i know too much about math
-        and thought that was a clever name.&nbsp; it contains some stuff that
-        used to be the thoughts section.&nbsp; it's basically
-        stream-of-consciousness style writing (as is usually the case with
-        blogs), so be aware that some (most?) of it is rather raw.
+        bln is a &lsquo;natural blog&rsquo; because i thought that was a clever
+        name.
       </p>
+      <dl>
+        <dt><a href="bln/">a natural blog</a></dt>
+        <dd>
 
 <?
-    echo "      <dl>\n";
-    echo '        <dt><a href="bln/">a natural blog</a></dt>' . "\n";
-    $cats = 'select name, count from taginfo where type=\'entries\' order by name';
-    if($cats = $db->Get($cats, 'error looking up categories', 'no categories in use')) {
-      echo "        <dd><ul>\n";
-      while($cat = $cats->NextRecord()) {
+    $page->TagCloud('entries', 'bln/tag=', 2, 4, 8, 16);  // keep in sync with bln/index.php
 ?>
-            <li><a href="bln/tag=<?=$cat->name; ?>"><?=$cat->name; ?></a> - <?=$cat->count == 1 ? '1 entry' : $cat->count . ' entries'; ?></li>
+        </dd>
+      </dl>
+
 <?
-      }
-      echo "        </ul></dd>\n";
-    }
-    echo "      </dl>\n\n";
 
     foreach($sects as $sect) {
       $page->Heading($sect->name, $sect->id);
