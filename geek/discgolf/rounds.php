@@ -433,7 +433,7 @@
     if($multi)
       $tbl .= '<th>' . ($sum ? $sum : '') . '</th>';
     if($last)
-      $tbl .= '<th>' . array_sum($round->scorelist) . '</th>';
+      $tbl .= '<th>' . ($round ? array_sum($round->scorelist) : '') . '</th>';
     $tbl .= '</tr></tbody></table>';
     return $tbl;
   }
