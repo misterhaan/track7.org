@@ -261,10 +261,12 @@ function unhilightOtherVotes() {
 
 /**
  * Enable a form text field for suggestions.
- * @param field ID of the form field to enable.
+ * @param field element or ID to enable.
  */
 function enableSuggest(field, suggestUrl) {
-  if(field = document.getElementById(field)) {
+  if(!field.nodeName)  // if not an element, then it's a string so find the element
+    field = document.getElementById(field);
+  if(field) {
     field.setAttribute("autocomplete", "off");
     field.toreq = false;
     field.ajaxreq = false;

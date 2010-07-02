@@ -2,9 +2,25 @@
   $getvars = array('id', 'roundsort', 'roundfilter', 'tees');
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
 
+  if(isset($_GET['nearest']) && is_numeric($_GET['lat']) && is_numeric($_GET['lon'])) {
+    header('Content-Type: text/plain; charset=utf-8');
+    $coslat = cos(deg2rad($_GET['lat']));
+    $course = 'select id, 69.0934137*sqrt(pow(' . $_GET['lat'] . '-latitude,2)+pow(' . $coslat . '*(' . $_GET['lon'] . '-longitude),2)) as distance from dgcourses order by distance';
+    if($course = $db->GetValue($course))
+      echo $course;
+    die;
+  }
+
   if(is_numeric($_GET['id'])) {
-    $course = 'select approved, name, location, holes, teelist, parlist, par, comments from dgcourses where id=' . $_GET['id'];
+    $course = 'select approved, name, location, latitude, longitude, holes, teelist, parlist, par, comments from dgcourses where id=' . $_GET['id'];
     if($course = $db->GetRecord($course, 'error reading course information', 'could not find course id ' . $_GET['id'] . ' -- please find your course below and click on its name.&nbsp; if it isn\'t in the list, you can request that it be added.')) {
+      if(isset($_GET['roundparams'])) {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo $course->teelist;
+        echo "\n";
+        echo $course->parlist;
+        die;
+      }
       if($user->GodMode) {
         if(isset($_GET['delete'])) {
           $del = 'delete from dgcourses where id=\'' . $_GET['id'] . '\'';
@@ -42,7 +58,7 @@
           $editcourse = getCourseForm($course);
           $okpar = true;
           if($editcourse->CheckInput(true) && $okpar = checkParFields()) {
-            $update = 'update dgcourses set name=\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', location=\'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', holes=\'' . +$_POST['holes'] . '\', teelist=' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', comments=\'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\', parlist=\'' . buildParList('\', par=\'') . '\' where id=\'' . $_GET['id'] . '\'';
+            $update = 'update dgcourses set name=\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', location=\'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', latitude=' . +$_POST['latitude'] . ', longitude=' . +$_POST['longitude'] . ', holes=\'' . +$_POST['holes'] . '\', teelist=' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', comments=\'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\', parlist=\'' . buildParList('\', par=\'') . '\' where id=\'' . $_GET['id'] . '\'';
             if(false !== $db->Change($update, 'error updating course')) {
               header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $_GET['id']);
               die;
@@ -84,7 +100,7 @@
 <?
     } else {
 ?>
-        <li><a href="/user/login.php">login</a> or <a href="/user/register.php">register</a> to add your scores</li>
+        <li><a id="messageloginlink" href="/user/login.php">login</a> or <a href="/user/register.php">register</a> to add your scores</li>
 <?
     }
 ?>
@@ -108,7 +124,7 @@
       <p>
         the <?=$course->name; ?> course has <?=$course->holes; ?> holes.&nbsp;
         course par is <?=$course->par; ?>, or <?=3 * $course->holes; ?> on par
-        3s.<?=getAvgScoreSentence($avgcount, $avg); ?>
+        3s.<?=getAvgScoreSentence($avgcount, $avg, $course); ?>
       </p>
 <?
       showCourseHoles($course->holes, $course->parlist, $avg, $course->teelist);
@@ -157,13 +173,12 @@
         if($roundtypes = $db->Get($roundtypes, 'error getting list of round types for this course', ''))
           if($roundtypes->NumRecords() > 1) {
             while($type = $roundtypes->NextRecord()) {
-              if(!$type->roundtype)
-                $type->roundtype = 'unknown';
-              if($type->roundtype == $_GET['roundfilter']) {
-                $heading[] = $type->roundtype;
-                $roundtypefiltered = true;
-              } else
-                $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best&amp;roundfilter=' : '&amp;roundfilter=') . $type->roundtype . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlentities($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="only show ' . $type->roundtype . ' rounds">' . $type->roundtype . '</a>';
+              if($type->roundtype)
+                if($type->roundtype == $_GET['roundfilter']) {
+                  $heading[] = $type->roundtype;
+                  $roundtypefiltered = true;
+                } else
+                  $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best&amp;roundfilter=' : '&amp;roundfilter=') . $type->roundtype . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlentities($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="only show ' . $type->roundtype . ' rounds">' . $type->roundtype . '</a>';
             }
             if($roundtypefiltered)
               $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlentities($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="show any rounds">any</a>';
@@ -173,36 +188,35 @@
           if($tees = $db->Get($tees, 'error getting list of tees for this course', ''))
             if($tees->NumRecords() > 1) {
               while($tee = $tees->NextRecord()) {
-                if(!$tee->tees)
-                  $tee->tees = 'unknown';
-                if($tee->tees == $_GET['tees']) {
-                  $heading[] = $tee->tees . '-tee';
-                  $teesfiltered = true;
-                } else
-                  $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($_GET['roundfilter'] ? '&amp;roundfilter=' . htmlentities($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . '&amp;tees=' . $tee->tees . '" title="only show rounds from the ' . $tee->tees . ' tees">' . $tee->tees . ' tee</a>';
+                if($tee->tees)
+                  if($tee->tees == $_GET['tees']) {
+                    $heading[] = $tee->tees . '-tee';
+                    $teesfiltered = true;
+                  } else
+                    $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($_GET['roundfilter'] ? '&amp;roundfilter=' . htmlentities($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . '&amp;tees=' . $tee->tees . '" title="only show rounds from the ' . $tee->tees . ' tees">' . $tee->tees . ' tee</a>';
               }
               if($teesfiltered)
                 $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($_GET['roundfilter'] ? '&amp;roundfilter=' . htmlentities($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . '" title="show rounds from any tees">any tee</a>';
             }
         }
-        $page->Heading(implode(' ', $heading) . ' rounds <span class="options">[ ' . implode(' | ', $options) . ' ]</span>');
+        $page->Heading(implode(' ', $heading) . ' rounds <ul class="elements"><li>' . implode('</li><li>', $options) . '</li></ul>');
 ?>
       <table class="text" cellspacing="0">
-        <thead><tr><th>date</th><th>player</th><th>type</th><?=$course->teelist ? '<th>tees</th>' : '';?><th title="total throws">raw</th><th title="compared to average for this type of round on this course">avg</th><th title="compared to course par">par</th><th title="compared to all holes as par 3">3s</th><th>comments</th></tr></thead>
+        <thead><tr><th>date</th><th>player</th><th>type</th><?=$course->teelist ? '<th>tees</th>' : '';?><th title="total throws">raw</th><th title="compared to average for this type of round on this course">avg</th><th title="compared to course par">par</th><th title="compared to all holes as par 3">3s</th></tr></thead>
         <tbody>
 <?
         $par3 = 3 * $course->holes;
-        require_once 'auText.php';
         while($round = $rounds->NextRecord()) {
           $round->comments = trim(html_entity_decode(strip_tags($round->comments), ENT_COMPAT, _CHARSET));
-          if(strlen($round->comments) > 17)
-            $round->comments = substr($round->comments, 0, 15) . '...';
+          if(strlen($round->comments) > 71)
+            $round->comments = substr($round->comments, 0, 69) . '...';
           if(!$round->roundtype)
-            $round->roundtype = 'unknown';
+            $round->roundtype = '?';
           if(!$round->tees)
-            $round->tees = 'unknown';
+            $round->tees = '?';
 ?>
-          <tr><td class="minor"><a href="rounds.php?id=<?=$round->id; ?>" title="more information on this round"><?=strtolower(auText::SmartDate($round->instant, $user)); ?></a></td><td class="minor"><a href="players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a></td><td><?=$round->roundtype; ?></td><?=$course->teelist ? '<td>' . $round->tees . '</td>' : ''; ?><td class="number"><?=$round->score; ?></td><td class="number"><?=($round->score == $avg[$round->roundtype][$round->tees]->avgscore ? 'even' : ($round->score > $avg[$round->roundtype][$round->tees]->avgscore ? '+' : '') . ($round->score - $avg[$round->roundtype][$round->tees]->avgscore)); ?></td><td class="number"><?=($round->score == $course->par ? 'even' : ($round->score > $course->par ? '+' : '') . ($round->score - $course->par)); ?></td><td class="number"><?=($round->score == $par3 ? 'even' : ($round->score > $par3 ? '+' : '') . ($round->score - $par3)); ?></td><td class="minor"><?=$round->comments; ?></td></tr>
+          <tr><td class="minor"><a href="rounds.php?id=<?=$round->id; ?>" title="more information on this round"><?=strtolower(auText::SmartDate($round->instant, $user)); ?></a></td><td class="minor"><a href="players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a></td><td><?=$round->roundtype; ?></td><?=$course->teelist ? '<td>' . $round->tees . '</td>' : ''; ?><td class="number"><?=$round->score; ?></td><td class="number"><?=($round->score == $avg[$round->roundtype][$round->tees]->avgscore ? 'even' : ($round->score > $avg[$round->roundtype][$round->tees]->avgscore ? '+' : '') . ($round->score - $avg[$round->roundtype][$round->tees]->avgscore)); ?></td><td class="number"><?=($round->score == $course->par ? 'even' : ($round->score > $course->par ? '+' : '') . ($round->score - $course->par)); ?></td><td class="number"><?=($round->score == $par3 ? 'even' : ($round->score > $par3 ? '+' : '') . ($round->score - $par3)); ?></td></tr>
+          <tr class="comments"><td class="minor" colspan="9"><?=$round->comments; ?></td></tr>
 <?
         }
 ?>
@@ -220,8 +234,7 @@
     $courseform = getCourseForm();
     $okpar = true;
     if($courseform->CheckInput(true) && $okpar = checkParFields()) {
-      require_once 'auText.php';
-      $ins = 'insert into dgcourses (name, location, holes, teelist, parlist, par, comments) values (\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', \'' . +$_POST['holes'] . '\', ' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', \'' . buildParList() . '\', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\')';
+      $ins = 'insert into dgcourses (name, location, latitude, longitude, holes, teelist, parlist, par, comments) values (\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', ' . +$_POST['latitude'] . ', ' . +$_POST['longitude'] . ', \'' . +$_POST['holes'] . '\', ' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', \'' . buildParList() . '\', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\')';
       if(false !== $courseid = $db->Put($ins, 'error saving course information')) {
         header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $courseid);
         die;
@@ -235,12 +248,21 @@
     die;
   }
 
+  // DO:  alter text to indicate course is being chosen for score entry
   $page->Start('courses - disc golf', 'disc golf courses');
+  if($user->Valid && isset($_GET['addround'])) {
+?>
+      <p>
+        choose the course where your round takes place.
+      </p>
+<?
+  } else {
 ?>
       <p>
         below is a listing of disc golf courses that are currently in the
-        system.&nbsp; if you play a course that is not on this list, use the
-        link below to add it.
+        system.&nbsp; select a course to view rounds that have been entered for
+        that course or to add a round of your own.&nbsp; if you play a course
+        that is not on this list, use the link below to add it.
       </p>
       <p>
         when viewing a course, there will be a <em>printable scoresheet</em>
@@ -251,51 +273,64 @@
         of them.
       </p>
 <?
-  if($user->Valid) {
+    if($user->Valid) {
 ?>
       <ul><li><a href="?addCourse">add a course</a></li></ul>
 <?
-  } else {
+    } else {
 ?>
-      <ul><li><a href="/user/login.php">login</a> or <a href="/user/register.php">register</a> to add a course</li></ul>
+      <ul><li><a id="messageloginlink" href="/user/login.php">login</a> or <a href="/user/register.php">register</a> to add a course</li></ul>
 <?
+    }
   }
   if($user->Valid) {
     $rounds = 'select rounds from userstats where uid=\'' . $user->ID . '\'';
     $rounds = $db->GetValue($rounds, 'error looking up number of rounds played', 'user statistics not found');
   }
+  $coursesel = '';
+  if($_GET['coursesort'] == 'distance') {
+    $heading = 'courses by distance';
+    $options[] = '<a href="courses.php' . (isset($_GET['addround']) ? '?addround' : '') . '" title="sort courses by popularity">popularity</a>';
+    $options[] = '<a href="?' . (isset($_GET['addround']) ? 'addround&amp;' : '') . 'coursesort=name" title="sort courses by name">name</a>';
+    $coslat = cos(deg2rad($_GET['lat']));
+    $coursesel = ', 69.0934137*sqrt(pow(' . $_GET['lat'] . '-latitude,2)+pow(' . $coslat . '*(' . $_GET['lon'] . '-longitude),2)) as distance';
+    $courses = 'distance';
+  } elseif($_GET['coursesort'] == 'name') {
+    $heading = 'courses by name';
+    $options[] = '<a href="courses.php' . (isset($_GET['addround']) ? '?addround' : '') . '" title="sort courses by popularity">popularity</a>';
+    $courses = 'name';
+  } else {
+    $heading = 'courses by popularity';
+    $options[] = '<a href="?' . (isset($_GET['addround']) ? 'addround&amp;' : '') . 'coursesort=name" title="sort courses by name">name</a>';
+    $courses = $rounds ? 'userrounds desc' : 'rounds desc';
+  }
   if($rounds)
-    $courses = 'select c.id, c.approved, c.name, c.location, c.holes, c.par, c.rounds, count(r.uid) as userrounds from dgcourses as c left join dgrounds as r on r.courseid=c.id and r.uid=\'' . $user->ID . '\' and r.entryuid is null' . ($user->GodMode ? '' : ' where approved=\'yes\'') . ' group by c.id order by ' . ($_GET['coursesort'] == 'name' ? 'c.name' : 'userrounds desc');
+    $courses = 'select c.id, c.approved, c.name, c.location, c.holes, c.par, c.rounds, count(r.uid) as userrounds' . $coursesel . ' from dgcourses as c left join dgrounds as r on r.courseid=c.id and r.uid=\'' . $user->ID . '\' and r.entryuid is null' . ($user->GodMode ? '' : ' where approved=\'yes\'') . ' group by c.id order by ' . $courses;
   else
-    $courses = 'select id, approved, name, location, holes, par, rounds from dgcourses' . ($user->GodMode ? '' : ' where approved=\'yes\'') . ' order by ' . ($_GET['coursesort'] == 'name' ? 'name' : 'rounds desc');
+    $courses = 'select id, approved, name, location, holes, par, rounds' . $coursesel . ' from dgcourses' . ($user->GodMode ? '' : ' where approved=\'yes\'') . ' order by ' . $courses;
   if($courses = $db->GetSplit($courses, 20, 0, '', '', 'error looking up courses', 'no courses found', false, true)) {
-    if($_GET['coursesort'] == 'name') {
-      $heading = 'courses by name';
-      $options[] = '<a href="courses.php" title="sort courses by popularity">popularity</a>';
-    } else {
-      $heading = 'courses by popularity';
-      $options[] = '<a href="?coursesort=name" title="sort courses by name">name</a>';
-    }
-    $page->Heading($heading . ' <span class="options">[ ' . implode(' | ', $options) . ' ]</span>');
+    $page->Heading($heading . ' <ul id="coursesort" class="elements"><li>' . implode('</li><li>', $options) . '</li></ul>');
 ?>
-      <table class="text" cellspacing="0">
-        <thead><tr><th>name</th><th>location</th><th>holes</th><th>par</th><th>rounds</th><?=$user->GodMode ? '<th>approved</th>' : ''; ?></tr></thead>
-        <tbody>
+      <dl class="courses">
 <?
     while($course = $courses->NextRecord()) {
 ?>
-          <tr><td><a href="?id=<?=$course->id; ?>"><?=$course->name; ?></a></td><td><?=$course->location; ?></td><td class="number"><?=$course->holes; ?></td><td class="number"><?=$course->par; ?></td><td class="number"><?=$rounds ? $course->userrounds . ' (' . $course->rounds . ')' : $course->rounds; ?></td><?=$user->GodMode ? '<td>' . ($course->approved == 'yes' ? 'yes' : 'no') . '</td>' : ''; ?></tr>
+        <dt><a href="<?=(isset($_GET['addround']) ? 'rounds.php?id=new&amp;course=' : '?id=') . $course->id; ?>"><?=$course->name; ?></a></dt>
+        <dd>
+          located <?=$_GET['coursesort'] == 'distance' ? round($course->distance, $course->distance < 20 ? 1 : 0) . ' miles away ' : ''; ?>in <?=$course->location; ?>.&nbsp;
+          <?=$rounds ? $course->userrounds : $course->rounds; ?> rounds logged<?=$rounds ? ' by you (' . $course->rounds . ' total)': ''; ?>.&nbsp;
+          par <?=$course->par; ?> over <?=$course->holes; ?> holes.
+        </dd>
 <?
     }
 ?>
-        </tbody>
-      </table>
+      </dl>
 <?
   }
   $page->End();
 
   // --------------------------------------------------[ getAvgScoreSentence ]--
-  function getAvgScoreSentence($num, $avg) {
+  function getAvgScoreSentence($num, $avg, $course) {
     if(!$num)
       return '';
     if($num == 1)
@@ -312,7 +347,7 @@
             if($avgs++)
               $avgsentence .= '.';
             else
-              $avgsentence .= ' and ';
+              $avgsentence .= '; and ';
           }
       else {
         foreach($avg as $type => $average)
@@ -322,9 +357,9 @@
             if($avgs == $num)
               $avgsentence .= '.';
             elseif($avgs == $num - 1)
-              $avgsentence .= ', and ';
+              $avgsentence .= '; and ';
             else
-              $avgsentence .= ', ';
+              $avgsentence .= '; ';
           }
       }
       return $avgsentence;
@@ -335,16 +370,37 @@
   function showCourseHoles($holes, $par, $avg, $hastees) {
 ?>
       <div id="parlist">
+<?
+    for($s = 0; $s < $holes; $s+= 9)
+      show9CourseHoles($s, $s + 9, $holes, $par, $avg, $hastees);
+?>
+      </div>
+
+<?
+  }
+
+  function show9CourseHoles($shole, $ehole, $holes, $par, $avg, $hastees) {
+?>
         <table class="data" cellspacing="0">
 <?
     echo '          <thead><tr><td></td>';
-    for($i = 1; $i <= $holes; $i++)
+    for($i = $shole + 1; $i <= $ehole; $i++)
       echo '<th>' . $i . '</th>';
-    echo "<th>total</th></tr></thead>\n          <tbody>\n";
+    if($shole != 0 || $ehole != $holes)
+      echo '<th>nine</th>';
+    if($last = ($ehole == $holes))
+      echo '<th>total</th>';
+    echo "</tr></thead>\n          <tbody>\n";
     echo '            <tr><th>course par</th>';
-    for($i = 0; $i < $holes; $i++)
+    $parsum = 0;
+    for($i = $shole; $i < $ehole; $i++) {
       echo '<td>' . $par[$i] . '</td>';
-    echo '<th>' . array_sum($par) . "</th></tr>\n";
+      $parsum += $par[$i];
+    }
+    echo '<th>' . $parsum . '</th>';
+    if($last)
+      echo '<th>' . (array_sum($par)) . '</th>';
+    echo "</tr>\n";
     if(is_array($avg))
       foreach($avg as $type => $v)
         foreach($v as $tee => $values) {
@@ -356,36 +412,40 @@
             echo '-tee';
           }
           echo '</th>';
-          for($i = 0; $i < $holes; $i++)
+          $avgsum = 0;
+          for($i = $shole; $i < $ehole; $i++) {
             echo '<td>' . number_format($values->avglist[$i], 1) . '</td>';
-          echo '<th>' . number_format(array_sum($values->avglist), 1) . "</th></tr>\n";
+            $avgsum += $values->avglist[$i];
+          }
+          echo '<th>' . number_format($avgsum, 1) . '</th>';
+          if($last)
+            echo '<th>' . number_format(array_sum($values->avglist), 1) . '</th>';
+          echo "</tr>\n";
         }
 ?>
           </tbody>
         </table>
-      </div>
-
 <?
   }
 
   // --------------------------------------------------------[ getCourseForm ]--
   function getCourseForm($course = false) {
-    require_once 'auForm.php';
-    require_once 'auText.php';
     if($course)
       $courseform = new auForm('editcourse', '?id=' . $_GET['id'] . '&edit');
     else
       $courseform = new auForm('addcourse', '?addCourse');
-    $courseform->AddField('name', 'name', 'name of the course (i.e. grignon park)', true, $course->name, _AU_FORM_FIELD_NORMAL, 40, 60);
-    $courseform->AddField('location', 'location', 'location of the course (i.e. appleton, wi)', true, $course->location, _AU_FORM_FIELD_NORMAL, 40, 60);
-    $courseform->AddSelect('holes', 'holes', 'number of holes this course has', auFormSelect::ArrayIndex(array(9, 18, 27)), $course ? +$course->holes : 18);
-    $courseform->AddField('tees', 'tees', 'this course has both pro and amateur tees', false, $course->teelist, _AU_FORM_FIELD_CHECKBOX);
-    $courseform->AddField('comments', 'description', 'short description of this course', false, auText::HTML2BB($course->comments), _AU_FORM_FIELD_BBCODE);
-    $courseform->AddHTML('par', getParFields($_POST['holes'], $course));
+    $courseform->Add(new auFormString('name', 'name', 'name of the course (i.e. grignon park)', true, html_entity_decode($course->name, ENT_COMPAT, _CHARSET), 40, 60));
+    $courseform->Add(new auFormString('location', 'location', 'location of the course (i.e. appleton, wi)', true, $course->location, 40, 60));
+    $courseform->Add(new auFormNumber('latitude', 'latitude', 'latitude portion of the geolocation of the first tee', false, $course->latitude));
+    $courseform->Add(new auFormNumber('longitude', 'longitude', 'longitude portion of the geolocation of the first tee', false, $course->longitude));
+    $courseform->Add(new auFormSelect('holes', 'holes', 'number of holes this course has', true, auFormSelect::ArrayIndex(array(9, 18, 27)), $course ? +$course->holes : 18));
+    $courseform->Add(new auFormCheckbox('tees', 'tees', 'this course has both pro and amateur tees', $course->teelist));
+    $courseform->Add(new auFormMultiString('comments', 'description', 'short description of this course', false, auText::HTML2BB($course->comments), true));
+    $courseform->Add(new auFormHTML('par', getParFields($_POST['holes'], $course)));
     if($course)
-      $courseform->AddButtons('save', 'save changes to this course');
+      $courseform->Add(new auFormButtons('save', 'save changes to this course'));
     else
-      $courseform->AddButtons('add', 'request that this course get added');
+      $courseform->Add(new auFormButtons('add', 'request that this course get added'));
     return $courseform;
   }
 
