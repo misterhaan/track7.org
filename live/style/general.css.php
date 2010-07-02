@@ -280,13 +280,6 @@ dl {
   margin: .5em 2em;
   padding-left: 10px;
 }
-dt {
-  margin-left: -10px;
-  padding-left: 10px;
-  background-image: url(/style/dt-bullet.png);
-  background-position: 0 5px;
-  background-repeat: no-repeat;
-}
 dd {
   margin: 0 1em .5em;
 }
@@ -344,6 +337,7 @@ table.text thead.minor th:first-child {
 table.text tbody td {
   padding-left: 1em;
   border-top: 1px dashed #<?=BGLIGHT; ?>;
+  background-color: #ffffff;
 }
 table.text tbody tr td:first-child {
   padding-left: 0;
@@ -410,11 +404,14 @@ fieldset {
 }
 fieldset legend {
   padding: 0 .5em;
-  border-left: 3px solid #<?=HEADDARK; ?>;
-  border-right: 3px solid #<?=HEADDARK; ?>;
+  border: 1px solid #<?=HEADDARK; ?>;
   background-color: #<?=HEADMEDIUM; ?>;
   color: #000000;
   font-weight: bold;
+  -khtml-border-radius: .75em;
+  -webkit-border-radius: .75em;
+  -moz-border-radius: .75em;
+  border-radius: .75em;
 }
 
 form tr.required th {
@@ -458,7 +455,8 @@ input.checkbox {
   vertical-align: middle;
 }
 
-input[type="submit"] {
+input[type="submit"],
+input[type="button"] {
   border: 1px solid #<?=BGDARK; ?>;
   background-color: #<?=BGLIGHT; ?>;
   color: #<?=LINKDARK; ?>;
@@ -469,14 +467,17 @@ input[type="submit"] {
   -moz-border-radius: .5em;
   border-radius: .5em;
 }
-input[type="submit"]:hover {
+input[type="submit"]:hover,
+input[type="button"]:hover {
   cursor: pointer;
   border-color: #000000;
   background-color: #<?=LINKDARK; ?>;
   color: #ffffff;
 }
 input[type="submit"][disabled],
-input[type="submit"][disabled]:hover {
+input[type="submit"][disabled]:hover,
+input[type="button"][disabled],
+input[type="button"][disabled]:hover {
   cursor: default;
   border-color: #<?=BGLIGHT; ?>;
   color: #<?=BGMEDIUM; ?>;
@@ -511,7 +512,6 @@ dl.relatedlinks dt {
   float: left;
   margin: 0;
   padding: .3em .5em 0 2em;
-  background-image: none;
 }
 dl.relatedlinks dd {
   font-size: .8em;

@@ -1,6 +1,5 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auText.php';
 
   if(isset($_GET['p'])) {
     $player = 'select u.uid, u.login, s.discs, s.rounds from users as u left join userstats as s on s.uid=u.uid where u.login=\'' . addslashes($_GET['p']) . '\'';

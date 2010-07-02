@@ -141,8 +141,6 @@
   $page->End();
 
   function getCaddyForm(&$db, $disc, $caddy = false) {
-    require_once 'auForm.php';
-    require_once 'auText.php';
     if($caddy)
       $f = new auForm('editdisc', '?id=' . $_GET['id'] . '&edit');
     else
