@@ -1,7 +1,7 @@
 <?
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   require_once 'auFeed.php';
-  $rss = new auFeed('track7 page comments', '/comments.php', 'all comments posted on track7 pages', 'copyright 2008 track7');
+  $rss = new auFeed('track7 page comments', '/comments.php', 'all comments posted on track7 pages', 'copyright 2008 - 2010 track7');
 
   $comments = 'select c.id, c.page, c.instant, c.uid, u.login, c.name, c.url, c.comments from comments as c left join users as u on c.uid=u.uid order by instant desc';
   if($comments = $db->GetLimit($comments, 0, 15, '', ''))
