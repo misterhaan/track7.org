@@ -104,6 +104,9 @@ div.photo div.typedate {
 div.guide div.typedate {
   background-image: url(/images/storytype/guide.png);
 }
+div.art div.typedate {
+  background-image: url(/images/storytype/art.png);
+}
 
 img.photothumb {
   border: 1px solid #000000;

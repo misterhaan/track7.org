@@ -10,6 +10,7 @@
   $page->AddFeed('track7 page comments', '/feeds/comments.rss');
   $page->AddFeed('track7 bln entries', '/feeds/entries.rss');
   $page->AddFeed('track7 album photos', '/feeds/photos.rss');
+  $page->AddFeed('track7 art', '/feeds/art.rss');
 
   $page->Start('track7');
 ?>
@@ -87,27 +88,35 @@
     $guide = $guides->NextRecord();
   else
     $guide = false;
+  $arts = 'select id, name, type, description, adddate from art order by adddate desc';
+  if($arts = $db->GetLimit($arts, 0, MAXITEMS, 'error looking up art', ''))
+    $art = $arts->NextRecord();
+  else
+    $art = false;
 
   $items = 0;
-  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide)) {
-    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded)) {
+  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide || $art)) {
+    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded) && (!$art || $update->instant >= $art->adddate)) {
       showUpdate($update, $user);
       $update = $updates->NextRecord();
-    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded)) {
+    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded) && (!$art || $post->instant >= $art->adddate)) {
       showPost($post, $user);
       $post = $posts->NextRecord();
-    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded)) {
+    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded) && (!$art || $comment->instant >= $art->adddate)) {
       showComment($comment, $user);
       $comment = $comments->NextRecord();
-    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded)) {
+    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded) && (!$art || $entry->instant >= $art->adddate)) {
       showEntry($entry, $user);
       $entry = $entries->NextRecord();
-    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded)) {
+    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded) && (!$art || $photo->added >= $art->adddate)) {
       showPhoto($photo, $user);
       $photo = $photos->NextRecord();
-    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added)) {
+    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added) && (!$art || $guide->dateadded >= $art->adddate)) {
       showGuide($guide, $user);
       $guide = $guides->NextRecord();
+    } elseif($art && (!$update || $art->adddate >= $update->instant) && (!$post || $art->adddate >= $post->instant) && (!$comment || $art->adddate >= $comment->instant) && (!$entry || $art->adddate >= $entry->instant) && (!$photo || $art->adddate >= $photo->added) && (!$guide || $art->adddate >= $guide->dateadded)) {
+      showArt($art, $user);
+      $art = $arts->NextRecord();
     }
     $items++;
   }
@@ -234,6 +243,27 @@
       <div class="typedate" title="guide at <?=strtolower($user->tzdate(LONGDATEFMT, $guide->dateadded)); ?>"><div class="date"><?=strtolower(auText::SmartTime($guide->dateadded, $user)); ?></div></div>
       <h2 class="feed"><a href="/feeds/guides.rss" class="feed" title="track7 guides" /><a href="/geek/guides/<?=$guide->id; ?>/"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></h2>
       <p><?=$guide->description; ?></p>
+    </div>
+
+<?
+  }
+
+  /**
+   * Show art (a sketch or digital art).
+   * @param object $art art to be shown
+   * @param auUserTrack7 $user user object for showing dates in the correct time zone
+   */
+  function showArt($art, $user) {
+    if($art->type == 'digital')
+      $art->type = 'digital art';
+    if(!$art->name)
+      $art->name = str_replace('-', ' ', $art->id);
+?>
+    <div class="feed art">
+      <div class="typedate" title="<?=$art->type; ?> at <?=strtolower($user->tzdate(LONGDATEFMT, $art->adddate)); ?>"><div class="date"><?=strtolower(auText::SmartTime($art->adddate, $user)); ?></div></div>
+      <h2 class="feed"><a href="/feeds/art.rss" class="feed" title="track7 art" /><a href="/output/gfx/sketch.php#<?=$art->id; ?>"><?=$art->name; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
+      <p><a class="img" href="/output/gfx/sketch.php#<?=$art->id; ?>"><img class="photothumb" src="/output/gfx/<?=$art->id; ?>-prev.png" alt="" /></a></p>
+      <p><?=$art->description; ?></p>
     </div>
 
 <?
