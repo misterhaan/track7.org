@@ -3,7 +3,7 @@
 
   $page->Start('digital art gallery');
 
-  $digitals = 'select a.id, a.description, a.adddate, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, v.vote from art as a left join ratings as r on r.selector=a.id and r.type=\'digital\' left join votes as v on v.ratingid=r.id and (v.uid=' . $user->ID . ' or v.ip=\'' . addslashes($_SERVER['REMOTE_ADDR']) . '\') where a.type=\'digital\' order by rating desc, votes desc, a.adddate desc';
+  $digitals = 'select a.id, a.description, a.adddate, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, v.vote from art as a left join ratings as r on r.selector=a.id and r.type=\'digital\' left join votes as v on v.ratingid=r.id and ' . ($user->Valid ? 'v.uid=\'' . $user->ID . '\'' : 'v.ip=\'' . addslashes($_SERVER['REMOTE_ADDR']) . '\'') . ' where a.type=\'digital\' order by rating desc, votes desc, a.adddate desc';
   if($digitals = $db->Get($digitals, 'error looking up digital art', 'no digital art found'))
     while($digital = $digitals->NextRecord()) {
       $page->Heading('', $digital->id);
