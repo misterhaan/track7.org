@@ -11,6 +11,7 @@
   $page->AddFeed('track7 bln entries', '/feeds/entries.rss');
   $page->AddFeed('track7 album photos', '/feeds/photos.rss');
   $page->AddFeed('track7 art', '/feeds/art.rss');
+  $page->AddFeed('track7 disc golf rounds', '/feeds/rounds.rss');
 
   $page->Start('track7');
 ?>
