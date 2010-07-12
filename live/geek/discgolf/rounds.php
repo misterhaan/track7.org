@@ -206,7 +206,8 @@
     $page->Start(htmlentities($_GET['player'], ENT_COMPAT, _CHARSET) . '’s rounds - disc golf', htmlentities($_GET['player'], ENT_COMPAT, _CHARSET) . '’s rounds');
     $rounds = ' and u.login=\'' . addslashes($_GET['player']) . '\'';
   } else {
-    $page->Start('rounds - disc golf', 'rounds');
+    $page->AddFeed('track7 disc golf rounds', '/feeds/rounds.rss');
+    $page->Start('rounds - disc golf', 'rounds<a class="feed" href="/feeds/rounds.rss" title="rss feed of recent disc golf rounds"><img src="/style/feed.png" alt="feed" /></a>');
     $rounds = '';
   }
   $rounds = 'select r.id, u.login, r.courseid, c.name, r.roundtype, r.tees, r.instant, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where (r.entryuid is null or r.uid=\'' . $user->ID . '\')' . $rounds . ' order by instant desc';
