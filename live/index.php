@@ -93,30 +93,38 @@
     $art = $arts->NextRecord();
   else
     $art = false;
+  $rounds = 'select r.id, r.instant, r.courseid, c.name, u.login, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where entryuid is null order by instant desc';
+  if($rounds = $db->GetLimit($rounds, 0, MAXITEMS, 'error looking up rounds', ''))
+    $round = $rounds->NextRecord();
+  else
+    $round = false;
 
   $items = 0;
-  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide || $art)) {
-    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded) && (!$art || $update->instant >= $art->adddate)) {
+  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide || $art || $round)) {
+    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded) && (!$art || $update->instant >= $art->adddate) && (!$round || $update->instant >= $round->instant)) {
       showUpdate($update, $user);
       $update = $updates->NextRecord();
-    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded) && (!$art || $post->instant >= $art->adddate)) {
+    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded) && (!$art || $post->instant >= $art->adddate) && (!$round || $post->instant >= $round->instant)) {
       showPost($post, $user);
       $post = $posts->NextRecord();
-    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded) && (!$art || $comment->instant >= $art->adddate)) {
+    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded) && (!$art || $comment->instant >= $art->adddate) && (!$round || $comment->instant >= $round->instant)) {
       showComment($comment, $user);
       $comment = $comments->NextRecord();
-    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded) && (!$art || $entry->instant >= $art->adddate)) {
+    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded) && (!$art || $entry->instant >= $art->adddate) && (!$round || $entry->instant >= $round->instant)) {
       showEntry($entry, $user);
       $entry = $entries->NextRecord();
-    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded) && (!$art || $photo->added >= $art->adddate)) {
+    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded) && (!$art || $photo->added >= $art->adddate) && (!$round || $photo->added >= $round->instant)) {
       showPhoto($photo, $user);
       $photo = $photos->NextRecord();
-    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added) && (!$art || $guide->dateadded >= $art->adddate)) {
+    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added) && (!$art || $guide->dateadded >= $art->adddate) && (!$round || $guide->dateadded >= $round->instant)) {
       showGuide($guide, $user);
       $guide = $guides->NextRecord();
-    } elseif($art && (!$update || $art->adddate >= $update->instant) && (!$post || $art->adddate >= $post->instant) && (!$comment || $art->adddate >= $comment->instant) && (!$entry || $art->adddate >= $entry->instant) && (!$photo || $art->adddate >= $photo->added) && (!$guide || $art->adddate >= $guide->dateadded)) {
+    } elseif($art && (!$update || $art->adddate >= $update->instant) && (!$post || $art->adddate >= $post->instant) && (!$comment || $art->adddate >= $comment->instant) && (!$entry || $art->adddate >= $entry->instant) && (!$photo || $art->adddate >= $photo->added) && (!$guide || $art->adddate >= $guide->dateadded) && (!$round || $art->adddate >= $round->instant)) {
       showArt($art, $user);
       $art = $arts->NextRecord();
+    } elseif($round) {
+      showRound($round, $user);
+      $round = $rounds->NextRecord();
     }
     $items++;
   }
@@ -263,9 +271,26 @@
       <div class="typedate" title="<?=$art->type; ?> at <?=strtolower($user->tzdate(LONGDATEFMT, $art->adddate)); ?>"><div class="date"><?=strtolower(auText::SmartTime($art->adddate, $user)); ?></div></div>
       <h2 class="feed"><a href="/feeds/art.rss" class="feed" title="track7 art" /><a href="/output/gfx/sketch.php#<?=$art->id; ?>"><?=$art->name; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
       <p><a class="img" href="/output/gfx/sketch.php#<?=$art->id; ?>"><img class="photothumb" src="/output/gfx/<?=$art->id; ?>-prev.png" alt="" /></a></p>
-      <p><?=$art->description; ?></p>
+      <?=$art->description; ?>
     </div>
 
+<?
+  }
+
+  function showRound($round, $user) {
+?>
+    <div class="feed round">
+      <div class="typedate" title="disc golf round at <?=strtolower($user->tzdate(LONGDATEFMT, $round->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($round->instant, $user)); ?></div></div>
+      <h2 class="feed"><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds" /><a href="/geek/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <a href="/user/<?=$round->login; ?>/"><?=$round->login; ?></a></h2>
+      <p>
+        on <?=strtolower($user->tzdate('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
+        <a href="/geek/discgolf/players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a>
+        played a <?=$round->roundtype; ?> round <?=$round->tees ? 'from the ' . $round->tees . ' tees ' : ''; ?>
+        at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>,
+        scoring <?=$round->score; ?>.
+      </p>
+      <p><?=$round->comments; ?></p>
+    </div>
 <?
   }
 ?>

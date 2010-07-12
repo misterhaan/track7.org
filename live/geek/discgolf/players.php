@@ -94,7 +94,7 @@
         while($round = $rounds->NextRecord()) {
           $round->comments = trim(html_entity_decode(strip_tags($round->comments), ENT_COMPAT, _CHARSET));
           if(strlen($round->comments) > 17)
-            $round->comments = substr($round->comments, 0, 15) . '...';
+            $round->comments = mb_substr($round->comments, 0, 15, _CHARSET) . '...';
 ?>
           <tr><td><a href="rounds.php?id=<?=$round->id; ?>"><?=strtolower(auText::SmartDate($round->instant)); ?></a></td><td><a href="courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a></td><td><?=$round->roundtype; ?></td><td><?=$round->tees; ?></td><td class="number"><?=$round->score; ?></td><td><?=$round->comments; ?></td></tr>
 <?
@@ -120,7 +120,7 @@
             $disc->color = '<em>unknown</em>';
           $disc->comments = html_entity_decode(str_replace(array('\r', '\n'), '', strip_tags($disc->comments)), ENT_COMPAT, _CHARSET);
           if(strlen($disc->comments) > 22)
-            $disc->comments = substr($disc->comments, 0, 20) . '...';
+            $disc->comments = mb_substr($disc->comments, 0, 20, _CHARSET) . '...';
 ?>
           <tr><td><a href="caddy.php?id=<?=$disc->id; ?>"><?=$disc->color; ?></a></td><td><?=$disc->mass; ?> g</td><td><a href="discs.php?id=<?=$disc->discid; ?>"><?=$disc->name; ?></a></td><td><?=$disc->status; ?></td><td><?=$disc->comments; ?></td></tr>
 <?

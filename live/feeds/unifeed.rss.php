@@ -3,7 +3,7 @@
   require_once 'auFeed.php';
   define('MAXITEMS', 15);
 
-  $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, page comments, bln entries, album photos, and art unifeed', 'copyright 2008 - 2010 track7');
+  $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, page comments, bln entries, album photos, art, and disc golf rounds unifeed', 'copyright 2008 - 2010 track7');
 
   $updates = 'select id, instant, `change` from updates order by instant desc';
   if($updates = $db->GetLimit($updates, 0, MAXITEMS, '', ''))
@@ -81,34 +81,43 @@
     $guide = false;
 
   $arts = 'select id, name, type, description, adddate from art order by adddate desc';
-  if($arts = $db->GetLimit($arts, 0, 15, '', ''))
+  if($arts = $db->GetLimit($arts, 0, MAXITEMS, '', ''))
     $art = $arts->NextRecord();
   else
     $art = false;
 
+  $rounds = 'select r.id, r.instant, r.courseid, c.name, u.login, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where entryuid is null order by instant desc';
+  if($rounds = $db->GetLimit($rounds, 0, MAXITEMS, '', ''))
+    $round = $rounds->NextRecord();
+  else
+    $round = false;
+
   $items = 0;
-  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide || $art)) {
-    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded) && (!$art || $update->instant >= $art->adddate)) {
+  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide || $art || $round)) {
+    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded) && (!$art || $update->instant >= $art->adddate) && (!$round || $update->instant >= $round->instant)) {
       AddUpdate($rss, $update);
       $update = $updates->NextRecord();
-    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded) && (!$art || $post->instant >= $art->adddate)) {
+    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded) && (!$art || $post->instant >= $art->adddate) && (!$round || $post->instant >= $round->instant)) {
       AddPost($rss, $post);
       $post = $posts->NextRecord();
-    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded) && (!$art || $comment->instant >= $art->adddate)) {
+    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded) && (!$art || $comment->instant >= $art->adddate) && (!$round || $comment->instant >= $round->instant)) {
       AddComment($rss, $comment);
       $comment = $comments->NextRecord();
-    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded) && (!$art || $entry->instant >= $art->adddate)) {
+    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded) && (!$art || $entry->instant >= $art->adddate) && (!$round || $entry->instant >= $round->instant)) {
       AddEntry($rss, $entry);
       $entry = $entries->NextRecord();
-    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded) && (!$art || $photo->added >= $art->adddate)) {
+    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded) && (!$art || $photo->added >= $art->adddate) && (!$round || $photo->added >= $round->instant)) {
       AddPhoto($rss, $photo);
       $photo = $photos->NextRecord();
-    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added) && (!$art || $guide->dateadded >= $art->adddate)) {
+    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added) && (!$art || $guide->dateadded >= $art->adddate) && (!$round || $guide->dateadded >= $round->instant)) {
       AddGuide($rss, $guide);
       $guide = $guides->NextRecord();
-    } elseif($art && (!$update || $art->adddate >= $update->instant) && (!$post || $art->adddate >= $post->instant) && (!$comment || $art->adddate >= $comment->instant) && (!$entry || $art->adddate >= $entry->instant) && (!$photo || $art->adddate >= $photo->added) && (!$guide || $art->adddate >= $guide->dateadded)) {
+    } elseif($art && (!$update || $art->adddate >= $update->instant) && (!$post || $art->adddate >= $post->instant) && (!$comment || $art->adddate >= $comment->instant) && (!$entry || $art->adddate >= $entry->instant) && (!$photo || $art->adddate >= $photo->added) && (!$guide || $art->adddate >= $guide->dateadded) && (!$round || $art->adddate >= $round->instant)) {
       AddArt($rss, $art);
       $art = $arts->NextRecord();
+    } elseif($round) {
+      AddRound($rss, $round);
+      $round = $rounds->NextRecord();
     }
     $items++;
   }
@@ -157,5 +166,9 @@
     if(!$art->name)
       $art->name = str_replace('-', ' ', $art->id);
     $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/' . $art->id . '.png" alt="" /></p><p>' . $art->description . '</p>', '[art] ' . $art->name, '/output/gfx/' . $art->type . '.php#' . $art->id, $art->adddate, '/output/gfx/' . $art->type . '.php#' . $art->id, true);
+  }
+
+  function AddRound($rss, $round) {
+    $rss->AddItem('<p><a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a> played a ' . $round->roundtype . ' round ' . ($round->tees ? 'from the ' . $round->tees . ' tees ' : '') . 'at <a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/courses.php?id=' . $round->courseid . '" title="more information on this course">' . $round->name . '</a>, scoring ' . $round->score . '.</p><p>' . $round->comments . '</p>', '[round] ' . $round->name . ' round - ' . $round->login, '/geek/discgolf/rounds.php?id=' . $round->id, $round->instant, '/geek/discgolf/rounds.php?id=' . $round->id, true);
   }
 ?>

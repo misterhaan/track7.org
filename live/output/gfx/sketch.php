@@ -33,7 +33,8 @@
     }
     $page->info('<a href="?new">add a sketch</a>');
   }
-  $page->Start('pen / pencil sketch gallery');
+  $page->AddFeed('track7 art', '/feeds/art.rss');
+  $page->Start('pen / pencil sketch gallery', 'pen / pencil sketch gallery<a class="feed" href="/feeds/art.rss" title="rss feed of art"><img src="/style/feed.png" alt="feed" /></a>');
 ?>
       <p>
         the following are most of the pen and pencil sketches i’ve done
@@ -43,7 +44,7 @@
       </p>
 
 <?
-  $sketches = 'select a.id, a.description, a.adddate, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, v.vote from art as a left join ratings as r on r.selector=a.id and r.type=\'sketch\' left join votes as v on v.ratingid=r.id and (v.uid=' . $user->ID . ' or v.ip=\'' . addslashes($_SERVER['REMOTE_ADDR']) . '\') where a.type=\'sketch\' order by rating desc, votes desc, a.adddate desc';
+  $sketches = 'select a.id, a.description, a.adddate, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, v.vote from art as a left join ratings as r on r.selector=a.id and r.type=\'sketch\' left join votes as v on v.ratingid=r.id and ' . ($user->Valid ? 'v.uid=' . $user->ID : 'v.ip=\'' . addslashes($_SERVER['REMOTE_ADDR']) . '\'') . ' where a.type=\'sketch\' order by rating desc, votes desc, a.adddate desc';
   if($sketches = $db->Get($sketches, 'error looking up sketches', 'no sketches found'))
     while($sketch = $sketches->NextRecord()) {
       $page->Heading('', $sketch->id);
