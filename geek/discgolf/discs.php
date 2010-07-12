@@ -165,7 +165,7 @@
             $disc->color = '<em>unknown</em>';
           $disc->comments = html_entity_decode(str_replace(array('\r', '\n'), '', strip_tags($disc->comments)), ENT_COMPAT, _CHARSET);
           if(strlen($disc->comments) > 22)
-            $disc->comments = substr($disc->comments, 0, 20) . '...';
+            $disc->comments = mb_substr($disc->comments, 0, 20, _CHARSET) . '...';
 ?>
           <tr><td><a href="caddy.php?id=<?=$disc->id; ?>"><?=$disc->color; ?></a></td><td><?=$disc->mass; ?> g</td><td><a href="players.php?p=<?=$disc->login; ?>"><?=$disc->login; ?></a></td><td><?=$disc->status; ?></td><td><?=htmlentities($disc->comments, ENT_COMPAT, _CHARSET); ?></td></tr>
 <?

@@ -8,6 +8,7 @@
   $page->AddFeed('track7 album photos', '/feeds/photos.rss');
   $page->AddFeed('track7 guides', '/feeds/guides.rss');
   $page->AddFeed('track7 art', '/feeds/art.rss');
+  $page->AddFeed('track7 disc golf rounds', '/feeds/rounds.rss');
   $page->Start('feeds');
 ?>
       <p>
@@ -25,6 +26,7 @@
         <li><a href="photos.rss">album photos</a></li>
         <li><a href="guides.rss">guides</a></li>
         <li><a href="art.rss">art</a></li>
+        <li><a href="rounds.rss">disc golf rounds</a></li>
       </ul>
 <?
   $page->End();

@@ -209,7 +209,7 @@
         while($round = $rounds->NextRecord()) {
           $round->comments = trim(html_entity_decode(strip_tags($round->comments), ENT_COMPAT, _CHARSET));
           if(strlen($round->comments) > 71)
-            $round->comments = substr($round->comments, 0, 69) . '...';
+            $round->comments = mb_substr($round->comments, 0, 69, _CHARSET) . '...';
           if(!$round->roundtype)
             $round->roundtype = '?';
           if(!$round->tees)

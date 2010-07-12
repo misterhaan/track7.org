@@ -122,7 +122,7 @@
         $disc->color = '<em>unknown</em>';
       $disc->comments = html_entity_decode(str_replace(array('\r', '\n'), '', strip_tags($disc->comments)), ENT_COMPAT, _CHARSET);
       if(strlen($disc->comments) > 22)
-        $disc->comments = substr($disc->comments, 0, 20) . '...';
+        $disc->comments = mb_substr($disc->comments, 0, 20, _CHARSET) . '...';
 ?>
           <tr><td><a href="?id=<?=$disc->id; ?>"><?=$disc->color; ?></a></td><td class="numeric"><?=$disc->mass; ?> g</td><td><a href="discs.php?id=<?=$disc->discid; ?>"><?=$disc->name; ?></a></td><?=strlen($_GET['player']) ? '' : '<td><a href="players.php?p=' . $disc->login . '">' . $disc->login . '</a></td>' ; ?><td><?=$disc->status; ?></td><td><?=$disc->comments; ?></td></tr>
 <?

@@ -12,7 +12,6 @@ RewriteRule \.snapshot/ - [F]
 RewriteRule etc/ - [F]
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
-RedirectPermanent /i/ http://i.track7.org/
 RedirectPermanent /track7.php http://www.track7.org/
 RedirectPermanent /ready.shtml http://www.track7.org/output/pen/theory/ready.php
 RedirectPermanent /ready.html http://www.track7.org/output/pen/theory/ready.php

@@ -132,7 +132,7 @@
         $page->Info('this round has not yet been confirmed by ' . $round->login);
 ?>
       <p>
-        on <?=strtolower(date('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
+        on <?=strtolower($user->tzdate('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
         <a href="players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a>
         played this <?=$round->roundtype; ?> round <?=$round->tees ? 'from the ' . $round->tees . ' tees ' : ''; ?>
         at <a href="courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>.
@@ -219,7 +219,7 @@
     while($round = $rounds->NextRecord()) {
       $round->comments = trim(html_entity_decode(strip_tags($round->comments), ENT_COMPAT, _CHARSET));
       if(strlen($round->comments) > 71)
-        $round->comments = substr($round->comments, 0, 69) . '...';
+        $round->comments = mb_substr($round->comments, 0, 69, _CHARSET) . '...';
 ?>
           <tr><td><a href="?id=<?=$round->id; ?>" title="more information on this round"><?=strtolower(auText::SmartDate($round->instant, $user)); ?></a></td><td><a href="courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a></td><?=strlen($_GET['player']) ? '' : '<td><a href="players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a></td>'; ?><td><?=$round->roundtype; ?></td><td><?=$round->tees; ?></td><td><?=$round->score; ?></td></tr><tr class="comments"><td class="minor" colspan="6"><?=$round->comments; ?></td></tr>
 <?
@@ -522,7 +522,7 @@
    */
   function saveScores($courseid, $scores, $puid, $pname, &$db, &$user, &$page) {
     $owner = $puid == $user->ID;
-    $ins = 'insert into dgrounds (uid, courseid, roundtype, tees, instant, scorelist, score, ' . ($owner ? 'bestdisc, worstdisc, comments' : 'entryuid') . ') values (\'' . addslashes($puid) . '\', \'' . $courseid . '\', ' . ($_POST['type'] == 'null' ? 'null' : '\'' . addslashes($_POST['type']) . '\'') . ', ' . (!$_POST['tees'] || $_POST['tees'] == 'null' ? 'null' : '\'' . addslashes($_POST['tees']) . '\'') . ', \'' . $user->tzstrtotime($_POST['date']) . '\', \'' . implode('|', $scores) . '\', \'' . array_sum($scores) . '\'' . ($owner ? ', ' . $_POST['bestdisc'] . ', ' . $_POST['worstdisc'] . ', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\'' : ', \'' . $user->ID . '\'') . ')';
+    $ins = 'insert into dgrounds (uid, courseid, roundtype, tees, instant, scorelist, score, ' . ($owner ? 'bestdisc, worstdisc, comments' : 'entryuid') . ') values (\'' . addslashes($puid) . '\', \'' . $courseid . '\', ' . ($_POST['type'] == 'null' ? 'null' : '\'' . addslashes($_POST['type']) . '\'') . ', ' . (!$_POST['tees'] || $_POST['tees'] == 'null' ? 'null' : '\'' . addslashes($_POST['tees']) . '\'') . ', \'' . ($_POST['date'] ? $user->tzstrtotime($_POST['date']) : time()) . '\', \'' . implode('|', $scores) . '\', \'' . array_sum($scores) . '\'' . ($owner ? ', ' . $_POST['bestdisc'] . ', ' . $_POST['worstdisc'] . ', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\'' : ', \'' . $user->ID . '\'') . ')';
     if(false !== $roundid = $db->Put($ins, 'error saving scores for ' . $pname)) {
       require_once 'util.php';
       countRounds($db, $courseid);
