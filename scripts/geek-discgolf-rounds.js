@@ -66,9 +66,11 @@ function enhancePlayerFields() {
   var partner = document.getElementById("fldpartner0");
   if(player && document.getElementById("frmnewround")) {
     enableSuggest(player, "/user/list.php?return=suggest&match=");
+    player.oldonblur = player.onblur;
     player.onblur = playerFieldLeft;
     if(partner) {
       enableSuggest(partner, "/user/list.php?return=suggest&match=");
+      partner.oldonblur = partner.onblur;
       partner.onblur = playerFieldLeft;
     }
     var scoreset = document.getElementById("scoreset");
@@ -112,6 +114,8 @@ function enhancePlayerFields() {
  * Hide the player field and show the value as text.
  */
 function playerFieldLeft() {
+  if(this.oldonblur)  // run the onblur from the suggest script
+    this.oldonblur();
   if(!this.span) {
     this.span = document.createElement("span");
     this.span.input = this;

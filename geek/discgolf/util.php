@@ -1,6 +1,6 @@
 <?
   function countRounds(&$db, $courseId) {
-    $count = 'select count(1) from dgrounds where courseid=\'' . addslashes($courseId) . '\' and entryuid is null';
+    $count = 'select count(1) from dgrounds where courseid=\'' . addslashes($courseId) . '\' and (entryuid is null or uid=0)';
     if(false === $count = $db->GetValue($count, 'error counting rounds for course ' . $courseId, ''))
       return false;
     $count = 'update dgcourses set rounds=\'' . $count . '\' where id=\'' . addslashes($courseId) . '\'';
@@ -20,7 +20,7 @@
   }
 
   function calcAvgScores(&$db, $courseId, $roundType, $tees, $delempty = false) {
-    $scores = 'select scorelist, score from dgrounds where courseid=\'' . $courseId . '\' and entryuid is null and roundtype' . ($roundType ? '=\'' . $roundType . '\'' : ' is null') . ' and tees' . ($tees ? '=\'' . $tees . '\'' : ' is null');
+    $scores = 'select scorelist, score from dgrounds where courseid=\'' . $courseId . '\' and (entryuid is null or uid=0) and roundtype' . ($roundType ? '=\'' . $roundType . '\'' : ' is null') . ' and tees' . ($tees ? '=\'' . $tees . '\'' : ' is null');
     if($scores = $db->Get($scores, 'error looking up ' . $roundType . ', ' . $tees . '-tee rounds for course ' . $courseId)) {
       $rounds = $scores->NumRecords();
       if(!$rounds)
