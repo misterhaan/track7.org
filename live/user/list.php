@@ -5,6 +5,7 @@
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
 
   if($_GET['return'] == 'suggest') {
+    header('Content-Type: text/plain; charset=utf-8');
     $count = 0;
     $us = 'select login from users where login like \'' . addslashes($_GET['match']) . '%\' order by login';
     if($us = $db->Get($us, '', '', true))

@@ -160,7 +160,7 @@
           $rounds = 'and r.tees is null ' . $rounds;
         else
           $rounds = 'and r.tees=\'' . addslashes($_GET['tees']) . '\' ' . $rounds;
-      $rounds = 'select r.id, u.login, r.roundtype, r.tees, r.instant, r.score, r.comments from dgrounds as r left join users as u on u.uid=r.uid where courseid=\'' . $_GET['id'] . '\' and (r.entryuid is null or r.uid=\'' . $user->ID . '\')' . $rounds;
+      $rounds = 'select r.id, u.login, r.uid, r.player, r.roundtype, r.tees, r.instant, r.score, r.comments from dgrounds as r left join users as u on u.uid=r.uid where courseid=\'' . $_GET['id'] . '\' and (r.entryuid is null or r.uid=\'' . $user->ID . '\' or r.uid=0)' . $rounds;
       if($rounds = $db->GetSplit($rounds, 10, 0, '', '', 'error looking up rounds for this course', '')) {
         if($_GET['roundsort'] == 'best') {
           $heading[] = 'best';
@@ -215,7 +215,7 @@
           if(!$round->tees)
             $round->tees = '?';
 ?>
-          <tr><td class="minor"><a href="rounds.php?id=<?=$round->id; ?>" title="more information on this round"><?=strtolower(auText::SmartDate($round->instant, $user)); ?></a></td><td class="minor"><a href="players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a></td><td><?=$round->roundtype; ?></td><?=$course->teelist ? '<td>' . $round->tees . '</td>' : ''; ?><td class="number"><?=$round->score; ?></td><td class="number"><?=($round->score == $avg[$round->roundtype][$round->tees]->avgscore ? 'even' : ($round->score > $avg[$round->roundtype][$round->tees]->avgscore ? '+' : '') . ($round->score - $avg[$round->roundtype][$round->tees]->avgscore)); ?></td><td class="number"><?=($round->score == $course->par ? 'even' : ($round->score > $course->par ? '+' : '') . ($round->score - $course->par)); ?></td><td class="number"><?=($round->score == $par3 ? 'even' : ($round->score > $par3 ? '+' : '') . ($round->score - $par3)); ?></td></tr>
+          <tr><td class="minor"><a href="rounds.php?id=<?=$round->id; ?>" title="more information on this round"><?=strtolower(auText::SmartDate($round->instant, $user)); ?></a></td><td class="minor"><?=$round->uid ? '<a href="players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a>' : $round->player; ?></td><td><?=$round->roundtype; ?></td><?=$course->teelist ? '<td>' . $round->tees . '</td>' : ''; ?><td class="number"><?=$round->score; ?></td><td class="number"><?=($round->score == $avg[$round->roundtype][$round->tees]->avgscore ? 'even' : ($round->score > $avg[$round->roundtype][$round->tees]->avgscore ? '+' : '') . ($round->score - $avg[$round->roundtype][$round->tees]->avgscore)); ?></td><td class="number"><?=($round->score == $course->par ? 'even' : ($round->score > $course->par ? '+' : '') . ($round->score - $course->par)); ?></td><td class="number"><?=($round->score == $par3 ? 'even' : ($round->score > $par3 ? '+' : '') . ($round->score - $par3)); ?></td></tr>
           <tr class="comments"><td class="minor" colspan="9"><?=$round->comments; ?></td></tr>
 <?
         }

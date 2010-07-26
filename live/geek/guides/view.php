@@ -141,6 +141,8 @@
    * @return formatted date the guide was added and possibly updated.
    */
   function GuideDate($user, $added, $updated) {
+    if(!$added)
+      return '';
     $added = strtolower(auText::SmartTime($added, $user));
     $updated = strtolower(auText::SmartTime($updated, $user));
     if($added == $updated)

@@ -50,6 +50,7 @@ create table dgcourses (
 create table dgrounds (
   id smallint unsigned not null auto_increment primary key,
   uid smallint unsigned not null, index (uid),
+  player varchar(42),
   courseid tinyint unsigned not null, index (courseid),
   roundtype enum(
     'single',

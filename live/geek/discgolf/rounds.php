@@ -16,16 +16,10 @@
           if(!$scores['okscores'])
             $page->Error('cannot save invalid scores.&nbsp; every hole must have a number between 1 and 9.&nbsp; scores entered were:&nbsp; ' . implode(', ', $scores['score']) . '.');
           else {
-            if($scores['player'] === false)
-              $page->Error('cannot save scores for nonexistant user ' . htmlspecialchars($_POST['player'][$row]) . ':&nbsp; ' . implode(', ', $scores['score']) . '.');
-            else if($scores['player'])
-              saveScores($course->id, $scores['score'], $scores['player'], htmlspecialchars($_POST['player'][$row]), $db, $user, $page);
+            saveScores($course->id, $scores['score'], $scores['player'], htmlspecialchars($scores['playerName']), $db, $user, $page);
 
             if($partner)
-              if($scores['partner'] === false)
-                $page->Error('cannot save scores for nonexistant user ' . htmlspecialchars($_POST['partner'][$row]) . ':&nbsp; ' . implode(', ', $scores['score']) . '.');
-              else if($scores['partner'])
-                saveScores($course->id, $scores['score'], $scores['partner'], htmlspecialchars($_POST['partner'][$row]), $db, $user, $page);
+              saveScores($course->id, $scores['score'], $scores['partner'], htmlspecialchars($scores['partnerName']), $db, $user, $page);
           }
         }
         $page->End();
@@ -50,8 +44,10 @@
   }
 
   if(is_numeric($_GET['id'])) {
-    $round = 'select u.login, r.uid, r.courseid, c.name, c.location, c.teelist, r.roundtype, r.tees, r.instant, c.holes, c.parlist, c.par, r.scorelist, r.score, r.bestdisc, r.worstdisc, r.comments, r.entryuid, eu.login as entryuser from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid left join users as eu on eu.uid=r.entryuid where r.id=\'' . +$_GET['id'] . '\'';
+    $round = 'select u.login, r.uid, r.player, r.courseid, c.name, c.location, c.teelist, r.roundtype, r.tees, r.instant, c.holes, c.parlist, c.par, r.scorelist, r.score, r.bestdisc, r.worstdisc, r.comments, r.entryuid, eu.login as entryuser from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid left join users as eu on eu.uid=r.entryuid where r.id=\'' . +$_GET['id'] . '\'';
     if($round = $db->GetRecord($round, 'error looking up round', 'round not found', true)) {
+      if(!$round->uid)
+        $round->login = $round->player;
       $page->Start(date('Y-m-d', $round->instant) . ' - ' . $round->name, $round->login . '’s ' . strtolower(auText::SmartDate($round->instant, $user)) . ' round', $round->name);
       if($round->uid == $user->ID) {
         if(isset($_GET['edit'])) {
@@ -128,12 +124,22 @@
 ?>
       </ul>
 <?
-      } elseif($round->entryuid)
+      } elseif($round->entryuid && $round->uid)
         $page->Info('this round has not yet been confirmed by ' . $round->login);
 ?>
       <p>
         on <?=strtolower($user->tzdate('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
+<?
+        if($round->uid) {
+?>
         <a href="players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a>
+<?
+        } else {
+?>
+        <?=$round->player; ?>
+<?
+        }
+?>
         played this <?=$round->roundtype; ?> round <?=$round->tees ? 'from the ' . $round->tees . ' tees ' : ''; ?>
         at <a href="courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>.
       </p>
@@ -191,8 +197,14 @@
       showRoundHoles($round->holes, $round->scorelist, $round->parlist, $avg->avglist);
 ?>
       <ul>
+<?
+      if($round->uid) {
+?>
         <li><a href="?player=<?=$round->login; ?>"><?=$round->login; ?>’s rounds</a></li>
         <li><a href="players.php?p=<?=$round->login; ?>"><?=$round->login; ?>’s player profile</a></li>
+<?
+      }
+?>
         <li><a href="courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?> information</a></li>
       </ul>
 <?
@@ -210,7 +222,7 @@
     $page->Start('rounds - disc golf', 'rounds<a class="feed" href="/feeds/rounds.rss" title="rss feed of recent disc golf rounds"><img src="/style/feed.png" alt="feed" /></a>');
     $rounds = '';
   }
-  $rounds = 'select r.id, u.login, r.courseid, c.name, r.roundtype, r.tees, r.instant, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where (r.entryuid is null or r.uid=\'' . $user->ID . '\')' . $rounds . ' order by instant desc';
+  $rounds = 'select r.id, u.login, r.uid, r.player, r.courseid, c.name, r.roundtype, r.tees, r.instant, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where (r.entryuid is null or r.uid=\'' . $user->ID . '\' or r.uid=0)' . $rounds . ' order by instant desc';
   if($rounds = $db->GetSplit($rounds, 30, 0, '', '', 'error looking up rounds', 'no rounds entered')) {
 ?>
       <table class="text" cellspacing="0">
@@ -222,7 +234,7 @@
       if(strlen($round->comments) > 71)
         $round->comments = mb_substr($round->comments, 0, 69, _CHARSET) . '...';
 ?>
-          <tr><td><a href="?id=<?=$round->id; ?>" title="more information on this round"><?=strtolower(auText::SmartDate($round->instant, $user)); ?></a></td><td><a href="courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a></td><?=strlen($_GET['player']) ? '' : '<td><a href="players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a></td>'; ?><td><?=$round->roundtype; ?></td><td><?=$round->tees; ?></td><td><?=$round->score; ?></td></tr><tr class="comments"><td class="minor" colspan="6"><?=$round->comments; ?></td></tr>
+          <tr><td><a href="?id=<?=$round->id; ?>" title="more information on this round"><?=strtolower(auText::SmartDate($round->instant, $user)); ?></a></td><td><a href="courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a></td><?=strlen($_GET['player']) ? '' : '<td>' . ($round->uid ? '<a href="players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a>' : $round->player) . '</td>'; ?><td><?=$round->roundtype; ?></td><td><?=$round->tees; ?></td><td><?=$round->score; ?></td></tr><tr class="comments"><td class="minor" colspan="6"><?=$round->comments; ?></td></tr>
 <?
     }
 ?>
@@ -477,10 +489,14 @@
       $_POST['partner'][$row] = '';
     }
     // verify player and partner are actual users
-    if($_POST['player'][$row])
-      $ret['player'] = checkPlayer($db, $_POST['player'][$row]);
-    if($partner && $_POST['partner'][$row])
-      $ret['partner'] = checkPlayer($db, $_POST['partner'][$row]);
+    if($_POST['player'][$row]) {
+      $ret['playerName'] = $_POST['player'][$row];
+      $ret['player'] = checkPlayer($db, $ret['playerName']);
+    }
+    if($partner && $_POST['partner'][$row]) {
+      $ret['partnerName'] = $_POST['partner'][$row];
+      $ret['partner'] = checkPlayer($db, $ret['partnerName']);
+    }
     return array_merge($ret, checkScoreFields($row, $holes));
   }
 
@@ -508,7 +524,7 @@
    */
   function checkPlayer(&$db, $login) {
     $chk = 'select uid from users where login=\'' . addslashes($login) . '\'';
-    return $db->GetValue($chk, 'error checking whether ' . htmlspecialchars($login, ENT_COMPAT, _CHARSET) . ' is a valid user', 'could not find a user named ' . htmlspecialchars($login, ENT_COMPAT, _CHARSET), true);
+    return $db->GetValue($chk, 'error checking whether ' . htmlspecialchars($login, ENT_COMPAT, _CHARSET) . ' is a valid user', 'could not find a user named ' . htmlspecialchars($login, ENT_COMPAT, _CHARSET) . ' — scores will be saved but not linked to a user', false);
   }
 
   /**
@@ -523,12 +539,13 @@
    */
   function saveScores($courseid, $scores, $puid, $pname, &$db, &$user, &$page) {
     $owner = $puid == $user->ID;
-    $ins = 'insert into dgrounds (uid, courseid, roundtype, tees, instant, scorelist, score, ' . ($owner ? 'bestdisc, worstdisc, comments' : 'entryuid') . ') values (\'' . addslashes($puid) . '\', \'' . $courseid . '\', ' . ($_POST['type'] == 'null' ? 'null' : '\'' . addslashes($_POST['type']) . '\'') . ', ' . (!$_POST['tees'] || $_POST['tees'] == 'null' ? 'null' : '\'' . addslashes($_POST['tees']) . '\'') . ', \'' . ($_POST['date'] ? $user->tzstrtotime($_POST['date']) : time()) . '\', \'' . implode('|', $scores) . '\', \'' . array_sum($scores) . '\'' . ($owner ? ', ' . $_POST['bestdisc'] . ', ' . $_POST['worstdisc'] . ', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\'' : ', \'' . $user->ID . '\'') . ')';
+    $ins = 'insert into dgrounds (uid, ' . ($puid ? '' : 'player, ') . 'courseid, roundtype, tees, instant, scorelist, score, ' . ($owner ? 'bestdisc, worstdisc, comments' : 'entryuid') . ') values (\'' . addslashes($puid) . ($puid ? '' : '\', \'' . addslashes($pname)) . '\', \'' . $courseid . '\', ' . ($_POST['type'] == 'null' ? 'null' : '\'' . addslashes($_POST['type']) . '\'') . ', ' . (!$_POST['tees'] || $_POST['tees'] == 'null' ? 'null' : '\'' . addslashes($_POST['tees']) . '\'') . ', \'' . ($_POST['date'] ? $user->tzstrtotime($_POST['date']) : time()) . '\', \'' . implode('|', $scores) . '\', \'' . array_sum($scores) . '\'' . ($owner ? ', ' . $_POST['bestdisc'] . ', ' . $_POST['worstdisc'] . ', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\'' : ', \'' . $user->ID . '\'') . ')';
     if(false !== $roundid = $db->Put($ins, 'error saving scores for ' . $pname)) {
       require_once 'util.php';
       countRounds($db, $courseid);
       if(calcAvgScores($db, $courseid, $_POST['roundtype'] == 'null' ? null : $_POST['roundtype'], $_POST['tees'] && $_POST['tees'] != 'null' ? $_POST['tees'] : null)) {
-        calcPlayerStats($db, $puid);
+        if($puid)
+          calcPlayerStats($db, $puid);
         $page->info('saved <a href="?id=' . $roundid . '">' . $pname . '’s round</a>');
       }
     }
