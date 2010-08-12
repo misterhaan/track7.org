@@ -94,7 +94,7 @@
     $art = $arts->NextRecord();
   else
     $art = false;
-  $rounds = 'select r.id, r.instant, r.courseid, c.name, u.login, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where entryuid is null order by instant desc';
+  $rounds = 'select r.id, r.instant, r.courseid, c.name, r.player, r.uid, u.login, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where entryuid is null or r.uid=0 order by instant desc';
   if($rounds = $db->GetLimit($rounds, 0, MAXITEMS, 'error looking up rounds', ''))
     $round = $rounds->NextRecord();
   else
@@ -282,10 +282,17 @@
 ?>
     <div class="feed round">
       <div class="typedate" title="disc golf round at <?=strtolower($user->tzdate(LONGDATEFMT, $round->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($round->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds" /><a href="/geek/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <a href="/user/<?=$round->login; ?>/"><?=$round->login; ?></a></h2>
+      <h2 class="feed"><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds" /><a href="/geek/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <?=$round->uid ? '<a href="/user/' . $round->login . '/">' . $round->login . '</a>' : $round->player; ?></h2>
       <p>
         on <?=strtolower($user->tzdate('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
+<?
+    if($round->uid) {
+?>
         <a href="/geek/discgolf/players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a>
+<?
+    } else
+      echo $round->player;
+?>
         played a <?=$round->roundtype; ?> round <?=$round->tees ? 'from the ' . $round->tees . ' tees ' : ''; ?>
         at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>,
         scoring <?=$round->score; ?>.

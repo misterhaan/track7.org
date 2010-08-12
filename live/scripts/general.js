@@ -221,7 +221,7 @@ function voteFinished(req, args) {
           if(+a.vote >= rating)
             src += "10";
           else
-            src += round((rating - Math.ceil(rating)) * -10);
+            src += Math.round((rating - Math.ceil(rating)) * -10);
         // indifferent link that needs te be filled
         if(+a.vote == 0 && rating == 0)
           src += "0";
@@ -230,7 +230,7 @@ function voteFinished(req, args) {
           if(+a.vote <= rating)
             src += "10";
           else
-            src += round((rating - Math.floor(rating)) * 10);
+            src += Math.round((rating - Math.floor(rating)) * 10);
         a.getElementsByTagName("img")[0].src = src + ".png";
       } else if(a.nodeName == "div" && a.firstChild.nodeValue.match(/^\([0-9]+ votes?\)$/))
         a.firstChild.nodeValue = "(" + votes + "vote" + (votes == 1 ? ")" : "s)");
