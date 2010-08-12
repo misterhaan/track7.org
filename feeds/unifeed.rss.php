@@ -86,7 +86,7 @@
   else
     $art = false;
 
-  $rounds = 'select r.id, r.instant, r.courseid, c.name, u.login, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where entryuid is null order by instant desc';
+  $rounds = 'select r.id, r.instant, r.courseid, c.name, r.uid, r.player, u.login, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where entryuid is null or r.uid=0 order by instant desc';
   if($rounds = $db->GetLimit($rounds, 0, MAXITEMS, '', ''))
     $round = $rounds->NextRecord();
   else
@@ -169,6 +169,6 @@
   }
 
   function AddRound($rss, $round) {
-    $rss->AddItem('<p><a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a> played a ' . $round->roundtype . ' round ' . ($round->tees ? 'from the ' . $round->tees . ' tees ' : '') . 'at <a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/courses.php?id=' . $round->courseid . '" title="more information on this course">' . $round->name . '</a>, scoring ' . $round->score . '.</p><p>' . $round->comments . '</p>', '[round] ' . $round->name . ' round - ' . $round->login, '/geek/discgolf/rounds.php?id=' . $round->id, $round->instant, '/geek/discgolf/rounds.php?id=' . $round->id, true);
+    $rss->AddItem('<p>' . ($round->uid ? '<a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a>' : $round->player) . ' played a ' . $round->roundtype . ' round ' . ($round->tees ? 'from the ' . $round->tees . ' tees ' : '') . 'at <a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/courses.php?id=' . $round->courseid . '" title="more information on this course">' . $round->name . '</a>, scoring ' . $round->score . '.</p>', '[round] ' . $round->name . ' round - ' . ($round->uid ? $round->login : $round->player), '/geek/discgolf/rounds.php?id=' . $round->id, $round->instant, '/geek/discgolf/rounds.php?id=' . $round->id, true);
   }
 ?>
