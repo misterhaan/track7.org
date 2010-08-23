@@ -28,6 +28,9 @@ div#features {
     width: auto;
   }
 }
+div#features.collapsed {
+  width: auto;
+}
 div#features h2 {
   color: #000000;
   text-align: center;
@@ -43,10 +46,33 @@ div#features h2 {
   border-bottom-right-radius: 0;
   margin: 0;
 }
+div#features.collapsed h2 {
+  -webkit-border-radius: .3em;
+  -moz-border-radius: .3em;
+  border-radius: .3em;
+}
+
+div#features h2 a {
+  cursor: pointer;
+  font-size: .7em;
+  float: right;
+  font-weight: normal;
+  margin-left: 1em;
+  margin-top: .25em;
+}
+div#features h2 a:before {
+  content: "[ ";
+}
+div#features h2 a:after {
+  content: " ]";
+}
 
 div#features dl {
   margin: 0;
   padding: .5em;
+}
+div#features.collapsed dl {
+  display: none;
 }
 div#features dt {
   margin: 0;
