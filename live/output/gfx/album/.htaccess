@@ -1,11 +1,15 @@
 RewriteEngine On
 RewriteRule ^tag=([^/]+)/sort=([^/]+)/photo=([^/]+)$ viewphoto.php?id=$3&tag=$1&sort=$2
 RewriteRule ^tag=([^/]+)/photo=([^/]+)$ viewphoto.php?id=$2&tag=$1
+RewriteRule ^tag=([^/]+)/sort=([^/]+)/skip=([^/]+)$ ?tag=$1&sort=$2&skip=$3
 RewriteRule ^tag=([^/]+)/sort=([^/]+)$ ?tag=$1&sort=$2
+RewriteRule ^tag=([^/]+)/skip=([^/]+)$ ?tag=$1&skip=$2
 RewriteRule ^tag=([^/]+)$ ?tag=$1
 RewriteRule ^sort=([^/]+)/photo=([^/]+)$ viewphoto.php?id=$2&sort=$1
+RewriteRule ^sort=([^/]+)/skip=([^/]+)$ ?sort=$1&skip=$2
 RewriteRule ^sort=([^/]+)$ ?sort=$1
 RewriteRule ^photo=([^/]+)$ viewphoto.php?id=$1
+RewriteRule ^skip=([^/]+)$ ?skip=$1
 
 RewriteRule ^tag/([^/]+)$ ?tag=$1
 RewriteRule ^photo/([^/]+)$ viewphoto.php?id=$1

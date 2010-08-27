@@ -62,15 +62,14 @@
         </li>
       </ul>
 <?
-    $url = false;
-    $q = '?';
+    $q = '';
     if($_GET['tag']) {
-      $url .= $_GET['tag'];
-      $q = '&';
+      $url .= 'tag=' . $_GET['tag'];
+      $q = '/';
     }
     if($_GET['sort']) {
       $url .= $q . 'sort=' . $_GET['sort'];
-      $q = '&';
+      $q = '/';
     }
     $page->SplitLinks(htmlspecialchars($q), $url);
   }
