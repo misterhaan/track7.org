@@ -10,6 +10,9 @@
     $url = dirname($_SERVER['PHP_SELF']);
     if($user->GodMode)
       $page->Info('<a href="' . $url . '/edit' . ($photo->youtubeid ? 'video' : 'photo') . '.php?id=' . $photo->id . '">edit this ' . ($photo->youtubeid ? 'video' : 'photo') . '</a>');
+
+    $tagnav = GetTagPrevNext($db, $photo->tags, $photo->added, $url);
+    echo $tagnav;
     if($photo->youtubeid) {
       if($page->Mobile) {
 ?>
@@ -57,7 +60,7 @@
       </div>
       <p><?=$photo->description; ?></p>
 <?
-    ShowTagPrevNext($db, $photo->tags, $photo->added, $url);
+    echo $tagnav;
     $page->SetFlag(_FLAG_PAGES_COMMENTS);
     $page->End();
     die;
@@ -67,31 +70,73 @@
   function TagLinks($tags, $url) {
     $tags = explode(',', $tags);
     foreach($tags as $tag) {
-      $links[] = '<a href="' . $url . '/tag/' . $tag . '">' . $tag . '</a>';
+      $links[] = '<a href="' . $url . '/tag=' . $tag . '">' . $tag . '</a>';
     }
     return implode(', ', $links);
   }
 
-  function ShowTagPrevNext(&$db, $tags, $added, $url) {
+  function GetTagPrevNext(&$db, $tags, $added, $url) {
     $tags = explode(',', $tags);
-    if(count($tags)) {
-      echo "\n" . '      <table id="tagnav" class="columns" cellspacing="0">' . "\n";
-      foreach($tags as $tag) {
-        echo '        <tr><th>' . $tag . '</th><td>';
-        $prev = 'select id from photos where added<' . $added . ' and (tags=\'' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . '\' or tags like \'%,' . $tag . ',%\') order by added desc';
-        if(false !== $prev = $db->GetValue($prev, 'error looking up previous photo for ' . $tag, ''))
-          echo '<a title="view the previous photo tagged with ' . $tag . '" href="' . $url . '/photo/' . $prev . '">previous</a>';
-        else
-          echo 'previous';
-        echo '</td><td><a title="view all photos tagged with ' . $tag . '" href="' . $url . '/tag/' . $tag . '">all</a></td><td>';
-        $next = 'select id from photos where added>' . $added . ' and (tags=\'' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . '\' or tags like \'%,' . $tag . ',%\') order by added';
-        if(false !== $next = $db->GetValue($next, 'error looking up next photo tagged ' . $tag, ''))
-          echo '<a title="view the next photo tagged with ' . $tag . '" href="' . $url . '/photo/' . $next . '">next</a>';
-        else
-          echo 'next';
-        echo "</td></tr>\n";
-      }
-      echo "      </table>\n";
+    $ret = '      <div class="tagnav">' . "\n";
+    if(in_array($_GET['tag'], $tags)) {
+      $tag = addslashes($_GET['tag']);
+      $older = 'select id from photos where added<' . $added . ' and (tags=\'' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . '\' or tags like \'%,' . $tag . ',%\') order by added desc';
+      $older = $db->GetValue($older, 'error looking up older photo for tag ' . $_GET['tag']);
+      $newer = 'select id from photos where added>' . $added . ' and (tags=\'' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . '\' or tags like \'%,' . $tag . ',%\') order by added';
+      $newer = $db->GetValue($newer, 'error looking up newer photo for tag ' . $_GET['tag']);
+      if(false !== $tag = array_search($_GET['tag'], $tags))
+        unset($tags[$tag]);
+    } else {
+      $_GET['tag'] = '';
+      $older = 'select id from photos where added<' . $added . ' order by added desc';
+      $older = $db->GetValue($older, 'error looking up older photo');
+      $newer = 'select id from photos where added>' . $added . ' order by added';
+      $newer = $db->GetValue($newer, 'error looking up newer photo');
     }
+    if($oldest = $_GET['sort'] == 'oldest') {
+      $prev = $older;
+      $prevname = 'older';
+      $next = $newer;
+      $nextname = 'newer';
+    } else {
+      $prev = $newer;
+      $prevname = 'newer';
+      $next = $older;
+      $nextname = 'older';
+    }
+    if($prev) {
+      $ret .= '        <a href="photo=' . $prev . '" title="see the previous photo';
+      if($_GET['tag'])
+        $ret .= ' tagged with ' . $_GET['tag'];
+      $ret .= '">◄ ' . $prevname . "</a>\n";
+    } else
+      $ret .= '        <span>' . $prevname . "</span>\n";
+    $url1 = dirname($_SERVER['PHP_SELF']) . '/tag=';
+    $url2 = '/photo=' . htmlspecialchars($_GET['id'], ENT_COMPAT, _CHARSET);
+    $ret .= '        <a ';
+    if($_GET['tag'])
+      $ret .= 'class="tag" ';
+    $ret .= 'href="' . $url . '/';
+    if($_GET['tag']) {
+      $tag = htmlspecialchars($_GET['tag'], ENT_COMPAT, _CHARSET);
+      $ret .= 'tag=' . $tag;
+      if($oldest)
+        $ret .= '/sort=oldest';
+      $ret .= '" title="view everything tagged with ' . $tag . '">' . $tag;
+    } else {
+      if($oldest)
+        $ret .= '/sort=oldest';
+      $ret .= '" title="view everything">everything';
+    }
+    $ret .= "</a>\n";
+    if($next) {
+    $ret .= '        <a href="photo=' . $next . '" title="see the next photo';
+    if($_GET['tag'])
+      $ret .= ' tagged with ' . $_GET['tag'];
+    $ret .= '">' . $nextname . " ►</a>\n";
+    } else
+      $ret .= '        <span>' . $nextname . "</span>\n";
+    $ret .= '      </div>' . "\n";
+    return $ret;
   }
 ?>

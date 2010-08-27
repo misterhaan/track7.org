@@ -1,12 +1,14 @@
 <?
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   $url = dirname($_SERVER['PHP_SELF']) . '/';
+  $phurl = $url;
   if($user->GodMode) {
     $page->Info('<a href="' . dirname($_SERVER['PHP_SELF']) . '/editphoto.php">add a new photo</a>');
     $page->Info('<a href="' . dirname($_SERVER['PHP_SELF']) . '/editvideo.php">add a new video</a>');
   }
   if(isset($_GET['tag'])) {
     $tag = htmlentities($_GET['tag'], ENT_COMPAT, _CHARSET);
+    $phurl .= 'tag=' . $tag . '/';
     $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']<a class="feed" href="/feeds/photos.rss?tags=' . $tag . '" title="rss feed of album photos tagged with ' . $tag . '"><img src="/style/feed.png" alt="feed" /></a>');
     $photos = addslashes($_GET['tag']);
     $photos = ' where tags=\'' . $photos . '\' or tags like \'' . $photos . ',%\' or tags like \'%,' . $photos . '\' or tags like \'%,' . $photos . ',%\'';
@@ -15,13 +17,15 @@
     if($user->GodMode)
       $page->Info('<a href="/tools/taginfo.php?type=photos&amp;name=' . $tag . '">add/edit tag description</a>');
   } else {
+    $tag = false;
     $page->Start('photo album', 'photo album<a class="feed" href="/feeds/photos.rss" title="rss feed of album photos"><img src="/style/feed.png" alt="feed" /></a>');
-    $page->TagCloud('photos', $url . 'tag/', 4, 7, 17, 40, 3);
+    $page->TagCloud('photos', $url . 'tag=', 4, 7, 17, 40, 3);
   }
   switch($_GET['sort']) {
     case 'oldest':
       $sortadj = 'oldest';
       $sortsql = 'added';
+      $phurl .= 'sort=oldest/';
       break;
     default:
       $sortadj = 'newest';
@@ -32,7 +36,7 @@
   if($photos = $db->GetSplit($photos, 24, 0, '', '', 'error looking up photos', isset($_GET['tag']) ? 'no photos tagged with ' . $tag : 'no photos found')) {
 ?>
       <p>showing <?=$db->split_count; ?> photos (<?=$_GET['show']; ?> at a time)</p>
-      <?=getSortLinks($db); ?>
+      <?=getSortLinks($db, $url, $tag); ?>
 
 
       <ul id="photos">
@@ -45,7 +49,7 @@
 <?
       }
 ?>
-          <a href="<?=$url; ?>photo/<?=$photo->id; ?>">
+          <a href="<?=$phurl; ?>photo=<?=$photo->id; ?>">
             <span class="photopreview">
               <img src="<?=$url; ?>photos/<?=$photo->id; ?>.jpg" alt="" <?=auFile::ImageSizeCSS(_ROOT . '/output/gfx/album/photos/' . $photo->id . '.jpg'); ?>/>
             </span>
@@ -75,15 +79,9 @@
   /**
    * gets HTML with linked options for how to sort thumbnails.
    */
-  function getSortLinks(&$db) {
-    $url = '?';
-    if($_GET['tag'])
-      $url = $_GET['tag'] . '&amp;';
-    if($_GET[$db->split_show] && $_GET[$db->split_show] != $db->split_dshow)
-      $url .= 'show=' . $_GET['show'] . '&amp;';
-    if($_GET['skip'])
-      $url .= 'skip=' . $_GET['skip'] . '&amp;';
-    $url .= 'sort=';
+  function getSortLinks(&$db, $url, $tag) {
+    if($tag)
+      $url .= 'tag=' . $tag;
     $ret = '<div id="sortoptions">sort by:&nbsp; ';
     if(!$_GET['sort'])
       $ret .= 'newest';
@@ -91,8 +89,11 @@
       $ret .= '<a href="' . $url . '" title="show newest photos first">newest</a>';
     if($_GET['sort'] == 'oldest')
       $ret .= ' | oldest';
-    else
-      $ret .= ' | <a href="' . $url . 'oldest" title="show oldest photos first">oldest</a>';
+    else {
+      if(substr($url, -1) != '/')
+        $url .= '/';
+      $ret .= ' | <a href="' . $url . 'sort=oldest" title="show oldest photos first">oldest</a>';
+    }
     return $ret . '</div>';
   }
 ?>
