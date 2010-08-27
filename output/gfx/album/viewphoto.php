@@ -61,7 +61,7 @@
       <p><?=$photo->description; ?></p>
 <?
     echo $tagnav;
-    $page->SetFlag(_FLAG_PAGES_COMMENTS);
+    $page->ShowComments($url . '/photo/' . $photo->id);
     $page->End();
     die;
   }
