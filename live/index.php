@@ -232,8 +232,8 @@
 ?>
     <div class="feed photo">
       <div class="typedate" title="photo at <?=strtolower($user->tzdate(LONGDATEFMT, $photo->added)); ?>"><div class="date"><?=strtolower(auText::SmartTime($photo->added, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/photos.rss" class="feed" title="track7 album photos" /><a href="/output/gfx/album/photo/<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
-      <p><a class="img" href="/output/gfx/album/photo/<?=$photo->id; ?>"><img class="photothumb" src="/output/gfx/album/photos/<?=$photo->id; ?>.jpg" alt="" /></a></p>
+      <h2 class="feed"><a href="/feeds/photos.rss" class="feed" title="track7 album photos" /><a href="/output/gfx/album/photo=<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
+      <p><a class="img" href="/output/gfx/album/photo=<?=$photo->id; ?>"><img class="photothumb" src="/output/gfx/album/photos/<?=$photo->id; ?>.jpg" alt="" /></a></p>
       <p><?=$photo->description; ?></p>
     </div>
 
