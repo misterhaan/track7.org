@@ -38,10 +38,10 @@
         <tr><th>reader</th><td>rosewill multi card reader</td></tr>
         <tr><th>sata0</th><td>western digital velociraptor 150 GB wd1500hlfs</td></tr>
         <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
-        <tr><th>operating system</th><td>ubuntu 9.10 intrepid ibex 64-bit<br />microsoft windows 7 64-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 10.10 maverick meerkat 64-bit<br />microsoft windows 7 64-bit</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
-        <tr><th>monitor</th><td>samsung syncmaster 204b</td></tr>
+        <tr><th>monitor</th><td>21.5″ asus vh226h</td></tr>
         <tr><th>scanner</th><td>canon canoscan lide 100</td></tr>
         <tr><th>joystick</th><td>logitech extreme 3d pro<br />logitech wingman rumblepad</td></tr>
       </table>
@@ -61,12 +61,34 @@
         <tr><th>network</th><td>intel pro/100 ve<br />intel pro/wireless 3945abg</td></tr>
         <tr><th>modem</th><td>toshiba software modem</td></tr>
         <tr><th>reader</th><td>sd card reader</td></tr>
-        <tr><th>ide0</th><td>western digital siliconedge 128 GB ssc-d0128sc-2100</td></tr>
-        <tr><th>ide1</th><td>matshita dvd-ram</td></tr>
-        <tr><th>operating system</th><td>ubuntu 10.04 lucid lynx 32-bit<br />microsoft windows 7 32-bit</td></tr>
+        <tr><th>sata0</th><td>western digital siliconedge 128 GB ssc-d0128sc-2100</td></tr>
+        <tr><th>sata1</th><td>matshita dvd-ram</td></tr>
+        <tr><th>operating system</th><td>ubuntu 10.10 maverick meerkat 32-bit<br />microsoft windows 7 32-bit</td></tr>
         <tr><th>keyboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>mouse</th><td>logitech v450 wireless laser</td></tr>
         <tr><th>monitor</th><td>toshiba wide 14.1″</td></tr>
+      </table>
+
+<?
+  $page->heading('bohr', 'bohr');
+?>
+      <table class="columns" cellspacing="0">
+        <tr class="first"><th>name</th><td>bohr</td></tr>
+        <tr><th>class</th><td>netbook</td></tr>
+        <tr><th>purpose</th><td>mobile</td></tr>
+        <tr><th>mainboard</th><td>asus eee 1018pb-bk801</td></tr>
+        <tr><th>processor</th><td>1.66-ghz intel atom n450</td></tr>
+        <tr><th>ram</th><td>1 GB</td></tr>
+        <tr><th>video</th><td>intel 945gm (128 MB)</td></tr>
+        <tr><th>audio</th><td>intel 82801gbm ich7-m</td></tr>
+        <tr><th>network</th><td>intel pro/100 ve<br />intel pro/wireless 3945abg</td></tr>
+        <tr><th>modem</th><td>toshiba software modem</td></tr>
+        <tr><th>reader</th><td>sd card reader</td></tr>
+        <tr><th>ide0</th><td>250 GB</td></tr>
+        <tr><th>operating system</th><td>ubuntu 10.04 lucid lynx netbook remix<br />microsoft windows 7 starter 32-bit</td></tr>
+        <tr><th>keyboard</th><td>asus eee</td></tr>
+        <tr><th>mouse</th><td>synaptics touchpad</td></tr>
+        <tr><th>monitor</th><td>asus wide 10.1″</td></tr>
       </table>
 
 <?
