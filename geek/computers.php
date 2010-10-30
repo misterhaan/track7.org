@@ -1,6 +1,6 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->start('computer hardware - geek', 'computer hardware', '', '', array('hecubus', 'tesla', 'galileo', 'egan'));
+  $page->start('computer hardware - geek', 'computer hardware', '', '', array('hecubus', 'tesla', 'galileo', 'bohr'));
 
   $page->heading('hecubus', 'hecubus');
 ?>

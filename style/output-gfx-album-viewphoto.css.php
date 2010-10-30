@@ -30,6 +30,12 @@ div#photometa {
   margin: .5em auto;
   font-size: .8em;
 }
+@media all and (max-width: 600px) {
+  div#photometa {
+    width: auto;
+    margin: .5em;
+  }
+}
 div#photometa span {
   margin: 0 1.5em;
 }
