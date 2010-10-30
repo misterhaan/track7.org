@@ -27,16 +27,16 @@
     if(substr($_GET['bln'], 0, 1) == '-') {
       $tags = explode(',', substr($_GET['tags'], 1));
       foreach($tags as $tag)
-        $entries .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
-      $entries = 'select name, instant, tags, title, post from bln where not (' . $entries . ') order by instant desc';
+        $entries .= 'tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
+      $entries = 'select name, instant, tags, title, post from bln where status=\'published\' and not (' . $entries . ') order by instant desc';
     } else {
       $tags = explode(',', $_GET['bln']);
       foreach($tags as $tag)
-        $entries .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
-      $entries = 'select name, instant, tags, title, post from bln where' . $entries . ' order by instant desc';
+        $entries .= 'tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
+      $entries = 'select name, instant, tags, title, post from bln where status=\'published\' and (' . $entries . ') order by instant desc';
     }
   else
-    $entries = 'select name, instant, tags, title, post from bln order by instant desc';
+    $entries = 'select name, instant, tags, title, post from bln where status=\'published\' order by instant desc';
   if($entries = $db->GetLimit($entries, 0, MAXITEMS, '', ''))
     $entry = $entries->NextRecord();
    else

@@ -74,7 +74,7 @@
     $comment = $comments->NextRecord();
   else
     $comment = false;
-  $entries = 'select instant, name, title, post from bln order by instant desc';
+  $entries = 'select instant, name, title, post from bln where status=\'published\' order by instant desc';
   if($entries = $db->GetLimit($entries, 0, MAXITEMS, 'error looking up bln entries', ''))
     $entry = $entries->NextRecord();
   else

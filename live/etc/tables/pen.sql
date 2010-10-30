@@ -19,6 +19,10 @@ create table penstories (
 
 create table bln (
   name varchar(32) primary key not null,
+  `status` enum(
+    'draft',
+    'published'
+  ), index(status),
   instant int, index(instant),
   tags varchar(255), index(tags),
   title varchar(128),

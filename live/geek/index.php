@@ -70,6 +70,7 @@
           <li><a href="computers.php#hecubus">hecubus</a> - server (file / ftp / http / pvr)</li>
           <li><a href="computers.php#tesla">tesla</a> - main workstation</li>
           <li><a href="computers.php#galileo">galileo</a> - mobile / secondary workstation</li>
+          <li><a href="computers.php#bohr">bohr</a> - ultra-mobile</li>
         </ul></li>
         <li>network</li>
         <li>audio / visual<ul>

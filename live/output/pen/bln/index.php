@@ -23,18 +23,31 @@
     $page->TagCloud('entries', 'tag=', 2, 4, 8, 16);  // keep in sync with ../index.php
   }
   if($user->GodMode) {
+    $page->Info('<a href="&amp;edit">add a new entry</a>');
+    $entries = 'select name, title from bln where status=\'draft\' ' . ($tag ? 'and (tags=\'' . $tag->name . '\' or tags like \'' . $tag->name . ',%\' or tags like \'%,' . $tag->name . '\' or tags like \'%,' . $tag->name . ',%\') ' : '') . 'order by instant desc';
+    if($entries = $db->Get($entries, 'error looking up draft entries', '')) {
+      $page->Heading('draft entries');
 ?>
-      <ul><li><a href="&amp;edit">add a new entry</a></li></ul>
-
+      <ul>
 <?
+      while($entry = $entries->NextRecord()) {
+        $links[] = '<a href="' . $entry->name . '">' . $entry->title . '</a>';
+?>
+        <li><a href="<?=$entry->name; ?>"><?=$entry->title; ?></a></li>
+<?
+      }
+?>
+      </ul>
+<?
+    }
   }
-  $entries = 'select name, instant, tags, title, post from bln ' . ($tag ? 'where tags=\'' . $tag->name . '\' or tags like \'' . $tag->name . ',%\' or tags like \'%,' . $tag->name . '\' or tags like \'%,' . $tag->name . ',%\' ' : '') . 'order by instant desc';
+  $entries = 'select name, instant, tags, title, post from bln where not status=\'draft\' ' . ($tag ? 'and (tags=\'' . $tag->name . '\' or tags like \'' . $tag->name . ',%\' or tags like \'%,' . $tag->name . '\' or tags like \'%,' . $tag->name . ',%\') ' : '') . 'order by instant desc';
   if($entries = $db->GetSplit($entries, 10, 0, '', '', 'error looking up entries', 'no entries have been made yet')) {
     while($entry = $entries->NextRecord()) {
       if($entry->instant)
-        $page->Heading('<span class="when">posted in ' . TagLinks($entry->tags) . ', ' . strtolower($user->tzdate('M j, Y', $entry->instant)) . '</span>' . $entry->title);
+        $page->Heading('<span class="when">posted in ' . TagLinks($entry->tags) . ', ' . strtolower($user->tzdate('M j, Y', $entry->instant)) . '</span><a href="' . $entry->name . '">' . $entry->title . '</a>');
       else
-        $page->heading('<span class="when">posted in ' . TagLinks($entry->tags) . '</span>' . $entry->title);
+        $page->Heading('<span class="when">posted in ' . TagLinks($entry->tags) . '</span><a href="' . $entry->name . '">' . $entry->title . '</a>');
 ?>
       <p>
         <?=$entry->post; ?>
