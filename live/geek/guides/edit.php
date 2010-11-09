@@ -28,7 +28,7 @@
           $update = 'update guides set status=\'pending\' where id=\'' . $guide->id . '\'';
           if(false !== $db->Change($update, 'error submitting guide for approval')) {
             if(!$user->GodMode)
-              mail('misterhaan@' . _DOMAIN, 'new guide:  ' . $guide->title, 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/');
+              auSend::EMail('new guide:  ' . $guide->title, 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/', 'guides@' . _HOST, 'misterhaan@' . _HOST, 'track7 guides', 'misterhaan');
             header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/');
             die;
           }
@@ -48,12 +48,12 @@
                   header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/contribute?id=' . $guide->id . '&page=end');
                 else {
                   if(!$user->GodMode)
-                    mail('misterhaan@' . _DOMAIN, 'guide page updated:  ' . $guide->title . ' :: ' . $_POST['heading'], 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/diff' . +$_GET['page']);
+                    auSend::EMail('guide page updated:  '  . $guide->title . ' :: ' . $_POST['heading'], 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/diff' . +$_GET['page'], 'guides@' . _HOST, 'misterhaan@' . _HOST, 'track7 guides', 'misterhaan');
                   header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/');
                 }
               else {
                 if($guide->status != 'new' && !$user->GodMode)
-                  mail('misterhaan@' . _DOMAIN, 'guide page updated:  ' . $guide->title . ' :: ' . $_POST['heading'], 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/diff' . +$_GET['page']);
+                  auSend::EMail('guide page updated:  '  . $guide->title . ' :: ' . $_POST['heading'], 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $guide->id . '/diff' . +$_GET['page'], 'guides@' . _HOST, 'misterhaan@' . _HOST, 'track7 guides', 'misterhaan');
                 header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/contribute?id=' . $guide->id . '&page=' . (1 + $_GET['page']));
               }
               die;

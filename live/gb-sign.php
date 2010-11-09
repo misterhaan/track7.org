@@ -1,7 +1,5 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
-  require_once 'auText.php';
 
   // the following arrays are the values for the select elements on the form
   $sexvalues = array('it|its' => 'unknown / other', 'he|his' => 'male', 'she|her' => 'female');
@@ -82,7 +80,7 @@
           if($id = $db->getid('guestbook', 'id', 'error getting next available guestbook entry id')) {
             $entry = 'insert into guestbook (id, site, instant, useragent, ip, version, name, comments) values (' . $id . ', \'track7\', ' . time() . ', \'' . addslashes($_SERVER['HTTP_USER_AGENT']) . '\', \'' . $_SERVER['REMOTE_ADDR'] . '\', 2, \'' . addslashes($_POST['name']) . '\', \'' . addslashes($comments . $madlib . "\n") . '\')';
             if($db->query($entry, 'unable to save your entry into the guestbook')) {
-              @mail('misterhaan@' . _HOST, $_POST['name'] . ' has signed the guestbook', strip_tags($comments . $madlib), 'From: track7 guestbook <guestbook@' . _HOST . '>');
+              auSend::EMail($_POST['name'] . ' has signed the guestbook', strip_tags($comments . $madlib), 'guestbook@' . _HOST, 'misterhaan@' . _HOST, 'track7 guestbook', 'misterhaan');
               header('Location: http://' . $_SERVER['HTTP_HOST'] . '/gb-view.php');
               die;
             }

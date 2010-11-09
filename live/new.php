@@ -34,11 +34,11 @@
       </ul>
 <?
           if(count($addresses))
-            $addresses = 'Bcc: ' . implode("\r\nBcc: ", $addresses) . "\r\n";
+            $addresses = implode(', ', $addresses);
           else
             $addresses = '';
           $_POST['change'] = 'the following change has been made at track7:' . "\r\n\r\n" . $_POST['change'] . "\r\n\r\n" . 'visit http://' . $_SERVER['HTTP_HOST'] . '/new.php for more updates, or http://' . $_SERVER['HTTP_HOST'] . '/user/profile.php' . ' to change your e-mail preferences.';
-          @mail('blackhole@' . _HOST, 'track7 update', strip_tags($_POST['change']), $addresses . 'From: track7 <updates@' . _HOST . ">\r\n" . 'X-Mailer: PHP/' . phpversion());
+          auSend::EMail('track7 update', strip_tags($_POST['change']), 'updates@' . _HOST, 'updates@' . _HOST, 'track7 updates', 'track7 updates', false, $addresses);
         }
       }
     }
@@ -47,7 +47,7 @@
       <h2>enter an update</h2>
 <?
       $updateform = new auForm('siteupdate');
-      $updateform->AddField('change', 'change', 'enter the description of what changed', true, '', _AU_FORM_FIELD_MULTILINE);  
+      $updateform->AddField('change', 'change', 'enter the description of what changed', true, '', _AU_FORM_FIELD_MULTILINE);
       $updateform->AddField('content', '', 'this update adds new content', true, false, _AU_FORM_FIELD_CHECKBOX);
       $updateform->AddField('date', 'date', 'the date on which this change was made');
       $updateform->AddButtons('save', 'add this update');

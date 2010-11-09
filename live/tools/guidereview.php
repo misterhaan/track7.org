@@ -1,8 +1,6 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
-  require_once 'auText.php';
-  
+
   $page->Start('guide review');
   if(isset($_GET['id'])) {
     if($_POST['submit'] == 'approve') {
@@ -15,7 +13,7 @@
           $db->Put($ins, 'error updating taginfo');
           $email = 'select c.email from guides as g left join usercontact as c on g.author=c.uid where g.id=\'' . $_POST['id'] . '\'';
           if($email = $db->GetValue($email, 'error looking up author\'s e-mail address', 'author\'s e-mail address not found'))
-            @mail($email, 'your guide has been approved!', 'congratulations, your guide has been approved and is now available to track7 visitors!  if you\'d like to look at it now, use this url:' . "\n\n" . 'http://' . $_SERVER['HTTP_HOST'] . '/geek/guides/' . $_POST['id'] . '/', 'From: track7 guides <guide@' . _HOST . '>');
+            auSend::EMail('your guide has been approved!', 'congratulations, your guide has been approved and is now available to track7 visitors!  if you\'d like to look at it now, use this url:' . "\n\n" . 'http://' . $_SERVER['HTTP_HOST'] . '/geek/guides/' . $_POST['id'] . '/', 'guides@' . _HOST, $email, 'track7 guides');
           $page->Info('guide approved');
           listguides();
           $page->End();
@@ -27,7 +25,7 @@
       if($db->Change($update, 'error rejecting guide')) {
         $email = 'select c.email from guides as g left join usercontact as c on g.author=c.uid where g.id=\'' . $_POST['id'] . '\'';
         if($email = $db->GetValue($email, 'error looking up author\'s e-mail address', 'author\'s e-mail address not found'))
-          @mail($email, 'your guide has been denied!', 'sorry, your guide has NOT been approved to be added to track7 at this time, for reasons listed below.  please try again either with a different guide or by improving this one.' . "\n\n" . $_POST['reason'], 'From: track7 guides <guide@' . _HOST . '>');
+          auSend::EMail('your guide has been denied!', 'sorry, your guide has NOT been approved to be added to track7 at this time, for reasons listed below.  please try again either with a different guide or by improving this one.' . "\n\n" . $_POST['reason'], 'guides@' . _HOST, $email, 'track7 guides');
         $page->Info('guide rejected');
         listguides();
         $page->End();
@@ -84,7 +82,7 @@
       die;
     }
   }
-  
+
   listguides();
   $page->End();
 

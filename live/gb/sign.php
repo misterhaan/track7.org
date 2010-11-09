@@ -30,10 +30,8 @@
     $store = $db->Get($store);
     if($store->IsError())
       die('error saving entry into guestbook:<br>' . $store->GetMessage());
-    if(strlen($book->notify) > 0) {
-      require_once 'mailhost.php';
-      @mail($book->notify, 'someone has signed your guestbook!', 'check it out at http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/view.php?book=' . $_GET['book'] . "\n\n" . 'remember you can log in at http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/login.php?book=' . $_GET['book'] . ' to manage your guestbook.', 'From: guestbooks@' . MAIL_HOST . "\r\n" . 'X-Mailer: PHP/' . phpversion());
-    }
+    if(strlen($book->notify) > 0)
+      auSend::EMail('someone has signed your guestbook!', 'check it out at http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/view.php?book=' . $_GET['book'] . "\n\n" . 'remember you can log in at http://' . $_SEVRER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/login.php?book=' . $_GET['book'] . ' to manage your guestbook.', 'guestbooks@' . _HOST, $book->notify);
     unset($book, $entry, $store);
 ?>
   <p style="color: #000000; background-color: #ffffa0; border: 1px solid #808080; margin: 1.5em 3em; padding: 1em 2em; font-family: verdana, sans-serif;">
