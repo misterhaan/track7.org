@@ -30,6 +30,8 @@
 
       <h2>test php functions</h2>
       <ul>
+        <li><a href="bitly.php">auSend::Bitly tester</a></li>
+        <li><a href="tweet.php">auSend::Tweet tester</a></li>
         <li><a href="regex.php">regular expression tester</a></li>
         <li><a href="timestamps.php">timestamp converter</a></li>
       </ul>

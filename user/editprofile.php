@@ -109,9 +109,9 @@
             }
             if($_POST['email'] != $contact->email) {
               if(strpos($contact->email, '@'))
-                @mail($contact->email, 'track7 e-mail change', 'a request has been received to change the e-mail address for \'' . $u->login ."'\r\n" . 'to \'' . $_POST['email'] . '\'', 'From: track7 <users@' . _HOST . '>');
+                auSend::EMail('track7 e-mail change', 'a request has been received to change the e-mail address for \'' . $u->login . '\' to \'' . $_POST['email'] . '\'', 'users@' . _HOST, $contact->email, 'track7');
               if(strpos($_POST['email'], '@'))
-                @mail($_POST['email'], 'track7 e-mail change', 'your e-mail change request has been received!' . "\r\n" . 'if you did not see an error on the website, it is probably already changed for you.', 'From: track7 <users@' . _HOST . '>');
+                auSend::EMail('track7 e-mail change', 'your e-mail change request has been received!' . "\r\n" . 'if you did not see an error on the website, it is probably already changed for you.', 'users@' . _HOST, $_POST['email'], 'track7');
               if(false !== $db->Change('update usercontact set email=\'' . addslashes(htmlspecialchars(trim($_POST['email']))) . '\' where uid=' . $u->uid, 'error updating e-mail address'))
                 $page->Info('e-mail address successfully updated');
             }

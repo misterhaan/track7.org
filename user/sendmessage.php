@@ -1,7 +1,5 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
-  require_once 'auText.php';
 
   // try to find someone to send this to, otherwise we will put together a list later
   if(isset($_POST['to']) && !isset($_GET['to']))
@@ -91,9 +89,8 @@
                 $db->Change('update usermessages set flags=flags|' . _FLAG_USERMESSAGES_REPLIED . ' where id=' . $_POST['reply']);
               $page->Info('message sent successfully!');
               $to = 'select email from usercontact where uid=' . $_POST['to'] . ' and flags & ' . _FLAG_USERCONTACT_NOTIFYMSGNOW;
-              if($to = $db->GetValue($to, 'error seeing if the recipient wants to be e-mailed', '')) {
-                @mail($to, 'new message from ' . $user->Name, 'visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/message.php to read it.' . "\r\n\r\n" . 'to change your e-mail preferences, visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/editprofile.php', 'From: track7 messenger <messages@' . _HOST . ">\r\n" . 'X-Mailer: PHP/' . phpversion());
-              }
+              if($to = $db->GetValue($to, 'error seeing if the recipient wants to be e-mailed', ''))
+                auSend::EMail('new message from ' . $user->Name, 'visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/message.php to read it.' . "\r\n\r\n" . 'to change your e-mail preferences, visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/editprofile.php', 'messages@' . _HOST, $to, 'track7 messenger');
               unset($to);
             }
           } elseif(strtolower(substr($_POST['message'], 0, 7)) != 'http://' && strtolower(substr($_POST['message'], 0, 4)) != '[url' && strtolower(substr($_POST['message'], 0, 5)) != '[link' && strtolower(substr($_POST['message'], 0, 3)) != '<a ') {
@@ -107,12 +104,11 @@
               $page->Info('message sent successfully!');
               $to = 'select email from usercontact where uid=' . $_POST['to'] . ' and flags&' . _FLAG_USERCONTACT_NOTIFYMSGNOW;
               if($to = $db->GetValue($to, 'error seeing if the recipient wants to be e-mailed', ''))
-                @mail($to, 'new message from ' . $_POST['name'], 'visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/messages.php to read it.' . "\r\n\r\n" . 'to change your e-mail preferences, visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/editprofile.php', 'From: track7 messenger <messages@' . _HOST . ">\r\n" . 'X-Mailer: PHP/' . phpversion());
+                auSend::EMail('new message from ' . $_POST['name'], 'visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/messages.php to read it.' . "\r\n\r\n" . 'to change your e-mail preferences, visit http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/editprofile.php', 'messages@' . _HOST, $to, 'track7 messenger');
               unset($to);
             }
-          } else {
+          } else
             $page->Error('Uh-oh, your message looks like a spam!&nbsp; if you\'re not trying to spam, then don\'t start your message with a url.');
-          }
           break;
       }
     }
