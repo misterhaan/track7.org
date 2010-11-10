@@ -49,10 +49,8 @@
       else
         $page->Heading('<span class="when">posted in ' . TagLinks($entry->tags) . '</span><a href="' . $entry->name . '">' . $entry->title . '</a>');
 ?>
-      <p>
         <?=$entry->post; ?>
 
-      </p>
 <?
       $comments = 'select count(1) from comments where page=\'/output/pen/bln/' . $entry->name . '\'';
       if(false !== $comments = $db->GetValue($comments, 'error finding number of comments on this entry', '')) {

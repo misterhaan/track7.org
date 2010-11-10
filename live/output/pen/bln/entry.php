@@ -6,7 +6,7 @@
       if($user->GodMode && isset($_GET['edit'])) {
         $frm = GetEntryForm($entry);
         if($frm->CheckInput(true)) {
-          $update = 'update bln set name=\'' . auFile::NiceName($_POST['name']) . '\', ' . (isset($_POST['publish']) ? 'status=\'published\', instant=' . time() . ', ' : '') . 'title=\'' . addslashes(htmlentities($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', tags=\'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', post=\'' . addslashes(auText::BB2HTML($_POST['post'])) . '\' where name=\'' . $entry->name . '\'';
+          $update = 'update bln set name=\'' . auFile::NiceName($_POST['name']) . '\', ' . (isset($_POST['publish']) ? 'status=\'published\', instant=' . time() . ', ' : '') . 'title=\'' . addslashes(htmlentities($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', tags=\'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', post=\'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\' where name=\'' . $entry->name . '\'';
           if(false !== $db->Change($update, 'error updating entry')) {
             $oldtags = explode(',', $entry->tags);
             $newtags = explode(',', $_POST['tags']);
@@ -38,10 +38,8 @@
 <?
         }
 ?>
-      <p>
-        <?=$entry->post; ?>
+      <?=$entry->post; ?>
 
-      </p>
 <?
         $page->SetFlag(_FLAG_PAGES_COMMENTS);  // show comments
         $page->End();

@@ -178,6 +178,21 @@ div.feed ol {
     margin-left: 2em;
   }
 }
+p.tags {
+  background: url(/style/tag.png) no-repeat left center;
+  min-height: 16px;
+  padding-left: 20px;
+}
+div#content p.tags a {
+  font-weight: normal;
+}
+div#content p.readmore {
+  text-align: right;
+}
+div#content p.readmore a {
+  font-weight: normal;
+  font-style: italic;
+}
 
 div#content p.links {
   font-size: .8em;
