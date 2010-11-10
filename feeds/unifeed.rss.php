@@ -47,15 +47,15 @@
       $tags = explode(',', substr($_GET['album'], 1));
       foreach($tags as $tag)
         $photos .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
-      $photos = 'select id, caption, added, description from photos where not (' . $photos . ') order by added desc';
+      $photos = 'select id, tags, youtubeid, caption, added, description from photos where not (' . $photos . ') order by added desc';
     } else {
       $tags = explode(',', $_GET['album']);
       foreach($tags as $tag)
         $photos .= ' tags=\'' . $tag . '\' or tags like \'%,' . $tag . '\' or tags like \'' . $tag . ',%\' or tags like \'%,' . $tag . ',%\'';
-      $photos = 'select id, caption, added, description from photos where' . $photos . ' order by added desc';
+      $photos = 'select id, tags, youtubeid, caption, added, description from photos where' . $photos . ' order by added desc';
     }
   else
-    $photos = 'select id, youtubeid, caption, added, description from photos order by added desc';
+    $photos = 'select id, tags, youtubeid, caption, added, description from photos order by added desc';
   if($photos = $db->GetLimit($photos, 0, MAXITEMS, '', ''))
     $photo = $photos->NextRecord();
   else
@@ -144,17 +144,21 @@
   }
 
   function AddEntry($rss, $entry) {
+    $p = strpos($entry->post, '</p>');
+    $entry->post = substr($entry->post, 0, $p + 4);
     $entry->post = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $entry->post);
     $entry->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $entry->title);
-    $rss->AddItem('<p>' . $entry->post . '</p>', '[bln] ' . $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, $entry->instant, '/output/pen/bln/' . $entry->name, true);
+    $tags = '<p>tags:&nbsp; ' . str_replace(',', ', ', $entry->tags) . '</p>';
+    $rss->AddItem($tags . $entry->post . '<p>» <a href="/output/pen/bln/' . $entry->id . '">read more...</a></p>', '[bln] ' . $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, $entry->instant, '/output/pen/bln/' . $entry->name, true);
   }
 
   function AddPhoto($rss, $photo) {
     $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
+    $tags = '<p>tags:&nbsp; ' . str_replace(',', ', ', $photo->tags) . '</p>';
     if($photo->youtubeid)
-      $rss->AddItem('<p><a href="http://www.youtube.com/watch?v=' . $photo->youtubeid . '">watch this video on youtube</a></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo=' . $photo->id, $photo->added, '/output/gfx/album/photo=' . $photo->id, true);
+      $rss->AddItem($tags . '<p><a href="http://www.youtube.com/watch?v=' . $photo->youtubeid . '">watch this video on youtube</a></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo=' . $photo->id, $photo->added, '/output/gfx/album/photo=' . $photo->id, true);
     else
-      $rss->AddItem('<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo=' . $photo->id, $photo->added, '/output/gfx/album/photo=' . $photo->id, true);
+      $rss->AddItem($tags . '<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo=' . $photo->id, $photo->added, '/output/gfx/album/photo=' . $photo->id, true);
   }
 
   function AddGuide($rss, $guide) {

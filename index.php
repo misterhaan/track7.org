@@ -74,12 +74,12 @@
     $comment = $comments->NextRecord();
   else
     $comment = false;
-  $entries = 'select instant, name, title, post from bln where status=\'published\' order by instant desc';
+  $entries = 'select instant, name, tags, title, post from bln where status=\'published\' order by instant desc';
   if($entries = $db->GetLimit($entries, 0, MAXITEMS, 'error looking up bln entries', ''))
     $entry = $entries->NextRecord();
   else
     $entry = false;
-  $photos = 'select added, id, caption, description from photos order by added desc';
+  $photos = 'select added, id, tags, caption, description from photos order by added desc';
   if($photos = $db->GetLimit($photos, 0, MAXITEMS, 'error looking up album photos', ''))
     $photo = $photos->NextRecord();
   else
@@ -212,11 +212,20 @@
    * @param auUserTrack7 $user user object for showing dates in the correct time zone
    */
   function showEntry($entry, $user) {
+    // only show first paragraph
+    $p = strpos($entry->post, '</p>');
+    $entry->post = substr($entry->post, 0, $p + 4);
+    $tags = explode(',', $entry->tags);
+    for($t = 0; $t < count($tags); $t++)
+      $tags[$t] = '<a href="/output/pen/bln/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
+    $tags = implode(', ', $tags);
 ?>
     <div class="feed entry">
       <div class="typedate" title="bln entry at <?=strtolower($user->tzdate(LONGDATEFMT, $entry->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($entry->instant, $user)); ?></div></div>
       <h2 class="feed"><a href="/feeds/entries.rss" class="feed" title="track7 bln entries" /><a href="/output/pen/bln/<?=$entry->name; ?>"><?=$entry->title; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
-      <p><?=$entry->post; ?></p>
+      <p class="tags"><?=$tags; ?></p>
+      <?=$entry->post; ?>
+      <p class="readmore">» <a href="/output/pen/bln/<?=$entry->id; ?>">read more...</a></p>
     </div>
 
 <?
@@ -229,10 +238,15 @@
    * @param auUserTrack7 $user user object for showing dates in the correct time zone
    */
   function showPhoto($photo, $user) {
+    $tags = explode(',', $photo->tags);
+    for($t = 0; $t < count($tags); $t++)
+      $tags[$t] = '<a href="/output/gfx/album/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
+    $tags = implode(', ', $tags);
 ?>
     <div class="feed photo">
       <div class="typedate" title="photo at <?=strtolower($user->tzdate(LONGDATEFMT, $photo->added)); ?>"><div class="date"><?=strtolower(auText::SmartTime($photo->added, $user)); ?></div></div>
       <h2 class="feed"><a href="/feeds/photos.rss" class="feed" title="track7 album photos" /><a href="/output/gfx/album/photo=<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
+      <p class="tags"><?=$tags; ?></p>
       <p><a class="img" href="/output/gfx/album/photo=<?=$photo->id; ?>"><img class="photothumb" src="/output/gfx/album/photos/<?=$photo->id; ?>.jpg" alt="" /></a></p>
       <p><?=$photo->description; ?></p>
     </div>

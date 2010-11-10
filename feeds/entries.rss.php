@@ -1,6 +1,5 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auFeed.php';
 
   if($_GET['tags'])
     if(substr($_GET['tags'], 0, 1) == '-') {
@@ -22,9 +21,12 @@
   }
   if($entries = $db->GetLimit($entries, 0, 15, '', ''))
     while($entry = $entries->NextRecord()) {
+      $p = strpos($entry->post, '</p>');
+      $entry->post = substr($entry->post, 0, $p + 4);
       $entry->post = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $entry->post);
       $entry->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $entry->title);
-      $rss->AddItem('<p>' . $entry->post . '</p>', $entry->title, '/output/pen/bln/' . $entry->name, $entry->instant, '/output/pen/bln/' . $entry->name, true);
+      $tags = '<p>tags:&nbsp; ' . str_replace(',', ', ', $entry->tags) . '</p>';
+      $rss->AddItem($tags . $entry->post . '<p>» <a href="/output/pen/bln/' . $entry->id . '">read more...</a></p>', $entry->title, '/output/pen/bln/' . $entry->name, $entry->instant, '/output/pen/bln/' . $entry->name, true);
     }
   $rss->End();
 ?>
