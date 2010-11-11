@@ -7,6 +7,17 @@
  * -> layout style for the feeds page                                         *
 \******************************************************************************/
 
+ul.twitter {
+  margin-left: 0;
+}
+ul.twitter li {
+  list-style-type: none;
+}
+ul.twitter a {
+  background: url(/images/twitter.png) no-repeat center left;
+  padding-left: 20px;
+}
+
 ul.feeds {
   margin-left: 0;
 }
