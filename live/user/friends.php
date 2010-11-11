@@ -24,7 +24,7 @@
           $db->Change($update);
         }
         if(substr($_GET['from'], 0, 1) == '/')
-          $url = htmlentities($_GET['from']);
+          $url = htmlspecialchars($_GET['from'], ENT_COMPAT, _CHARSET);
         else
           $url = $_SERVER['PHP_SELF'];
         header('Location: http://' . $_SERVER['HTTP_HOST'] . $url);
@@ -41,7 +41,7 @@
           $db->Change($update);
         }
         if(substr($_GET['from'], 0, 1) == '/')
-          $url = htmlentities($_GET['from']);
+          $url = htmlspecialchars($_GET['from'], ENT_COMPAT, _CHARSET);
         else
           $url = $_SERVER['PHP_SELF'];
         header('Location: http://' . $_SERVER['HTTP_HOST'] . $url);

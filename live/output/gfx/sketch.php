@@ -6,8 +6,11 @@
       $new = getSketchForm();
       if($new->Submitted(true)) {
         $ins = 'insert into art (id, type, description, adddate) values (\'' . addslashes($_POST['id']) . '\', \'sketch\', \'' . addslashes(auText::BB2HTML($_POST['description'], false, false)) . '\', \'' . time() . '\')';
-        if(false !== $db->Put($ins, 'error adding sketch'))
+        if(false !== $db->Put($ins, 'error adding sketch')) {
+          $twurl = auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . $_SERVER['PHP_SELF'] . '#' . $_POST['id']);
+          auSend::Tweet('sketch added: ' . $twurl);
           header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+        }
       }
       $page->ResetFlag(_FLAG_PAGES_COMMENTS);
       $page->Start('add pen / pencil sketch');

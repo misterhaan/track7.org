@@ -7,7 +7,7 @@
     $page->Info('<a href="' . dirname($_SERVER['PHP_SELF']) . '/editvideo.php">add a new video</a>');
   }
   if(isset($_GET['tag'])) {
-    $tag = htmlentities($_GET['tag'], ENT_COMPAT, _CHARSET);
+    $tag = htmlspecialchars($_GET['tag'], ENT_COMPAT, _CHARSET);
     $phurl .= 'tag=' . $tag . '/';
     $page->Start($tag . ' - photo album', 'photo album [' . $tag . ']<a class="feed" href="/feeds/photos.rss?tags=' . $tag . '" title="rss feed of album photos tagged with ' . $tag . '"><img src="/style/feed.png" alt="feed" /></a>');
     $photos = addslashes($_GET['tag']);

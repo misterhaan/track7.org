@@ -8,7 +8,7 @@
   if($_GET['author']) {
     // DO: add link to feed once feed can filter by user
     //$page->AddFeed('track7 forum posts', '/feeds/posts.rss');
-    $page->Start(htmlentities($_GET['author'], ENT_COMPAT, _CHARSET) . '&rsquo;s forum posts');
+    $page->Start(htmlspecialchars($_GET['author'], ENT_COMPAT, _CHARSET) . '’s forum posts');
   } else {
     $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
     $page->Start('recent forum posts', 'recent forum posts<a class="feed" href="/feeds/posts.rss" title="rss feed of recent forum posts"><img src="/style/feed.png" alt="feed" /></a>');

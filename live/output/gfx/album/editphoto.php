@@ -127,10 +127,17 @@
               }
             }
           } else {
-            $ins = 'insert into photos (id, caption, description, taken, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlentities($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', \'' . $taken . '\', \'' . addslashes(htmlentities($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', \'' . time() . '\')';
+            $ins = 'insert into photos (id, caption, description, taken, tags, added) values (\'' . addslashes($id) . '\', \'' . addslashes(htmlspecialchars($_POST['caption'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['desc'])) . '\', \'' . $taken . '\', \'' . addslashes(htmlspecialchars($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', \'' . time() . '\')';
             if(false === $db->Put($ins, 'error adding photo information'))
               $error = true;
             else {
+              $twurl = ' photo: ' . auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . dirname($_SERVER['PHP_SELF']) . '/photo/' . $id);
+              $len = 140 - strlen($twurl);
+              $caption = $_POST['caption'];
+              if(mb_strlen($caption, _CHARSET) > $len)
+                $caption = mb_substr($caption, 0, $len - 1, _CHARSET) . '…';
+              auSend::Tweet($caption . $twurl);
+
               $tags = explode(',', $_POST['tags']);
               $ins = 'insert into taginfo (type, name, count) values (\'photos\', \'' . implode('\', 1), (\'photos\', \'', $tags) . '\', 1) on duplicate key update count=count+1';
               $db->Put($ins, 'error updating tag information');

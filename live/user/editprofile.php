@@ -54,7 +54,7 @@
                 $newavatar = 'avatar=\'' . $newavatar . '\', ';
               }
             }
-          if(false !== $db->Change('update userprofiles set ' . $newavatar . 'signature=\'' . addslashes(auText::BB2HTML(trim($_POST['signature']))) . '\', location=\'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', geekcode=\'' . addslashes(auText::EOL2br($_POST['geekcode'])) . '\', hackerkey=\'' . addslashes(htmlentities($_POST['hackerkey'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error saving profile'))
+          if(false !== $db->Change('update userprofiles set ' . $newavatar . 'signature=\'' . addslashes(auText::BB2HTML(trim($_POST['signature']))) . '\', location=\'' . addslashes(htmlspecialchars($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', geekcode=\'' . addslashes(auText::EOL2br($_POST['geekcode'])) . '\', hackerkey=\'' . addslashes(htmlspecialchars($_POST['hackerkey'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error saving profile'))
             $page->Info('profile successfully updated');
         }
         break;
@@ -79,7 +79,7 @@
         if($_POST['submit'] == 'update') {
           if(strlen($_POST['website'] = trim($_POST['website'])) > 0 && strpos($_POST['website'], '://') === false)
             $_POST['website'] = 'http://' . $_POST['website'];
-          if(false !== $db->Change('update usercontact set flags=flags' . ($_POST['showemail'] ? '|' . _FLAG_USERCONTACT_SHOWEMAIL : '&' . (_FLAG_USERCONTACT ^ _FLAG_USERCONTACT_SHOWEMAIL)) . ', website=\'' . addslashes(htmlspecialchars($_POST['website'])) . '\', jabber=\'' . addslashes(htmlspecialchars(trim($_POST['jabber']))) . '\', icq=\'' . addslashes(htmlspecialchars(trim($_POST['icq']))) . '\', aim=\'' . addslashes(htmlspecialchars(trim($_POST['aim']))) . '\', steam=\'' . addslashes(htmlentities($_POST['steam'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error updating contact information'))
+          if(false !== $db->Change('update usercontact set flags=flags' . ($_POST['showemail'] ? '|' . _FLAG_USERCONTACT_SHOWEMAIL : '&' . (_FLAG_USERCONTACT ^ _FLAG_USERCONTACT_SHOWEMAIL)) . ', website=\'' . addslashes(htmlspecialchars($_POST['website'])) . '\', jabber=\'' . addslashes(htmlspecialchars(trim($_POST['jabber']))) . '\', icq=\'' . addslashes(htmlspecialchars(trim($_POST['icq']))) . '\', aim=\'' . addslashes(htmlspecialchars(trim($_POST['aim']))) . '\', steam=\'' . addslashes(htmlspecialchars($_POST['steam'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error updating contact information'))
             $page->Info('contact information successfully updated');
         }
         break;

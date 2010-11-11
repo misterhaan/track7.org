@@ -22,7 +22,7 @@
         </table>
 <?
     } else
-      die('<p class="info">no known referrers match ' . htmlentities($_GET['ref'], ENT_COMPAT, _CHARSET) . '</p>');
+      die('<p class="info">no known referrers match ' . htmlspecialchars($_GET['ref'], ENT_COMPAT, _CHARSET) . '</p>');
   } else
     die('<p class="error">error checking known referrers</p>');
 ?>

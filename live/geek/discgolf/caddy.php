@@ -8,7 +8,7 @@
       if(isset($_GET['edit']) && $user->ID == $disc->uid) {
         $editdisc = getCaddyForm($db, $disc, $disc);
         if($editdisc->CheckInput(true)) {
-          $update = 'update dgcaddy set mass=\'' . +$_POST['mass'] . '\', color=\'' . addslashes(htmlentities($_POST['color'], ENT_COMPAT, _CHARSET)) . '\', status=\'' . addslashes(htmlentities($_POST['status'], ENT_COMPAT, _CHARSET)) . '\', comments=\'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\' where id=\'' . $disc->id . '\'';
+          $update = 'update dgcaddy set mass=\'' . +$_POST['mass'] . '\', color=\'' . addslashes(htmlspecialchars($_POST['color'], ENT_COMPAT, _CHARSET)) . '\', status=\'' . addslashes(htmlspecialchars($_POST['status'], ENT_COMPAT, _CHARSET)) . '\', comments=\'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\' where id=\'' . $disc->id . '\'';
           if(false !== $db->Change($update, 'error updating disc')) {
             $ok = true;
             if(($disc->status == 'bag' || $disc->status == 'reserve') && ($_POST['status'] == 'lost' || $_POST['status'] == 'sold'))
@@ -26,7 +26,7 @@
         $page->End();
         die;
       }
-      $page->Start($disc->login . '&rsquo;s ' . $disc->name . ' - disc golf', $disc->login . '&rsquo;s ' . $disc->name, $disc->type . ' from ' . $disc->mfgr);
+      $page->Start($disc->login . '’s ' . $disc->name . ' - disc golf', $disc->login . '’s ' . $disc->name, $disc->type . ' from ' . $disc->mfgr);
 ?>
       <table class="columns" cellspacing="0">
         <tr><th>color</th><td><?=$disc->color; ?></td></tr>
@@ -35,7 +35,7 @@
       </table>
 
 <?
-      $page->Heading($disc->login . '&rsquo;s comments');
+      $page->Heading($disc->login . '’s comments');
 ?>
       <p>
         <?=$disc->comments; ?>
@@ -50,8 +50,8 @@
 <?
       }
 ?>
-        <li><a href="?player=<?=$disc->login; ?>"><?=$disc->login; ?>&rsquo;s discs</a></li>
-        <li><a href="players.php?p=<?=$disc->login; ?>"><?=$disc->login; ?>&rsquo;s player profile</a></li>
+        <li><a href="?player=<?=$disc->login; ?>"><?=$disc->login; ?>’s discs</a></li>
+        <li><a href="players.php?p=<?=$disc->login; ?>"><?=$disc->login; ?>’s player profile</a></li>
         <li><a href="discs.php?id=<?=$disc->discid; ?>"><?=$disc->name; ?> information</a></li>
       </ul>
 <?
@@ -64,7 +64,7 @@
     if($disc = $db->GetRecord($disc, 'error looking up disc information', 'disc not found')) {
       $adddisc = getCaddyForm($db, $disc);
       if($adddisc->CheckInput(true)) {
-        $ins = 'insert into dgcaddy (uid, discid, mass, color, comments, status) values (\'' . $user->ID . '\', \'' .  $disc->discid . '\', \'' . +$_POST['mass'] . '\', \'' . addslashes(htmlentities($_POST['color'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\', \'' . addslashes(htmlentities($_POST['status'], ENT_COMPAT, _CHARSET)) . '\')';
+        $ins = 'insert into dgcaddy (uid, discid, mass, color, comments, status) values (\'' . $user->ID . '\', \'' .  $disc->discid . '\', \'' . +$_POST['mass'] . '\', \'' . addslashes(htmlspecialchars($_POST['color'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\', \'' . addslashes(htmlspecialchars($_POST['status'], ENT_COMPAT, _CHARSET)) . '\')';
         if(false !== $caddyid = $db->Put($ins, 'error adding disc to collection')) {
           $ok = true;
           if($_POST['status'] == 'bag' || $_POST['status'] == 'reserve')
@@ -100,18 +100,18 @@
 
   $page->ResetFlag(_FLAG_PAGES_COMMENTS);
   if(strlen($_GET['player'])) {
-    $page->Start(htmlentities($_GET['player'], ENT_COMPAT, _CHARSET) . '&rsquo;s discs - disc golf', htmlentities($_GET['player'], ENT_COMPAT, _CHARSET) . '&rsquo;s discs');
+    $page->Start(htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET) . '’s discs - disc golf', htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET) . '’s discs');
     $discs = ' where u.login=\'' . addslashes($_GET['player']) . '\'';
   } else {
-  $page->Start('players&rsquo; discs - disc golf', 'players&rsquo; discs');
+  $page->Start('players’ discs - disc golf', 'players’ discs');
     $discs = '';
   }
   $discs = 'select c.id, c.color, c.mass, c.discid, d.name, u.login, c.status, c.comments from dgcaddy as c left join users as u on u.uid=c.uid left join dgdiscs as d on d.id=c.discid' . $discs . ' order by +c.status, d.name';
   if($discs = $db->GetSplit($discs, 20, 0, '', '', 'error looking up discs', 'no discs found')) {
     if(strlen($_GET['player']))
-      $page->heading($_GET['player'] . '&rsquo;s discs');
+      $page->heading($_GET['player'] . '’s discs');
     else
-      $page->heading('players&rsquo; discs');
+      $page->heading('players’ discs');
 ?>
       <table class="data" cellspacing="0">
         <thead><tr><th>color</th><th>mass</th><th>disc</th><?=strlen($_GET['player']) ? '' : '<th>player</th>'; ?><th>status</th><th>comments</th></tr></thead>
@@ -134,7 +134,7 @@
     $page->SplitLinks();
     if(strlen($_GET['player'])) {
 ?>
-      <ul><li><a href="players.php?p=<?=htmlentities($_GET['player'], ENT_COMPAT, _CHARSET); ?>"><?=htmlentities($_GET['player'], ENT_COMPAT, _CHARSET); ?>&rsquo;s player profile</a></li></ul>
+      <ul><li><a href="players.php?p=<?=htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET); ?>"><?=htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET); ?>’s player profile</a></li></ul>
 <?
     }
   }

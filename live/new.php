@@ -13,6 +13,13 @@
         $_POST['date'] = strtotime($_POST['date']);
       $ins = 'insert into updates (instant, `change`) values (\'' . $_POST['date'] . '\', \'' . addslashes($_POST['change']) . '\')';
       if($db->Change($ins, 'error saving update')) {
+        // tweet this update
+        $twurl = auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . $_SERVER['PHP_SELF']);
+        $len = 139 - strlen($twurl);
+        $tweet = strip_tags($_POST['change']);
+        if(mb_strlen($tweet, _CHARSET) > $len)
+          $tweet = mb_substr($tweet, 0, $len - 1, _CHARSET) . '…';
+        auSend::Tweet($tweet . ' ' . $twurl);
         // send e-mail to everybody who wants to know
         if(isset($_POST['content']))
           $mail = _FLAG_USERCONTACT_NOTIFYNEWCONTENT | _FLAG_USERCONTACT_NOTIFYNEWANYTHING;
