@@ -9,7 +9,7 @@
     $uid = 'select uid from users where login=\'' . addslashes($_GET['user']) . '\' or uid=\'' . addslashes($_GET['user']). '\'';
     if($uid = $db->GetValue($uid, 'error looking up user id', 'user not found'))
       if(removeAll($db, $uid)) {
-        $page->Info('successfully deleted user ' . htmlentities($_GET['user']));
+        $page->Info('successfully deleted user ' . htmlspecialchars($_GET['user'], ENT_COMPAT, _CHARSET));
         if(shiftAll($db, $uid))
           $page->Info('successfully shifted other users');
         if($nextuid = $db->GetValue('select max(uid)+1 from users'))

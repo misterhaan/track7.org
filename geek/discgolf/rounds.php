@@ -67,8 +67,8 @@
                     calcPlayerStats($db, $round->uid);
                     $page->Info('round updated');
                     $round->instant = $user->tzstrtotime($_POST['date']);
-                    $round->roundtype = $_POST['type'] == 'null' ? null : htmlentities($_POST['type'], ENT_COMPAT, _CHARSET);
-                    $round->tees = $_POST['tees'] && $_POST['tees'] != 'null' ? htmlentities($_POST['tees'], ENT_COMPAT, _CHARSET) : null;
+                    $round->roundtype = $_POST['type'] == 'null' ? null : htmlspecialchars($_POST['type'], ENT_COMPAT, _CHARSET);
+                    $round->tees = $_POST['tees'] && $_POST['tees'] != 'null' ? htmlspecialchars($_POST['tees'], ENT_COMPAT, _CHARSET) : null;
                     $round->scorelist = implode('|', $scores);
                     $round->score = array_sum($scores);
                     $round->bestdisc = $_POST['bestdisc'] == 'null' ? null : $_POST['bestdisc'];
@@ -215,7 +215,7 @@
 
   $page->ResetFlag(_FLAG_PAGES_COMMENTS);
   if(strlen($_GET['player'])) {
-    $page->Start(htmlentities($_GET['player'], ENT_COMPAT, _CHARSET) . '’s rounds - disc golf', htmlentities($_GET['player'], ENT_COMPAT, _CHARSET) . '’s rounds');
+    $page->Start(htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET) . '’s rounds - disc golf', htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET) . '’s rounds');
     $rounds = ' and u.login=\'' . addslashes($_GET['player']) . '\'';
   } else {
     $page->AddFeed('track7 disc golf rounds', '/feeds/rounds.rss');
@@ -244,7 +244,7 @@
     $page->SplitLinks();
     if(strlen($_GET['player'])) {
 ?>
-      <ul><li><a href="players.php?p=<?=htmlentities($_GET['player'], ENT_COMPAT, _CHARSET); ?>"><?=htmlentities($_GET['player'], ENT_COMPAT, _CHARSET); ?>’s player profile</a></li></ul>
+      <ul><li><a href="players.php?p=<?=htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET); ?>"><?=htmlspecialchars($_GET['player'], ENT_COMPAT, _CHARSET); ?>’s player profile</a></li></ul>
 <?
     }
   }
@@ -541,6 +541,8 @@
     $owner = $puid == $user->ID;
     $ins = 'insert into dgrounds (uid, ' . ($puid ? '' : 'player, ') . 'courseid, roundtype, tees, instant, scorelist, score, ' . ($owner ? 'bestdisc, worstdisc, comments' : 'entryuid') . ') values (\'' . addslashes($puid) . ($puid ? '' : '\', \'' . addslashes($pname)) . '\', \'' . $courseid . '\', ' . ($_POST['type'] == 'null' ? 'null' : '\'' . addslashes($_POST['type']) . '\'') . ', ' . (!$_POST['tees'] || $_POST['tees'] == 'null' ? 'null' : '\'' . addslashes($_POST['tees']) . '\'') . ', \'' . ($_POST['date'] ? $user->tzstrtotime($_POST['date']) : time()) . '\', \'' . implode('|', $scores) . '\', \'' . array_sum($scores) . '\'' . ($owner ? ', ' . $_POST['bestdisc'] . ', ' . $_POST['worstdisc'] . ', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\'' : ', \'' . $user->ID . '\'') . ')';
     if(false !== $roundid = $db->Put($ins, 'error saving scores for ' . $pname)) {
+      $twurl = auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . $_SERVER['PHP_SELF'] . '?id=' . $roundid);
+      auSend::Tweet($pname . ' played a disc golf round: ' . $twurl);
       require_once 'util.php';
       countRounds($db, $courseid);
       if(calcAvgScores($db, $courseid, $_POST['roundtype'] == 'null' ? null : $_POST['roundtype'], $_POST['tees'] && $_POST['tees'] != 'null' ? $_POST['tees'] : null)) {

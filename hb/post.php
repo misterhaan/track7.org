@@ -22,7 +22,7 @@
         </td>
         <td>
           <div class="head">
-            <div class="subject">subject:&nbsp; <span class="response"><?=htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET); ?></span></div>
+            <div class="subject">subject:&nbsp; <span class="response"><?=htmlspecialchars($_POST['subject'], ENT_COMPAT, _CHARSET); ?></span></div>
             <div class="time">posted:&nbsp; <span class="response"><?=strtolower($user->tzdate('g:i:s a, M d, Y', $post->instant)); ?></span></div>
           </div>
           <?=auText::BB2HTML($_POST['post'], false, false); ?>
@@ -36,7 +36,7 @@
               } else {
                 if($post->number == 1) {
                   $tags = makeTagList();
-                  $update = 'update hbthreads set title=\'' . addslashes(htmlentities($_POST['title'])) . '\', tags=\'' . $tags . '\' where id=\'' . $thread->id . '\'';
+                  $update = 'update hbthreads set title=\'' . addslashes(htmlspecialchars($_POST['title'])) . '\', tags=\'' . $tags . '\' where id=\'' . $thread->id . '\'';
                   $db->Change($update, 'error updating thread');
                   if($tags)
                     $newtags = explode(',', $tags);
@@ -60,7 +60,7 @@
                   }
                 }
                 $posttext = addslashes(auText::BB2HTML($_POST['post'], false, false));
-                $update = 'update hbposts set subject=\'' . addslashes(htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET)) . ($post->post == $posttext ? '' : '\', post=\'' . $posttext . '\', history=\'' . $post->history . '/' . $user->Name . '|' . time()) . '\' where id=\'' . $post->id . '\'';
+                $update = 'update hbposts set subject=\'' . addslashes(htmlspecialchars($_POST['subject'], ENT_COMPAT, _CHARSET)) . ($post->post == $posttext ? '' : '\', post=\'' . $posttext . '\', history=\'' . $post->history . '/' . $user->Name . '|' . time()) . '\' where id=\'' . $post->id . '\'';
                 if(false !== $db->Change($update, 'error updating post')) {
                   header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread->id . ($post->number > _FORUM_POST_PER_PAGE ? '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) : '/') . '#p' . $post->id);
                   die;
@@ -108,7 +108,7 @@
         </td>
         <td>
           <div class="head">
-            <div class="subject">subject:&nbsp; <span class="response"><?=htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET); ?></span></div>
+            <div class="subject">subject:&nbsp; <span class="response"><?=htmlspecialchars($_POST['subject'], ENT_COMPAT, _CHARSET); ?></span></div>
             <div class="time">posted:&nbsp; <span class="response"><?=strtolower($user->tzdate('g:i:s a, M d, Y')); ?></span></div>
           </div>
           <?=auText::BB2HTML($_POST['post'], false, false); ?>
@@ -118,14 +118,17 @@
 
 <?
           } else {
-            $post = 'insert into hbposts (thread, number, subject, post, instant, uid) values (\'' . $thread->id . '\', ' . ($thread->posts + 1) . ', \'' . addslashes(htmlentities($_POST['subject'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\', ' . time() . ', \'' . $user->ID . '\')';
+            $post = 'insert into hbposts (thread, number, subject, post, instant, uid) values (\'' . $thread->id . '\', ' . ($thread->posts + 1) . ', \'' . addslashes(htmlspecialchars($_POST['subject'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\', ' . time() . ', \'' . $user->ID . '\')';
             if(false !== $post = $db->Put($post, 'error saving new post')) {
+              // tweet new post (existing thread)
+              $url = 'http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread->id . ($thread->posts + 1 > _FORUM_POSTS_PER_PAGE ? '/skip=' . (floor($thread->posts / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p' : '/#p') . $post;
+              tweetPost($url, 'reply', $user->Name, $_POST['subject']);
               $update = 'update hbthreads set posts=posts+1, lastpost=\'' . $post . '\' where id=\'' . $thread->id . '\'';
               if(false !== $db->Change($update, 'error linking thread to post')) {
                 $update = 'update userstats set posts=posts+1 where uid=\'' . $user->ID . '\'';
                 $db->Change($update);
                 if($_POST['return'] != 'xml')
-                  header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread->id . ($thread->posts + 1 > _FORUM_POSTS_PER_PAGE ? '/skip=' . (floor($thread->posts / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p' : '/#p') . $post);
+                  header('Location: ' . $url);
                 else {
                   header('Content-Type: text/xml; charset=utf-8');
                   header('Cache-Control: no-cache');
@@ -203,7 +206,7 @@
     if($newthread->CheckInput($user->Valid)) {
       if($newthread->Submitted() == 'preview') {
         $page->Start('post new thread');
-        $page->Heading(htmlentities($_POST['title'], ENT_COMPAT, _CHARSET) . ' (preview)');
+        $page->Heading(htmlspecialchars($_POST['title'], ENT_COMPAT, _CHARSET) . ' (preview)');
 ?>
       <p>tags:&nbsp; <?=HB::TagLinks(makeTagList()); ?></p>
       <table class="post"><tr>
@@ -213,7 +216,7 @@
         </td>
         <td>
           <div class="head">
-            <div class="subject">subject:&nbsp; <span class="response"><?=htmlentities($_POST[$_POST['subject'] ? 'subject' : 'title'], ENT_COMPAT, _CHARSET); ?></span></div>
+            <div class="subject">subject:&nbsp; <span class="response"><?=htmlspecialchars($_POST[$_POST['subject'] ? 'subject' : 'title'], ENT_COMPAT, _CHARSET); ?></span></div>
             <div class="time">posted:&nbsp; <span class="response"><?=strtolower($user->tzdate('g:i:s a, M d, Y')); ?></span></div>
           </div>
           <?=auText::BB2HTML($_POST['post'], false, false); ?>
@@ -224,10 +227,13 @@
 <?
       } else {
         $tags = makeTagList();
-        $thread = 'insert into hbthreads (tags, title, instant, uid) values (\'' . addslashes($tags) . '\', \'' . addslashes(htmlentities($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', ' . time() . ', \'' . $user->ID . '\')';
+        $thread = 'insert into hbthreads (tags, title, instant, uid) values (\'' . addslashes($tags) . '\', \'' . addslashes(htmlspecialchars($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', ' . time() . ', \'' . $user->ID . '\')';
         if(false !== $thread = $db->Put($thread, 'error saving new thread')) {
-          $post = 'insert into hbposts (thread, number, subject, post, instant, uid) values (\'' . $thread . '\', 1, \'' . addslashes(htmlentities($_POST[$_POST['subject'] ? 'subject' : 'title'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\', ' . time() . ', \'' . $user->ID . '\')';
+          $post = 'insert into hbposts (thread, number, subject, post, instant, uid) values (\'' . $thread . '\', 1, \'' . addslashes(htmlspecialchars($_POST[$_POST['subject'] ? 'subject' : 'title'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\', ' . time() . ', \'' . $user->ID . '\')';
           if(false !== $post = $db->Put($post, 'error saving new post')) {
+            // tweet new forum post (new thread)
+            $url = 'http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread;
+            tweetPost($url, 'thread', $user->Name, $_POST['title']);
             $update = 'update hbthreads set posts=1, lastpost=\'' . $post . '\' where id=\'' . $thread . '\'';
             if(false !== $db->Change($update, 'error linking thread to post')) {
               $update = 'update userstats set posts=posts+1 where uid=\'' . $user->ID . '\'';
@@ -235,7 +241,7 @@
               if($tags)
                 $ins = 'insert into taginfo (type, name, count) values (\'threads\', \'' . implode('\', 1), (\'threads\', \'', explode(',', $tags)) . '\', 1) on duplicate key update count=count+1';
               $db->Put($ins);
-              header('Location: http://' . $_SERVER['HTTP_HOST'] . '/hb/thread' . $thread);
+              header('Location: ' . $url);
               die;
             } else {
               $db->Change('delete from hbposts where id=\'' . $post . '\'', 'error deleting post');
@@ -262,5 +268,26 @@
       if(substr($name, 0, 5) == 'tags_')
         $tags[] = $val;
     return implode(',', $tags);
+  }
+
+  /**
+   * Tweet a new forum post.
+   * @param string $url URL for jumping to the post.
+   * @param string $type Type of post (thread / reply).
+   * @param string $name Name of the post author.
+   * @param string $subject Subject of the post.
+   */
+  function tweetPost($url, $type, $name, $subject) {
+    $twurl = auSend::Bitly(str_replace('//m.', '//www.', $url));
+    $tweetstart = 'forum ' . $type . ' “';
+    $tweetend = '” by ' . $name . ': ' . $twurl;
+    $len = 140 - mb_strlen($tweetstart, _CHARSET) - mb_strlen($tweetend, _CHARSET);
+    // remove re: prefix
+    if(substr($subject, 0, 4) == 're: ')
+      $subject = substr($subject, 4);
+    // shorten to fit on twitter
+    if(mb_strlen($subject, _CHARSET) > $len)
+      $subject = mb_substr($subject, 0, $len - 1, _CHARSET) . '…';
+    auSend::Tweet($tweetstart . $subject . $tweetend);
   }
 ?>

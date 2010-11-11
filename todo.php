@@ -120,7 +120,7 @@
       $addareaset->AddButtons('add', 'add this area');
       $addarea->AddFieldSet($addareaset);
       if($addarea->CheckInput(true)) {
-        $ins = 'insert into t7taskarea (name, parent) values (\'' . addslashes(htmlentities($_POST['name'])) . '\', ' . addslashes($_POST['parent']) . ')';
+        $ins = 'insert into t7taskarea (name, parent) values (\'' . addslashes(htmlspecialchars($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', ' . addslashes($_POST['parent']) . ')';
         if(false !== $db->Put($ins, 'error adding new area'))
           $page->Info('new area added successfully');
       } else
@@ -147,7 +147,7 @@
         if(false !== $parentarea = $db->GetValue($parentarea, 'error checking for parent area', 'task area not found', true)) {
           if($parentarea === null)
             $parentarea = addslashes($_POST['area']);
-          $ins = 'insert into tasks (instant, area, title, parentarea) values (' . time() . ', ' . $_POST['area'] . ', \'' . addslashes(htmlentities($_POST['title'])) . '\', ' . $parentarea . ')';
+          $ins = 'insert into tasks (instant, area, title, parentarea) values (' . time() . ', ' . $_POST['area'] . ', \'' . addslashes(htmlspecialchars($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', ' . $parentarea . ')';
           if(false !== $id = $db->Put($ins, 'error adding new task')) {
             $ins = 'insert into ratings (type, selector) values (\'task\', ' . $id . ')';
             $db->Put($ins, 'error initializing rating');

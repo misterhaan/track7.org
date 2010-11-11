@@ -18,6 +18,7 @@
         if(isset($_POST['uid']) && is_numeric($_POST['uid'])) {
           if($user->Valid && $_POST['uid'] == $user->ID) {
             if(false !== $db->Put('insert into comments (page, instant, uid, comments) values (\'' . addslashes($_POST['page']) . '\', ' . time() . ', ' . +$_POST['uid'] . ', \'' . addslashes(auText::BB2HTML($_POST['pagecomments'], false, false)) . '\')', 'error saving comment')) {
+              tweetComment($_POST['page'], $user->Name);
               $db->Change('update userstats set comments=comments+1 where uid=' . +$_POST['uid']);
               $user->UpdateRank();
               //if($_POST['uid'] != 1)
@@ -77,10 +78,11 @@
           if(strlen($_POST['name']) <= 0)
             $_POST['name'] = 'anonymous';
           if(false !== $db->Put('insert into comments (page, instant, name, url, comments) values (\'' . addslashes(htmlspecialchars($_POST['page'])) . '\', ' . time() . ', \'' . addslashes(htmlspecialchars($_POST['name'])) . '\', \'' . addslashes(auText::FixLink($_POST['contact'])) . '\', \'' . addslashes(auText::BB2HTML($_POST['pagecomments'], false, false)) . '\')', 'error saving comments')) {
+            tweetComment($_POST['page'], $_POST['name']);
             //auSend::EMail($_POST['name'] . ' has commented on ' . $_POST['page'], 'http://' . $_SERVER['HTTP_HOST'] . $_POST['page'] . '#comments' . "\n\n" . $_POST['pagecomments'], 'whatyousay@' . _HOST, 'misterhaan@' . _HOST, 'track7 comments', 'misterhaan');
             if($_POST['ref'])
               $_POST['page'] = $_POST['ref'];
-            header('Location: http://' . $_SERVER['HTTP_HOST'] . $_POST['page'] . "#comments\r\n");
+            header('Location: http://' . $_SERVER['HTTP_HOST'] . $_POST['page'] . '#comments');
             die;
           }
         }
@@ -278,5 +280,19 @@
 <?
     }
     $page->End();
+  }
+
+  /**
+   * Tweet that a new comment was posted.
+   * @param string $url URL to the comment.
+   * @param string $page Page the comment was posted on.
+   * @param string $name Name of comment author.
+   */
+  function tweetComment($page, $name) {
+    $pagename = explode('/', rtrim($page, '/'));
+    $pagename = $pagename[count($pagename) - 1];
+    $twurl = auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . $page . '#comments');
+    $tweet = 'comment on ' . $pagename . ' by ' . $name . ': ' . $twurl;
+    auSend::Tweet($tweet);
   }
 ?>

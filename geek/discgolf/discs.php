@@ -28,7 +28,7 @@
   if($_GET['id'] == 'new') {
     $adddisc = getDiscForm($db);
     if($adddisc->CheckInput(true)) {
-      $ins = 'insert into dgdiscs (name, mfgr, type, speed, glide, turn, fade) values (\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', ' . intOrNull($_POST['speed']) . ', ' . intOrNull($_POST['glide']) . ', ' . intOrNull($_POST['turn']) . ', ' . intOrNull($_POST['fade']) . ')';
+      $ins = 'insert into dgdiscs (name, mfgr, type, speed, glide, turn, fade) values (\'' . addslashes(htmlspecialchars($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlspecialchars($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlspecialchars($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', ' . intOrNull($_POST['speed']) . ', ' . intOrNull($_POST['glide']) . ', ' . intOrNull($_POST['turn']) . ', ' . intOrNull($_POST['fade']) . ')';
       if(false !== $discid = $db->Put($ins, 'error saving disc')) {
         header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $discid);
         die;
@@ -56,7 +56,7 @@
         if(isset($_GET['edit'])) {
           $editdisc = getDiscForm($db, $disc);
           if($editdisc->CheckInput(true)) {
-            $update = 'update dgdiscs set name=\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', mfgr=\'' . addslashes(htmlentities($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', type=\'' . addslashes(htmlentities($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', speed=' . intOrNull($_POST['speed']) . ', glide=' . intOrNull($_POST['glide']) . ', turn=' . intOrNull($_POST['turn']) . ', fade=' . intOrNull($_POST['fade']) . ' where id=\'' . addslashes($_GET['id']) . '\'';
+            $update = 'update dgdiscs set name=\'' . addslashes(htmlspecialchars($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', mfgr=\'' . addslashes(htmlspecialchars($_POST['manufacturer'], ENT_COMPAT, _CHARSET)) . '\', type=\'' . addslashes(htmlspecialchars($_POST['type'], ENT_COMPAT, _CHARSET)) . '\', speed=' . intOrNull($_POST['speed']) . ', glide=' . intOrNull($_POST['glide']) . ', turn=' . intOrNull($_POST['turn']) . ', fade=' . intOrNull($_POST['fade']) . ' where id=\'' . addslashes($_GET['id']) . '\'';
             if(false !== $db->Change($update, 'error updating disc')) {
               header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $_GET['id']);
               die;
@@ -167,7 +167,7 @@
           if(strlen($disc->comments) > 22)
             $disc->comments = mb_substr($disc->comments, 0, 20, _CHARSET) . '...';
 ?>
-          <tr><td><a href="caddy.php?id=<?=$disc->id; ?>"><?=$disc->color; ?></a></td><td><?=$disc->mass; ?> g</td><td><a href="players.php?p=<?=$disc->login; ?>"><?=$disc->login; ?></a></td><td><?=$disc->status; ?></td><td><?=htmlentities($disc->comments, ENT_COMPAT, _CHARSET); ?></td></tr>
+          <tr><td><a href="caddy.php?id=<?=$disc->id; ?>"><?=$disc->color; ?></a></td><td><?=$disc->mass; ?> g</td><td><a href="players.php?p=<?=$disc->login; ?>"><?=$disc->login; ?></a></td><td><?=$disc->status; ?></td><td><?=htmlspecialchars($disc->comments, ENT_COMPAT, _CHARSET); ?></td></tr>
 <?
         }
 ?>

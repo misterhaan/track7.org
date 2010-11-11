@@ -58,7 +58,7 @@
           $editcourse = getCourseForm($course);
           $okpar = true;
           if($editcourse->CheckInput(true) && $okpar = checkParFields()) {
-            $update = 'update dgcourses set name=\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', location=\'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', latitude=' . +$_POST['latitude'] . ', longitude=' . +$_POST['longitude'] . ', holes=\'' . +$_POST['holes'] . '\', teelist=' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', comments=\'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\', parlist=\'' . buildParList('\', par=\'') . '\' where id=\'' . $_GET['id'] . '\'';
+            $update = 'update dgcourses set name=\'' . addslashes(htmlspecialchars($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', location=\'' . addslashes(htmlspecialchars($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', latitude=' . +$_POST['latitude'] . ', longitude=' . +$_POST['longitude'] . ', holes=\'' . +$_POST['holes'] . '\', teelist=' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', comments=\'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\', parlist=\'' . buildParList('\', par=\'') . '\' where id=\'' . $_GET['id'] . '\'';
             if(false !== $db->Change($update, 'error updating course')) {
               header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $_GET['id']);
               die;
@@ -164,10 +164,10 @@
       if($rounds = $db->GetSplit($rounds, 10, 0, '', '', 'error looking up rounds for this course', '')) {
         if($_GET['roundsort'] == 'best') {
           $heading[] = 'best';
-          $options[] = '<a href="courses.php?id=' . $_GET['id'] . (isset($_GET['roundfilter']) ? '&amp;roundfilter=' . htmlentities($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlentities($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="show recent rounds">recent</a>';
+          $options[] = '<a href="courses.php?id=' . $_GET['id'] . (isset($_GET['roundfilter']) ? '&amp;roundfilter=' . htmlspecialchars($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlspecialchars($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="show recent rounds">recent</a>';
         } else {
           $heading[] = 'recent';
-          $options[] = '<a href="courses.php?id=' . $_GET['id'] . '&amp;roundsort=best' . (isset($_GET['roundfilter']) ? '&amp;roundfilter=' . htmlentities($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlentities($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="show best rounds">best</a>';
+          $options[] = '<a href="courses.php?id=' . $_GET['id'] . '&amp;roundsort=best' . (isset($_GET['roundfilter']) ? '&amp;roundfilter=' . htmlspecialchars($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlspecialchars($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="show best rounds">best</a>';
         }
         $roundtypes = 'select roundtype from dgrounds where courseid=\'' . addslashes($_GET['id']) . '\' and entryuid is null group by roundtype';
         if($roundtypes = $db->Get($roundtypes, 'error getting list of round types for this course', ''))
@@ -178,10 +178,10 @@
                   $heading[] = $type->roundtype;
                   $roundtypefiltered = true;
                 } else
-                  $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best&amp;roundfilter=' : '&amp;roundfilter=') . $type->roundtype . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlentities($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="only show ' . $type->roundtype . ' rounds">' . $type->roundtype . '</a>';
+                  $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best&amp;roundfilter=' : '&amp;roundfilter=') . $type->roundtype . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlspecialchars($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="only show ' . $type->roundtype . ' rounds">' . $type->roundtype . '</a>';
             }
             if($roundtypefiltered)
-              $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlentities($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="show any rounds">any</a>';
+              $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($course->teelist && $_GET['tees'] ? '&amp;tees=' . htmlspecialchars($_GET['tees'], ENT_COMPAT, _CHARSET) : '') . '" title="show any rounds">any</a>';
           }
         if($course->teelist) {
           $tees = 'select tees from dgrounds where courseid=\'' . addslashes($_GET['id']) . '\' and entryuid is null group by tees';
@@ -193,10 +193,10 @@
                     $heading[] = $tee->tees . '-tee';
                     $teesfiltered = true;
                   } else
-                    $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($_GET['roundfilter'] ? '&amp;roundfilter=' . htmlentities($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . '&amp;tees=' . $tee->tees . '" title="only show rounds from the ' . $tee->tees . ' tees">' . $tee->tees . ' tee</a>';
+                    $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($_GET['roundfilter'] ? '&amp;roundfilter=' . htmlspecialchars($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . '&amp;tees=' . $tee->tees . '" title="only show rounds from the ' . $tee->tees . ' tees">' . $tee->tees . ' tee</a>';
               }
               if($teesfiltered)
-                $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($_GET['roundfilter'] ? '&amp;roundfilter=' . htmlentities($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . '" title="show rounds from any tees">any tee</a>';
+                $options[] = '<a href="courses.php?id=' . $_GET['id'] . ($_GET['roundsort'] == 'best' ? '&amp;roundsort=best' : '') . ($_GET['roundfilter'] ? '&amp;roundfilter=' . htmlspecialchars($_GET['roundfilter'], ENT_COMPAT, _CHARSET) : '') . '" title="show rounds from any tees">any tee</a>';
             }
         }
         $page->Heading(implode(' ', $heading) . ' rounds <ul class="elements"><li>' . implode('</li><li>', $options) . '</li></ul>');
@@ -234,7 +234,7 @@
     $courseform = getCourseForm();
     $okpar = true;
     if($courseform->CheckInput(true) && $okpar = checkParFields()) {
-      $ins = 'insert into dgcourses (name, location, latitude, longitude, holes, teelist, parlist, par, comments) values (\'' . addslashes(htmlentities($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlentities($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', ' . +$_POST['latitude'] . ', ' . +$_POST['longitude'] . ', \'' . +$_POST['holes'] . '\', ' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', \'' . buildParList() . '\', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\')';
+      $ins = 'insert into dgcourses (name, location, latitude, longitude, holes, teelist, parlist, par, comments) values (\'' . addslashes(htmlspecialchars($_POST['name'], ENT_COMPAT, _CHARSET)) . '\', \'' . addslashes(htmlspecialchars($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', ' . +$_POST['latitude'] . ', ' . +$_POST['longitude'] . ', \'' . +$_POST['holes'] . '\', ' . (isset($_POST['tees']) ? '\'am,pro\'' : 'null') . ', \'' . buildParList() . '\', \'' . addslashes(auText::BB2HTML($_POST['comments'])) . '\')';
       if(false !== $courseid = $db->Put($ins, 'error saving course information')) {
         header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?id=' . $courseid);
         die;

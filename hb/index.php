@@ -3,10 +3,10 @@
   require_once 'hb.inc';
 
   if(strlen($_GET['tag'])) {
-    $page->Start(htmlentities($_GET['tag']) . ' threads', 'thread listing [' . htmlentities($_GET['tag']) .']');
+    $page->Start(htmlspecialchars($_GET['tag'], ENT_COMPAT, _CHARSET) . ' threads', 'thread listing [' . htmlspecialchars($_GET['tag'], ENT_COMPAT, _CHARSET) .']');
     $page->ShowTagDescription('threads', addslashes($_GET['tag']));
     if($user->GodMode)
-      $page->Info('<a href="/tools/taginfo.php?type=threads&amp;name=' . htmlentities($_GET['tag']) . '">add/edit tag description</a>');
+      $page->Info('<a href="/tools/taginfo.php?type=threads&amp;name=' . htmlspecialchars($_GET['tag'], ENT_COMPAT, _CHARSET) . '">add/edit tag description</a>');
     $threads = ' where t.tags=\'' . addslashes($_GET['tag']) . '\' or t.tags like \'' . addslashes($_GET['tag']) . ',%\' or t.tags like \'%,' . addslashes($_GET['tag']) . '\' or t.tags like \'%,' . addslashes($_GET['tag']) . ',%\'';
   } else {
     $page->Start('threads', 'thread listing');
@@ -27,7 +27,7 @@
       $subject = html_entity_decode($thread->subject, ENT_COMPAT, _CHARSET);
       if(strlen($subject) > 16)
         $subject = substr($subject, 0, 15) . '...';
-      $subject = htmlentities($subject, ENT_COMPAT, _CHARSET);
+      $subject = htmlspecialchars($subject, ENT_COMPAT, _CHARSET);
 ?>
           <tr><td><a href="/hb/thread<?=$thread->id; ?>/"><?=$thread->title; ?></a></td><td class="detail"><?=HB::TagLinks($thread->tags); ?></td><td class="number"><?=$thread->posts; ?></td><td class="detail"><a href="/hb/thread<?=$thread->id; ?>/<?=$thread->posts > _FORUM_POSTS_PER_PAGE ? 'skip=' . (floor(($thread->posts - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) : ''; ?>#p<?=$thread->lastpost; ?>"<?=$subject != $thread->subject ? ' title="' . $thread->subject . '"' : ''; ?>><?=$subject; ?></a> <?=$user->tzdate('Y-m-d g:i a', $thread->pinstant) . ' by ' . ($thread->plogin ? $thread->plogin : 'anonymous'); ?></td><td class="detail"><?=$user->tzdate('Y-m-d g:i a', $thread->instant) . ' by ' . ($thread->login ? $thread->login : 'anonymous'); ?></td></tr>
 <?

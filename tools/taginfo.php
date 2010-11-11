@@ -8,7 +8,7 @@
   if(strlen($_GET['name']) && strlen($_GET['type'])) {
     $desc = 'select description from taginfo where type=\'' . addslashes($_GET['type']) . '\' and name=\'' . addslashes($_GET['name']) . '\'';
     if(false !== $desc = $db->GetValue($desc, 'error looking up tag information', 'tag not found', true)) {
-      $page->Start(htmlentities($_GET['type'] . '/' . $_GET['name']) . ' - tag information editor', htmlentities($_GET['type'] . '/' . $_GET['name']));
+      $page->Start(htmlspecialchars($_GET['type'] . '/' . $_GET['name'], ENT_COMPAT, _CHARSET) . ' - tag information editor', htmlspecialchars($_GET['type'] . '/' . $_GET['name'], ENT_COMPAT, _CHARSET));
       require_once 'auForm.php';
       require_once 'auText.php';
       $tagedit = new auForm('tagedit', '?type=' . $_GET['type'] . '&name=' . $_GET['name']);
@@ -39,7 +39,7 @@
       }
 ?>
       </ul>
-  
+
 <?
       $page->SplitLinks();
     }
