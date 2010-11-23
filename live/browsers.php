@@ -21,6 +21,7 @@
           <tr><td><a href="http://www.opera.com/download/">opera</a></td><td>presto</td></tr>
           <tr><td><a href="http://www.microsoft.com/windows/ie/default.mspx?mg_ID=10010">microsoft internet explorer</a></td><td>trident</td></tr>
           <tr><td><a href="http://www.google.com/chrome/">google chrome</a></td><td>webkit</td></tr>
+          <tr><td><a href="http://www.apple.com/iphone/">apple safari (iphone)</a></td><td>webkit</td></tr>
         </tbody>
       </table>
 

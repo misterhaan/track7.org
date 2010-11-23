@@ -44,13 +44,11 @@
         i'll tell you you're not my friend).
       </p>
       <ul>
-        <li><a href="http://jmeagher.2ya.com/">joe's index and links</a> *</li>
-        <li><a href="http://www.thecircumlocution.com/">the circumlocution</a></li>
-        <li><a href="http://www.katana.org/" title="visit katana.org">katana.org</a></li>
+        <li><a href="http://jmeagher.2ya.com/">joe's index and links</a></li>
+        <li><a href="http://jeffreymeagher.com/">jeffrey meagher</a></li>
+        <li><a href="http://www.katana.org/">katana.org</a></li>
         <li><a href="http://www.allsyntax.com/">allsyntax.com</a></li>
-        <li><a href="http://www.kzoiks.nl/">kzoiks!</a> *</li>
-        <li><a href="http://www.restoman.com/" title="visit restoman.com">restoman.com</a></li>
-        <li><a href="http://www.geocities.com/Yosemite/9483" title="visit the unofficial camp michigamme bum page">the unofficial camp michigamme bum page</a> *&nbsp; <i>!!plays music!!</i></li>
+        <li><a href="http://www.restoman.com/">southwest restorations</a></li>
       </ul>
       <p class="note">* this site has a link to track7</p>
 

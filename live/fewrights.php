@@ -1,7 +1,6 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   $page->Start('few rights reserved', null, '', '', array('links', 'credit', 'tell me', 'borrowed'), array('reasoning', 'linking', 'credit', 'tellme', 'borrowed'));
-  echo "\n\nAccept: " . $_SERVER['HTTP_ACCEPT'] . "\n\n";
 ?>
       <p>
         the contents of track7 are copyright “few rights reserved” instead of

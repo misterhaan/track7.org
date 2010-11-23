@@ -15,7 +15,8 @@ div#content a.feed {
 /* ==============================================================[ layout ]== */
 
 div.dynamic {
-  width: 24.81em;
+  width: 22.81em;
+  padding-left: 0;
 }
 
 div#foot {

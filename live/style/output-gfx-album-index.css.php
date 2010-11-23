@@ -62,4 +62,5 @@ span.photopreview img {
 span.caption {
   display: block;
   margin-top: .3em;
+  font-size: .9em;
 }

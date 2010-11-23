@@ -11,13 +11,17 @@ div#title {
   display: none;
 }
 
+div#what h2,
+div.feed h2 {
+  background: none;
+}
+
 div#features {
   background-color: #<?=BGLIGHT; ?>;
-  margin: 0 1em;
+  margin: 1em 2em;
   padding: 0;
   float: right;
   width: 28em;
-  border: 1px solid #<?=BGMEDIUM; ?>;
   -webkit-border-radius: .75em;
   -moz-border-radius: .75em;
   border-radius: .75em;
@@ -26,6 +30,7 @@ div#features {
   div#features {
     float: none;
     width: auto;
+    margin: 1em;
   }
 }
 div#features.collapsed {
@@ -35,21 +40,21 @@ div#features h2 {
   color: #000000;
   text-align: center;
   background-color: #<?=BGMEDIUM; ?>;
-  -webkit-border-radius: .3em;
+  -webkit-border-radius: .5em;
   -webkit-border-bottom-left-radius: 0;
   -webkit-border-bottom-right-radius: 0;
-  -moz-border-radius: .3em;
+  -moz-border-radius: .5em;
   -moz-border-radius-bottomleft: 0;
   -moz-border-radius-bottomright: 0;
-  border-radius: .3em;
+  border-radius: .5em;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   margin: 0;
 }
 div#features.collapsed h2 {
-  -webkit-border-radius: .3em;
-  -moz-border-radius: .3em;
-  border-radius: .3em;
+  -webkit-border-radius: .4em;
+  -moz-border-radius: .4em;
+  border-radius: .4em;
 }
 
 div#features h2 a {
@@ -69,7 +74,7 @@ div#features h2 a:after {
 
 div#features dl {
   margin: 0;
-  padding: .5em;
+  padding: .6em;
 }
 div#features.collapsed dl {
   display: none;
@@ -82,6 +87,7 @@ div#features dt {
 }
 div#features dt img.icon {
   padding-left: 0;
+  margin-top: .1em;
   margin-right: .5em;
 }
 div#features dd {
@@ -89,9 +95,15 @@ div#features dd {
   padding-left: .5em;
 }
 
+div#what h2 {
+  clear: left;
+  color:  #<?=TEXT; ?>;
+}
+
 div.feed {
   clear: left;
-  margin: 1em 0;
+  margin: 1.5em 0;
+  min-height: 72px;
 }
 
 div.typedate {
@@ -101,7 +113,7 @@ div.typedate {
   padding: 54px 0 0;
   text-align: center;
   width: 60px;
-  background: #<?=HEADMEDIUM; ?> no-repeat 6px 6px;
+  background: #<?=BGMEDIUM; ?> no-repeat 6px 6px;
   -khtml-border-radius: 8px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
@@ -144,24 +156,18 @@ img.photothumb {
 
 h2.feed {
   clear: none;
-  border: none;
   font-size: 1.25em;
-  margin: 0 1.6em .2em;
-  background: #<?=HEADMEDIUM; ?>;
+  margin: 1em 1.6em .2em;
+  color:  #<?=TEXT; ?>;
   line-height: 1.4em;
-  -khtml-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
 }
-
 h2.feed a.feed {
-  float: right;
-  display: block;
-  margin-top: .1em;
-  height: 1.25em;
-  width: 1.25em;
-  background: url(/style/feed.png) no-repeat center center;
+  display: none;
+  margin-left: .75em;
+  background-color: transparent;
+}
+h2.feed a.feed img {
+  vertical-align: middle;
 }
 
 div.feed p,
@@ -169,6 +175,7 @@ div.feed samp,
 div.feed ul,
 div.feed ol {
   margin-left: 7.5em;
+  margin-right: 7.5em;
 }
 @media all and (max-width: 45em) {
   div.feed p,
@@ -176,6 +183,7 @@ div.feed ol {
   div.feed ul,
   div.feed ol {
     margin-left: 2em;
+    margin-right: 2em;
   }
 }
 p.tags {
@@ -187,7 +195,7 @@ div#content p.tags a {
   font-weight: normal;
 }
 div#content p.readmore {
-  text-align: right;
+  padding-left: 2em;
 }
 div#content p.readmore a {
   font-weight: normal;
