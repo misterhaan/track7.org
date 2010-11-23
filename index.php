@@ -57,6 +57,19 @@
         </dl>
       </div>
 
+      <div id="what">
+        <h2>what’s all this then?</h2>
+        <p>
+          welcome to track7, the personal website of a guy who calls himself
+          <a href="/user/misterhaan/">misterhaan</a> on the internet.&nbsp; if
+          you’ve been here before, keep reading to see what’s been happening
+          around here lately.&nbsp; if this is your first time to track7, have a
+          look at the features box and check out something that sounds
+          interesting.&nbsp; if you still don’t know what’s going on, you can
+          read more about <a href="what.php">what this site’s all about</a>.
+        </p>
+      </div>
+
 <?
   // get last MAXITEMS items from updates, posts, comments, entries, and photos
   $updates = 'select instant, `change` from updates order by instant desc';
@@ -150,7 +163,7 @@
 ?>
     <div class="feed update">
       <div class="typedate" title="site update at <?=strtolower($user->tzdate(LONGDATEFMT, $update->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($update->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/updates.rss" class="feed" title="track7 updates"></a>track7 update by <a href="/user/misterhaan/">misterhaan</a></h2>
+      <h2 class="feed">track7 update by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/updates.rss" class="feed" title="track7 updates"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p><?=$update->change; ?></p>
     </div>
 
@@ -168,7 +181,7 @@
     <div class="feed post">
       <div class="typedate" title="forum post at <?=strtolower($user->tzdate(LONGDATEFMT, $post->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($post->instant, $user)); ?></div></div>
 <?
-    echo '      <h2 class="feed"><a href="/feeds/posts.rss" class="feed" title="track7 forum posts" /><a href="/hb/thread' . $post->thread;
+    echo '      <h2 class="feed"><a href="/hb/thread' . $post->thread;
     if($post->number - 1 > _FORUM_POSTS_PER_PAGE)
       echo '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p';
     else
@@ -178,7 +191,7 @@
       echo '<a href="/user/' . $post->login . '/">' . $post->login . '</a>';
     else
       echo 'anonymous';
-    echo "</h2>\n";
+    echo '<a href="/feeds/posts.rss" class="feed" title="track7 forum posts"><img src="/style/feed.png" alt="rss" /></a></h2>' . "\n";
 ?>
       <?=$post->post; ?>
     </div>
@@ -198,7 +211,7 @@
 ?>
     <div class="feed comment">
       <div class="typedate" title="page comment at <?=strtolower($user->tzdate(LONGDATEFMT, $comment->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($comment->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/comments.rss" class="feed" title="track7 comments"></a>comment on <a href="<?=$comment->page; ?>"><?=$pagename; ?></a> by <?=($comment->uid ? '<a href="/user/' . $comment->login . '/">' . $comment->login . '</a>' : ($comment->url ? '<a href="' . $comment->url . '">' . $comment->name . '</a>' : $comment->name)); ?></h2>
+      <h2 class="feed">comment on <a href="<?=$comment->page; ?>"><?=$pagename; ?></a> by <?=($comment->uid ? '<a href="/user/' . $comment->login . '/">' . $comment->login . '</a>' : ($comment->url ? '<a href="' . $comment->url . '">' . $comment->name . '</a>' : $comment->name)); ?><a href="/feeds/comments.rss" class="feed" title="track7 comments"><img src="/style/feed.png" alt="rss" /></a></h2>
       <?=$comment->comments; ?>
     </div>
 
@@ -222,7 +235,7 @@
 ?>
     <div class="feed entry">
       <div class="typedate" title="bln entry at <?=strtolower($user->tzdate(LONGDATEFMT, $entry->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($entry->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/entries.rss" class="feed" title="track7 bln entries" /><a href="/output/pen/bln/<?=$entry->name; ?>"><?=$entry->title; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
+      <h2 class="feed"><a href="/output/pen/bln/<?=$entry->name; ?>"><?=$entry->title; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/entries.rss" class="feed" title="track7 bln entries"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p class="tags"><?=$tags; ?></p>
       <?=$entry->post; ?>
       <p class="readmore">» <a href="/output/pen/bln/<?=$entry->id; ?>">read more...</a></p>
@@ -245,7 +258,7 @@
 ?>
     <div class="feed photo">
       <div class="typedate" title="photo at <?=strtolower($user->tzdate(LONGDATEFMT, $photo->added)); ?>"><div class="date"><?=strtolower(auText::SmartTime($photo->added, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/photos.rss" class="feed" title="track7 album photos" /><a href="/output/gfx/album/photo=<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
+      <h2 class="feed"><a href="/output/gfx/album/photo=<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/photos.rss" class="feed" title="track7 album photos"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p class="tags"><?=$tags; ?></p>
       <p><a class="img" href="/output/gfx/album/photo=<?=$photo->id; ?>"><img class="photothumb" src="/output/gfx/album/photos/<?=$photo->id; ?>.jpg" alt="" /></a></p>
       <p><?=$photo->description; ?></p>
@@ -264,7 +277,7 @@
 ?>
     <div class="feed guide">
       <div class="typedate" title="guide at <?=strtolower($user->tzdate(LONGDATEFMT, $guide->dateadded)); ?>"><div class="date"><?=strtolower(auText::SmartTime($guide->dateadded, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/guides.rss" class="feed" title="track7 guides" /><a href="/geek/guides/<?=$guide->id; ?>/"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></h2>
+      <h2 class="feed"><a href="/geek/guides/<?=$guide->id; ?>/"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a><a href="/feeds/guides.rss" class="feed" title="track7 guides"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p><?=$guide->description; ?></p>
     </div>
 
@@ -284,7 +297,7 @@
 ?>
     <div class="feed art">
       <div class="typedate" title="<?=$art->type; ?> at <?=strtolower($user->tzdate(LONGDATEFMT, $art->adddate)); ?>"><div class="date"><?=strtolower(auText::SmartTime($art->adddate, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/art.rss" class="feed" title="track7 art" /><a href="/output/gfx/sketch.php#<?=$art->id; ?>"><?=$art->name; ?></a> by <a href="/user/misterhaan/">misterhaan</a></h2>
+      <h2 class="feed"><a href="/output/gfx/sketch.php#<?=$art->id; ?>"><?=$art->name; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/art.rss" class="feed" title="track7 art"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p><a class="img" href="/output/gfx/sketch.php#<?=$art->id; ?>"><img class="photothumb" src="/output/gfx/<?=$art->id; ?>-prev.png" alt="" /></a></p>
       <?=$art->description; ?>
     </div>
@@ -296,7 +309,7 @@
 ?>
     <div class="feed round">
       <div class="typedate" title="disc golf round at <?=strtolower($user->tzdate(LONGDATEFMT, $round->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($round->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds" /><a href="/geek/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <?=$round->uid ? '<a href="/user/' . $round->login . '/">' . $round->login . '</a>' : $round->player; ?></h2>
+      <h2 class="feed"><a href="/geek/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <?=$round->uid ? '<a href="/user/' . $round->login . '/">' . $round->login . '</a>' : $round->player; ?><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p>
         on <?=strtolower($user->tzdate('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
 <?

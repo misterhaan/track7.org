@@ -73,7 +73,7 @@ hr.minor {
 }
 p {
   margin: .5em 2em;
-  line-height: 1.3em;
+  line-height: 1.5em;
 }
 div#content p {
   text-align: justify;
@@ -663,7 +663,7 @@ html {
   margin: 0;
   padding: 0;
   background: #<?=BGDARK; ?> url(/style/html-tile.png) repeat-x fixed center top;
-  font-size: 76%;
+  font-size: 85%;
 }
 body {
   margin: 0 auto;
@@ -807,6 +807,9 @@ div#navhelp a:visited:hover {
   border-bottom: 1px dotted #<?=LINKDARK; ?>;
 }
 
+a#homelink {
+  background: none;
+}
 img#punkhead {
   margin-left: 3px;
   width: 78px;
@@ -957,12 +960,13 @@ div#content ul.elements a {
 /* =====================================================[ dynamic content ]== */
 
 div.dynamic {
-  width: 62.01em;
+  width: 57.2em;
   margin: 0 auto;
+  padding-left: .1em;
 }
 div.dynsec {
   float: left;
-  width: 12em;
+  width: 11em;
   padding: 0 .2em;
 }
 

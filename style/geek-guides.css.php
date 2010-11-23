@@ -28,6 +28,9 @@ dl.guides dt {
 dl.guides dd {
   margin: 0;
 }
+.when {
+  font-size: .8em;
+}
 div.guideinfo {
   background-color: #<?=BGLIGHT; ?>;
   padding: .1em .5em;
