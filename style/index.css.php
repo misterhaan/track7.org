@@ -159,7 +159,6 @@ h2.feed {
   font-size: 1.25em;
   margin: 1em 1.6em .2em;
   color:  #<?=TEXT; ?>;
-  line-height: 1.4em;
 }
 h2.feed a.feed {
   display: none;
@@ -174,8 +173,7 @@ div.feed p,
 div.feed samp,
 div.feed ul,
 div.feed ol {
-  margin-left: 7.5em;
-  margin-right: 7.5em;
+  margin: .5em 7.5em;
 }
 @media all and (max-width: 45em) {
   div.feed p,
@@ -186,10 +184,11 @@ div.feed ol {
     margin-right: 2em;
   }
 }
-p.tags {
+div.feed p.tags {
   background: url(/style/tag.png) no-repeat left center;
   min-height: 16px;
   padding-left: 20px;
+  margin-top: .2em;
 }
 div#content p.tags a {
   font-weight: normal;

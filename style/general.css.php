@@ -72,8 +72,8 @@ hr.minor {
   background-image: url(/style/lightknot.png);
 }
 p {
-  margin: .5em 2em;
-  line-height: 1.5em;
+  margin: 1.2em 2em;
+  line-height: 1.6em;
 }
 div#content p {
   text-align: justify;
@@ -294,6 +294,7 @@ td.number {
 table.columns,
 table.text,
 table.data {
+  border-collapse: collapse;
   margin: .5em 2em;
 }
 table.columns th {
@@ -684,12 +685,8 @@ body {
     margin: 0;
   }
 }
-div#body {
-  width: 100%;
-  float: right;
-  margin-left: -13.5em;
-}
 div#content {
+  display: block;
   background-color: #ffffff;
   margin: 0 .5em;
   border: 1px solid #<?=BGDARK; ?>;
@@ -701,6 +698,9 @@ div#content {
   -moz-border-radius-bottomright: .75em;
   border-bottom-left-radius: .75em;
   border-bottom-right-radius: .75em;
+}
+footer {
+  display: block;
 }
 div.dynamic {
   clear: both;
@@ -719,8 +719,9 @@ div#foot {
 
 
 /* ==============================================================[ header ]== */
-div#head {
+header {
   vertical-align: bottom;
+  display: block;
   height: 100px;
   white-space: nowrap;
   border-bottom: 1px solid #000000;
@@ -864,12 +865,13 @@ ul#sectnav li.active a:hover {
   background-color: #<?=LINKLIGHT; ?>;
   color: #000000;
 }
-div#location {
+nav#location {
+  display: block;
   font-size: .9em;
   padding-left: .4em;
   padding-top: .1em;
 }
-div#location a {
+nav#location a {
   font-weight: normal;
 }
 
