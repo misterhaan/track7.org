@@ -48,8 +48,6 @@ h2 {
   padding: 0 .5em;
   background-color: #<?=HEADMEDIUM; ?>;
   color: #000000;
-  -khtml-border-radius: .5em;
-  -webkit-border-radius: .5em;
   -moz-border-radius: .5em;
   border-radius: .5em;
 }
@@ -89,8 +87,6 @@ p.error {
   background-repeat: no-repeat;
   background-position: 4px 4px;
   min-height: 18px;
-  -khtml-border-radius: 9px;
-  -webkit-border-radius: 9px;
   -moz-border-radius: 9px;
   border-radius: 9px;
 }
@@ -244,8 +240,6 @@ q {
   margin: .5em 1em;
   border: 1px solid #<?=BGMEDIUM; ?>;
   padding: .2em .5em;
-  -khtml-border-radius: .75em;
-  -webkit-border-radius: .75em;
   -moz-border-radius: .75em;
   border-radius: .75em;
 }
@@ -398,8 +392,6 @@ fieldset {
   padding: 1em;
   margin: 1em 0;
   border: 1px solid #<?=HEADDARK; ?>;
-  -khtml-border-radius: 1em;
-  -webkit-border-radius: 1em;
   -moz-border-radius: 1em;
   border-radius: 1em;
 }
@@ -409,8 +401,6 @@ fieldset legend {
   background-color: #<?=HEADMEDIUM; ?>;
   color: #000000;
   font-weight: bold;
-  -khtml-border-radius: .75em;
-  -webkit-border-radius: .75em;
   -moz-border-radius: .75em;
   border-radius: .75em;
 }
@@ -463,8 +453,6 @@ input[type="button"] {
   color: #<?=LINKDARK; ?>;
   font-size: 1em;  /* buttons don't seem to inherit font size without something like this */
   font-weight: bold;
-  -khtml-border-radius: .5em;
-  -webkit-border-radius: .5em;
   -moz-border-radius: .5em;
   border-radius: .5em;
 }
@@ -528,16 +516,12 @@ div#usercomments {
   margin: 2em 5em 1em;
   border: 1px solid #<?=HEADMEDIUM; ?>;
   clear: both;
-  -khtml-border-radius: .8em;
-  -webkit-border-radius: .8em;
   -moz-border-radius: .8em;
   border-radius: .8em;
 }
 div#usercomments h2 {
   margin: 0;
   border: none;
-  -webkit-border-bottom-left-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
   -moz-border-radius-bottomleft: 0;
   -moz-border-radius-bottomright: 0;
   border-bottom-left-radius: 0;
@@ -550,8 +534,6 @@ div#usercomments h2 {
   }
   div#usercomments h2 {
     margin: 1em 1.2em .5em;
-    -khtml-border-radius: .5em;
-    -webkit-border-radius: .5em;
     -moz-border-radius: .5em;
     border-radius: .5em;
   }
@@ -626,8 +608,6 @@ div.tagcloud {
   background: #<?=BGLIGHT; ?> url(/style/tag.png) no-repeat 4px 4px;
   min-height: 18px;
   border: 1px solid #<?=BGMEDIUM; ?>;
-  -khtml-border-radius: 9px;
-  -webkit-border-radius: 9px;
   -moz-border-radius: 9px;
   border-radius: 9px;
 }
@@ -692,8 +672,6 @@ div#content {
   border: 1px solid #<?=BGDARK; ?>;
   border-top: none;
   padding-bottom: 1.5em;
-  -webkit-border-bottom-left-radius: .75em;
-  -webkit-border-bottom-right-radius: .75em;
   -moz-border-radius-bottomleft: .75em;
   -moz-border-radius-bottomright: .75em;
   border-bottom-left-radius: .75em;
@@ -824,6 +802,9 @@ img#t7head {
   height: 79px;
   vertical-align: bottom;
 }
+nav#sect {
+  display: inline;
+}
 ul#sectnav {
   padding: 0;
   list-style-type: none;
@@ -842,8 +823,6 @@ ul#sectnav li a {
   border: 1px solid #<?=BGDARK; ?>;
   border-bottom: none;
   background-color: #<?=BGLIGHT; ?>;
-  -webkit-border-top-left-radius: .5em;
-  -webkit-border-top-right-radius: .5em;
   -moz-border-radius-topleft: .5em;
   -moz-border-radius-topright: .5em;
   border-top-left-radius: .5em;

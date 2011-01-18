@@ -5,10 +5,11 @@
 create table users (
   uid smallint unsigned primary key auto_increment,
   login varchar(32) unique not null,
-  pass varchar(32) not null,
+  pass varchar(96) not null,
   allowedip varchar(255) not null,
   style tinyint unsigned not null default 1,
-  flags tinyint unsigned not null default 0
+  flags tinyint unsigned not null default 0,
+  tzoffset mediumint
 );
 
 create table userprofiles (
