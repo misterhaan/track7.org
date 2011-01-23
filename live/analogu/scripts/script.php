@@ -40,7 +40,7 @@
         }
         if($script->flags & _FLAG_AUSCRIPTS_SQL) {
 ?>
-        <li><a href="http://dev.mysql.com/downloads/index.html">sql database</a></li>
+        <li><a href="http://www.mysql.com/downloads/mysql/">sql database</a></li>
 <?
         }
         if($script->flags & _FLAG_AUSCRIPTS_PEAR) {
