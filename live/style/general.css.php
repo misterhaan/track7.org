@@ -235,7 +235,8 @@ cite {
 }
 q:before {content: '';}
 q:after {content: '';}
-q {
+q,
+blockquote {
   display: block;
   margin: .5em 1em;
   border: 1px solid #<?=BGMEDIUM; ?>;
@@ -244,14 +245,21 @@ q {
   border-radius: .75em;
 }
 q q,
+blockquote blockquote,
 q q q q,
-q q q q q q {
+blockquote blockquote blockquote blockquote,
+q q q q q q,
+blockquote blockquote blockquote blockquote blockquote blockquote {
   background-color: #ffffff;
 }
 q,
+blockquote,
 q q q,
+blockquote blockquote blockquote,
 q q q q q,
-q q q q q q q {
+blockquote blockquote blockquote blockquote blockquote,
+q q q q q q q,
+blockquote blockquote blockquote blockquote blockquote {
   background-color: #<?=BGLIGHT; ?>;
 }
 
