@@ -182,7 +182,7 @@ samp {
   overflow: auto;
   text-align: left;
   max-height: 20em;
-  max-width: 80%;
+  max-width: 100%;
   border: 1px solid #<?=BGLIGHT; ?>;
   background-color: #<?=BGVERYLIGHT; ?>;
 }
@@ -1010,7 +1010,7 @@ div#copyright {
   margin-top: -1.2em;
   float: right;
 }
-@media all and (max-width: 40em;) {
+@media all and (max-width: 40em) {
   div#copyright {
     margin-top: 0;
     float: none;
