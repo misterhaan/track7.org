@@ -19,7 +19,7 @@
         <tr><th>sata1</th><td>western digital caviar black 1 TB wd1001fals</td></tr>
         <tr><th>sata2</th><td>western digital caviar 400 GB wd4000aaks</td></tr>
         <tr><th>sata3</th><td>lite-on dvd-rom dh-16d2s-04</td></tr>
-        <tr><th>operating system</th><td>fedora 12 64-bit</td></tr>
+        <tr><th>operating system</th><td>fedora 14 64-bit</td></tr>
       </table>
 
 <?
