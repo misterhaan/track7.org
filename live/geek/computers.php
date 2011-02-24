@@ -40,7 +40,7 @@
         <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
         <tr><th>operating system</th><td>ubuntu 10.10 maverick meerkat 64-bit<br />microsoft windows 7 64-bit</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
-        <tr><th>mouse</th><td>logitech mx revolution<br />logitech cordless optical</td></tr>
+        <tr><th>mouse</th><td>logitech g500<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>21.5″ asus vh226h</td></tr>
         <tr><th>scanner</th><td>canon canoscan lide 100</td></tr>
         <tr><th>joystick</th><td>logitech extreme 3d pro<br />logitech wingman rumblepad</td></tr>
