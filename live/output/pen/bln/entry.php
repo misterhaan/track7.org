@@ -20,7 +20,7 @@
       } elseif($user->GodMode && isset($_GET['edit'])) {
         $frm = GetEntryForm($entry);
         if($frm->CheckInput(true)) {
-          $update = 'update bln set name=\'' . auFile::NiceName($_POST['name']) . '\', title=\'' . addslashes(htmlspecialchars($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', tags=\'' . addslashes(htmlspecialchars($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', post=\'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\' where name=\'' . $entry->name . '\'';
+          $update = 'update bln set name=\'' . auFile::NiceName($_POST['name']) . '\', title=\'' . addslashes(htmlspecialchars($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', tags=\'' . addslashes(htmlspecialchars($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', post=\'' . addslashes(auText::BB2HTML($_POST['post'], true, false)) . '\' where name=\'' . $entry->name . '\'';
           if(false !== $db->Change($update, 'error updating entry')) {
             if($entry->status == 'published') {
               $oldtags = explode(',', $entry->tags);
