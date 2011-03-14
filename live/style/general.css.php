@@ -423,6 +423,9 @@ label[title] {
 input[type="text"],
 input[type="password"],
 input[type="file"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
 textarea,
 select {
   font-family: dejavu sans, bitstream vera sans, corbel, verdana, arial, sans-serif;
@@ -439,12 +442,19 @@ textarea {
   input[type="text"],
   input[type="password"],
   input[type="file"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
   select {
     width: 100%;
   }
 }
 input[type="text"]:focus,
 input[type="password"]:focus,
+input[type="file"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
 textarea:focus,
 select:focus {
   border-color: #<?=BGDARK; ?>;
@@ -465,7 +475,9 @@ input[type="button"] {
   border-radius: .5em;
 }
 input[type="submit"]:hover,
-input[type="button"]:hover {
+input[type="button"]:hover,
+input[type="submit"]:focus,
+input[type="button"]:focus {
   cursor: pointer;
   border-color: #000000;
   background-color: #<?=LINKDARK; ?>;
@@ -580,8 +592,9 @@ table.post p.signature {
   margin: .625em 1.25em;
   border-top: 1px solid #<?=BGLIGHT; ?>;
   padding: .15em .5em 0;
-  max-height: 3.5em;
-  overflow: auto;
+  line-height: 1em;
+  max-height: 3em;
+  overflow: hidden;
 }
 table.post div.foot {
   font-size: .8em;

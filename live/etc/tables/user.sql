@@ -63,6 +63,7 @@ create table usercontact (
   icq varchar(10),
   aim varchar(32),
   steam varchar(32),
+  twitter varchar(16),
   flags tinyint unsigned not null default 0
 );
 
