@@ -29,9 +29,7 @@
   $page->Start('user list', 'track7 users');
 ?>
       <p>
-        click a username to view the user's profile, which (as you may expect)
-        has more information about the user, including ways (at least one) to
-        contact them.
+        users’ names are linked to their profiles.
       </p>
 <?
   if(!isset($_GET['showall'])) {
@@ -51,12 +49,12 @@
   if($us = $db->GetSplit($us, 20, 0, '', '', 'error reading user information', 'there are currently no registered users')) {
 ?>
       <table class="text" cellspacing="0">
-        <thead class="minor"><tr><th>user</th><th>status</th><th>frequency</th><th>last login</th><th>registered</th><th>fans</th><th>posts</th><th>comments</th></tr></thead>
+        <thead class="minor"><tr><th>user</th><th>on?</th><th>frequency</th><th>last login</th><th>registered</th><th>fans</th><th>posts</th><th>comments</th></tr></thead>
         <tbody>
 <?
     while($u = $us->NextRecord()) {
 ?>
-          <tr><td><a href="<?=$u->login; ?>/" title="view <?=$u->login; ?>'s profile"><?=$u->login; ?></a></td><td><?=$u->pageload > time() -900 ? 'online' : 'offline'; ?></td><td><?=$u->rank; ?></td><td><?=($u->lastlogin == null ? '' : auText::HowLongAgo($u->lastlogin) . ' ago'); ?></td><td><?=($u->since == null ? '' : auText::SmartTime($u->since, $user)); ?></td><td class="number"><?=$u->fans; ?></td><td class="number"><?=$u->posts; ?></td><td class="number"><?=$u->comments; ?></td></tr>
+          <tr><td><a href="<?=$u->login; ?>/" title="view <?=$u->login; ?>'s profile"><?=$u->login; ?></a></td><td><?=onlineIcon($u->pageload); ?></td><td><?=$u->rank; ?></td><td><?=($u->lastlogin == null ? '' : auText::HowLongAgo($u->lastlogin) . ' ago'); ?></td><td><?=($u->since == null ? '' : auText::SmartTime($u->since, $user)); ?></td><td class="number"><?=$u->fans; ?></td><td class="number"><?=$u->posts; ?></td><td class="number"><?=$u->comments; ?></td></tr>
 <?
     }
 ?>
@@ -67,4 +65,9 @@
     $page->SplitLinks();
   }
   $page->End();
+
+  function onlineIcon($pageload) {
+    $on = $pageload > time() -900;
+    return '<img src="/images/' . ($on ? 'online' : 'offline') . '.png" alt='. ($on ? 'online' : 'offline') . ' title="' . ($on ? 'was here in the past 15 minutes' : 'hasn’t been here in the past 15 minutes') . '">';
+  }
 ?>

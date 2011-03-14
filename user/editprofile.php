@@ -54,7 +54,7 @@
                 $newavatar = 'avatar=\'' . $newavatar . '\', ';
               }
             }
-          if(false !== $db->Change('update userprofiles set ' . $newavatar . 'signature=\'' . addslashes(auText::BB2HTML(trim($_POST['signature']))) . '\', location=\'' . addslashes(htmlspecialchars($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', geekcode=\'' . addslashes(auText::EOL2br($_POST['geekcode'])) . '\', hackerkey=\'' . addslashes(htmlspecialchars($_POST['hackerkey'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error saving profile'))
+          if(false !== $db->Change('update userprofiles set ' . $newavatar . 'signature=\'' . addslashes(str_replace('</p><p>', '<br /><br />', auText::BB2HTML(trim($_POST['signature'])))) . '\', location=\'' . addslashes(htmlspecialchars($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', geekcode=\'' . addslashes(auText::EOL2br($_POST['geekcode'])) . '\', hackerkey=\'' . addslashes(htmlspecialchars($_POST['hackerkey'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error saving profile'))
             $page->Info('profile successfully updated');
         }
         break;
@@ -74,12 +74,12 @@
         }
         break;
       case 'contact':
-        $contact = 'select flags, website, jabber, icq, aim, steam, email from usercontact where uid=' . $u->uid;
+        $contact = 'select flags, website, jabber, icq, aim, steam, twitter, spore, email from usercontact where uid=' . $u->uid;
         $contact = $db->GetRecord($contact, 'error looking up contact information', 'contact information not found');
         if($_POST['submit'] == 'update') {
           if(strlen($_POST['website'] = trim($_POST['website'])) > 0 && strpos($_POST['website'], '://') === false)
             $_POST['website'] = 'http://' . $_POST['website'];
-          if(false !== $db->Change('update usercontact set flags=flags' . ($_POST['showemail'] ? '|' . _FLAG_USERCONTACT_SHOWEMAIL : '&' . (_FLAG_USERCONTACT ^ _FLAG_USERCONTACT_SHOWEMAIL)) . ', website=\'' . addslashes(htmlspecialchars($_POST['website'])) . '\', jabber=\'' . addslashes(htmlspecialchars(trim($_POST['jabber']))) . '\', icq=\'' . addslashes(htmlspecialchars(trim($_POST['icq']))) . '\', aim=\'' . addslashes(htmlspecialchars(trim($_POST['aim']))) . '\', steam=\'' . addslashes(htmlspecialchars($_POST['steam'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error updating contact information'))
+          if(false !== $db->Change('update usercontact set flags=flags' . ($_POST['showemail'] ? '|' . _FLAG_USERCONTACT_SHOWEMAIL : '&' . (_FLAG_USERCONTACT ^ _FLAG_USERCONTACT_SHOWEMAIL)) . ', website=\'' . addslashes(htmlspecialchars($_POST['website'])) . '\', jabber=\'' . addslashes(htmlspecialchars(trim($_POST['jabber']))) . '\', icq=\'' . addslashes(htmlspecialchars(trim($_POST['icq']))) . '\', aim=\'' . addslashes(htmlspecialchars(trim($_POST['aim']))) . '\', steam=\'' . addslashes(htmlspecialchars($_POST['steam'], ENT_COMPAT, _CHARSET)) . '\', twitter=\'' . addslashes(htmlspecialchars($_POST['twitter'], ENT_COMPAT, _CHARSET)) . '\', spore=\'' . addslashes(htmlspecialchars($_POST['spore'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error updating contact information'))
             $page->Info('contact information successfully updated');
         }
         break;
@@ -154,13 +154,15 @@
         $prof->Add(new auFormCheckbox('fullwidth', 'width', 'force pages to use the full width of the browser window', $u->style && $u->style % 2 == 0));
         break;
       case 'contact':
-        $prof->AddHTML('e-mail address', $contact->email . ' (<a href="' . $querystring . 'tab=password">change</a>)');
-        $prof->AddField('showemail', 'show e-mail', 'show e-mail address on track7 (beware spambots)', false, +$contact->flags & _FLAG_USERCONTACT_SHOWEMAIL, _AU_FORM_FIELD_CHECKBOX);
-        $prof->AddField('website', 'website url', 'enter the url of your personal website if you have one', false, $contact->website, _AU_FORM_FIELD_NORMAL, 40, 55);
-        $prof->AddField('jabber', 'jabber id', 'enter your jabber id if you use jabber', false, $contact->jabber, _AU_FORM_FIELD_NORMAL, 30, 64);
-        $prof->AddField('icq', 'icq uin', 'enter your icq number if you use icq', false, $contact->icq, _AU_FORM_FIELD_INTEGER, 10, 10);
-        $prof->AddField('aim', 'aim screen name', 'enter your screen name if you use aim', false, $contact->aim, _AU_FORM_FIELD_NORMAL, 10, 32);
-        $prof->AddField('steam', 'steam id', 'enter your steam id if you use steam', false, $contact->steam, _AU_FORM_FIELD_NORMAL, 10, 32);
+        $prof->Add(new auFormHTML('e-mail address', $contact->email . ' (<a href="' . $querystring . 'tab=password">change</a>)'));
+        $prof->Add(new auFormCheckbox('showemail', 'show e-mail', 'show e-mail address on track7 (beware spambots)', false, +$contact->flags & _FLAG_USERCONTACT_SHOWEMAIL));
+        $prof->Add(new auFormString('website', 'website url', 'enter the url of your personal website if you have one', false, $contact->website, 40, 55, _AU_FORM_STRING_URL));
+        $prof->Add(new auFormString('jabber', 'jabber id', 'enter your jabber id if you use jabber', false, $contact->jabber, 30, 64, _AU_FORM_STRING_EMAIL));
+        $prof->Add(new auFormInteger('icq', 'icq uin', 'enter your icq number if you use icq', false, $contact->icq, 10, 10));
+        $prof->Add(new auFormString('aim', 'aim screen name', 'enter your screen name if you use aim', false, $contact->aim, 10, 32));
+        $prof->Add(new auFormString('twitter', 'twitter username', 'enter your username if you use twitter', false, $contact->twitter, 10, 16));
+        $prof->Add(new auFormString('steam', 'steam id', 'enter your steam id if you use steam', false, $contact->steam, 10, 32));
+        $prof->Add(new auFormString('spore', 'spore screen name', 'enter your screen name if you play spore', false, $contact->spore, 10, 32));
         break;
       case 'notification':
         $prof->AddHTML('e-mail address', $contact->email . ' (<a href="' . $querystring . 'tab=password">change</a>)');
