@@ -1,0 +1,11 @@
+/******************************************************************************\
+ * track7 style sheet by misterhaan of http://www.track7.org/                 *
+ *                                                                            *
+ * -> layout style for bln entries                                            *
+\******************************************************************************/
+
+h1 span.sub {
+  font-style: italic;
+  font-size: .5em;
+  margin: .1em 0 .2em;
+}
