@@ -18,56 +18,43 @@
       <div id="features">
         <h2>features</h2>
         <dl>
-          <dt><a href="/analogu/"><img class="icon" src="/analogu/favicon.png" alt="" />the analog underground</a></dt>
-          <dd>
-            download free software with source code.
-          </dd>
-          <dt><a href="/output/pen/"><img class="icon" src="/output/pen/favicon.png" alt="" />pen vs. sword</a></dt>
-          <dd>
-            read short stories and theories.
-          </dd>
-          <dt><a href="/output/pen/bln/"><img class="icon" src="/output/pen/favicon.png" alt="" />bln (natural blog)</a></dt>
+          <dt><a href="/bln/"><img class="icon" src="/bln/favicon.png" alt="" />bln (natural blog)</a></dt>
           <dd>
             find out what i think.
           </dd>
-          <dt><a href="/output/lego/"><img class="icon" src="/output/lego/favicon.png" alt="" />lego models</a></dt>
-          <dd>
-            download instructions to build lego models.
-          </dd>
-          <dt><a href="/output/gfx/"><img class="icon" src="/output/favicon.png" alt="" />graphics</a></dt>
-          <dd>
-            see pencil sketches and digital artwork.
-          </dd>
-          <dt><a href="/output/gfx/album/"><img class="icon" src="/output/gfx/album/favicon.png" alt="" />photo album</a></dt>
+          <dt><a href="/album/"><img class="icon" src="/album/favicon.png" alt="" />photo album</a></dt>
           <dd>
             view my collection of photos.
           </dd>
-          <dt><a href="/geek/guides/"><img class="icon" src="/geek/favicon.png" alt="" />guides</a></dt>
+          <dt><a href="/guides/"><img class="icon" src="/guides/favicon.png" alt="" />guides</a></dt>
           <dd>
             learn something.
           </dd>
-          <dt><a href="/geek/discgolf/"><img class="icon" src="/geek/favicon.png" alt="" />disc golf</a></dt>
+          <dt><a href="/discgolf/"><img class="icon" src="/discgolf/favicon.png" alt="" />disc golf</a></dt>
           <dd>
             track disc golf scores.
+          </dd>
+          <dt><a href="/art/lego/"><img class="icon" src="/art/lego/favicon.png" alt="" />lego models</a></dt>
+          <dd>
+            download instructions to build lego models.
+          </dd>
+          <dt><a href="/art/"><img class="icon" src="/art/favicon.png" alt="" />visual art</a></dt>
+          <dd>
+            see pencil sketches and digital artwork.
+          </dd>
+          <dt><a href="/pen/"><img class="icon" src="/pen/favicon.png" alt="" />pen vs. sword</a></dt>
+          <dd>
+            read short stories and theories.
+          </dd>
+          <dt><a href="/analogu/"><img class="icon" src="/analogu/favicon.png" alt="" />the analog underground</a></dt>
+          <dd>
+            download free software with source code.
           </dd>
           <dt><a href="/hb/"><img class="icon" src="/hb/favicon.png" alt="" />forums</a></dt>
           <dd>
             speak your mind and see what others think.
           </dd>
         </dl>
-      </div>
-
-      <div id="what">
-        <h2>what’s all this then?</h2>
-        <p>
-          welcome to track7, the personal website of a guy who calls himself
-          <a href="/user/misterhaan/">misterhaan</a> on the internet.&nbsp; if
-          you’ve been here before, keep reading to see what’s been happening
-          around here lately.&nbsp; if this is your first time to track7, have a
-          look at the features box and check out something that sounds
-          interesting.&nbsp; if you still don’t know what’s going on, you can
-          read more about <a href="what.php">what this site’s all about</a>.
-        </p>
       </div>
 
 <?
@@ -230,15 +217,15 @@
     $entry->post = substr($entry->post, 0, $p + 4);
     $tags = explode(',', $entry->tags);
     for($t = 0; $t < count($tags); $t++)
-      $tags[$t] = '<a href="/output/pen/bln/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
+      $tags[$t] = '<a href="/bln/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
     $tags = implode(', ', $tags);
 ?>
     <div class="feed entry">
       <div class="typedate" title="bln entry at <?=strtolower($user->tzdate(LONGDATEFMT, $entry->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($entry->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/output/pen/bln/<?=$entry->name; ?>"><?=$entry->title; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/entries.rss" class="feed" title="track7 bln entries"><img src="/style/feed.png" alt="rss" /></a></h2>
+      <h2 class="feed"><a href="/bln/<?=$entry->name; ?>"><?=$entry->title; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/entries.rss" class="feed" title="track7 bln entries"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p class="tags"><?=$tags; ?></p>
       <?=$entry->post; ?>
-      <p class="readmore">» <a href="/output/pen/bln/<?=$entry->id; ?>">read more...</a></p>
+      <p class="readmore">» <a href="/bln/<?=$entry->id; ?>">read more...</a></p>
     </div>
 
 <?
@@ -253,14 +240,14 @@
   function showPhoto($photo, $user) {
     $tags = explode(',', $photo->tags);
     for($t = 0; $t < count($tags); $t++)
-      $tags[$t] = '<a href="/output/gfx/album/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
+      $tags[$t] = '<a href="/album/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
     $tags = implode(', ', $tags);
 ?>
     <div class="feed photo">
       <div class="typedate" title="photo at <?=strtolower($user->tzdate(LONGDATEFMT, $photo->added)); ?>"><div class="date"><?=strtolower(auText::SmartTime($photo->added, $user)); ?></div></div>
-      <h2 class="feed"><a href="/output/gfx/album/photo=<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/photos.rss" class="feed" title="track7 album photos"><img src="/style/feed.png" alt="rss" /></a></h2>
+      <h2 class="feed"><a href="/album/photo=<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/photos.rss" class="feed" title="track7 album photos"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p class="tags"><?=$tags; ?></p>
-      <p><a class="img" href="/output/gfx/album/photo=<?=$photo->id; ?>"><img class="photothumb" src="/output/gfx/album/photos/<?=$photo->id; ?>.jpg" alt="" /></a></p>
+      <p><a class="img" href="/album/photo=<?=$photo->id; ?>"><img class="photothumb" src="/album/photos/<?=$photo->id; ?>.jpg" alt="" /></a></p>
       <p><?=$photo->description; ?></p>
     </div>
 
@@ -277,7 +264,7 @@
 ?>
     <div class="feed guide">
       <div class="typedate" title="guide at <?=strtolower($user->tzdate(LONGDATEFMT, $guide->dateadded)); ?>"><div class="date"><?=strtolower(auText::SmartTime($guide->dateadded, $user)); ?></div></div>
-      <h2 class="feed"><a href="/geek/guides/<?=$guide->id; ?>/"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a><a href="/feeds/guides.rss" class="feed" title="track7 guides"><img src="/style/feed.png" alt="rss" /></a></h2>
+      <h2 class="feed"><a href="/guides/<?=$guide->id; ?>/"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a><a href="/feeds/guides.rss" class="feed" title="track7 guides"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p><?=$guide->description; ?></p>
     </div>
 
@@ -309,19 +296,19 @@
 ?>
     <div class="feed round">
       <div class="typedate" title="disc golf round at <?=strtolower($user->tzdate(LONGDATEFMT, $round->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($round->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/geek/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <?=$round->uid ? '<a href="/user/' . $round->login . '/">' . $round->login . '</a>' : $round->player; ?><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds"><img src="/style/feed.png" alt="rss" /></a></h2>
+      <h2 class="feed"><a href="/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <?=$round->uid ? '<a href="/user/' . $round->login . '/">' . $round->login . '</a>' : $round->player; ?><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p>
         on <?=strtolower($user->tzdate('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
 <?
     if($round->uid) {
 ?>
-        <a href="/geek/discgolf/players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a>
+        <a href="/discgolf/players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a>
 <?
     } else
       echo $round->player;
 ?>
         played a <?=$round->roundtype; ?> round <?=$round->tees ? 'from the ' . $round->tees . ' tees ' : ''; ?>
-        at <a href="/geek/discgolf/courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>,
+        at <a href="/discgolf/courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>,
         scoring <?=$round->score; ?>.
       </p>
       <p><?=$round->comments; ?></p>
