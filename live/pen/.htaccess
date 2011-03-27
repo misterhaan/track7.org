@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteOptions inherit
+RewriteRule ^[^/]+/(.+)\.php$ story.php?id=$1
+RewriteRule ^(.*)\.html$ story.php?id=$1
