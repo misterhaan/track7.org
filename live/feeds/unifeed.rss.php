@@ -1,9 +1,8 @@
 <?
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auFeed.php';
   define('MAXITEMS', 15);
 
-  $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, page comments, bln entries, album photos, art, and disc golf rounds unifeed', 'copyright 2008 - 2010 track7');
+  $rss = new auFeed('track7', '/', 'track7 site updates, forum posts, page comments, bln entries, album photos, art, and disc golf rounds unifeed', 'copyright 2008 - 2011 track7');
 
   $updates = 'select id, instant, `change` from updates order by instant desc';
   if($updates = $db->GetLimit($updates, 0, MAXITEMS, '', ''))
@@ -149,21 +148,21 @@
     $entry->post = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $entry->post);
     $entry->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $entry->title);
     $tags = '<p>tags:&nbsp; ' . str_replace(',', ', ', $entry->tags) . '</p>';
-    $rss->AddItem($tags . $entry->post . '<p>» <a href="/output/pen/bln/' . $entry->id . '">read more...</a></p>', '[bln] ' . $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name, $entry->instant, '/output/pen/bln/' . $entry->name, true);
+    $rss->AddItem($tags . $entry->post . '<p>» <a href="/bln/' . $entry->id . '">read more...</a></p>', '[bln] ' . $entry->title, 'http://' . $_SERVER['HTTP_HOST'] . '/bln/' . $entry->name, $entry->instant, '/bln/' . $entry->name, true);
   }
 
   function AddPhoto($rss, $photo) {
     $photo->caption = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $photo->caption);
     $tags = '<p>tags:&nbsp; ' . str_replace(',', ', ', $photo->tags) . '</p>';
     if($photo->youtubeid)
-      $rss->AddItem($tags . '<p><a href="http://www.youtube.com/watch?v=' . $photo->youtubeid . '">watch this video on youtube</a></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo=' . $photo->id, $photo->added, '/output/gfx/album/photo=' . $photo->id, true);
+      $rss->AddItem($tags . '<p><a href="http://www.youtube.com/watch?v=' . $photo->youtubeid . '">watch this video on youtube</a></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/album/photo=' . $photo->id, $photo->added, '/album/photo=' . $photo->id, true);
     else
-      $rss->AddItem($tags . '<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/output/gfx/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/output/gfx/album/photo=' . $photo->id, $photo->added, '/output/gfx/album/photo=' . $photo->id, true);
+      $rss->AddItem($tags . '<p><img src="http://' . $_SERVER['HTTP_HOST'] . '/album/photos/' . $photo->id . '.jpeg" alt="" /></p><p>' . $photo->description . '</p>', '[photo] ' . $photo->caption, '/album/photo=' . $photo->id, $photo->added, '/album/photo=' . $photo->id, true);
   }
 
   function AddGuide($rss, $guide) {
     $guide->title = str_replace(array('&lsquo;', '&rsquo;', '&ldquo;', '&rdquo;', '&mdash;'), array('\'', '\'', '"', '"', '--'), $guide->title);
-    $rss->AddItem('<p>' . $guide->description . '</p>', '[guide] ' . $guide->title, '/geek/guides/' . $guide->id . '/', $guide->dateadded, '/geek/guides/' . $guide->id . '/', true);
+    $rss->AddItem('<p>' . $guide->description . '</p>', '[guide] ' . $guide->title, '/guides/' . $guide->id . '/', $guide->dateadded, '/guides/' . $guide->id . '/', true);
   }
 
   function AddArt($rss, $art) {
@@ -173,6 +172,6 @@
   }
 
   function AddRound($rss, $round) {
-    $rss->AddItem('<p>' . ($round->uid ? '<a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a>' : $round->player) . ' played a ' . $round->roundtype . ' round ' . ($round->tees ? 'from the ' . $round->tees . ' tees ' : '') . 'at <a href="http://' . $_SERVER['HTTP_HOST'] . '/geek/discgolf/courses.php?id=' . $round->courseid . '" title="more information on this course">' . $round->name . '</a>, scoring ' . $round->score . '.</p>', '[round] ' . $round->name . ' round - ' . ($round->uid ? $round->login : $round->player), '/geek/discgolf/rounds.php?id=' . $round->id, $round->instant, '/geek/discgolf/rounds.php?id=' . $round->id, true);
+    $rss->AddItem('<p>' . ($round->uid ? '<a href="http://' . $_SERVER['HTTP_HOST'] . '/discgolf/players.php?p=' . $round->login . '" title="more information on this player">' . $round->login . '</a>' : $round->player) . ' played a ' . $round->roundtype . ' round ' . ($round->tees ? 'from the ' . $round->tees . ' tees ' : '') . 'at <a href="http://' . $_SERVER['HTTP_HOST'] . '/discgolf/courses.php?id=' . $round->courseid . '" title="more information on this course">' . $round->name . '</a>, scoring ' . $round->score . '.</p>', '[round] ' . $round->name . ' round - ' . ($round->uid ? $round->login : $round->player), '/discgolf/rounds.php?id=' . $round->id, $round->instant, '/discgolf/rounds.php?id=' . $round->id, true);
   }
 ?>
