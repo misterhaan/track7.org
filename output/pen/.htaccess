@@ -1,6 +1,0 @@
-RedirectPermanent /output/pen/ready.php http://www.track7.org/output/pen/theory/ready.php
-
-RewriteEngine on
-RewriteOptions inherit
-RewriteRule ^[^/]+/(.+)\.php$ story.php?id=$1
-RewriteRule ^(.*)\.html$ story.php?id=$1
