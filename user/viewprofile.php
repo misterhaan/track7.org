@@ -162,9 +162,9 @@
         if($stats->comments)
           echo '          <li>#' . getRank($db, 'comments', $stats->comments) . ' in comments with <a href="/comments.php?user=' . $login . '">' . $stats->comments . "</a></li>\n";
         if($stats->rounds)
-          echo '          <li>#' . getRank($db, 'rounds', $stats->rounds) . ' in rounds with <a href="/geek/discgolf/rounds.php?player=' . $login . '">' . $stats->rounds . "</a></li>\n";
+          echo '          <li>#' . getRank($db, 'rounds', $stats->rounds) . ' in rounds with <a href="/discgolf/rounds.php?player=' . $login . '">' . $stats->rounds . "</a></li>\n";
         if($stats->discs)
-          echo '          <li>#' . getRank($db, 'discs', $stats->discs) . ' in discs with <a href="/geek/discgolf/caddy.php?player=' . $login . '">' . $stats->discs . "</a></li>\n";
+          echo '          <li>#' . getRank($db, 'discs', $stats->discs) . ' in discs with <a href="/discgolf/caddy.php?player=' . $login . '">' . $stats->discs . "</a></li>\n";
         if($stats->rpgchars)
           echo '          <li>#' . getRank($db, 'rpgchars', $stats->rpgchars) . ' in characters with <a href="/geek/rpg/?player=' . $login . '">' . $stats->rpgchars . "</a></li>\n";
 ?>
@@ -200,7 +200,7 @@
             echo '          <li class=post>posted <a href="/hb/thread' . $post->thread . '/#p' . $post->id . '">' . $post->subject . '</a> ' . auText::HowLongAgo($post->instant) . " ago</li>\n";
             $post = $posts->NextRecord();
           } elseif($round && (!$comment || $comment->instant < $round->instant) && (!$post || $post->instant < $round->instant)) {
-            echo '          <li class=round>scored <a href="/geek/discgolf/rounds.php?id=' . $round->id . '">' . $round->score . '</a> at <a href="/geek/discgolf/courses.php?id=' . $round->courseid . '">' . $round->name . '</a> ' . auText::HowLongAgo($round->instant) . " ago</li>\n";
+            echo '          <li class=round>scored <a href="/discgolf/rounds.php?id=' . $round->id . '">' . $round->score . '</a> at <a href="/discgolf/courses.php?id=' . $round->courseid . '">' . $round->name . '</a> ' . auText::HowLongAgo($round->instant) . " ago</li>\n";
             $round = $rounds->NextRecord();
           }
           $activity++;
