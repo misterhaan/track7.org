@@ -1,0 +1,24 @@
+text:      #555;
+disabled:  #bbb;
+
+links (blue)
+dark:      #048;
+normal:    #37a;
+medium:    #ace;
+light:     #def;
+
+headings (green)
+dark:      #6a5;
+medium:    #bda;
+light:     #eef7dd;
+
+background (brown)
+dark:      #965;
+medium:    #b98;
+light:     #f7eedd;
+v light:   #fffbf5;
+
+error (red?)
+dark:      #cc4c3c;
+medium:    #fa7;
+light:     #feb;
