@@ -1,6 +1,0 @@
-RewriteEngine on
-RewriteOptions inherit
-RewriteRule ^tag=(.+)$ index.php?tag=$1
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule .* - [L]
-RewriteRule ^(.+)$ entry.php?name=$1
