@@ -1,2 +1,0 @@
-RewriteEngine on
-RewriteRule ^(.+)\.rtf$ $1.rtf.php
