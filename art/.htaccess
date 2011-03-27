@@ -1,0 +1,6 @@
+RedirectPermanent pen/ http://www.track7.org/pen/
+RedirectPermanent lego.php http://www.track7.org/art/lego/
+
+RewriteEngine On
+RewriteOptions inherit
+RewriteRule ^cd/([a-z]+)\.php$ compilations.php?cd=$1
