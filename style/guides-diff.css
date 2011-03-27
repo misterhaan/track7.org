@@ -1,0 +1,14 @@
+/******************************************************************************\
+ * track7 style sheet by misterhaan of http://www.track7.org/                 *
+ *                                                                            *
+ * -> layout style for guide diff pages                                       *
+\******************************************************************************/
+
+del {
+  background-color: #faa;
+}
+
+ins {
+  text-decoration: none;
+  background-color: #afa;
+}

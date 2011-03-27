@@ -1,0 +1,10 @@
+/******************************************************************************\
+ * track7 style sheet by misterhaan of http://www.track7.org/                 *
+ *                                                                            *
+ * -> layout style for pen vs. sword index page                               *
+\******************************************************************************/
+
+dd ul {
+  margin-left: 0;
+  padding-left: 1em;
+}
