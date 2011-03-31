@@ -12,7 +12,7 @@
           if(false !== $db->Change($update, 'error publishing entry')) {
             tweetEntry($entry);
             $db->Put('insert into taginfo (type, name, count) values (\'entries\', \'' . str_replace(',', '\', 1), (\'entries\', \'', $entry->tags) . '\', 1) on duplicate key update count=count+1');
-            header('Location: http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . $entry->name);
+            header('Location: http://' . $_SERVER['HTTP_HOST'] . '/bln/' . $entry->name);
           }
         }
         $page->Start('publish ' . $entry->title . '?');
@@ -34,7 +34,7 @@
               if(count($newtags))
                 $db->Put('insert into taginfo (type, name, count) values (\'entries\', \'' . implode('\', 1), (\'entries\', \'', $newtags) . '\', 1) on duplicate key update count=count+1');
             }
-            header('Location: http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . auFile::NiceName($_POST['name']));
+            header('Location: http://' . $_SERVER['HTTP_HOST'] . '/bln/' . auFile::NiceName($_POST['name']));
             die;
           }
         }
@@ -50,12 +50,12 @@
           $page->Start($entry->title . ' - bln', $entry->title, 'posted in ' . TagLinks($entry->tags));
         if($user->GodMode) {
 ?>
-      <ul>
-        <li><a href="<?=$_GET['name']; ?>&amp;edit">edit this entry</a></li>
+      <ul class=actions>
+        <li class=edit><a href="<?=$_GET['name']; ?>&amp;edit">edit this entry</a></li>
 <?
           if($entry->status == 'draft' && !isset($_GET['publish'])) {
 ?>
-        <li><a href="<?=$_GET['name']; ?>&amp;publish">publish this entry</a></li>
+        <li class=publish><a href="<?=$_GET['name']; ?>&amp;publish">publish this entry</a></li>
 <?
           }
 ?>
@@ -76,7 +76,7 @@
     if($frm->CheckInput(true)) {
       $ins = 'insert into bln (name, status, instant, tags, title, post) values (\'' . auFile::NiceName($_POST['name']) . '\', \'draft\', ' . time() . ', \'' . addslashes(htmlspecialchars($_POST['tags'])) . '\', \'' . addslashes(htmlspecialchars($_POST['title'])) . '\', \'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\')';
       if(false !== $db->Put($ins, 'error saving new entry')) {
-        header('Location: http://' . $_SERVER['HTTP_HOST'] . '/output/pen/bln/' . auFile::NiceName($_POST['name']));
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . '/bln/' . auFile::NiceName($_POST['name']));
         die;
       }
     }
@@ -106,7 +106,7 @@
   }
 
   function tweetEntry($entry) {
-    $url = ': ' . auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . '/output/pen/bln/' . $entry->name);
+    $url = ': ' . auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . '/bln/' . $entry->name);
     $len = 130 - strlen($url);  // start with 130 because 'bln entry ' is 10 and twitter takes 140
     $title = $entry->title;
     if(mb_strlen($title, _CHARSET) > $len)

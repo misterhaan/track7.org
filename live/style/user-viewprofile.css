@@ -4,34 +4,6 @@
  * -> layout style for user profile view page                                 *
 \******************************************************************************/
 
-ul.actions {
-  background-color: #f7eedd;
-  padding: .1em 0;
-  margin: 1em 1.5em;
-  line-height: 1.75em;
-  -moz-border-radius: .5em;
-  border-radius: .5em;
-}
-ul.actions li {
-  padding: 0 .5em;
-  display: inline;
-  list-style-type: none;
-}
-ul.actions li a,
-ul.actions li em {
-  padding-left: 20px;
-  background-position: left;
-  background-repeat: no-repeat;
-}
-ul.actions li.edit a {
-  background-image: url(/style/edit.png);
-}
-ul.actions li.del {
-  float: right;
-}
-ul.actions li.del a {
-  background-image: url(/style/del.png);
-}
 ul.actions li.pm a {
   background-image: url(/style/pm.png);
 }

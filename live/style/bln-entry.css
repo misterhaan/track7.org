@@ -9,3 +9,7 @@ h1 span.sub {
   font-size: .5em;
   margin: .1em 0 .2em;
 }
+
+ul.actions li.publish a {
+  background-image: url(/images/action/publish.png);
+}
