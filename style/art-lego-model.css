@@ -1,0 +1,42 @@
+/******************************************************************************\
+ * track7 style sheet by misterhaan of http://www.track7.org/                 *
+ *                                                                            *
+ * -> layout style for lego model pages                                       *
+\******************************************************************************/
+
+img.render {
+  width: 600px;
+  max-width: 90%;
+  display: block;
+  margin: 0 auto;
+}
+ul.facts {
+  text-align: center;
+  max-width: 90%;
+  margin: 0 auto;
+}
+ul.facts li {
+  list-style-type: none;
+  display: inline;
+  background: left no-repeat;
+  margin-left: .5em;
+  padding-left: 20px;
+}
+ul.facts li.added {
+  background-image: url(/images/lego/added.png);
+}
+ul.facts li.pieces {
+  background-image: url(/images/lego/pieces.png);
+}
+ul.facts li.mans {
+  background-image: url(/images/lego/mans.png);
+}
+
+a.award {
+  float: right;
+  margin: .5em 2em;
+  display: block;
+}
+div.rating {
+  clear: both;
+}
