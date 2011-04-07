@@ -16,6 +16,7 @@ RedirectPermanent /output/pen/bln/ http://www.track7.org/bln/
 RedirectPermanent /pen/bln/ http://www.track7.org/bln/
 RedirectPermanent /output/gfx/album/ http://www.track7.org/album/
 RedirectPermanent /output/album/ http://www.track7.org/album/
+RedirectPermanent /output/lego.php http://www.track7.org/art/lego/
 RedirectPermanent /geek/guides/ http://www.track7.org/guides/
 RedirectPermanent /geek/discgolf/ http://www.track7.org/discgolf/
 RedirectPermanent /output/pen/ http://www.track7.org/pen/
