@@ -11,7 +11,7 @@ addStartupFunction(enhanceScoreFields);
 function checkMobile() {
   document.mobile = document.getElementById("score0_0");
   if(document.mobile)
-    document.mobile = (document.mobile.nodeName == "select");  // if scores are select elements, we're on the mobile site
+    document.mobile = (document.mobile.nodeName.toLowerCase() == "select");  // if scores are select elements, we're on the mobile site
 }
 
 /**

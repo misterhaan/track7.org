@@ -38,7 +38,7 @@
         <tr><th>reader</th><td>rosewill multi card reader</td></tr>
         <tr><th>sata0</th><td>western digital velociraptor 150 GB wd1500hlfs</td></tr>
         <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
-        <tr><th>operating system</th><td>ubuntu 10.10 maverick meerkat 64-bit<br />microsoft windows 7 64-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 11.04 natty narwhal 64-bit<br />microsoft windows 7 sp1 64-bit</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech g500<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>21.5″ asus vh226h</td></tr>
@@ -63,7 +63,7 @@
         <tr><th>reader</th><td>sd card reader</td></tr>
         <tr><th>sata0</th><td>western digital siliconedge 128 GB ssc-d0128sc-2100</td></tr>
         <tr><th>sata1</th><td>matshita dvd-ram</td></tr>
-        <tr><th>operating system</th><td>ubuntu 10.10 maverick meerkat 32-bit<br />microsoft windows 7 32-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 11.04 natty narwhal 32-bit<br />microsoft windows 7 sp1 32-bit</td></tr>
         <tr><th>keyboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>mouse</th><td>logitech v450 wireless laser</td></tr>
         <tr><th>monitor</th><td>toshiba wide 14.1″</td></tr>
