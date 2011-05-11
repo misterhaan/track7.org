@@ -396,7 +396,7 @@ function enhanceScoreFields() {
 function updateScore() {
   if(this.nextSibling) {
     var oldvalue = +this.nextSibling.firstChild.data;
-    var newvalue = +(this.nodeName == "select" ? this.options[this.selectedIndex].value : this.value);
+    var newvalue = +(this.nodeName.toLowerCase() == "select" ? this.options[this.selectedIndex].value : this.value);
     this.nextSibling.replaceChild(document.createTextNode(newvalue), this.nextSibling.firstChild);
     // two .parentNodes for cell then row
     addScore(this.parentNode.parentNode.nine, this.parentNode.parentNode.total, newvalue - oldvalue);
@@ -435,7 +435,7 @@ function nextHole() {
     var c1 = c0 + 1;
     var nextRows = rows;
     if(c1 >= 9)
-      if(tbody.parentNode.nextSibling && tbody.parentNode.nextSibling.nodeName == "table") {
+      if(tbody.parentNode.nextSibling && tbody.parentNode.nextSibling.nodeName.toLowerCase() == "table") {
         nextRows = tbody.parentNode.nextSibling.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
         c1 = 0;
       }
