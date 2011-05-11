@@ -416,7 +416,12 @@
     for($h = $shole + 1; $h <= $ehole; $h++)
       $tbl .= '<th>' . $h . '</th>';
     if($multi = !$course || $course->holes > 9)
-      $tbl .= '<th>nine</th>';
+      if($shole == 0)
+        $tbl .= '<th>front</th>';
+      else if($shole == ($course ? $course->holes : 27) - 9)
+        $tbl .= '<th>back</th>';
+      else
+        $tbl .= '<th>mid</th>';
     if($last = $ehole >= ($course ? $course->holes : 27))
       $tbl .= '<th>total</th>';
     $tbl .= '</tr></thead><tbody><tr class="par"><th class="player">par</th>';
@@ -440,7 +445,7 @@
       if($mobile  && !$round)
         $tbl .= '<td><select ' . ($h == 0 ? 'id="score0_0" ' : '') . 'name="score[0][' . $h . ']">' . getScoreOptions(3) . '</select></td>';
       else
-        $tbl .= '<td><input ' . ($h == 0 ? 'id="score0_0" ' : '') . 'class="integer" type="text" name="score[0][' . $h . ']" size="1" maxlength="1" value="' . ($round ? $round->scorelist[$h] : 3) . '" /></td>';
+        $tbl .= '<td><input ' . ($h == 0 ? 'id="score0_0" ' : '') . 'class="integer" type="number" name="score[0][' . $h . ']" size="1" maxlength="1" value="' . ($round ? $round->scorelist[$h] : 3) . '" /></td>';
       $sum += $round->scorelist[$h];
     }
     if($multi)
