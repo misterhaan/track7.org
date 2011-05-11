@@ -287,7 +287,7 @@ function addPlayer() {
         } else {
           var score = document.createElement("input");
           score.className = "integer";
-          score.type = "text";
+          score.type = "number";
           score.name = "score[" + scoreset.extraPlayers + "][" + h + "]";
           score.size = 1;
           score.maxLength = 1;
