@@ -162,8 +162,13 @@ h2.feed a.feed img {
 div.feed p,
 div.feed samp,
 div.feed ul,
-div.feed ol {
+div.feed ol,
+div.feed cite,
+div.feed blockquote {
   margin: .5em 7.5em;
+}
+div.feed blockquote p {
+  margin: .5em 1em;
 }
 @media all and (max-width: 45em) {
   h2.feed a.feed {
@@ -172,7 +177,9 @@ div.feed ol {
   div.feed p,
   div.feed samp,
   div.feed ul,
-  div.feed ol {
+  div.feed ol,
+  div.feed cite,
+  div.feed blockquote {
     margin-left: 2em;
     margin-right: 2em;
   }
