@@ -7,3 +7,13 @@ create table photos (
   taken int,
   tags varchar(255), index(tags)
 );
+
+create table randomvisual (
+  photo varchar(30),
+  arttype enum(
+    'legos',
+    'art'
+  ),
+  art varchar(32)
+);
+insert into randomvisual (photo, arttype, art) values (null, null, null);
