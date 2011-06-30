@@ -91,6 +91,34 @@ div#features dd {
   padding-left: .5em;
 }
 
+div#randomvisual {
+  padding: 0 1em;
+}
+div#features.collapsed div#randomvisual {
+  display: none;
+}
+div#features div.img {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+@media all and (min-width: 400px) {
+  div#features div.img {
+    width: 49.99%;
+    float: left;
+  }
+}
+div#features div.img h3 {
+  border: none;
+  line-height: 1.2em;
+  margin: .5em 0 .25em;
+  color: #555;
+  padding: 0;
+}
+div#features div.img img {
+  display: block;
+  margin: 0 auto;
+}
+
 div.feed {
   clear: left;
   margin: 1.5em 0;

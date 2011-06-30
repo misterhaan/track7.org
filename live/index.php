@@ -54,7 +54,52 @@
           <dd>
             speak your mind and see what others think.
           </dd>
+<?
+  if($user->GodMode) {
+?>
+          <dt><a href="/tools/"><img class="icon" src="/favicon.png" alt="" />tools</a></dt>
+          <dd>
+            administer track7.
+          </dd>
+<?
+  }
+?>
         </dl>
+
+<?
+  // TODO:  get daily photo and weekly art
+  $rndvis = 'select r.photo, p.caption, r.arttype, r.art, a.type, a.name as aname, l.name as lname from randomvisual as r left join photos as p on p.id=r.photo left join art as a on a.id=r.art left join legos as l on l.id=r.art';
+  if($rndvis = $db->GetRecord($rndvis, 'error looking up random visuals', 'random visuals not defined')) {
+    if($rndvis->arttype == 'legos') {
+      $rndvis->arturl = '/art/lego/' . $rndvis->art;
+      $rndvis->thumb = $rndvis->arturl . '-thumb.png';
+      $rndvis->artname = $rndvis->lname;
+    } else {
+      $rndvis->arturl = '/art/' . $rndvis->type . '.php#' . $rndvis->art;
+      $rndvis->thumb = '/art/' . $rndvis->art . '-prev.png';
+      $rndvis->artname = $rndvis->aname;
+    }
+?>
+        <div id=randomvisual>
+          <div id=dailyphoto class=img>
+            <h3>photo of the day</h3>
+            <a href=/album/photo=<?=$rndvis->photo; ?> title="<?=$rndvis->caption; ?>">
+              <img src=/album/photos/<?=$rndvis->photo; ?>.jpg alt="">
+            </a>
+          </div>
+
+          <div id=weeklyart class=img>
+            <h3>art of the week</h3>
+            <a href="<?=$rndvis->arturl; ?>" title="<?=$rndvis->artname; ?>">
+              <img src=<?=$rndvis->thumb; ?> alt="">
+            </a>
+          </div>
+
+          <br class=clear />
+        </div>
+<?
+  }
+?>
       </div>
 
 <?
