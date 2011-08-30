@@ -28,7 +28,7 @@
         $f->AddHTML('posting as', 'anonymous (<a id="messageloginlink" href="/user/login.php">log in</a> or <a href="/user/register.php">register</a>)');
       if(!$thread || $post->number == 1)
         $f->AddField('title', 'thread title', 'enter a title for this thread', true, $thread->title, _AU_FORM_FIELD_NORMAL, 40, 255);
-      $f->AddField('subject', 'post subject', 'enter a subject for this post', false, $post ? $post->subject : ($quote ? HB::AddRe($quote->subject) : ($thread ? HB::AddRe($thread->title) : '')), _AU_FORM_FIELD_NORMAL, 40, 255);
+      $f->AddField('subject', 'post subject', 'enter a subject for this post', false, $post ? html_entity_decode($post->subject) : ($quote ? HB::AddRe($quote->subject) : ($thread ? HB::AddRe($thread->title) : '')), _AU_FORM_FIELD_NORMAL, 40, 255);
       if(!$thread || $post->number == 1) {
         $tags = 'select name from taginfo where type=\'threads\' order by name';
         if($tags = $db->Get($tags, '', '')) {
