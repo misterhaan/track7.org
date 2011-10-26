@@ -8,9 +8,9 @@
         <tr class="first"><th>name</th><td>hecubus</td></tr>
         <tr><th>class</th><td>workstation</td></tr>
         <tr><th>purpose</th><td>file / ftp / http server / dvr</td></tr>
-        <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2</td></tr>
-        <tr><th>processor</th><td>intel pentium d 2.66 GHz</td></tr>
-        <tr><th>ram</th><td>g.skill 1 GB pc2 5300 ddr2 sdram</td></tr>
+        <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2<!--ga-ep35-ds3l--></td></tr>
+        <tr><th>processor</th><td>intel pentium d 2.66 GHz<!--core 2 quad q9300 2.5 GHz--></td></tr>
+        <tr><th>ram</th><td>g.skill 1 GB pc2 5300 ddr2 sdram<!--g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram--></td></tr>
         <tr><th>video</th><td>intel gma950 (onboard)</td></tr>
         <tr><th>audio</th><td>realtek alc883 (onboard, disabled)</td></tr>
         <tr><th>tuner</th><td>hauppage wintv-hvr-2250<br />hauppage wintv-pvr 150</td></tr>
@@ -29,16 +29,16 @@
         <tr class="first"><th>name</th><td>tesla</td></tr>
         <tr><th>class</th><td>workstation</td></tr>
         <tr><th>purpose</th><td>main workstation / gaming</td></tr>
-        <tr><th>mainboard</th><td>gigabyte ga-ep35-ds3l</td></tr>
-        <tr><th>processor</th><td>intel core 2 quad q9300 2.5 GHz</td></tr>
-        <tr><th>ram</th><td>g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram</td></tr>
+        <tr><th>mainboard</th><td>gigabyte ga-z68p-ds3</td></tr>
+        <tr><th>processor</th><td>intel core i5 2400s 2.5 GHz</td></tr>
+        <tr><th>ram</th><td>g.skill 4 GB pc3 17000 ddr3 sdram<br />g.skill 4 GB pc3 17000 ddr3 sdram</td></tr>
         <tr><th>video</th><td>evga 768-p3-1362-tr nvidia geforce gtx 460 (768 MB)</td></tr>
         <tr><th>audio</th><td>realtek high definition audio (onboard)</td></tr>
         <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet (onboard)</td></tr>
         <tr><th>reader</th><td>rosewill multi card reader</td></tr>
         <tr><th>sata0</th><td>western digital velociraptor 150 GB wd1500hlfs</td></tr>
         <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
-        <tr><th>operating system</th><td>ubuntu 11.04 natty narwhal 64-bit<br />microsoft windows 7 sp1 64-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 11.10 oneiric ocelot 64-bit<br />microsoft windows 7 sp1 64-bit</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech g500<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>21.5″ asus vh226h</td></tr>
@@ -63,7 +63,7 @@
         <tr><th>reader</th><td>sd card reader</td></tr>
         <tr><th>sata0</th><td>western digital siliconedge 128 GB ssc-d0128sc-2100</td></tr>
         <tr><th>sata1</th><td>matshita dvd-ram</td></tr>
-        <tr><th>operating system</th><td>ubuntu 11.04 natty narwhal 32-bit<br />microsoft windows 7 sp1 32-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 11.10 oneiric ocelot 32-bit<br />microsoft windows 7 sp1 32-bit</td></tr>
         <tr><th>keyboard</th><td>toshiba satellite r25</td></tr>
         <tr><th>mouse</th><td>logitech v450 wireless laser</td></tr>
         <tr><th>monitor</th><td>toshiba wide 14.1″</td></tr>
