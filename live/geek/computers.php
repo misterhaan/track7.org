@@ -38,7 +38,7 @@
         <tr><th>reader</th><td>rosewill multi card reader</td></tr>
         <tr><th>sata0</th><td>western digital velociraptor 150 GB wd1500hlfs</td></tr>
         <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
-        <tr><th>operating system</th><td>ubuntu 11.10 oneiric ocelot 64-bit<br />microsoft windows 7 sp1 64-bit</td></tr>
+        <tr><th>operating system</th><td>ubuntu 11.10 oneiric ocelot 64-bit<br />microsoft windows 8 developer preview 64-bit</td></tr>
         <tr><th>keyboard</th><td>logitech premium desktop</td></tr>
         <tr><th>mouse</th><td>logitech g500<br />logitech cordless optical</td></tr>
         <tr><th>monitor</th><td>21.5″ asus vh226h</td></tr>
