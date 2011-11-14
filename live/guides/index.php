@@ -121,7 +121,7 @@
             <span>author:&nbsp; <?=$guide->author ? '<a href="/user/' . $guide->login . '/">' . $guide->login . '</a>' : ''; ?></span>
             <span>level:&nbsp; <?=$guide->skill; ?></span>
             <span>pages:&nbsp; <?=$guide->pages; ?></span>
-            <span>rated:&nbsp; <?=+$guide->rating; ?> (<?=+$guide->votes; ?> vote<?=$guide->votes != 1 ? 's' : ''; ?>)</span>
+            <span>rated:&nbsp; <?=round($guide->rating, 2); ?> (<?=+$guide->votes; ?> vote<?=$guide->votes != 1 ? 's' : ''; ?>)</span>
             <span>views:&nbsp; <?=+$guide->hits; ?></span>
             <span class="tags">tags:&nbsp; <?=TagLinks($guide->tags); ?></span>
           </div>
