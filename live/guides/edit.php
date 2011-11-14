@@ -183,7 +183,7 @@
     $f->Add(new auFormString('title', 'title', 'enter the title of your guide', true, html_entity_decode($guide->title), 50, 100));
     if($user->GodMode)
       $f->Add(new auFormString('id', 'id', 'enter the id for this guide; used in the url', true, $guide->id, 20, 32));
-    $f->Add(new auFormMultiString('description', 'description', 'enter a short description of your guide', true, auText::pbr2EOL($guide->description), false, 0, 200));
+    $f->Add(new auFormMultiString('description', 'description', 'enter a short description of your guide', true, auText::pbr2EOL($guide->description), false, 0, 500));
     if($user->GodMode)
       $f->Add(new auFormString('tags', 'tags', 'enter comma-separated tags for this guide', false, $guide->tags, 50));
     $f->Add(new auFormInteger('pages', 'pages', 'enter the number of pages in your guide (must be between 1 and 9)', true, $guide->pages, 1, 1));
