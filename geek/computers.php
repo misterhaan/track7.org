@@ -8,18 +8,18 @@
         <tr class="first"><th>name</th><td>hecubus</td></tr>
         <tr><th>class</th><td>workstation</td></tr>
         <tr><th>purpose</th><td>file / ftp / http server / dvr</td></tr>
-        <tr><th>mainboard</th><td>gigabyte ga-945gzm-s2<!--ga-ep35-ds3l--></td></tr>
-        <tr><th>processor</th><td>intel pentium d 2.66 GHz<!--core 2 quad q9300 2.5 GHz--></td></tr>
-        <tr><th>ram</th><td>g.skill 1 GB pc2 5300 ddr2 sdram<!--g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram--></td></tr>
-        <tr><th>video</th><td>intel gma950 (onboard)</td></tr>
-        <tr><th>audio</th><td>realtek alc883 (onboard, disabled)</td></tr>
+        <tr><th>mainboard</th><td>ga-ep35-ds3l</td></tr>
+        <tr><th>processor</th><td>core 2 quad q9300 2.5 GHz</td></tr>
+        <tr><th>ram</th><td>g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram<br />g.skill 1 GB pc2 8500 ddr2 sdram</td></tr>
+        <tr><th>video</th><td>nvidia geforce 8400 gs</td></tr>
+        <tr><th>audio</th><td>realtek alc888 (onboard, disabled)</td></tr>
         <tr><th>tuner</th><td>hauppage wintv-hvr-2250<br />hauppage wintv-pvr 150</td></tr>
-        <tr><th>network</th><td>realtek 8110sc 10/100/1000 ethernet (onboard)</td></tr>
+        <tr><th>network</th><td>realtek 8168b 10/100/1000 ethernet (onboard)</td></tr>
         <tr><th>sata0</th><td>western digital caviar 80 GB wd800jd</td></tr>
         <tr><th>sata1</th><td>western digital caviar black 1 TB wd1001fals</td></tr>
         <tr><th>sata2</th><td>western digital caviar 400 GB wd4000aaks</td></tr>
         <tr><th>sata3</th><td>lite-on dvd-rom dh-16d2s-04</td></tr>
-        <tr><th>operating system</th><td>fedora 14 64-bit</td></tr>
+        <tr><th>operating system</th><td>fedora 16 64-bit</td></tr>
       </table>
 
 <?
@@ -34,7 +34,7 @@
         <tr><th>ram</th><td>g.skill 4 GB pc3 17000 ddr3 sdram<br />g.skill 4 GB pc3 17000 ddr3 sdram</td></tr>
         <tr><th>video</th><td>evga 768-p3-1362-tr nvidia geforce gtx 460 (768 MB)</td></tr>
         <tr><th>audio</th><td>realtek high definition audio (onboard)</td></tr>
-        <tr><th>network</th><td>realtek rtl8169 1000/100/10 ethernet (onboard)</td></tr>
+        <tr><th>network</th><td>realtek rtl8168b 1000/100/10 ethernet (onboard)</td></tr>
         <tr><th>reader</th><td>rosewill multi card reader</td></tr>
         <tr><th>sata0</th><td>western digital velociraptor 150 GB wd1500hlfs</td></tr>
         <tr><th>sata1</th><td>samsung dvd burner sh-s183l</td></tr>
