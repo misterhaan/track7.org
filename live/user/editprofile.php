@@ -214,7 +214,7 @@
       <ul class=actions id=editcomputers>
 <?
           while($computer = $computers->NextRecord()) {
-            if($_GET['computer'] == $computer->id || $_POST['computer'] == $computer->id || $_GET['id'] != 'new' && $computers->NumRecords() == 1)
+            if($_GET['computer'] == $computer->id || $_POST['computer'] == $computer->id || $_GET['computer'] != 'new' && $computers->NumRecords() == 1)
               $editcomputer = $computer;
 ?>
         <li class="<?=$computer->class; ?>"><a href="<?=$querystring; ?>tab=computers&amp;computer=<?=$computer->id; ?>"><?=$computer->name; ?></a><?=($computer->purpose ? ' (' . $computer->purpose . ')' : ''); ?></li>
