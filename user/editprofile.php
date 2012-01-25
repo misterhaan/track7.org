@@ -110,8 +110,10 @@
              . addslashes(htmlspecialchars(trim($_POST['scanner']), ENT_COMPAT, _CHARSET)) . '\', \''
              . addslashes(auText::EOL2br(trim($_POST['os']))) . '\', \''
              . addslashes(auText::EOL2br(trim($_POST['other']))) . '\')';
-            if(false !== $db->Put($ins, 'error saving computer'))
+            if(false !== $ins = $db->Put($ins, 'error saving computer')) {
               $page->Info('new computer saved');
+              $_POST['computer'] = $ins;
+            }
           }
         }
         break;
