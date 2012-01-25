@@ -1,32 +1,51 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('c# .net projects - the analog underground', 'c# .net projects', '', '', array('mo', 'meat', 'aulib'));
+  $page->Start('c# .net projects - the analog underground', 'c# .net projects', '', '', array('gamesink', 'mo', 'meat', 'aulib'));
 ?>
       <p>
-        though my programs written in <a href="../vb.php">visual basic</a> are
-        working and doing most of what i want, it seemed it was time to grow up
-        a little and move away from programming in vb.&nbsp; because of that, i
-        am currently re-writing my visual basic applications using the .net
-        framework in c#.&nbsp; supposedly using .net should make it easier for
-        these applications to run on something other than windows, but i haven't
-        tried it.
+        i’ve long since left <a href="../vb.php">visual basic</a> behind in
+        favor of c# and the latest version of .net for windows programming.&nbsp;
+        since then i’ve only released a single working application but started
+        on three others, hoping to have another ready for release soon.
       </p>
       <p>
-        i've also been learning windows installer xml (wix) while working on
-        these projects, so they all come in msi form, along with an optional cab
-        file containing the source code (even the wix source).&nbsp; i like the
-        level of control i get with wix -- i can make much nicer installers with
-        it than trying to use the confusing deployment tools that are included
-        with visual studio.
+        to run an application that uses .net, the correct version of the .net
+        framework must be installed.&nbsp; these can be downloaded for free from
+        microsoft.&nbsp; currently, the latest version is 4 and is available
+        here:&nbsp; <a href="http://www.microsoft.com/download/en/details.aspx?id=17851">microsoft .net framework 4 web installer</a>.&nbsp;
+        to work with the source code the minimum is a text editor and the
+        correct version of the .net sdk, with visual c# express or visual
+        studio (not free) being more convenient.&nbsp; any of those will install
+        the .net framework so it does not need to be installed separately.
       </p>
       <p>
-        to run any of these projects, you will need to have the
-        <a href="http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5">.net framework 2.0</a>
-        which you can get for free from microsoft if you don't already have it.&nbsp;
-        in order to build the projects from source you will need the .net
-        framework sdk (also free from microsoft), and visual studio 2005 might
-        be of some help as well but that's sure not free.
+        msi installer packages are built using windows installer xml (wix).&nbsp;
+        just run the msi file to install.&nbsp; to build the installer from
+        source, the <a href="http://wix.sourceforge.net/">wix toolset</a> is
+        needed.&nbsp; some wix code available here may not be compatible with
+        the latest wix toolset. 
       </p>
+      <p>
+        all source code is stored in a subversion repository at <a href="http://svn.track7.org/">svn.track7.org</a>.&nbsp;
+        the easiest way to retrieve it is to install <a href="http://tortoisesvn.net/downloads.html">tortoisesvn</a>,
+        create a directory, then right-click and do an svn checkout of the
+        project’s dev url.&nbsp; alternately, code files can be browsed or even
+        downloaded one-by-one through a browser.
+      </p>
+
+<?
+  $page->Heading('gamesink', 'gamesink');
+?>
+      <p>
+        gamesink is designed to simplify backing up and restoring game save
+        files.&nbsp; it requires <a href="http://msdn.microsoft.com/en-us/netframework/aa569263">.net 4</a>
+        to run or visual studio 2010 to develop.
+      </p>
+      <ul>
+        <!--li><a href="/files/analogu/net/gamesink/gamesink-v0.0.0.msi">download latest gamesink installer</a></li-->
+        <li><a href="http://wiki.track7.org/GameSink">gamesink documentation on auwiki</a></li>
+        <li><a href="gamesink/">gamesink project page</a></li>
+      </ul>
 
 <?
   $page->Heading('memory organizer', 'mo');

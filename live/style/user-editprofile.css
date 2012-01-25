@@ -63,3 +63,16 @@ textarea#fldsignature {
 textarea#fldgeekcode {
   height: 5.8em;
 }
+textarea#fldram,
+textarea#fldvideo,
+textarea#fldtuner,
+textarea#fldnetwork,
+textarea#fldhdd,
+textarea#fldoptical,
+textarea#fldjoystick,
+textarea#fldmonitor,
+textarea#fldos,
+textarea#fldother {
+  height: 1.5em;
+  width: 28em; 
+}
