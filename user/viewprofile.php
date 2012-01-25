@@ -102,7 +102,7 @@
         <tr><th>username</th><td><?=$login; ?></td></tr>
 <?
 
-      $stats = 'select since, lastlogin, signings, rank, posts, comments, discs, rounds, fans, rpgchars from userstats where uid=' . $u->uid;
+      $stats = 'select since, lastlogin, signings, rank, posts, comments, discs, rounds, fans from userstats where uid=' . $u->uid;
       if($stats = $db->GetRecord($stats, 'error looking up statistics for user')) {
 ?>
         <tr><th>frequency</th><td><?=$stats->rank; ?></td></tr>
@@ -165,8 +165,6 @@
           echo '          <li>#' . getRank($db, 'rounds', $stats->rounds) . ' in rounds with <a href="/discgolf/rounds.php?player=' . $login . '">' . $stats->rounds . "</a></li>\n";
         if($stats->discs)
           echo '          <li>#' . getRank($db, 'discs', $stats->discs) . ' in discs with <a href="/discgolf/caddy.php?player=' . $login . '">' . $stats->discs . "</a></li>\n";
-        if($stats->rpgchars)
-          echo '          <li>#' . getRank($db, 'rpgchars', $stats->rpgchars) . ' in characters with <a href="/geek/rpg/?player=' . $login . '">' . $stats->rpgchars . "</a></li>\n";
 ?>
         </ul>
       </div>
@@ -246,6 +244,121 @@
           }
 ?>
       </ul>
+<?
+        }
+      }
+
+      $computers = 'select name, class, purpose, processor, mainboard, ram, video, audio, tuner, network, hdd, optical, reader, keyboard, mouse, joystick, monitor, printer, scanner, os, other from computers where uid=\'' . $u->uid . '\'';
+      if($computers = $db->Get($computers, 'error looking up computers')) {
+        $one = $computers->NumRecords() == 1;
+        $page->Heading($one ? 'computer' : 'computers', 'computers');
+        while($computer = $computers->NextRecord()) {
+          if(!$one)
+            $page->SubHeading($computer->name, 'computer-' . $computer->name);
+?>
+      <table class=columns>
+<?
+          if($one && $computer->name) {
+?>
+        <tr><th>name</th><td><?=$computer->name; ?></td></tr>
+<?
+          }
+?>
+        <tr><th>class</th><td><?=$computer->class; ?></td></tr>
+<?
+          if($computer->purpose) {
+?>
+        <tr><th>purpose</th><td><?=$computer->purpose; ?></td></tr>
+<?
+          }
+?>
+        <tr><th>processor</th><td><?=$computer->processor; ?></td></tr>
+<?
+          if($computer->mainboard) {
+?>
+        <tr><th>mainboard</th><td><?=$computer->mainboard; ?></td></tr>
+<?
+          }
+?>
+        <tr><th>ram</th><td><?=$computer->ram; ?></td></tr>
+<?
+          if($computer->video) {
+?>
+        <tr><th>video</th><td><?=$computer->video; ?></td></tr>
+<?
+          }
+          if($computer->audio) {
+?>
+        <tr><th>audio</th><td><?=$computer->audio; ?></td></tr>
+<?
+          }
+          if($computer->tuner) {
+?>
+        <tr><th>tuner</th><td><?=$computer->tuner; ?></td></tr>
+<?
+          }
+          if($computer->network) {
+?>
+        <tr><th>network</th><td><?=$computer->network; ?></td></tr>
+<?
+          }
+          if($computer->hdd) {
+?>
+        <tr><th>hdd</th><td><?=$computer->hdd; ?></td></tr>
+<?
+          }
+          if($computer->optical) {
+?>
+        <tr><th>optical</th><td><?=$computer->optical; ?></td></tr>
+<?
+          }
+          if($computer->reader) {
+?>
+        <tr><th>reader</th><td><?=$computer->reader; ?></td></tr>
+<?
+          }
+          if($computer->keyboard) {
+?>
+        <tr><th>keyboard</th><td><?=$computer->keyboard; ?></td></tr>
+<?
+          }
+          if($computer->mouse) {
+?>
+        <tr><th>mouse</th><td><?=$computer->mouse; ?></td></tr>
+<?
+          }
+          if($computer->joystick) {
+?>
+        <tr><th>joystick</th><td><?=$computer->joystick; ?></td></tr>
+<?
+          }
+          if($computer->monitor) {
+?>
+        <tr><th>monitor</th><td><?=$computer->monitor; ?></td></tr>
+<?
+          }
+          if($computer->printer) {
+?>
+        <tr><th>printer</th><td><?=$computer->printer; ?></td></tr>
+<?
+          }
+          if($computer->scanner) {
+?>
+        <tr><th>scanner</th><td><?=$computer->scanner; ?></td></tr>
+<?
+          }
+          if($computer->os) {
+?>
+        <tr><th>os</th><td><?=$computer->os; ?></td></tr>
+<?
+          }
+          if($computer->other) {
+?>
+        <tr><th>other</th><td><?=$computer->other; ?></td></tr>
+<?
+          }
+?>
+      </table>
 <?
         }
       }

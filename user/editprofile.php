@@ -21,7 +21,6 @@
       $_GET['tab'] = 'profile';
     switch($_GET['tab']) {
       case 'profile':
-        require_once 'auFile.php';
         $profile = 'select avatar, signature, location, geekcode, hackerkey from userprofiles where uid=' . $u->uid;
         $profile = $db->GetRecord($profile, 'error reading user profile', 'user profile not found');
         if($_POST['submit'] == 'update') {
@@ -56,6 +55,64 @@
             }
           if(false !== $db->Change('update userprofiles set ' . $newavatar . 'signature=\'' . addslashes(str_replace('</p><p>', '<br /><br />', auText::BB2HTML(trim($_POST['signature'])))) . '\', location=\'' . addslashes(htmlspecialchars($_POST['location'], ENT_COMPAT, _CHARSET)) . '\', geekcode=\'' . addslashes(auText::EOL2br($_POST['geekcode'])) . '\', hackerkey=\'' . addslashes(htmlspecialchars($_POST['hackerkey'], ENT_COMPAT, _CHARSET)) . '\' where uid=' . $u->uid, 'error saving profile'))
             $page->Info('profile successfully updated');
+        }
+        break;
+      case 'computers':
+        if($_POST['submit'] == 'update') {
+          if($_POST['computer']) {
+            $chk = 'select id from computers where uid=\'' . $u->uid . '\' and id=\'' . addslashes($_POST['computer']) . '\'';
+            if(false !== $db->GetValue($chk, 'error verifying this computer belongs to you', 'this computer doesn’t exist or doesn’t belong to you', true)) {
+              $update = 'update computers set name=\''
+               . addslashes(htmlspecialchars(trim($_POST['name']), ENT_COMPAT, _CHARSET)) . '\', class=\''
+               . addslashes(htmlspecialchars(trim($_POST['class']), ENT_COMPAT, _CHARSET)) . '\', purpose=\''
+               . addslashes(htmlspecialchars(trim($_POST['purpose']), ENT_COMPAT, _CHARSET)) . '\', processor=\''
+               . addslashes(htmlspecialchars(trim($_POST['processor']), ENT_COMPAT, _CHARSET)) . '\', mainboard=\''
+               . addslashes(htmlspecialchars(trim($_POST['mainboard']), ENT_COMPAT, _CHARSET)) . '\', ram=\''
+               . addslashes(auText::EOL2br(trim($_POST['ram']))) . '\', video=\''
+               . addslashes(auText::EOL2br(trim($_POST['video']))) . '\', audio=\''
+               . addslashes(htmlspecialchars(trim($_POST['audio']), ENT_COMPAT, _CHARSET)) . '\', tuner=\''
+               . addslashes(auText::EOL2br(trim($_POST['tuner']))) . '\', network=\''
+               . addslashes(auText::EOL2br(trim($_POST['network']))) . '\', hdd=\''
+               . addslashes(auText::EOL2br(trim($_POST['hdd']))) . '\', optical=\''
+               . addslashes(auText::EOL2br(trim($_POST['optical']))) . '\', reader=\''
+               . addslashes(htmlspecialchars(trim($_POST['reader']), ENT_COMPAT, _CHARSET)) . '\', keyboard=\''
+               . addslashes(htmlspecialchars(trim($_POST['keyboard']), ENT_COMPAT, _CHARSET)) . '\', mouse=\''
+               . addslashes(htmlspecialchars(trim($_POST['mouse']), ENT_COMPAT, _CHARSET)) . '\', joystick=\''
+               . addslashes(auText::EOL2br(trim($_POST['joystick']))) . '\', monitor=\''
+               . addslashes(auText::EOL2br(trim($_POST['monitor']))) . '\', printer=\''
+               . addslashes(htmlspecialchars(trim($_POST['printer']), ENT_COMPAT, _CHARSET)) . '\', scanner=\''
+               . addslashes(htmlspecialchars(trim($_POST['scanner']), ENT_COMPAT, _CHARSET)) . '\', os=\''
+               . addslashes(auText::EOL2br(trim($_POST['os']))) . '\', other=\''
+               . addslashes(auText::EOL2br(trim($_POST['other']))) . '\' where id=\'' . addslashes($_POST['computer']) . '\'';
+              if(false !== $db->Change($update, 'error updating computer', 'no changes made'))
+                $page->Info('computer updates saved');
+            }
+          } else {
+            $ins = 'insert into computers (uid, name, class, purpose, processor, mainboard, ram, video, audio, tuner, network, hdd, optical, reader, keyboard, mouse, joystick, monitor, printer, scanner, os, other) values (' . $u->uid . ', \''
+             . addslashes(htmlspecialchars(trim($_POST['name']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['class']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['purpose']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['processor']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['mainboard']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['ram']))) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['video']))) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['audio']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['tuner']))) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['network']))) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['hdd']))) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['optical']))) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['reader']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['keyboard']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['mouse']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['joystick']))) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['monitor']))) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['printer']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(htmlspecialchars(trim($_POST['scanner']), ENT_COMPAT, _CHARSET)) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['os']))) . '\', \''
+             . addslashes(auText::EOL2br(trim($_POST['other']))) . '\')';
+            if(false !== $db->Put($ins, 'error saving computer'))
+              $page->Info('new computer saved');
+          }
         }
         break;
       case 'display':
@@ -123,6 +180,7 @@
       <p><a href="/user/<?=$u->login; ?>/">view profile</a></p>
       <ul class="tabs">
         <li<?=$_GET['tab'] == 'profile' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=profile" title="edit avatar, signature, and geek code / hacker key">profile</a></li>
+        <li<?=$_GET['tab'] == 'computers' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=computers" title="add / edit / remove computer specs">computers</a></li>
         <li<?=$_GET['tab'] == 'display' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=display" title="edit display settings">display</a></li>
         <li<?=$_GET['tab'] == 'contact' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=contact" title="edit contact information">contact</a></li>
         <li<?=$_GET['tab'] == 'notification' ? ' class="active"' : ''; ?>><a href="<?=$querystring; ?>tab=notification" title="edit notifications">notification</a></li>
@@ -147,6 +205,54 @@
         $prof->AddField('location', 'location', 'enter your location', false, $profile->location, _AU_FORM_FIELD_NORMAL, 20, 32);
         $prof->AddField('geekcode', 'geek code', 'enter your geek code (www.geekcode.com)', false, auText::br2EOL($profile->geekcode), _AU_FORM_FIELD_MULTILINE, 60, 250);
         $prof->AddField('hackerkey', 'hacker key', 'enter your hacker key (www.hackerkey.com)', false, $profile->hackerkey, _AU_FORM_FIELD_NORMAL, 48, 250);
+        break;
+      case 'computers':
+        $editcomputer = false;
+        $computers = 'select id, name, class, purpose, processor, mainboard, ram, video, audio, tuner, network, hdd, optical, reader, keyboard, mouse, joystick, monitor, printer, scanner, os, other from computers where uid=' . $u->uid;
+        if($computers = $db->Get($computers, 'error looking up user’s computers', '')) {
+?>
+      <ul class=actions id=editcomputers>
+<?
+          while($computer = $computers->NextRecord()) {
+            if($_GET['computer'] == $computer->id || $_POST['computer'] == $computer->id || $_GET['id'] != 'new' && $computers->NumRecords() == 1)
+              $editcomputer = $computer;
+?>
+        <li class="<?=$computer->class; ?>"><a href="<?=$querystring; ?>tab=computers&amp;computer=<?=$computer->id; ?>"><?=$computer->name; ?></a><?=($computer->purpose ? ' (' . $computer->purpose . ')' : ''); ?></li>
+<?
+          }
+          if($editcomputer && $editcomputer->name) {  // don't allow adding a computer if the first doesn't have a name
+?>
+        <li class=new><a href="<?=$querystring; ?>tab=computers&amp;computer=new">add computer</a></li>
+<?
+          }
+?>
+      </ul>
+<?
+        }
+        if($editcomputer)
+          $prof->Add(new auFormData('computer', $editcomputer->id));
+        $cset = $prof->Add(new auFormFieldSet($editcomputer ? 'editing computer ' . $editcomputer->name : 'add computer'));
+        $cset->Add(new auFormString('name', 'name', 'name of this computer (can be blank if you only list one)', $editcomputer->name || $_GET['computer'] == 'new', html_entity_decode($editcomputer->name, ENT_COMPAT, _CHARSET), 20, 64));
+        $cset->Add(new auFormSelect('class', 'class', 'hardware class of this computer (not what it’s used for)', true, auFormSelect::ArrayIndex(array('server', 'workstation', 'laptop', 'netbook', 'tablet')), $editcomputer ? $editcomputer->class : 'workstation'));
+        $cset->Add(new auFormString('purpose', 'purpose', 'what this computer is used for', false, html_entity_decode($editcomputer->purpose, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormString('processor', 'processor', 'what processor is in this computer', true, html_entity_decode($editcomputer->processor, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormString('mainboard', 'mainboard', 'what mainboard (motherboard) is in this computer', false, html_entity_decode($editcomputer->mainboard, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormMultiString('ram', 'ram', 'the ram (memory) in this computer', true, auText::br2EOL($editcomputer->ram), false, 40, 255));
+        $cset->Add(new auFormMultiString('video', 'video', 'the video card (or onboard graphics controller) in this computer', false, auText::br2EOL($editcomputer->video), false, 40, 255));
+        $cset->Add(new auFormString('audio', 'audio', 'the sound card (or onboard sound controller) in this computer', false, html_entity_decode($editcomputer->audio, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormMultiString('tuner', 'tuner', 'the tv tuner card in this computer', false, auText::br2EOL($editcomputer->tuner), false, 40, 255));
+        $cset->Add(new auFormMultiString('network', 'network', 'the network controllers in this computer (wired and wireless)', false, auText::br2EOL($editcomputer->network), false, 40, 255));
+        $cset->Add(new auFormMultiString('hdd', 'hdd', 'hard disk (or solid state) drives in this computer', false, auText::br2EOL($editcomputer->hdd), false, 40, 255));
+        $cset->Add(new auFormMultiString('optical', 'optical', 'cd / dvd / bluray drives in this computer', false, auText::br2EOL($editcomputer->optical), false, 40, 255));
+        $cset->Add(new auFormString('reader', 'reader', 'memory card reader used with this computer', false, html_entity_decode($editcomputer->reader, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormString('keyboard', 'keyboard', 'keyboard used with this computer', false, html_entity_decode($editcomputer->keyboard, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormString('mouse', 'mouse', 'mouse or other pointing device used with this computer', false, html_entity_decode($editcomputer->mouse, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormMultiString('joystick', 'joystick', 'joystick or gamepad used with this computer', false, auText::br2EOL($editcomputer->joystick), false, 40, 128));
+        $cset->Add(new auFormMultiString('monitor', 'monitor', 'monitors used with this computer', false, auText::br2EOL($editcomputer->monitor), false, 40, 255));
+        $cset->Add(new auFormString('printer', 'printer', 'printer used with this computer', false, html_entity_decode($editcomputer->printer, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormString('scanner', 'scanner', 'scanner used with this computer', false, html_entity_decode($editcomputer->scanner, ENT_COMPAT, _CHARSET), 40, 128));
+        $cset->Add(new auFormMultiString('os', 'os', 'operating systems installed on this computer', false, auText::br2EOL($editcomputer->os), false, 40, 128));
+        $cset->Add(new auFormMultiString('other', 'other', 'any other parts of this computer', false, auText::br2EOL($editcomputer->other), false, 40, 255));
         break;
       case 'display':
         $prof->AddField('time', 'current time', 'enter the current time so track7 can display dates and times in your time zone', true, $user->tzdate('g:i a'), _AU_FORM_FIELD_NORMAL, 8, 20);

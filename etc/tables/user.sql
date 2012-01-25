@@ -103,3 +103,35 @@ create table userfriends (
   frienduid smallint unsigned,
   primary key(fanuid, frienduid)
 );
+
+create table computers (
+  id smallint unsigned primary key auto_increment,
+  uid smallint unsigned, index(uid),
+  name varchar(64),
+  class enum(
+    'server',
+    'workstation',
+    'laptop',
+    'netbook',
+    'tablet'
+  ),
+  purpose varchar(128),
+  processor varchar(128),
+  mainboard varchar(128),
+  ram varchar(255),
+  video varchar(255),
+  audio varchar(128),
+  tuner varchar(255),
+  network varchar(255),
+  hdd varchar(255),
+  optical varchar(255),
+  reader varchar(128),
+  keyboard varchar(128),
+  mouse varchar(128),
+  joystick varchar(128),
+  monitor varchar(255),
+  printer varchar(128),
+  scanner varchar(128),
+  os varchar(128),
+  other varchar(255)
+);
