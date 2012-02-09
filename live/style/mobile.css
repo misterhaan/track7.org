@@ -6,6 +6,10 @@
 
 /* ==============================================================[ layout ]== */
 
+body {
+  -webkit-text-size-adjust: none;
+}
+
 div.dynamic {
   width: 22.81em;
   padding-left: 0;

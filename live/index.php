@@ -67,7 +67,7 @@
         </dl>
 
 <?
-  // TODO:  get daily photo and weekly art
+  // get daily photo and weekly art
   $rndvis = 'select r.photo, p.caption, r.arttype, r.art, a.type, a.name as aname, l.name as lname from randomvisual as r left join photos as p on p.id=r.photo left join art as a on a.id=r.art left join legos as l on l.id=r.art';
   if($rndvis = $db->GetRecord($rndvis, 'error looking up random visuals', 'random visuals not defined')) {
     if($rndvis->arttype == 'legos') {
@@ -270,7 +270,7 @@
       <h2 class="feed"><a href="/bln/<?=$entry->name; ?>"><?=$entry->title; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/entries.rss" class="feed" title="track7 bln entries"><img src="/style/feed.png" alt="rss" /></a></h2>
       <p class="tags"><?=$tags; ?></p>
       <?=$entry->post; ?>
-      <p class="readmore">» <a href="/bln/<?=$entry->id; ?>">read more...</a></p>
+      <p class="readmore">» <a href="/bln/<?=$entry->name; ?>">read more...</a></p>
     </div>
 
 <?
