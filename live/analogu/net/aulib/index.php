@@ -1,13 +1,12 @@
 <?
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auFile.php';
 
   $page->Start('shared libraries - c# .net - analogu', 'shared libraries (au.util)', '', '', array('files', 'help'));
 ?>
       <p>
         shared libraries used by most analog underground applications.&nbsp;
-        they're not an application themselves, and are pretty much useless to
-        anyone who isn't a programmer.&nbsp; the two dll files are
+        they’re not an application themselves, and are pretty much useless to
+        anyone who isn’t a programmer.&nbsp; the two dll files are
         strongly-named which means they can be installed to the
         <abbr title="global assembly cache">gac</abbr>, which will be done if
         you build the source.&nbsp; downloading the binaries will get you the
@@ -20,8 +19,10 @@
       <table class="data" cellspacing="0">
         <thead><tr><th>package</th><th>version</th><th>filename</th><th>size</th><th>type</th></tr></thead>
         <tbody>
-          <tr class="current"><td>au.util binaries</td><td class="number">3.1.0</td><td><a href="/files/analogu/net/aulib/au.util-v3.1.0.zip">au.util-v3.1.0.zip</a></td><td class="number"><?=auFile::Size('au.util-v3.1.0.zip'); ?></td><td>zip archive</td></tr>
-          <tr class="current"><td>au.util source</td><td class="number">3.1.0</td><td><a href="http://svn.track7.org/util/releases/3.1.0/">3.1.0 source</a></td><td></td><td>subversion repository</td></tr>
+          <tr class=current><td>au.util binaries</td><td class="number">4.0.0</td><td><a href="/files/analogu/net/aulib/au.util-v4.0.0.zip">au.util-v4.0.0.zip</a></td><td class="number"><?=auFile::Size('au.util-v4.0.0.zip'); ?></td><td>zip archive</td></tr>
+          <tr class=current><td>au.util source</td><td class="number">4.0.0</td><td><a href="http://svn.track7.org/util/releases/4.0/">4.0 source</a></td><td></td><td>subversion repository</td></tr>
+          <tr><td>au.util binaries</td><td class="number">3.1.0</td><td><a href="/files/analogu/net/aulib/au.util-v3.1.0.zip">au.util-v3.1.0.zip</a></td><td class="number"><?=auFile::Size('au.util-v3.1.0.zip'); ?></td><td>zip archive</td></tr>
+          <tr><td>au.util source</td><td class="number">3.1.0</td><td><a href="http://svn.track7.org/util/releases/3.1.0/">3.1.0 source</a></td><td></td><td>subversion repository</td></tr>
           <tr><td>aulib installer</td><td class="number">3.0.0</td><td><a href="/files/analogu/net/aulib/aulib-v3.0.0.msi">aulib-v3.0.0.msi</a></td><td class="number"><?=auFile::Size('aulib-v3.0.0.msi'); ?></td><td>windows installer</td></tr>
           <tr><td>aulib source</td><td class="number">3.0.0</td><td><a href="http://svn.track7.org/util/releases/3.0.0/">3.0.0 source</a></td><td></td><td>subversion repository</td></tr>
         </tbody>
