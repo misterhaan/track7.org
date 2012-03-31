@@ -45,7 +45,7 @@
         to run or visual studio 2010 (with wix 3.5) to develop.
       </p>
       <ul>
-        <li>download latest mythclient installer:&nbsp; <a href="/files/analogu/net/mythclient/mythclient-v0.1.0_x64.msi">64-bit</a> or <a href="/files/analogu/net/mythclient/mythclient-v0.1.0_x86.msi">32-bit</a></li>
+        <li>download latest mythclient installer:&nbsp; <a href="/files/analogu/net/mythclient/mythclient-v0.1.1_x64.msi">64-bit</a> or <a href="/files/analogu/net/mythclient/mythclient-v0.1.1_x86.msi">32-bit</a></li>
         <li><a href="http://wiki.track7.org/MythClient">mythclient documentation on auwiki</a></li>
         <li><a href="mythclient/">mythclient project page</a></li>
       </ul>
