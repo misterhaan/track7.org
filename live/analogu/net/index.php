@@ -45,7 +45,7 @@
         to run or visual studio 2010 (with wix 3.5) to develop.
       </p>
       <ul>
-        <li>download latest mythclient installer:&nbsp; <a href="/files/analogu/net/mythclient/mythclient-v0.1.1_x64.msi">64-bit</a> or <a href="/files/analogu/net/mythclient/mythclient-v0.1.1_x86.msi">32-bit</a></li>
+        <li>download latest mythclient installer:&nbsp; <a href="/files/analogu/net/mythclient/mythclient-v0.2.0_x64.msi">64-bit</a> or <a href="/files/analogu/net/mythclient/mythclient-v0.2.0_x86.msi">32-bit</a></li>
         <li><a href="http://wiki.track7.org/MythClient">mythclient documentation on auwiki</a></li>
         <li><a href="mythclient/">mythclient project page</a></li>
       </ul>
@@ -53,13 +53,14 @@
 <?
   $page->Heading('gamesink', 'gamesink');
 ?>
-      <p>
+      <img src="gamesink/gamesink.png" alt="" class=icon>
+      <p class=iconned>
         gamesink is designed to simplify backing up and restoring game save
         files.&nbsp; it requires <a href="http://msdn.microsoft.com/en-us/netframework/aa569263">.net 4</a>
-        to run or visual studio 2010 to develop.
+        to run or visual studio 2010 (with wix 3.5) to develop.
       </p>
       <ul>
-        <!--li><a href="/files/analogu/net/gamesink/gamesink-v0.0.0.msi">download latest gamesink installer</a></li-->
+        <li>download latest gamesink installer:&nbsp; <a href="/files/analogu/net/gamesink/gamesink-v0.1.0_x64.msi">64-bit</a> or <a href="/files/analogu/net/gamesink/gamesink-v0.1.0_x86.msi">32-bit</a></li>
         <li><a href="http://wiki.track7.org/GameSink">gamesink documentation on auwiki</a></li>
         <li><a href="gamesink/">gamesink project page</a></li>
       </ul>

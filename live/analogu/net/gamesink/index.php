@@ -4,22 +4,25 @@
 ?>
       <p>
         gamesink is designed to simplify backing up and restoring game save
-        files.&nbsp; it requires <a href="http://msdn.microsoft.com/en-us/netframework/aa569263">.net 4</a>
-        to run or visual studio 2010 to develop.
+        files, especially between computers or when reinstalling a computer from
+        scratch.&nbsp; once a backup directory is defined, supported games can
+        be backed up as a single file per game in that directory.&nbsp; choose a
+        directory on an external drive, or copy the contents of the directory to
+        an external location to transfer to a new installation.&nbsp; the
+        <a href="http://wiki.track7.org/GameSink_Supported_Games">list of supported games</a>
+        is kept up-to-date on auwiki.
       </p>
 <?
   $page->Heading('files', 'files');
-  $page->Info('gamesink has not yet been released, so there is nothing available to download at this time');
 ?>
-      <!--table class="data" cellspacing="0">
+      <table class="data" cellspacing="0">
         <thead><tr><th>package</th><th>version</th><th>filename</th><th>size</th><th>type</th></tr></thead>
         <tbody>
-          <tr class="current"><td>meat installer</td><td class="number">0.2.0</td><td><a href="/files/analogu/net/meat/meat-v0.2.0.msi">meat-v0.2.0.msi</a></td><td class="number"><?=auFile::Size('meat-v0.2.0.msi'); ?></td><td>windows installer</td></tr>
-          <tr class="current"><td>meat source</td><td class="number">0.2.0</td><td><a href="http://svn.track7.org/meat/releases/0.2.0/">0.2.0 source</a></td><td></td><td>subversion repository</td></tr>
-          <tr><td>meat installer</td><td class="number">0.1.0</td><td><a href="/files/analogu/net/meat/meat-v0.1.0.msi">meat-v0.1.0.msi</a></td><td class="number"><?=auFile::Size('meat-v0.1.0.msi'); ?></td><td>windows installer</td></tr>
-          <tr><td>meat source</td><td class="number">0.1.0</td><td><a href="http://svn.track7.org/meat/releases/0.1.0/">0.1.0 source</a></td><td></td><td>subversion repository</td></tr>
+          <tr class="current"><td>gamesink 64-bit installer</td><td class="number">0.1.0</td><td><a href="/files/analogu/net/gamesink/gamesink-v0.1.0_x64.msi">gamesink-v0.1.0_x64.msi</a></td><td class="number"><?=auFile::Size('gamesink-v0.1.0_x64.msi'); ?></td><td>windows installer</td></tr>
+          <tr class="current"><td>gamesink 32-bit installer</td><td class="number">0.1.0</td><td><a href="/files/analogu/net/gamesink/gamesink-v0.1.0_x64.msi">gamesink-v0.1.0_x64.msi</a></td><td class="number"><?=auFile::Size('gamesink-v0.1.0_x64.msi'); ?></td><td>windows installer</td></tr>
+          <tr class="current"><td>gamesink source</td><td class="number">0.1.0</td><td><a href="http://svn.track7.org/GameSink/releases/0.1/">0.1.0 source</a></td><td></td><td>subversion repository</td></tr>
         </tbody>
-      </table-->
+      </table>
 
 <?
   $page->Heading('documentation', 'doc');
