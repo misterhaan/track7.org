@@ -1,3 +1,11 @@
+7b4 - light green
+ffd - very light yellow
+357 - deep blue
+37a - mid blue
+9be - light blue
+d82 - orange
+
+
 text:      #555;
 disabled:  #bbb;
 

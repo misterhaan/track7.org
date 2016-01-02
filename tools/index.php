@@ -10,6 +10,7 @@
 
       <h2>manage data</h2>
       <ul>
+        <li><a href="transition/">bring data forward from old database</a></li>
         <li><a href="/votes.php">votes</a></li>
         <li><a href="unknownreferrers.php">unknown referrers</a></li>
         <li><a href="taginfo.php">tag info</a></li>
