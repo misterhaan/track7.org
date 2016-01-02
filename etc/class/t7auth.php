@@ -427,7 +427,7 @@
       curl_setopt($c, CURLOPT_TIMEOUT, 30);
       curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($c, CURLOPT_HEADER, false);
-      curl_setopt($c, CURLOPT_HTTPHEADER, ['Authorization: OAuth ' . implode(', ', $header)]);
+      curl_setopt($c, CURLOPT_HTTPHEADER, ['Authorization: OAuth ' . implode(', ', $header), 'Content-length: 0']);
       $response = curl_exec($c);
       curl_close($c);
 
