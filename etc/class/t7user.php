@@ -91,7 +91,6 @@
       }
       if(isset($_SESSION['user'])) {
         if($this->GetBasic($_SESSION['user'])) {
-          $this->UpdateLastLoad($_SESSION['user']);
           $this->GetSettings();
           return;
         }
@@ -127,20 +126,25 @@
           $uid = $id;
           break;
         case 'google':
-          if($google = $db->query('select user from login_google where sub=\'' . $db->real_escape_string($id) . '\' limit 1'))
+          if($google = $db->query('select user from login_google where sub=\'' . $db->escape_string($id) . '\' limit 1'))
             if($google = $google->fetch_object())
               $uid = $google->user;
           break;
         case 'twitter':
-          if($twitter = $db->query('select user from login_twitter where user_id=\'' . $db->real_escape_string($id) . '\' limit 1'))
+          if($twitter = $db->query('select user from login_twitter where user_id=\'' . $db->escape_string($id) . '\' limit 1'))
             if($twitter = $twitter->fetch_object())
               $uid = $twitter->user;
+          break;
+        case 'facebook':
+          if($facebook = $db->query('select user from login_facebook where extid=\'' . $db->escape_string($id) . '\' limit 1'))
+            if($facebook = $facebook->fetch_object())
+              $uid = $facebook->user;
           break;
       }
       if($uid) {
         $_SESSION['user'] = $uid;
         $_SESSION['loginsource'] = $type;
-        $this->UpdateLastLogin($uid);
+        self::UpdateLastLogin($uid);
         if($type != 'register') {
           if($remember)
             $this->CreateRememberToken($uid, $this->StartRememberSeries());
@@ -289,16 +293,7 @@
      */
     private function UpdateLastLogin($id) {
       global $db;
-      $db->real_query('insert into users_stats (id, lastlogin, lastload) values (\'' . $db->real_escape_string($id) . '\', \'' . +time() . '\', \'' . +time() . '\') on duplicate key update lastlogin=\'' . +time() . '\', lastload=\'' . +time() . '\'');
-    }
-
-      /**
-     * update the last time the user loaded a php script.
-     * @param integer $id user id who just loaded a script
-     */
-    private function UpdateLastLoad($id) {
-      global $db;
-      $db->real_query('insert into users_stats (id, lastload) values (\'' . $db->real_escape_string($id) . '\', \'' . +time() . '\') on duplicate key update lastload=\'' . +time() . '\'');
+      $db->real_query('insert into users_stats (id, lastlogin) values (\'' . $db->real_escape_string($id) . '\', \'' . +time() . '\') on duplicate key update lastlogin=\'' . +time() . '\'');
     }
 
     /**
