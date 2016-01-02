@@ -7,6 +7,7 @@ ErrorDocument 403 /403.php
 ErrorDocument 401 /401.php
 
 RewriteEngine on
+RewriteRule \.git/ - [F]
 RewriteRule \.svn/ - [F]
 RewriteRule \.snapshot/ - [F]
 RewriteRule etc/ - [F]
@@ -44,6 +45,10 @@ RewriteRule ^files/(.+\.(zip|wsz|xpi|msi|cab))$ /download.php?file=$1
 RewriteRule ^robots.txt /robots.php
 RewriteRule ^oi/f[0-9]+/t([0-9]+) /hb/thread$1/ [R]
 RewriteRule ^oi /hb [R]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php
 
 # RewriteCond %{HTTP_REFERER} ^http://[^/]*$ [NC,OR] # IE actually sends referrers missing the trailing slash
 RewriteCond %{HTTP_REFERER} ^http://(www\.)?a-b-l-o-g\.com.*$ [NC,OR]
