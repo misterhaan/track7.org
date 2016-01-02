@@ -522,11 +522,11 @@
         curl_close($c);
         $response = json_decode($response);
         if(isset($response->id) && $response->id == $this->ID) {
-          $this->ProfileFull = t7user::ExpandProfileLink($info->screen_name, self::SOURCE);
-          $this->ProfileShort = $info->screen_name;
-          $this->Avatar = $info->profile_image_url;
-          $this->Username = $info->screen_name;
-          $this->DisplayName = $info->name;
+          $this->ProfileFull = t7user::ExpandProfileLink($response->screen_name, self::SOURCE);
+          $this->ProfileShort = $response->screen_name;
+          $this->Avatar = $response->profile_image_url;
+          $this->Username = $response->screen_name;
+          $this->DisplayName = $response->name;
           if(isset($response->entities) && isset($response->entities->url) && isset($response->entities->url->urls) && isset($response->entities->url->urls[0]) && isset($response->entities->url->urls[0]->expanded_url))
             $this->Website = $response->entities->url->urls[0]->expanded_url;
           else
