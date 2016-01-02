@@ -1,4 +1,135 @@
 <?
+  define('MAX_COMMENT_GET', 10);
+
+  if(isset($_GET['ajax'])) {
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+    $ajax = new t7ajax();
+    switch($_GET['ajax']) {
+      case 'get':
+        if(VerifyCommonFields($ajax, $_GET))
+          if($comments = $db->query('(select c.id, c.posted, c.user as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.name, c.contacturl, c.markdown, c.html from ' . $_GET['type'] . '_comments as c left join users as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=\'' . +$user->ID . '\' where c.' . KeyName($_GET['type']) . '=\'' . $db->escape_string($_GET['key']) . '\' order by c.posted desc limit ' . MAX_COMMENT_GET . ') order by posted')) {
+            $ajax->Data->comments = [];
+            while($comment = $comments->fetch_object()) {
+              $comment->id += 0;
+              $comment->posted = t7format::TimeTag('g:i a \o\n l F jS Y', $comment->posted);
+              if(!$user->IsLoggedIn() && substr($comment->contacturl, 0, 7) == 'mailto:')
+                $comment->contacturl = '';
+              $comment->canchange = $user->IsLoggedIn() && ($comment->canchange == $user->ID && $comment->markdown || $user->IsAdmin());
+              unset($comment->markdown);
+              $ajax->Data->comments[] = $comment;
+            }
+            // TODO: check if there are more comments (and support loading more)
+          } else
+            $ajax->Fail('error getting comments.');
+        break;
+      case 'add':
+        if(VerifyCommonFields($ajax, $_POST))
+          if($user->IsLoggedIn() || isset($_POST['name']))  // name can be blank but needs to have been sent if not logged in
+            if(isset($_POST['md']) && !ctype_space($_POST['md']) && $_POST['md'] != '') {
+              $ajax->Data->html = t7format::Markdown($_POST['md']);
+              $ajax->Data->posted = +time();
+              if(!$user->IsLoggedIn()) {
+                $ajax->Data->name = trim($_POST['name']);
+                if($ajax->Data->name == '')
+                  $ajax->Data->name = $user->DisplayName;  // grab the default display name for non-logged-in users
+                $ajax->Data->contacturl = t7format::Link($_POST['contact']);
+                $ajax->Data->canchange = false;
+                $ajax->Data->friend = false;
+                $ajax->Data->username = $ajax->Data->displayname = $ajax->Data->avatar = $ajax->Data->level = null;
+              }
+              $ins = $user->IsLoggedIn()
+                ? 'insert into ' . $_POST['type'] . '_comments (' . KeyName($_POST['type']) . ', posted, user, html, markdown) values (\'' . $db->escape_string($_POST['key']) . '\', \'' . $ajax->Data->posted . '\', \'' . $user->ID . '\', \'' . $db->escape_string($ajax->Data->html) . '\', \'' . $db->escape_string($_POST['md']) . '\')'
+                : 'insert into ' . $_POST['type'] . '_comments (' . KeyName($_POST['type']) . ', posted, name, contacturl, html, markdown) values (\'' . $db->escape_string($_POST['key']) . '\', \'' . $ajax->Data->posted . '\', \'' . $db->escape_string($ajax->Data->name) . '\', \'' . $db->escape_string($ajax->Data->contacturl) . '\', \'' . $db->escape_string(t7format::Markdown($_POST['md'])) . '\', \'' . $db->escape_string($_POST['md']) . '\')';
+              if($db->real_query($ins)) {
+                $ajax->Data->id = $db->insert_id;
+                $ajax->Data->posted = t7format::TimeTag('g:i a \o\n l F jS Y', $ajax->Data->posted);
+                if($user->IsLoggedIn()) {
+                  // TODO:  maybe recalculate from scratch instead of incrementing
+                  $db->real_query('update users_stats set comments=comments+1 where id=\'' . $user->ID . '\' limit 1');
+                  $ajax->Data->canchange = true;
+                  $ajax->Data->username = $user->Username;
+                  $ajax->Data->displayname = $user->DisplayName;
+                  $ajax->Data->friend = false;
+                  $ajax->Data->avatar = $user->Avatar;
+                  $ajax->Data->level = $user->GetLevelName();
+                  $ajax->Data->name = '';
+                  $ajax->Data->contacturl = '';
+                }
+              } else
+                $ajax->Fail('error saving comment.');
+            } else
+              $ajax->Fail('comment missing or empty.');
+        break;
+      case 'edit':
+        if(VerifyCommonFields($ajax, $_POST, 'id'))
+          if($user->IsLoggedIn())
+            if($comment = $db->query('select user, markdown, html from ' . $_POST['type'] . '_comments where id=\'' . +$_POST['id'] . '\' limit 1'))
+              if($comment = $comment->fetch_object())
+                if($user->ID == $comment->user || $user->IsAdmin())
+                  if($comment->markdown)
+                    $ajax->Data->markdown = $comment->markdown;
+                  elseif($user->IsAdmin())
+                    $ajax->Data->markdown = $comment->html;
+                  else
+                    $ajax->Fail('this comment does not have editable content.');
+                else
+                  $ajax->Fail('you can only edit comments you posted.');
+              else
+                $ajax->Fail('comment not found.');
+            else
+              $ajax->Fail('error looking up comment.');
+          else
+            $ajax->Fail('you must be signed in to edit your comment.  you were probably signed out for inactivity.');
+        break;
+      case 'save':
+        if(VerifyCommonFields($ajax, $_POST, 'id'))
+          if($user->IsLoggedIn())
+            if(isset($_POST['markdown']) && trim($_POST['markdown']))
+              if($comment = $db->query('select user from ' . $_POST['type'] . '_comments where id=\'' . +$_POST['id'] . '\' limit 1'))
+                if($comment = $comment->fetch_object())
+                  if($user->ID == $comment->user || $user->IsAdmin()) {
+                    $ajax->Data->html = t7format::Markdown($_POST['markdown']);
+                    if(!$db->real_query('update ' . $_POST['type'] . '_comments set markdown=\'' . $db->escape_string($_POST['markdown']) . '\', html=\'' . $db->escape_string($ajax->Data->html) . '\' where id=\'' . +$_POST['id'] . '\' limit 1'))
+                      $ajax->Fail('error updating comment');
+                  } else
+                    $ajax->Fail('you can only edit comments you posted.');
+                else
+                  $ajax->Fail('comment not found.');
+              else
+                $ajax->Fail('error looking up comment.');
+            else
+              $ajax->Fail('comment was empty.  if you intend to delete your comment, cancel editing and use delete instead.');
+          else
+            $ajax->Fail('you must be signed in to edit your comment.  you were probably signed out for inactivity.');
+        break;
+      case 'delete':
+        if(VerifyCommonFields($ajax, $_POST, 'id'))
+          if($user->IsLoggedIn())
+            if($comment = $db->query('select user from ' . $_POST['type'] . '_comments where id=\'' . +$_POST['id'] . '\' limit 1'))
+              if($comment = $comment->fetch_object())
+                if($user->ID == $comment->user || $user->IsAdmin())
+                  if($db->real_query('delete from ' . $_POST['type'] . '_comments where id=\'' . +$_POST['id'] . '\' limit 1'))
+                    // TODO:  maybe recalculate from scratch instead of incrementing
+                    $db->real_query('update user_stats set comments=comments-1 where id=\'' . $comment->user . '\' limit 1');
+                  else
+                    $ajax->Fail('error deleting comment.');
+                else
+                  $ajax->Fail('you can only delete comments you posted.');
+              else
+                $ajax->Fail('comment not found.');
+            else
+              $ajax->Fail('error looking up comment.');
+          else
+            $ajax->Fail('you must be signed in to delete your comment.  you were probably signed out for inactivity.');
+        break;
+      default:
+        $ajax->Fail('unknown function name.  supported function names are: get, add, delete.');
+        break;
+    }
+    $ajax->Send();
+    die;
+  }
+
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   $cmtform = new auForm('pagecomments', '/comments.php');
   $cmtform->Add(new auFormData('page', ''));
@@ -294,5 +425,40 @@
     $twurl = auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . $page . '#comments');
     $tweet = 'comment on ' . $pagename . ' by ' . $name . ': ' . $twurl;
     auSend::Tweet($tweet);
+  }
+
+  /**
+   * Verify the type and key fields, which are needed to know what the comments
+   * apply to.
+   * @param t7ajax $ajax Ajax object for potential error message
+   * @param array $req Request array to check for type and key; $_GET or $_POST
+   * @param string $field2 Second field to require; key for generic or id for specific
+   * @return boolean true if verified successfully
+   */
+  function VerifyCommonFields($ajax, $req, $field2 = 'key') {
+    if(isset($req['type']))
+      switch($req['type']) {
+      // TODO:  add other types as tables get created (also in the fail comment at the default case)
+        case 'blog':
+          if(isset($req[$field2]))
+            return true;
+          else
+            $ajax->Fail($field2 . ' is required');
+          break;
+        default:
+          $ajax->Fail('invalid comment type specified.  valid types are:  blog.');
+          break;
+      }
+    else
+      $ajax->Fail('comment type is required');
+    return false;
+  }
+
+  function KeyName($type) {
+    switch($type) {
+      case 'blog':
+        return 'entry';
+    }
+    return false;
   }
 ?>

@@ -1,116 +1,146 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  if($_GET['name']) {
-    $entry = 'select name, status, instant, tags, title, post from bln where name=\'' . addslashes($_GET['name']) . '\'';
-    if($entry = $db->GetRecord($entry, 'error looking up entry', 'entry not found')) {
-      if($user->GodMode && isset($_GET['publish'])) {
-        $frm = new auForm('blnpublish', $entry->name . '&publish');
-        $frm->Add(new auFormText('publish', 'once this entry is ready to be shared with the world, click the publish button.'));
-        $frm->Add(new auFormButtons('publish', 'share this entry with the world'));
-        if($frm->CheckInput(true)) {
-          $update = 'update bln set status=\'published\', instant=' . time() . ' where name=\'' . $entry->name . '\'';
-          if(false !== $db->Change($update, 'error publishing entry')) {
-            tweetEntry($entry);
-            $db->Put('insert into taginfo (type, name, count) values (\'entries\', \'' . str_replace(',', '\', 1), (\'entries\', \'', $entry->tags) . '\', 1) on duplicate key update count=count+1');
-            header('Location: http://' . $_SERVER['HTTP_HOST'] . '/bln/' . $entry->name);
-          }
-        }
-        $page->Start('publish ' . $entry->title . '?');
-        $frm->WriteHTML(true);
-      } elseif($user->GodMode && isset($_GET['edit'])) {
-        $frm = GetEntryForm($entry);
-        if($frm->CheckInput(true)) {
-          $update = 'update bln set name=\'' . auFile::NiceName($_POST['name']) . '\', title=\'' . addslashes(htmlspecialchars($_POST['title'], ENT_COMPAT, _CHARSET)) . '\', tags=\'' . addslashes(htmlspecialchars($_POST['tags'], ENT_COMPAT, _CHARSET)) . '\', post=\'' . addslashes(auText::BB2HTML($_POST['post'], true, false)) . '\' where name=\'' . $entry->name . '\'';
-          if(false !== $db->Change($update, 'error updating entry')) {
-            if($entry->status == 'published') {
-              $oldtags = explode(',', $entry->tags);
-              $newtags = explode(',', $_POST['tags']);
-              if(count($oldtags) && count($newtags))
-                for($i = 0; $i < count($oldtags); $i++)
-                  if(false !== $pos = array_search($oldtags[$i], $newtags))
-                    unset($oldtags[$i], $newtags[$pos]);
-              if(count($oldtags))
-                $db->Change('update taginfo set count=count-1 where type=\'entries\' and (name=\'' . implode('\' or name=\'', $oldtags) . '\')');
-              if(count($newtags))
-                $db->Put('insert into taginfo (type, name, count) values (\'entries\', \'' . implode('\', 1), (\'entries\', \'', $newtags) . '\', 1) on duplicate key update count=count+1');
-            }
-            header('Location: http://' . $_SERVER['HTTP_HOST'] . '/bln/' . auFile::NiceName($_POST['name']));
-            die;
-          }
-        }
-        $page->Start('edit entry');
-        $frm->WriteHTML(true);
-        $page->End();
-        die;
-      }
-      if($entry->status == 'published' || $user->GodMode) {
-        if($entry->instant)
-          $page->Start($entry->title . ' - bln', $entry->title, 'posted in ' . TagLinks($entry->tags) . ', ' . strtolower($user->tzdate('M j, Y', $entry->instant)));
-        else
-          $page->Start($entry->title . ' - bln', $entry->title, 'posted in ' . TagLinks($entry->tags));
-        if($user->GodMode) {
-?>
-      <ul class=actions>
-        <li class=edit><a href="<?=$_GET['name']; ?>&amp;edit">edit this entry</a></li>
-<?
-          if($entry->status == 'draft' && !isset($_GET['publish'])) {
-?>
-        <li class=publish><a href="<?=$_GET['name']; ?>&amp;publish">publish this entry</a></li>
-<?
-          }
-?>
-      </ul>
-<?
-        }
-?>
-      <?=$entry->post; ?>
+<?php
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-<?
-        $page->SetFlag(_FLAG_PAGES_COMMENTS);  // show comments
-        $page->End();
-        die;
-      }
+  $tag = false;
+  if(isset($_GET['tag']))
+    if($tag = $db->query('select name from blog_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))
+      if($tag = $tag->fetch_object())
+        $tag = $tag->name;
+    else {  // tag not found, so try getting to the entry without the tag
+      header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['name']);
+      die;
     }
-  } elseif($user->GodMode && isset($_GET['edit'])) {
-    $frm = GetEntryForm();
-    if($frm->CheckInput(true)) {
-      $ins = 'insert into bln (name, status, instant, tags, title, post) values (\'' . auFile::NiceName($_POST['name']) . '\', \'draft\', ' . time() . ', \'' . addslashes(htmlspecialchars($_POST['tags'])) . '\', \'' . addslashes(htmlspecialchars($_POST['title'])) . '\', \'' . addslashes(auText::BB2HTML($_POST['post'], false, false)) . '\')';
-      if(false !== $db->Put($ins, 'error saving new entry')) {
-        header('Location: http://' . $_SERVER['HTTP_HOST'] . '/bln/' . auFile::NiceName($_POST['name']));
-        die;
-      }
-    }
-    $page->Start('add entry - bln', 'add entry');
-    $frm->WriteHTML(true);
-    $page->End();
+
+  $entry = false;
+
+  if(isset($_GET['name']) && $entry = $db->query('select id, url, title, status, posted, content from blog_entries where url=\'' . $db->escape_string($_GET['name']) . '\' limit 1'))
+    $entry = $entry->fetch_object();
+  if(!$entry || $entry->status != 'published' && !$user->IsAdmin()) {
+    header('HTTP/1.0 404 Not Found');
+    $html = new t7html([]);
+    $html->Open($tag ? 'entry not found - ' . $tag . ' - blog' : 'entry not found - blog');
+?>
+      <h1>404 blog entry not found</h1>
+
+      <p>
+        sorry, we don’t seem to have a blog entry by that name.  try the list of
+        <a href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">all blog entries</a>.
+      </p>
+<?php
+    $html->Close();
     die;
   }
-  $page->Show404();
 
-  function TagLinks($tags) {
-    $tags = explode(',', $tags);
-    foreach($tags as $tag) {
-      $links[] = '<a href="tag=' . $tag . '">' . $tag . '</a>';
+  $html = new t7html(['ko' => true]);
+  $html->Open($entry->title . ($tag ? ' - ' . $tag . ' - blog' : ' - blog'));
+?>
+      <h1><?php echo htmlspecialchars($entry->title); ?></h1>
+<?php
+  if($tags = $db->query('select t.name from blog_entrytags as et left join blog_tags as t on t.id=et.tag where et.entry=\'' . $entry->id . '\'')) {
+    $entry->tags = [];
+    while($t = $tags->fetch_object())
+      $entry->tags[] = '<a href="' . ($tag ? '../' : '') . $t->name . '/" title="entries tagged ' . $t->name . '">' . $t->name . '</a>';
+  }
+?>
+      <p class=postmeta>
+        posted by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a>
+<?php
+  if(count($entry->tags)) {
+?>
+        in <?php echo join(', ', $entry->tags); ?>
+<?php
+  }
+  if($entry->posted) {
+?>
+        on <time datetime="<?php echo date('c', $entry->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $entry->posted); ?>"><?php echo strtolower(t7format::LocalDate('M j, Y', $entry->posted)); ?></time>
+<?php
+  }
+?>
+      </p>
+<?php
+  if($user->IsAdmin()) {
+?>
+      <nav class=actions data-id="<?php echo $entry->id; ?>">
+        <a class=edit href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?id=<?php echo $entry->id; ?>">edit this entry</a>
+<?php
+    if($entry->status == 'draft') {
+?>
+        <a id=publishentry class=new href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this entry</a>
+        <a id=delentry class=del href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=delete">delete this entry</a>
+<?php
     }
-    return implode(', ', $links);
+?>
+      </nav>
+<?php
   }
+  echo $entry->content;
+  // TODO:  show previous / next entry (tag or all), link back to list
+?>
+      <section id=comments>
+        <h2>comments</h2>
+        <p data-bind="visible: error(), text: error"></p>
+        <p data-bind="visible: !loadingComments() && comments().length == 0">
+          there are no comments on this entry so far.  you could be the first!
+        </p>
+        <!-- ko foreach: comments -->
+        <section class=comment>
+          <div class=userinfo>
+            <div class=username data-bind="visible: !username && !contacturl, text: name"></div>
+            <div class=username data-bind="visible: !username && contacturl"><a data-bind="text: name, attr: {href: contacturl}"></a></div>
+            <div class=username data-bind="visible: username">
+              <a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}"></a>
+              <img data-bind="visible: friend, attr: {title: (displayname || username) + ' is your friend'}" alt="*" src="/images/friend.png">
+            </div>
+            <a data-bind="visible: avatar"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
+            <div class=userlevel data-bind="visible: level, text:level"></div>
+          </div>
+          <div class=comment>
+            <header>posted <time data-bind="text: posted.display, attr: {datetime: posted.datetime}"></time></header>
+            <div class=content data-bind="visible: !editing(), html: html"></div>
+            <div class="content edit" data-bind="visible: editing">
+              <textarea data-bind="value: markdown"></textarea>
+            </div>
+            <footer data-bind="visible: canchange">
+              <a class="okay action" data-bind="visible: editing(), click: $parent.SaveComment" href="/comments.php?ajax=save">save</a>
+              <a class="cancel action" data-bind="visible: editing(), click: $parent.UneditComment" href="#">cancel</a>
+              <a class="edit action" data-bind="visible: !editing(), click: $parent.EditComment" href="/comments.php?ajax=edit">edit</a>
+              <a class="del action" data-bind="visible: !editing(), click: $parent.DeleteComment" href="/comments.php?ajax=delete">delete</a>
+            </footer>
+          </div>
+        </section>
 
-  function GetEntryForm($entry = false) {
-    $frm = new auForm('entry', $entry->name . '&edit');
-    $frm->Add(new auFormString('name', 'name', 'name to use in url; must be unique', true, $entry->name, 20, 32));
-    $frm->Add(new auFormString('title', 'title', 'title to display on the page', true, $entry->title, 50, 128));
-    $frm->Add(new auFormString('tags', 'tags', 'tags for this entry (comma-separated)', true, $entry->tags, 50, 255));
-    $frm->Add(new auFormMultiString('post', 'entry', 'the text of this entry (t7code)', true, auText::HTML2BB($entry->post), true, 10));
-    $frm->Add(new auFormButtons('save', 'save this entry'));
-    return $frm;
-  }
+        <!-- /ko -->
 
-  function tweetEntry($entry) {
-    $url = ': ' . auSend::Bitly('http://' . str_replace('m.', 'www.', $_SERVER['HTTP_HOST']) . '/bln/' . $entry->name);
-    $len = 130 - strlen($url);  // start with 130 because 'bln entry ' is 10 and twitter takes 140
-    $title = $entry->title;
-    if(mb_strlen($title, _CHARSET) > $len)
-      $title = mb_substr($title, 0, $len - 1, _CHARSET) . '…';
-    auSend::Tweet('bln entry ' . $title . $url);
+        <form id=addcomment data-type=blog data-key=<?php echo $entry->id; ?>>
+<?php
+  if($user->IsLoggedIn()) {
+?>
+          <label title="you are signed in, so your comment will post with your avatar and a link to your profile">
+            <span class=label>name:</span>
+            <span class=field><a href="/user/<?php echo $user->Username; ?>/"><?php echo htmlspecialchars($user->DisplayName); ?></a></span>
+          </label>
+<?php
+  } else {
+?>
+          <label title="please sign in or enter a name so we know what to call you">
+            <span class=label>name:</span>
+            <span class=field><input id=authorname></span>
+          </label>
+          <label title="enter a website, web page, or e-mail address if you want people to be able to find you">
+            <span class=label>contact:</span>
+            <span class=field><input id=authorcontact></span>
+          </label>
+<?php
   }
+?>
+          <label title="enter your comments using markdown">
+            <span class=label>comment:</span>
+            <span class=field><textarea id=newcomment></textarea></span>
+          </label>
+          <button id=postcomment>post comment</button>
+        </form>
+      </section>
+<?php
+  // TODO:  move comment stuff to t7html; show add comment form; make edit / delete links do something
+  $html->Close();
 ?>

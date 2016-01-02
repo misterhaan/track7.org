@@ -1,22 +1,33 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  header('HTTP/1.0 404 Not Found');
-  $page->Start('404 not found', '404 bad guess');
+<?php
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+
+  $html = new t7html([]);
+  $html->Open('404 not found');
 ?>
+      <h1>404 bad guess</h1>
+
       <p>
-        i can't find the file you asked for, so you will have to either get it
-        right or find it yourself (or have google help you):
+        sorry, that’s not a thing.  if you followed a link and expected to find
+        a thing, you should tell the owner of the link there’s nothing here so
+        they can fix it.  if the link was from track7,
+        <a href="/user/sendmessage.php?to=misterhaan">tell misterhaan</a>.  if
+        you were just making stuff up, you might do better with this google
+        search of everything on track7:
       </p>
 
-<?
-  require_once 'auForm.php';
-  $google = new auForm('', 'http://www.google.com/custom', 'get');
-  $google->AddData('cof', 'L:http://www.track7.org/t7logo.png;S:http://www.track7.org/;');
-  $google->AddData('sitesearch', 'www.track7.org');
-  $google->AddData('filter', 0);
-  $google->AddField('q', 'google', 'text to search for', true, '', _AU_FORM_FIELD_NORMAL, 70);
-  $google->AddButtons('search', 'search track7 using google');
-  $google->WriteHTML($user->valid);
-
-  $page->End();
+      <script>
+        (function() {
+          var cx = '009301861402372195375:8j9q7yqytle';
+          var gcse = document.createElement('script');
+          gcse.type = 'text/javascript';
+          gcse.async = true;
+          gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+              '//cse.google.com/cse.js?cx=' + cx;
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(gcse, s);
+        })();
+      </script>
+      <gcse:searchbox-only></gcse:searchbox-only>
+<?php
+  $html->Close();
 ?>

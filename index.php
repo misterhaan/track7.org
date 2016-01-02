@@ -1,363 +1,253 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-
+<?php
   define('MAXITEMS', 9);
   define('LONGDATEFMT', 'g:i a \o\n l F jS Y');
-
-  $page->AddFeed('track7', '/feeds/unifeed.rss');
-  $page->AddFeed('track7 site updates', '/feeds/updates.rss');
-  $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
-  $page->AddFeed('track7 page comments', '/feeds/comments.rss');
-  $page->AddFeed('track7 bln entries', '/feeds/entries.rss');
-  $page->AddFeed('track7 album photos', '/feeds/photos.rss');
-  $page->AddFeed('track7 art', '/feeds/art.rss');
-  $page->AddFeed('track7 disc golf rounds', '/feeds/rounds.rss');
-
-  $page->Start('track7');
+  define('FORUM_POSTS_PER_PAGE', 20);
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+  $html = new t7html([]);
+  $html->Open('track7');
 ?>
-      <div id="features">
-        <h2>features</h2>
-        <dl>
-          <dt><a href="/bln/"><img class="icon" src="/bln/favicon.png" alt="" />bln (natural blog)</a></dt>
-          <dd>
-            find out what i think.
-          </dd>
-          <dt><a href="/album/"><img class="icon" src="/album/favicon.png" alt="" />photo album</a></dt>
-          <dd>
-            view my collection of photos.
-          </dd>
-          <dt><a href="/guides/"><img class="icon" src="/guides/favicon.png" alt="" />guides</a></dt>
-          <dd>
-            learn something.
-          </dd>
-          <dt><a href="/discgolf/"><img class="icon" src="/discgolf/favicon.png" alt="" />disc golf</a></dt>
-          <dd>
-            track disc golf scores.
-          </dd>
-          <dt><a href="/art/lego/"><img class="icon" src="/art/lego/favicon.png" alt="" />lego models</a></dt>
-          <dd>
-            download instructions to build lego models.
-          </dd>
-          <dt><a href="/art/"><img class="icon" src="/art/favicon.png" alt="" />visual art</a></dt>
-          <dd>
-            see pencil sketches and digital artwork.
-          </dd>
-          <dt><a href="/pen/"><img class="icon" src="/pen/favicon.png" alt="" />pen vs. sword</a></dt>
-          <dd>
-            read short stories and theories.
-          </dd>
-          <dt><a href="/analogu/"><img class="icon" src="/analogu/favicon.png" alt="" />the analog underground</a></dt>
-          <dd>
-            download free software with source code.
-          </dd>
-          <dt><a href="/hb/"><img class="icon" src="/hb/favicon.png" alt="" />forums</a></dt>
-          <dd>
-            speak your mind and see what others think.
-          </dd>
-<?
-  if($user->GodMode) {
+      <h1><img alt=track7 src="/images/track7.png"></h1>
+
+      <section id=features>
+        <nav>
+          <a href="/bln/" title="read the blog">
+            <img src="/bln/favicon.png" alt="">
+            blog
+          </a>
+          <a href="/album/" title="see my photos">
+            <img src="/album/favicon.png" alt="">
+            photo album
+          </a>
+          <a href="/guides/" title="learn how i’ve done things">
+            <img src="/guides/favicon.png" alt="">
+            guides
+          </a>
+          <a href="/discgolf/" title="track disc golf scores">
+            <img src="/discgolf/favicon.png" alt="">
+            disc golf
+          </a>
+          <a href="/art/lego/" title="download instructions for custom lego models">
+            <img src="/art/lego/favicon.png" alt="">
+            lego models
+          </a>
+          <a href="/art/" title="see sketches and digital artwork">
+            <img src="/art/favicon.png" alt="">
+            visual art
+          </a>
+          <a href="/pen/" title="read short fiction and a poem">
+            <img src="/pen/favicon.png" alt="">
+            stories
+          </a>
+          <a href="/analogu/" title="download free software with source code">
+            <img src="/analogu/favicon.png" alt="">
+            software
+          </a>
+          <a href="/hb/" title="join or start conversations">
+            <img src="/hb/favicon.png" alt="">
+            forums
+          </a>
+<?php
+  if($user->IsAdmin()) {
 ?>
-          <dt><a href="/tools/"><img class="icon" src="/favicon.png" alt="" />tools</a></dt>
-          <dd>
-            administer track7.
-          </dd>
-<?
+          <a href="/tools/" title="administer track7">
+            <img src="/favicon.png" alt="">
+            tools
+          </a>
+<?php
   }
 ?>
-        </dl>
-
-<?
-  // get daily photo and weekly art
-  $rndvis = 'select r.photo, p.caption, r.arttype, r.art, a.type, a.name as aname, l.name as lname from randomvisual as r left join photos as p on p.id=r.photo left join art as a on a.id=r.art left join legos as l on l.id=r.art';
-  if($rndvis = $db->GetRecord($rndvis, 'error looking up random visuals', 'random visuals not defined')) {
-    if($rndvis->arttype == 'legos') {
-      $rndvis->arturl = '/art/lego/' . $rndvis->art;
-      $rndvis->thumb = $rndvis->arturl . '-thumb.png';
-      $rndvis->artname = $rndvis->lname;
-    } else {
-      $rndvis->arturl = '/art/' . $rndvis->type . '.php#' . $rndvis->art;
-      $rndvis->thumb = '/art/' . $rndvis->art . '-prev.png';
-      $rndvis->artname = $rndvis->aname;
-    }
-?>
-        <div id=randomvisual>
-          <div id=dailyphoto class=img>
-            <h3>photo of the day</h3>
-            <a href=/album/photo=<?=$rndvis->photo; ?> title="<?=$rndvis->caption; ?>">
-              <img src=/album/photos/<?=$rndvis->photo; ?>.jpg alt="">
-            </a>
-          </div>
-
-          <div id=weeklyart class=img>
-            <h3>art of the week</h3>
-            <a href="<?=$rndvis->arturl; ?>" title="<?=$rndvis->artname; ?>">
-              <img src=<?=$rndvis->thumb; ?> alt="">
-            </a>
-          </div>
-
-          <br class=clear />
-        </div>
-<?
-  }
-?>
-      </div>
-
-<?
-  // get last MAXITEMS items from updates, posts, comments, entries, and photos
-  $updates = 'select instant, `change` from updates order by instant desc';
-  if($updates = $db->GetLimit($updates, 0, MAXITEMS, 'error looking up updates', ''))
-    $update = $updates->NextRecord();
-  else
-    $update = false;
-  $posts = 'select p.id, p.number, p.thread, p.instant, p.subject, p.post, p.uid, u.login from hbposts as p left join users as u on u.uid=p.uid order by instant desc';
-  if($posts = $db->GetLimit($posts, 0, MAXITEMS, 'error looking up forum posts', ''))
-    $post = $posts->NextRecord();
-  else
-    $post = false;
-  $comments = 'select c.instant, c.page, c.uid, u.login, c.name, c.url, c.comments from comments as c left join users as u on u.uid=c.uid order by instant desc';
-  if($comments = $db->GetLimit($comments, 0, MAXITEMS, 'error looking up comments', ''))
-    $comment = $comments->NextRecord();
-  else
-    $comment = false;
-  $entries = 'select instant, name, tags, title, post from bln where status=\'published\' order by instant desc';
-  if($entries = $db->GetLimit($entries, 0, MAXITEMS, 'error looking up bln entries', ''))
-    $entry = $entries->NextRecord();
-  else
-    $entry = false;
-  $photos = 'select added, id, tags, caption, description from photos order by added desc';
-  if($photos = $db->GetLimit($photos, 0, MAXITEMS, 'error looking up album photos', ''))
-    $photo = $photos->NextRecord();
-  else
-    $photo = false;
-  $guides = 'select g.id, g.dateadded, g.title, g.description, u.login from guides as g left join users as u on u.uid=g.author order by dateadded desc';
-  if($guides = $db->GetLimit($guides, 0, MAXITEMS, 'error looking up guides and tips', ''))
-    $guide = $guides->NextRecord();
-  else
-    $guide = false;
-  $arts = 'select id, name, type, description, adddate from art order by adddate desc';
-  if($arts = $db->GetLimit($arts, 0, MAXITEMS, 'error looking up art', ''))
-    $art = $arts->NextRecord();
-  else
-    $art = false;
-  $rounds = 'select r.id, r.instant, r.courseid, c.name, r.player, r.uid, u.login, r.roundtype, r.tees, r.score, r.comments from dgrounds as r left join dgcourses as c on c.id=r.courseid left join users as u on u.uid=r.uid where entryuid is null or r.uid=0 order by instant desc';
-  if($rounds = $db->GetLimit($rounds, 0, MAXITEMS, 'error looking up rounds', ''))
-    $round = $rounds->NextRecord();
-  else
-    $round = false;
+        </nav>
+      </section>
+<?php
+  // get last MAXITEMS from contributions, updates, posts, comments, and photos
+  $act = $update = $forum = $comment = $photo = $guide = $art = $round = false;
+  if($acts = $db->query('select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author order by c.posted desc limit ' . MAXITEMS))
+    $act = $acts->fetch_object();
+  if($updates = $db->query('select instant as posted, `change` as preview from track7_t7data.updates order by instant desc limit ' . MAXITEMS))
+    $update = $updates->fetch_object();
+  if($forums = $db->query('select p.id, p.number, p.thread, p.instant as posted, p.subject as title, p.post as preview, u.username, u.displayname from track7_t7data.hbposts as p left join track7_t7data.users as ou on ou.uid=p.uid left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id order by instant desc limit ' . MAXITEMS))
+    $forum = $forums->fetch_object();
+  if($comments = $db->query('select \'comment\' as conttype, c.instant as posted, c.page as url, u.username, u.displayname, c.name as authorname, c.url as authorurl, substring_index(c.page, \'/\', -1) as title, c.comments as preview, 0 as hasmore from track7_t7data.comments as c left join track7_t7data.users as ou on ou.uid=c.uid left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id where not (c.page like \'/bln/%\') order by instant desc limit ' . MAXITEMS))
+    $comment = $comments->fetch_object();
+  if($photos = $db->query('select added as posted, id, caption as title from track7_t7data.photos order by posted desc limit ' . MAXITEMS))
+    $photo = $photos->fetch_object();
+  if($guides = $db->query('select g.id, g.dateadded as posted, g.title, g.description as preview, u.username, u.displayname from track7_t7data.guides as g left join track7_t7data.users as ou on ou.uid=g.author left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id order by posted desc limit ' . MAXITEMS))
+    $guide = $guides->fetch_object();
+  if($arts = $db->query('select id, name as title, `type`, adddate as posted from track7_t7data.art order by posted desc limit ' . MAXITEMS))
+    $art = $arts->fetch_object();
+  if($rounds = $db->query('select r.id, r.instant as posted, c.name, r.player as authorname, \'\' as authorurl, u.username, u.displayname, r.roundtype, r.tees, r.score, r.comments from track7_t7data.dgrounds as r left join track7_t7data.dgcourses as c on c.id=r.courseid left join track7_t7data.users as ou on ou.uid=r.uid left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id where r.entryuid is null or r.uid=0 order by posted desc limit ' . MAXITEMS))
+    $round = $rounds->fetch_object();
 
   $items = 0;
-  while($items < MAXITEMS && ($update || $post || $comment || $entry || $photo || $guide || $art || $round)) {
-    if($update && (!$post || $update->instant >= $post->instant) && (!$comment || $update->instant >= $comment->instant) && (!$entry || $update->instant >= $entry->instant) && (!$photo || $update->instant >= $photo->added) && (!$guide || $update->instant >= $guide->dateadded) && (!$art || $update->instant >= $art->adddate) && (!$round || $update->instant >= $round->instant)) {
-      showUpdate($update, $user);
-      $update = $updates->NextRecord();
-    } elseif($post && (!$update || $post->instant >= $update->instant) && (!$comment || $post->instant >= $comment->instant) && (!$entry || $post->instant >= $entry->instant) && (!$photo || $post->instant >= $photo->added) && (!$guide || $post->instant >= $guide->dateadded) && (!$art || $post->instant >= $art->adddate) && (!$round || $post->instant >= $round->instant)) {
-      showPost($post, $user);
-      $post = $posts->NextRecord();
-    } elseif($comment && (!$update || $comment->instant >= $update->instant) && (!$post || $comment->instant >= $post->instant) && (!$entry || $comment->instant >= $entry->instant) && (!$photo || $comment->instant >= $photo->added) && (!$guide || $comment->instant >= $guide->dateadded) && (!$art || $comment->instant >= $art->adddate) && (!$round || $comment->instant >= $round->instant)) {
-      showComment($comment, $user);
-      $comment = $comments->NextRecord();
-    } elseif($entry && (!$update || $entry->instant >= $update->instant) && (!$post || $entry->instant >= $post->instant) && (!$comment || $entry->instant >= $comment->instant) && (!$photo || $entry->instant >= $photo->added) && (!$guide || $entry->instant >= $guide->dateadded) && (!$art || $entry->instant >= $art->adddate) && (!$round || $entry->instant >= $round->instant)) {
-      showEntry($entry, $user);
-      $entry = $entries->NextRecord();
-    } elseif($photo && (!$update || $photo->added >= $update->instant) && (!$post || $photo->added >= $post->instant) && (!$comment || $photo->added >= $comment->instant) && (!$entry || $photo->added >= $entry->instant) && (!$guide || $photo->added >= $guide->dateadded) && (!$art || $photo->added >= $art->adddate) && (!$round || $photo->added >= $round->instant)) {
-      showPhoto($photo, $user);
-      $photo = $photos->NextRecord();
-    } elseif($guide && (!$update || $guide->dateadded >= $update->instant) && (!$post || $guide->dateadded >= $post->instant) && (!$comment || $guide->dateadded >= $comment->instant) && (!$entry || $guide->dateadded >= $entry->instant) && (!$photo || $guide->dateadded >= $photo->added) && (!$art || $guide->dateadded >= $art->adddate) && (!$round || $guide->dateadded >= $round->instant)) {
-      showGuide($guide, $user);
-      $guide = $guides->NextRecord();
-    } elseif($art && (!$update || $art->adddate >= $update->instant) && (!$post || $art->adddate >= $post->instant) && (!$comment || $art->adddate >= $comment->instant) && (!$entry || $art->adddate >= $entry->instant) && (!$photo || $art->adddate >= $photo->added) && (!$guide || $art->adddate >= $guide->dateadded) && (!$round || $art->adddate >= $round->instant)) {
-      showArt($art, $user);
-      $art = $arts->NextRecord();
+  while($items < MAXITEMS && ($act || $update || $forum || $comment || $photo || $guide || $art || $round)) {
+    if($act && (!$update || $act->posted > $update->posted) && (!$forum || $act->posted > $forum->posted) && (!$comment || $act->posted > $comment->posted) && (!$photo || $act->posted > $photo->posted) && (!$guide || $act->posted > $guide->posted) && (!$art || $act->posted > $art->posted) && (!$round || $act->posted > $round->posted)) {
+      ShowContribution($act);
+      $act = $acts->fetch_object();
+    } elseif($update && (!$forum || $update->posted > $forum->posted) && (!$comment || $update->posted > $comment->posted) && (!$photo || $update->posted > $photo->posted) && (!$guide || $update->posted > $guide->posted) && (!$art || $update->posted > $art->posted) && (!$round || $update->posted > $round->posted)) {
+      ShowUpdate($update);
+      $update = $updates->fetch_object();
+    } elseif($forum && (!$comment || $forum->posted > $comment->posted) && (!$photo || $forum->posted > $photo->posted) && (!$guide || $forum->posted > $guide->posted) && (!$art || $forum->posted > $art->posted) && (!$round || $forum->posted > $round->posted)) {
+      ShowForum($forum);
+      $forum = $forums->fetch_object();
+    } elseif($comment && (!$photo || $comment->posted > $photo->posted) && (!$guide || $comment->posted > $guide->posted) && (!$round || $comment->posted > $round->posted)) {
+      ShowContribution($comment);
+      $comment = $comments->fetch_object();
+    } elseif($photo && (!$guide || $photo->posted > $guide->posted) && (!$art || $photo->posted > $art->posted) && (!$round || $photo->posted > $round->posted)) {
+      ShowPhoto($photo);
+      $photo = $photos->fetch_object();
+    } elseif($guide && (!$art || $guide->posted > $art->posted) && (!$round || $guide->posted > $round->posted)) {
+      ShowGuide($guide);
+      $guide = $guides->fetch_object();
+    } elseif($art && (!$round || $art->posted > $round->posted)) {
+      ShowArt($art);
+      $art = $arts->fetch_object();
     } elseif($round) {
-      showRound($round, $user);
-      $round = $rounds->NextRecord();
+      ShowRound($round);
+      $round = $rounds->fetch_object();
     }
     $items++;
   }
+  $html->Close();
+
+  function ShowContribution($act) {
 ?>
-
-      <p class="links">[
-        <a href="new.php">updates</a> |
-        <a href="hb/recentposts.php">posts</a> |
-        <a href="comments.php">comments</a>
-      ]</p>
-      <br class="clear" />
-<?
-  $page->End();
-
-  /**
-   * Show a site update.
-   *
-   * @param object $update site update to be shown
-   * @param auUserTrack7 $user user object for showing dates in the correct time zone
-   */
-  function showUpdate($update, $user) {
+      <article class="activity <?php echo $act->conttype; ?>">
+        <div class=whatwhen title="<?php echo $act->conttype; ?> at <?php echo t7format::LocalDate(LONGDATEFMT, $act->posted); ?>">
+          <time datetime="<?php echo gmdate('c', $act->posted); ?>"><?php echo t7format::SmartDate($act->posted); ?></time>
+        </div>
+        <div>
+          <h2><?php echo ContributionPrefix($act->conttype); ?><a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a> by <?php echo AuthorLink($act); ?></h2>
+          <div class=summary>
+            <?php echo $act->preview; ?>
+<?php
+    if($act->hasmore) {
 ?>
-    <div class="feed update">
-      <div class="typedate" title="site update at <?=strtolower($user->tzdate(LONGDATEFMT, $update->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($update->instant, $user)); ?></div></div>
-      <h2 class="feed">track7 update by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/updates.rss" class="feed" title="track7 updates"><img src="/style/feed.png" alt="rss" /></a></h2>
-      <p><?=$update->change; ?></p>
-    </div>
-
-<?
+            <p class=readmore><a href="<?php echo htmlspecialchars($act->url); ?>">⇨ read more</a></p>
+<?php
+    }
+?>
+          </div>
+        </div>
+      </article>
+<?php
   }
 
-  /**
-   * Show a forum post.
-   *
-   * @param object $post forum post to be shown
-   * @param auUserTrack7 $user user object for showing dates in the correct time zone
-   */
-  function showPost($post, $user) {
+  function ShowUpdate($update) {
 ?>
-    <div class="feed post">
-      <div class="typedate" title="forum post at <?=strtolower($user->tzdate(LONGDATEFMT, $post->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($post->instant, $user)); ?></div></div>
-<?
-    echo '      <h2 class="feed"><a href="/hb/thread' . $post->thread;
-    if($post->number - 1 > _FORUM_POSTS_PER_PAGE)
-      echo '/skip=' . (floor(($post->number - 1) / _FORUM_POSTS_PER_PAGE) * _FORUM_POSTS_PER_PAGE) . '#p';
-    else
-      echo '/#p';
-    echo $post->id . '">' . $post->subject . '</a> by ';
-    if($post->uid)
-      echo '<a href="/user/' . $post->login . '/">' . $post->login . '</a>';
-    else
-      echo 'anonymous';
-    echo '<a href="/feeds/posts.rss" class="feed" title="track7 forum posts"><img src="/style/feed.png" alt="rss" /></a></h2>' . "\n";
-?>
-      <?=$post->post; ?>
-    </div>
-
-<?
+      <article class="activity update">
+        <div class=whatwhen title="site update at <?php echo t7format::LocalDate(LONGDATEFMT, $update->posted); ?>">
+          <time datetime="<?php echo gmdate('c', $update->posted); ?>"><?php echo t7format::SmartDate($update->posted); ?></time>
+        </div>
+        <div>
+          <h2>track7 update by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></h2>
+          <div class=summary><p><?php echo $update->preview; ?></p></div>
+        </div>
+      </article>
+<?php
   }
 
-  /**
-   * Show a page comment.
-   *
-   * @param object $comment page comment to be shown
-   * @param auUserTrack7 $user user object for showing dates in the correct time zone
-   */
-  function showComment($comment, $user) {
-    $pagename = explode('/', rtrim($comment->page, '/'));
-    $pagename = $pagename[count($pagename) - 1];
+  function ShowForum($forum) {
+    $forum->url = '/hb/thread' . $forum->thread . '/';
+    if($forum->number - 1 > FORUM_POSTS_PER_PAGE)
+      $forum->url .= 'skip=' . floor(($forum->number - 1) / FORUM_POSTS_PER_PAGE) * FORUM_POSTS_PER_PAGE;
+    $forum->url .= '#p' . $forum->id;
+    $forum->authorurl = false;
+    $forum->authorname = 'anonymous';
 ?>
-    <div class="feed comment">
-      <div class="typedate" title="page comment at <?=strtolower($user->tzdate(LONGDATEFMT, $comment->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($comment->instant, $user)); ?></div></div>
-      <h2 class="feed">comment on <a href="<?=$comment->page; ?>"><?=$pagename; ?></a> by <?=($comment->uid ? '<a href="/user/' . $comment->login . '/">' . $comment->login . '</a>' : ($comment->url ? '<a href="' . $comment->url . '">' . $comment->name . '</a>' : $comment->name)); ?><a href="/feeds/comments.rss" class="feed" title="track7 comments"><img src="/style/feed.png" alt="rss" /></a></h2>
-      <?=$comment->comments; ?>
-    </div>
-
-<?
+      <article class="activity forum">
+        <div class=whatwhen title="forum post at <?php echo t7format::LocalDate(LONGDATEFMT, $forum->posted); ?>">
+          <time datetime="<?php echo gmdate('c', $forum->posted); ?>"><?php echo t7format::SmartDate($forum->posted); ?></time>
+        </div>
+        <div>
+          <h2><a href="<?php echo $forum->url; ?>"><?php echo $forum->title; ?></a> by <?php echo AuthorLink($forum); ?></h2>
+          <?php echo $forum->preview; ?>
+        </div>
+      </article>
+<?php
   }
 
-  /**
-   * Show a bln entry.
-   *
-   * @param object $entry bln entry to be shown
-   * @param auUserTrack7 $user user object for showing dates in the correct time zone
-   */
-  function showEntry($entry, $user) {
-    // only show first paragraph
-    $p = strpos($entry->post, '</p>');
-    $entry->post = substr($entry->post, 0, $p + 4);
-    $tags = explode(',', $entry->tags);
-    for($t = 0; $t < count($tags); $t++)
-      $tags[$t] = '<a href="/bln/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
-    $tags = implode(', ', $tags);
+  function ShowPhoto($photo) {
 ?>
-    <div class="feed entry">
-      <div class="typedate" title="bln entry at <?=strtolower($user->tzdate(LONGDATEFMT, $entry->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($entry->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/bln/<?=$entry->name; ?>"><?=$entry->title; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/entries.rss" class="feed" title="track7 bln entries"><img src="/style/feed.png" alt="rss" /></a></h2>
-      <p class="tags"><?=$tags; ?></p>
-      <?=$entry->post; ?>
-      <p class="readmore">» <a href="/bln/<?=$entry->name; ?>">read more...</a></p>
-    </div>
-
-<?
+      <article class="activity photo">
+        <div class=whatwhen title="photo at <?php echo t7format::LocalDate(LONGDATEFMT, $photo->posted); ?>">
+          <time datetime="<?php echo gmdate('c', $photo->posted); ?>"><?php echo t7format::SmartDate($photo->posted); ?></time>
+        </div>
+        <div>
+          <h2><a href="/album/photo=<?php echo $photo->id; ?>"><?php echo $photo->title; ?></a> by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></h2>
+          <p><a href="/album/photo=<?php echo $photo->id; ?>"><img class=photothumb src="/album/photos/<?php echo $photo->id; ?>.jpg" alt=""></a></p>
+          <p class=readmore><a href="/album/photo=<?php echo $photo->id; ?>">⇨  see larger</a></p>
+        </div>
+      </article>
+<?php
   }
 
- /**
-   * Show a photo.
-   *
-   * @param object $photo photo to be shown
-   * @param auUserTrack7 $user user object for showing dates in the correct time zone
-   */
-  function showPhoto($photo, $user) {
-    $tags = explode(',', $photo->tags);
-    for($t = 0; $t < count($tags); $t++)
-      $tags[$t] = '<a href="/album/tag=' . $tags[$t] . '">' . $tags[$t] . '</a>';
-    $tags = implode(', ', $tags);
+  function ShowGuide($guide) {
 ?>
-    <div class="feed photo">
-      <div class="typedate" title="photo at <?=strtolower($user->tzdate(LONGDATEFMT, $photo->added)); ?>"><div class="date"><?=strtolower(auText::SmartTime($photo->added, $user)); ?></div></div>
-      <h2 class="feed"><a href="/album/photo=<?=$photo->id; ?>"><?=$photo->caption; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/photos.rss" class="feed" title="track7 album photos"><img src="/style/feed.png" alt="rss" /></a></h2>
-      <p class="tags"><?=$tags; ?></p>
-      <p><a class="img" href="/album/photo=<?=$photo->id; ?>"><img class="photothumb" src="/album/photos/<?=$photo->id; ?>.jpg" alt="" /></a></p>
-      <p><?=$photo->description; ?></p>
-    </div>
-
-<?
+      <article class="activity guide">
+        <div class=whatwhen title="guide at <?php echo t7format::LocalDate(LONGDATEFMT, $guide->posted); ?>">
+          <time datetime="<?php echo gmdate('c', $guide->posted); ?>"><?php echo t7format::SmartDate($guide->posted); ?></time>
+        </div>
+        <div>
+          <h2><a href="/guides/<?php echo $guide->id; ?>"><?php echo $guide->title; ?></a> by <?php echo AuthorLink($guide); ?></h2>
+          <p><?php echo $guide->preview; ?></p>
+          <p class=readmore><a href="/guides/<?php echo $guide->id; ?>">⇨  read more</a></p>
+        </div>
+      </article>
+<?php
   }
 
-  /**
-   * Show a guide.
-   *
-   * @param object $guide guide to be shown
-   * @param auUserTrack7 $user user object for showing dates in the correct time zone
-   */
-  function showGuide($guide, $user) {
-?>
-    <div class="feed guide">
-      <div class="typedate" title="guide at <?=strtolower($user->tzdate(LONGDATEFMT, $guide->dateadded)); ?>"><div class="date"><?=strtolower(auText::SmartTime($guide->dateadded, $user)); ?></div></div>
-      <h2 class="feed"><a href="/guides/<?=$guide->id; ?>/"><?=$guide->title; ?></a> by <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a><a href="/feeds/guides.rss" class="feed" title="track7 guides"><img src="/style/feed.png" alt="rss" /></a></h2>
-      <p><?=$guide->description; ?></p>
-    </div>
-
-<?
-  }
-
-  /**
-   * Show art (a sketch or digital art).
-   * @param object $art art to be shown
-   * @param auUserTrack7 $user user object for showing dates in the correct time zone
-   */
-  function showArt($art, $user) {
+  function ShowArt($art) {
     if($art->type == 'digital')
       $art->type = 'digital art';
-    if(!$art->name)
-      $art->name = str_replace('-', ' ', $art->id);
+    if(!$art->title)
+      $art->title = str_replace('-', ' ', $art->id);
 ?>
-    <div class="feed art">
-      <div class="typedate" title="<?=$art->type; ?> at <?=strtolower($user->tzdate(LONGDATEFMT, $art->adddate)); ?>"><div class="date"><?=strtolower(auText::SmartTime($art->adddate, $user)); ?></div></div>
-      <h2 class="feed"><a href="/output/gfx/sketch.php#<?=$art->id; ?>"><?=$art->name; ?></a> by <a href="/user/misterhaan/">misterhaan</a><a href="/feeds/art.rss" class="feed" title="track7 art"><img src="/style/feed.png" alt="rss" /></a></h2>
-      <p><a class="img" href="/output/gfx/sketch.php#<?=$art->id; ?>"><img class="photothumb" src="/output/gfx/<?=$art->id; ?>-prev.png" alt="" /></a></p>
-      <?=$art->description; ?>
-    </div>
-
-<?
+      <article class="activity art">
+        <div class=whatwhen title="<?php echo $art->type; ?> at <?php echo t7format::LocalDate(LONGDATEFMT, $art->posted); ?>">
+          <time datetime="<?php echo gmdate('c', $art->posted); ?>"><?php echo t7format::SmartDate($art->posted); ?></time>
+        </div>
+        <div>
+          <h2><a href="/output/gfx/sketch.php#<?php echo $art->id; ?>"><?php echo $art->title; ?></a> by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></h2>
+          <p><a href="/output/gfx/sketch.php#<?php echo $art->id; ?>"><img class=photothumb src="/output/gfx/<?php echo $art->id; ?>-prev.png" alt=""></a></p>
+          <p class=readmore><a href="/output/gfx/sketch.php#<?php echo $art->id; ?>">⇨  see larger</a></p>
+        </div>
+      </article>
+<?php
   }
 
-  function showRound($round, $user) {
+  function ShowRound($round) {
 ?>
-    <div class="feed round">
-      <div class="typedate" title="disc golf round at <?=strtolower($user->tzdate(LONGDATEFMT, $round->instant)); ?>"><div class="date"><?=strtolower(auText::SmartTime($round->instant, $user)); ?></div></div>
-      <h2 class="feed"><a href="/discgolf/rounds.php?id=<?=$round->id; ?>">disc golf round</a> at <a href="/discgolf/courses.php?id=<?=$round->courseid; ?>"><?=$round->name; ?></a> by <?=$round->uid ? '<a href="/user/' . $round->login . '/">' . $round->login . '</a>' : $round->player; ?><a href="/feeds/rounds.rss" class="feed" title="track7 disc golf rounds"><img src="/style/feed.png" alt="rss" /></a></h2>
-      <p>
-        on <?=strtolower($user->tzdate('l, F j<\s\u\p>S</\s\u\p>, Y', $round->instant)); ?>,
-<?
-    if($round->uid) {
-?>
-        <a href="/discgolf/players.php?p=<?=$round->login; ?>" title="more information on this player"><?=$round->login; ?></a>
-<?
-    } else
-      echo $round->player;
-?>
-        played a <?=$round->roundtype; ?> round <?=$round->tees ? 'from the ' . $round->tees . ' tees ' : ''; ?>
-        at <a href="/discgolf/courses.php?id=<?=$round->courseid; ?>" title="more information on this course"><?=$round->name; ?></a>,
-        scoring <?=$round->score; ?>.
-      </p>
-      <p><?=$round->comments; ?></p>
-    </div>
-<?
+      <article class="activity round">
+        <div class=whatwhen title="disc golf round at <?php echo t7format::LocalDate(LONGDATEFMT, $round->posted); ?>">
+          <time datetime="<?php echo gmdate('c', $round->posted); ?>"><?php echo t7format::SmartDate($round->posted); ?></time>
+        </div>
+        <div>
+          <h2><a href="/discgolf/rounds.php?id=<?php echo $round->id; ?>">disc golf round at <?php echo $round->name; ?></a> by <?php echo AuthorLink($round); ?></h2>
+          <p>
+            scored <?php echo $round->score; ?> in a <?php echo $round->roundtype; ?> round<?php echo $round->tees ? ' from the ' . $round->tees . ' tees.' : '.'; ?>
+          </p>
+          <p class=readmore><a href="/discgolf/rounds.php?id=<?php echo $round->id; ?>">⇨ read more</a></p>
+        </div>
+      </article>
+<?php
+  }
+
+  function ContributionPrefix($type) {
+    switch($type) {
+      case 'comment':
+        return 'comment on ';
+    }
+    return '';
+  }
+
+  function AuthorLink($act) {
+    if($act->username) {
+      if(!$act->displayname)
+        $act->displayname = $act->username;
+      return '<a href="/user/' . htmlspecialchars($act->username) . '/" title="view ' . htmlspecialchars($act->displayname) . '’s profile">' . htmlspecialchars($act->displayname) . '</a>';
+    }
+    if($act->authorurl)
+      return '<a href="'. htmlspecialchars($act->authorurl) . '">' . htmlspecialchars($act->authorname) . '</a>';
+    return htmlspecialchars($act->authorname);
   }
 ?>

@@ -1,6 +1,9 @@
 RewriteEngine on
 RewriteOptions inherit
-RewriteRule ^tag=(.+)$ index.php?tag=$1
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule .* - [L]
-RewriteRule ^(.+)$ entry.php?name=$1
+RewriteRule ^([^\/]+)\/([^\/]+)$ entry.php?name=$2&tag=$1
+RewriteRule ^([^\/]+)\/$ index.php?tag=$1
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\/]+)$ entry.php?name=$1

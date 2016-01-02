@@ -23,7 +23,7 @@
       case 'profile':
         $profile = 'select avatar, signature, location, geekcode, hackerkey from userprofiles where uid=' . $u->uid;
         $profile = $db->GetRecord($profile, 'error reading user profile', 'user profile not found');
-        if($_POST['submit'] == 'update') {
+        if(isset($_POST['submit']) && $_POST['submit'] == 'update') {
           $newavatar = '';
           $upload = auFile::SaveUploadImage('avatar', _ROOT . '/user/avatar/', _AU_FILE_IMAGE_PNG | _AU_FILE_IMAGE_JPEG, $u->login . '.ext', AVATAR_SIZE, AVATAR_SIZE);
           if(file_exists($_FILES['avatar']['tmp_name']))
