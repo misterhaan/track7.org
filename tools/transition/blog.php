@@ -82,7 +82,7 @@
         }
         break;
       case 'copycomments':
-        if($db->real_query('insert into blog_comments (entry, posted, user, name, contacturl, html) select e.id, c.instant, u.id, c.name, c.url, replace(replace(replace(c.comments, \'&nbsp;\' \' \'), \'&rsquo;\', \'’\'), \'&mdash;\', \'—\') from track7_t7data.comments as c left join blog_entries as e on e.url=substr(c.page, 6) left join transition_users as u on u.olduid=c.uid where page like \'/bln/%\' order by c.instant'))
+        if($db->real_query('insert into blog_comments (entry, posted, user, name, contacturl, html) select e.id, c.instant, u.id, c.name, c.url, replace(replace(replace(c.comments, \'&nbsp;\', \' \'), \'&rsquo;\', \'’\'), \'&mdash;\', \'—\') from track7_t7data.comments as c left join blog_entries as e on e.url=substr(c.page, 6) left join transition_users as u on u.olduid=c.uid where page like \'/bln/%\' order by c.instant'))
           $db->real_query('update transition_status set stepnum=' . STEP_COPYCOMMENTS . ', status=\'completed\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_COPYCOMMENTS);
         break;
     }
