@@ -1,381 +1,270 @@
-<?
-/*----------------------------------------------------------------------------*\
- | purpose:  display the profile of the user passed through $_GET['login'].   |
- |                                                                            |
-\*----------------------------------------------------------------------------*/
-
-  define('ACTIVITY_LIMIT', 7);
-
-  // -----------------------------------------------[ display a profile ]-- //
+<?php
   if(isset($_GET['login'])) {
-    require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+    require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/.dbinfo.track7.php';
+    $olddb = new mysqli(_DB_HOST, _DB_USER, _DB_PASS, _DB_NAME);
+    $olddb->real_query('set names \'utf8\'');
+    $olddb->set_charset('utf8');
 
-    $u = 'select u.uid, u.login, s.pageload from users as u left join userstats as s on u.uid=s.uid where login=\'' . addslashes($_GET['login']) . '\'';
-    if($u = $db->GetRecord($u, 'error looking up basic profile information', 'could not find a user named \'' . htmlspecialchars($_GET['login'], ENT_QUOTES, _CHARSET) .'\'', true)) {
-      $login = htmlspecialchars($u->login, ENT_QUOTES, _CHARSET);
-
-      $title = $login;
-
-      if($u->pageload)
-        if($u->pageload > time() -900)
-          $title = '<img src="/images/online.png" alt=online title="' . $login . ' was here in the past 15 minutes"> ' . $title;
-        else
-          $title = '<img src="/images/offline.png" alt=offline title="' . $login . ' hasn’t been here in the past 15 minutes"> ' . $title;
-
-      if($user->Valid) {
-        $isfriend = 'select 1 from userfriends where fanuid=\'' . $user->ID . '\' and frienduid=\'' . $u->uid . '\'';
-        if($isfriend = $db->Get($isfriend, 'error checking if you are already friends', ''))
-          $title = '<img src="/style/friend.png" alt="*" title="' . ($u->uid == $user->ID ? 'you are' : $login . ' is') . ' your friend"> ' . $title;
-      }
-
-      $page->Start($login, $title);
+    $u = new t7user($_GET['login']);
+    if(!$u->IsLoggedIn())
+      $u = new oldUser($_GET['login']);
+    if($u->IsLoggedIn()) {
+      $u->DisplayName = htmlspecialchars($u->DisplayName);
+      $stats = $u->GetStats();
+      $html = new t7html([]);
+      $html->Open($u->DisplayName);
 ?>
-      <ul class=actions>
-<?
-      if($u->uid == $user->ID)
-        echo '        <li class=edit><a title="edit your profile" href="/user/editprofile.php?user=' . $login . '">edit profile</a></li>' . "\n";
-      elseif($user->GodMode) {
-        echo '        <li class=edit><a title="edit ' . $login . '’s profile" href="/user/editprofile.php?user=' . $login . '">edit profile</a></li>' . "\n";
-        echo '        <li class=del><a title="delete ' . $login . '" href="/user/delete.php?user=' . $login . '">delete user</a></li>' . "\n";
+      <header class=profile>
+        <img class=avatar src="<?php echo htmlspecialchars($u->Avatar); ?>" alt="">
+        <div>
+          <h1>
+            <?php echo $u->DisplayName; ?>
+<?php
+      if($u->Fan) {
+?>
+            <img class=friend src="/images/friend.png" alt="☆" title="<?php echo $u->DisplayName; ?> is your friend">
+<?php
       }
 ?>
-        <li class=pm><a title="send <?=$login; ?> a private message on track7" href="/user/sendmessage.php?to=<?=$login; ?>">send message</a></li>
-<?
-      if($isfriend)
-        if($u->uid == $user->ID)
-          echo '        <li class=delfriend><a title="remove yourself from your friends (won’t decrease your fan count)" href="/user/friends.php?remove=' . $login . '&amp;from=' . $_SERVER['REQUEST_URI'] . '">remove friend</a></li>';
-        else
-          echo '        <li class=delfriend><a title="remove ' . $login . ' from your friends" href="/user/friends.php?remove=' . $login . '&amp;from=' . $_SERVER['REQUEST_URI'] . '">remove friend</a></li>';
-              elseif($user->Valid)
-        if($u->uid == $user->ID)
-          echo '        <li class=addfriend><a title="add yourself as a friend (won’t increase your fan count)" href="/user/friends.php?add=' . $login . '&amp;from=' . $_SERVER['REQUEST_URI'] . '">add friend</a></li>' . "\n";
-        else
-          echo '        <li class=addfriend><a title="add ' . $login . ' as a friend" href="/user/friends.php?add=' . $login . '&amp;from=' . $_SERVER['REQUEST_URI'] . '">add friend</a></li>' . "\n";
+          </h1>
+          <p><?php echo $u->GetLevelName(); ?>, joined <time datetime="<?php echo gmdate('c', $stats->registered); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $stats->registered); ?>"><?php echo t7format::HowLongAgo($stats->registered); ?> ago</time></p>
+        </div>
+      </header>
+      <nav class=actions>
+        <a class=message title="send <?php echo $u->DisplayName; ?> a private message" href="/user/sendmessage.php?to=<?php echo htmlspecialchars($u->Username); ?>">send message</a>
+<?php
+      if($user->IsLoggedIn())
+        if($u->ID == $user->ID) {
 ?>
-      </ul>
-<?
-      $contact = 'select email, website, jabber, icq, aim, twitter, steam, spore, flags from usercontact where uid=' . $u->uid;
-      $contact = $db->GetRecord($contact, 'error looking up contact information', 'contact information not found');
-      if($contact->email || $contact->website || $contact->jabber || $contact->icq || $contact->aim || $contact->twitter || $contact->steam || $contact->spore) {
+        <a class=edit title="edit your profile" href="/user/settings.php">edit profile</a>
+<?php
+        } elseif($u->Fan) {
 ?>
-      <div id=connect>
-        <h2>connect with <?=$login; ?></h2>
-        <ul class=actions id=contactlinks>
-<?
-        if($contact->email) {
-          echo '          <li class=email>';
-          if($contact->flags & _FLAG_USERCONTACT_SHOWEMAIL) {
-            $safemail = auText::SafeEmail($contact->email);
-            echo '<a href="mailto:' . $safemail . '" title=send ' . $login . ' an e-mail">' . $safemail . '</a>';
-          } else
-            echo '<em title="' . $login . ' has an e-mail address on file but doesn’t show it to avoid spam">[not shown]</em>';
-          echo "</li>\n";
+        <a class=removefriend title="remove <?php echo $u->DisplayName; ?> from your friends" href="/user/?ajax=removefriend&amp;friend=<?php echo $u->ID; ?>">remove friend</a>
+<?php
+        } else {
+?>
+        <a class=addfriend title="add <?php echo $u->DisplayName; ?> as a friend" href="/user/?ajax=addfriend&amp;friend=<?php echo $u->ID; ?>">add friend</a>
+<?php
         }
-        if($contact->website)
-          echo '          <li class=www><a title="visit ' . $login . '’s website" href="' . $contact->website . '">' . $contact->website . "</a></li>\n";
-        if($contact->jabber)
-          echo '          <li class=xmpp><a title="contact ' . $login . ' on jabber / xmpp / gtalk" href="xmpp:' . $contact->jabber . '?message">' . $contact->jabber . "</a></li>\n";
-        if($contact->icq)
-          echo '          <li class=icq><a title="contact ' . $login . ' on icq" href="icq:send_message?uin=' . $contact->icq . '">' . $contact->icq . "</a></li>\n";
-        if($contact->aim)
-          echo '          <li class=aim><a title="contact ' . $login . ' on aim" href="aim:goim?screenname=' . $contact->aim . '">' . $contact->aim . "</a></li>\n";
-        if($contact->twitter)
-          echo '          <li class=twitter><a title="view ' . $login . '’s twitter profile" href="http://twitter.com/' . $contact->twitter . '">@' . $contact->twitter . "</a></li>\n";
-        if($contact->steam)
-          echo '          <li class=steam><a title="view ' . $login . '’s steam community profile" href="http://steamcommunity.com/id/' . $contact->steam . '">' . $contact->steam . "</a></li>\n";
-        if($contact->spore)
-          echo '          <li class=spore><a title="view ' . $login . '’s spore profile" href="http://www.spore.com/view/myspore/' . $contact->spore . '">' . $contact->spore . "</a></li>\n";
 ?>
-        </ul>
-      </div>
-
-<?
+      </nav>
+<?php
+      if(count($links = $u->GetContactLinks())) {
+?>
+      <section id=contact>
+<?php
+        foreach($links as $link) {
+?>
+        <a href="<?php echo htmlspecialchars($link['url']); ?>" title="<?php echo $link['title']; ?>"><img src="/images/contact/<?php echo $link['type']; ?>.png" alt="<?php echo $link['type']; ?>"></a>
+<?php
+        }
+?>
+      </section>
+<?php
       }
-
-      $profile = 'select avatar, signature, location, geekcode, hackerkey from userprofiles where uid=' . $u->uid;
-      $profile = $db->GetRecord($profile, 'error looking up profile information', 'profile information not found');
-
-      echo '' . "\n";
+      if($stats->fans || $stats->comments || $stats->posts || $stats->forum || $stats->rounds) {
 ?>
-      <img id=profileavatar src="<?=$profile->avatar ? '/user/avatar/' . $login . '.' . $profile->avatar : '/style/noavatar.jpg'; ?>" alt="">
-      <table class=list id=userinfo>
-        <tr><th>username</th><td><?=$login; ?></td></tr>
-<?
-
-      $stats = 'select since, lastlogin, signings, rank, posts, comments, discs, rounds, fans from userstats where uid=' . $u->uid;
-      if($stats = $db->GetRecord($stats, 'error looking up statistics for user')) {
-?>
-        <tr><th>frequency</th><td><?=$stats->rank; ?></td></tr>
-        <tr><th>last login</th><td title="<?=strtolower($user->tzdate('M d, Y \a\t g:i:s a', $stats->lastlogin)); ?>"><?=auText::HowLongAgo($stats->lastlogin); ?> ago</td></tr>
-        <tr><th>registered</th><td title="<?=strtolower($user->tzdate('M d, Y \a\t g:i:s a', $stats->since)); ?>"><?=auText::HowLongAgo($stats->since); ?> ago</td></tr>
-<?
-      }
-?>
-      </table>
-<?
-      $song = 'select instant, title, artist, length, filename from usersongs where uid=' . $u->uid . ' order by instant desc';
-      $song = $db->GetRecord($song, 'error looking up last song played', '');
-      if($profile->location || $profile->geekcode || $profile->hackerkey || $profile->signature || $song || $u->uid == $user->ID) {
-?>
-      <table class=list id=userprofile>
-<?
-        if($profile->location)
-          echo '        <tr><th>location</th><td>' . $profile->location . "</td></tr>\n";
-        if($profile->geekcode)
-          echo '        <tr><th>geek code</th><td class=code>' . $profile->geekcode . "</td></tr>\n";
-        if($profile->hackerkey)
-          echo '        <tr><th>hacker key</th><td class=code>' . $profile->hackerkey . "</td></tr>\n";
-        if($profile->signature)
-          echo '        <tr><th>signature</th><td class=signature><p>' . $profile->signature . "</p></td></tr>\n";
-        if($song) {
-          $time = explode(':', $song->length);
-          if($song->instant + $time[0] * 60 + $time[1] < time()) {
-            if($u->uid == $user->ID)
-              echo '        <tr><th>current track</th><td>none <span class=detail>(<a href="/user/songtrack.php">music tracking instructions</a>)</span>' . "</td></tr>\n";
-          } else {
-            if($song->title) {
-              $song->title = '“' . $song->title . '”';
-              if($song->artist)
-                $song->title .= ' by ' . $song->artist;
-              $song = $song->title;
-            } else
-              $song = $song->filename;
-            echo '        <tr><th>current track</th><td>' . $song . ($u->uid == $user->ID ? ' <span class=details>(<a href="/user/songtrack.php">music tracking instructions</a>)</span>' : '') . "</td></tr>\n";
-          }
-        } elseif($u->uid == $user->ID)
-          echo '        <tr><th>current track</th><td><a href="/user/songtrack.php">start tracking your music</a>' . "</td></tr>\n";
-?>
-      </table>
-<?
-      }
-
-      if($stats->fans || $stats->posts || $stats->comments || $stats->rounds || $stats->discs || $stats->rpgchars) {
-?>
-      <div id=rank>
-        <h2>rankings</h2>
+      <section id=rank>
+        <header>rankings</header>
         <ul>
-<?
-        if($stats->fans)
-          echo '          <li>#' . getRank($db, 'fans', $stats->fans) . ' in fans with ' . $stats->fans . "</li>\n";
-        if($stats->posts)
-          echo '          <li>#' . getRank($db, 'posts', $stats->posts) . ' in posts with <a href="/hb/recentposts.php?author=' . $login . '">' . $stats->posts . "</a></li>\n";
-        if($stats->comments)
-          echo '          <li>#' . getRank($db, 'comments', $stats->comments) . ' in comments with <a href="/comments.php?user=' . $login . '">' . $stats->comments . "</a></li>\n";
-        if($stats->rounds)
-          echo '          <li>#' . getRank($db, 'rounds', $stats->rounds) . ' in rounds with <a href="/discgolf/rounds.php?player=' . $login . '">' . $stats->rounds . "</a></li>\n";
-        if($stats->discs)
-          echo '          <li>#' . getRank($db, 'discs', $stats->discs) . ' in discs with <a href="/discgolf/caddy.php?player=' . $login . '">' . $stats->discs . "</a></li>\n";
+<?php
+        if($stats->fans) {
+?>
+          <li>#<?php echo Rank('fans', $stats->fans); ?> in fans with <?php echo $stats->fans; ?></li>
+<?php
+        }
+        if($stats->comments) {
+?>
+          <li>#<?php echo Rank('comments', $stats->comments); ?> in <a href="/comments.php?user=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s comments">comments</a> with <?php echo $stats->comments; ?></li>
+<?php
+        }
+        if($stats->posts) {  // TODO:  when others are allowed to posts blogs, this link should be less generic
+?>
+          <li>#<?php echo Rank('posts', $stats->posts); ?> in <a href="/bln/" title="view all of <?php echo $u->Username; ?>’s blog posts">blog posts</a> with <?php echo $stats->posts; ?></li>
+<?php
+        }
+        if($stats->rounds) {
+?>
+          <li>#<?php echo Rank('rounds', $stats->rounds); ?> in <a href="/discgolf/rounds.php?player=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s disc golf rounds">disc golf rounds</a> with <?php echo $stats->rounds; ?></li>
+<?php
+        }
+        if($stats->forum) {
+?>
+          <li>#<?php echo Rank('forum', $stats->forum); ?> in <a href="/hb/recentposts.php?author=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s forum posts">forum posts</a> with <?php echo $stats->forum; ?></li>
+<?php
+        }
 ?>
         </ul>
-      </div>
-<?
+      </section>
+<?php
       }
-
-      if($stats->posts || $stats->comments || $stats->rounds) {
+      $act = $comment = $forum = $round = false;
+      if($acts = $db->query('select conttype, posted, url, title from contributions where author=\'' . +$u->ID . '\' order by posted desc limit 12'))
+        $act = $acts->fetch_object();
+      if($u->OldID()) {  // this is only for users that existed in the old database; otherwise it picks up everything anonymous
+        // filtering out blog comments since those have been converted
+        if($comments = $olddb->query('select page as url, instant as posted from comments where uid=\'' . +$u->OldID() . '\' and left(page, 5) != \'/bln/\' order by instant desc limit 12'))
+          $comment = $comments->fetch_object();
+        if($forums = $olddb->query('select concat(\'/hb/thread\', thread, \'/#p\', id) as url, subject as title, instant as posted from hbposts where uid=\'' . +$u->OldID() . '\' order by instant desc limit 12'))
+          $forum = $forums->fetch_object();
+        if($rounds = $olddb->query('select r.id, r.instant as posted, r.score, r.courseid, c.name from dgrounds as r left join dgcourses as c on c.id=r.courseid where r.uid=\'' . $u->OldID() . '\' order by r.instant desc limit 12'))
+          $round = $rounds->fetch_object();
+      }
+      if($act || $comment || $forum || $round) {
 ?>
-      <div id=useractivity<?=$stats->fans || $stats->posts || $stats->comments || $stats->rounds || $stats->discs || $stats->rpgchars ? ' class=hasrank' : ''; ?>>
-        <h2><?=$login; ?>’s activity</h2>
-        <ol>
-<?
-        $comment = $post = $round = false;
-        $comments = 'select page, instant from comments where uid=\'' . addslashes($u->uid) . '\' order by instant desc';
-        if($comments = $db->GetLimit($comments, 0, ACTIVITY_LIMIT, 'error looking up comments', ''))
-          $comment = $comments->NextRecord();
-        $posts = 'select id, thread, number, subject, instant from hbposts where uid=\'' . addslashes($u->uid) . '\' order by instant desc';
-        if($posts = $db->GetLimit($posts, 0, ACTIVITY_LIMIT, 'error looking up forum activity', ''))
-          $post = $posts->NextRecord();
-        $rounds = 'select r.id, r.instant, r.score, r.courseid, c.name from dgrounds as r left join dgcourses as c on c.id=r.courseid where r.uid=\'' . addslashes($u->uid) . '\' order by r.instant desc';
-        if($rounds = $db->GetLimit($rounds, 0, ACTIVITY_LIMIT, 'error looking up disc golf rounds', ''))
-          $round = $rounds->NextRecord();
-        $activity = 0;
-        while($activity < ACTIVITY_LIMIT && ($comment || $post || $round)) {
-          if($comment && (!$post || $post->instant < $comment->instant) && (!$round || $round->instant < $comment->instant)) {
-            $comment->title = explode('/', $comment->page);
-            $comment->title = $comment->title[count($comment->title) - 1];
-            echo '         <li class=comment>commented on <a href="' . htmlspecialchars($comment->page) . '">' . htmlspecialchars($comment->title) . '</a> ' . auText::HowLongAgo($comment->instant) . " ago</li>\n";
-            $comment = $comments->NextRecord();
-          } elseif($post && (!$comment || $comment->instant < $post->instant) && (!$round || $round->instant < $post->instant)) {
-            echo '          <li class=post>posted <a href="/hb/thread' . $post->thread . '/#p' . $post->id . '">' . $post->subject . '</a> ' . auText::HowLongAgo($post->instant) . " ago</li>\n";
-            $post = $posts->NextRecord();
-          } elseif($round && (!$comment || $comment->instant < $round->instant) && (!$post || $post->instant < $round->instant)) {
-            echo '          <li class=round>scored <a href="/discgolf/rounds.php?id=' . $round->id . '">' . $round->score . '</a> at <a href="/discgolf/courses.php?id=' . $round->courseid . '">' . $round->name . '</a> ' . auText::HowLongAgo($round->instant) . " ago</li>\n";
-            $round = $rounds->NextRecord();
+      <ol id=activity>
+<?php
+        $count = 0;
+        while($count < 12 && ($act || $comment || $forum || $round)) {
+          if($act && (!$comment || $act->posted > $comment->posted) && (!$forum || $act->posted > $forum->posted) && (!$round || $act->posted > $round->posted)) {
+?>
+        <li class=<?php echo $act->conttype; ?>><?php echo ActionWords($act->conttype); ?> <a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a> <time datetime="<?php echo gmdate('c', $act->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $act->posted); ?>"><?php echo t7format::HowLongAgo($act->posted); ?> ago</time></li>
+<?php
+            $act = $acts->fetch_object();
+          } elseif($comment && (!$forum || $comment->posted > $forum->posted) && (!$round || $comment->posted > $round->posted)) {
+?>
+        <li class=comment>commented on <a href="<?php echo $comment->url; ?>"><?php echo array_pop(explode('/', trim($comment->url, '/'))); ?></a> <time datetime="<?php echo gmdate('c', $comment->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $comment->posted); ?>"><?php echo t7format::HowLongAgo($comment->posted); ?> ago</time></li>
+<?php
+            $comment = $comments->fetch_object();
+          } elseif($forum && (!$round || $forum->posted > $round->posted)) {
+?>
+        <li class=forum>posted <a href="<?php echo $forum->url; ?>"><?php echo $forum->title; ?></a> <time datetime="<?php echo gmdate('c', $forum->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $forum->posted); ?>"><?php echo t7format::HowLongAgo($forum->posted); ?> ago</time></li>
+<?php
+            $forum = $forums->fetch_object();
+          } elseif($round) {
+?>
+        <li class=round>scored <a href="/discgolf/rounds.php?id=<?php echo $round->id; ?>"><?php echo $round->score; ?></a> at <a href="/discgolf/courses.php?id=<?php echo $round->courseid; ?>"><?php echo $round->name; ?></a> <time datetime="<?php echo gmdate('c', $round->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $round->posted); ?>"><?php echo t7format::HowLongAgo($round->posted); ?> ago</time></li>
+<?php
+            $round = $rounds->fetch_object();
           }
-          $activity++;
+          $count++;
         }
 ?>
-        </ol>
-      </div>
-      <br class=clear>
-<?
+      </ol>
+<?php
+      } else {
+?>
+      <p><?php echo $u->DisplayName; ?> hasn’t posted anything to track7 yet.</p>
+<?php
       }
-
-      if($user->ID == $u->uid || $user->GodMode) {
-        $page->Heading('friends (only visible to you)', 'friends');
-        $friends = 'select u.login, p.avatar from userfriends as f left join users as u on u.uid=f.frienduid left join userprofiles as p on p.uid=u.uid where fanuid=\'' . $u->uid . '\' order by login';
-        if($friends = $db->Get($friends, 'error looking up friends', 'you don’t currently have any <a href="/user/friends.php">friends</a>.&nbsp; visit <a href="/user/list.php">other users’</a> profiles to add them to your list.')) {
-?>
-      <ul id="friends">
-<?
-          while($friend = $friends->NextRecord()) {
-            if($friend->avatar)
-              $friend->avatar = '/user/avatar/' . $friend->login . '.' . $friend->avatar;
-            else
-              $friend->avatar = '/style/noavatar.jpg';
-?>
-        <li><div class="friend">
-          <a class="profile" href="/user/<?=$friend->login; ?>/" title="view <?=$friend->login; ?>’s profile">
-            <img alt="" src="<?=$friend->avatar; ?>" />
-            <?=$friend->login; ?>
-
-          </a>
-<?
-            if($user->ID == $u->uid) {
-?>
-          <div class="actions">
-            <a href="/user/sendmessage.php?to=<?=$friend->login; ?>" title="send <?=$friend->login; ?> a message"><img src="/style/pm.png" alt="pm" /></a>
-            <a href="/user/friends.php?remove=<?=$friend->login; ?>&amp;from=/user/<?=$u->login; ?>/%23friends" title="remove <?=$friend->login; ?> from your friends list"><img src="/style/friend-del.png" alt="remove" /></a>
-          </div>
-<?
-            }
-?>
-        </div></li>
-<?
-          }
-?>
-      </ul>
-<?
-        }
-      }
-
-      $computers = 'select name, class, purpose, processor, mainboard, ram, video, audio, tuner, network, hdd, optical, reader, keyboard, mouse, joystick, monitor, printer, scanner, os, other from computers where uid=\'' . $u->uid . '\'';
-      if($computers = $db->Get($computers, 'error looking up computers')) {
-        $one = $computers->NumRecords() == 1;
-        $page->Heading($one ? 'computer' : 'computers', 'computers');
-        while($computer = $computers->NextRecord()) {
-          if(!$one)
-            $page->SubHeading($computer->name, 'computer-' . $computer->name);
-?>
-      <table class=columns>
-<?
-          if($one && $computer->name) {
-?>
-        <tr><th>name</th><td><?=$computer->name; ?></td></tr>
-<?
-          }
-?>
-        <tr><th>class</th><td><?=$computer->class; ?></td></tr>
-<?
-          if($computer->purpose) {
-?>
-        <tr><th>purpose</th><td><?=$computer->purpose; ?></td></tr>
-<?
-          }
-?>
-        <tr><th>processor</th><td><?=$computer->processor; ?></td></tr>
-<?
-          if($computer->mainboard) {
-?>
-        <tr><th>mainboard</th><td><?=$computer->mainboard; ?></td></tr>
-<?
-          }
-?>
-        <tr><th>ram</th><td><?=$computer->ram; ?></td></tr>
-<?
-          if($computer->video) {
-?>
-        <tr><th>video</th><td><?=$computer->video; ?></td></tr>
-<?
-          }
-          if($computer->audio) {
-?>
-        <tr><th>audio</th><td><?=$computer->audio; ?></td></tr>
-<?
-          }
-          if($computer->tuner) {
-?>
-        <tr><th>tuner</th><td><?=$computer->tuner; ?></td></tr>
-<?
-          }
-          if($computer->network) {
-?>
-        <tr><th>network</th><td><?=$computer->network; ?></td></tr>
-<?
-          }
-          if($computer->hdd) {
-?>
-        <tr><th>hdd</th><td><?=$computer->hdd; ?></td></tr>
-<?
-          }
-          if($computer->optical) {
-?>
-        <tr><th>optical</th><td><?=$computer->optical; ?></td></tr>
-<?
-          }
-          if($computer->reader) {
-?>
-        <tr><th>reader</th><td><?=$computer->reader; ?></td></tr>
-<?
-          }
-          if($computer->keyboard) {
-?>
-        <tr><th>keyboard</th><td><?=$computer->keyboard; ?></td></tr>
-<?
-          }
-          if($computer->mouse) {
-?>
-        <tr><th>mouse</th><td><?=$computer->mouse; ?></td></tr>
-<?
-          }
-          if($computer->joystick) {
-?>
-        <tr><th>joystick</th><td><?=$computer->joystick; ?></td></tr>
-<?
-          }
-          if($computer->monitor) {
-?>
-        <tr><th>monitor</th><td><?=$computer->monitor; ?></td></tr>
-<?
-          }
-          if($computer->printer) {
-?>
-        <tr><th>printer</th><td><?=$computer->printer; ?></td></tr>
-<?
-          }
-          if($computer->scanner) {
-?>
-        <tr><th>scanner</th><td><?=$computer->scanner; ?></td></tr>
-<?
-          }
-          if($computer->os) {
-?>
-        <tr><th>os</th><td><?=$computer->os; ?></td></tr>
-<?
-          }
-          if($computer->other) {
-?>
-        <tr><th>other</th><td><?=$computer->other; ?></td></tr>
-<?
-          }
-?>
-      </table>
-<?
-        }
-      }
-    }
-    $page->End();
-  } else  // display user list
-    header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/list.php');
+      $html->Close();
+    } else  // user not found; go to user index
+      header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/');
+  } else  // user not specified; go to user index
+    header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/');
 
   /**
-   * Count how many users have a higher value in a certain stat than this user
-   * @param auDB $db Database object
-   * @param string $name Field name of the stat to check
-   * @param integer $value User's value for the stat to check
+   * Count how many users have at least the specified value in a certain stat.
+   * @param string $stat Field name of the stat to check
+   * @param integer $value User's value for the stat
+   * @return integer|string value to display as the rank
    */
-  function getRank(&$db, $name, $value) {
-    if(false !== $rank = $db->GetValue('select count(1) from userstats where ' . $name . '>=' . +$value))
-      return $rank;
+  function Rank($stat, $value) {
+    global $db, $olddb;
+    switch($stat) {
+      case 'fans':
+      case 'posts':
+        if($r = $db->query('select count(1) as rank from users_stats where ' . $stat . '>=' . +$value))
+          if($r = $r->fetch_object())
+            return $r->rank;
+        break;
+      case 'comments':  // comments is a special case because we have to add the two tables together
+        if($r = $db->query('select count(1) as rank from (select id, uid, sum(comments) as comments from ((select s.id, t.olduid as uid, s.comments from users_stats as s left join transition_users as t on t.id=s.id group by s.id) union all (select t.id, s.uid, s.comments from track7_t7data.userstats as s left join transition_users as t on t.olduid=s.uid)) as superstats group by uid, id) as allcomments where comments>=' . +$value))
+          if($r = $r->fetch_object())
+            return $r->rank;
+        break;
+      case 'forum':
+        $stat = 'posts';
+      case 'rounds':
+        if($r = $olddb->query('select count(1) as rank from userstats where ' . $stat . '>=' . +$value))
+          if($r = $r->fetch_object())
+            return $r->rank;
+        break;
+    }
     return '<em title=unknown>?</em>';
+  }
+
+  /**
+   * Get the action words for a contribution type.
+   * @param string $type Contribution type
+   * @return string Action words (defaults to [type]ed) if unknown type
+   */
+  function ActionWords($type) {
+    switch($type) {
+      case 'comment':
+        return 'commented on';
+    }
+    return $type . 'ed';
+  }
+
+  /**
+   * Version of the profile page portion of t7user that uses the old database
+   * instead.
+   * @author misterhaan
+   */
+  class oldUser {
+    private $found = false;
+    public $ID = false;
+    public $Username = false;
+    public $DisplayName = false;
+    public $Avatar = false;
+    private $Friend = false;
+    public $Fan = false;
+
+    public function oldUser($login) {
+      global $olddb, $user;
+      if($u = $olddb->query('select u.uid, u.login, p.avatar, fa.fanuid, fr.frienduid from users as u left join userprofiles as p on p.uid=u.uid left join userfriends as fr on fr.fanuid=u.uid and fr.frienduid=\'' . $user->OldID() . '\' left join userfriends as fa on fa.frienduid=u.uid and fa.fanuid=\'' . $user->OldID() . '\' where login=\'' . $olddb->escape_string($login) . '\''))
+        if($u = $u->fetch_object()) {
+          $this->found = true;
+          $this->ID = $u->uid;
+          $this->Username = $u->login;
+          $this->DisplayName = $u->login;
+          $this->Avatar = $u->avatar ? '/user/avatar/' . $u->login . '.' . $u->avatar : '/images/user.jpg';
+          $this->Friend = $u->frienduid;
+          $this->Fan = $u->fanuid;
+        } else
+          die('user not found');
+        else
+          die('erorr running query');
+    }
+
+    public function IsLoggedIn() {
+      return $this->found;
+    }
+
+    public function GetStats() {
+      global $olddb;
+      if($s = $olddb->query('select since as registered, fans, comments, posts from userstats where uid=\'' . +$this->ID . '\''))
+        if($s = $s->fetch_object())
+          return $s;
+      return false;
+    }
+
+    public function GetLevelName() {
+      return 'old';
+    }
+
+    public function GetContactLinks() {
+      global $olddb, $user;
+      $links = [];
+      if($c = $olddb->query('select email, website, twitter, steam, flags from usercontact where uid=\'' . +$this->ID . '\' limit 1'))
+        if($c = $c->fetch_object()) {
+          if($c->email && ($c->flags & 1 || $user->IsAdmin()))
+            $links[] = ['type' => 'email', 'url' => 'mailto:' . $c->email, 'title' => 'send ' . $this->DisplayName . ' an e-mail'];
+          if($c->website)
+            $links[] = ['type' => 'www', 'url' => $c->website, 'title' => 'visit ' . $this->DisplayName . '’s website'];
+          if($c->twitter)
+            $links[] = ['type' => 'twitter', 'url' => self::ExpandProfileLink($c->twitter, 'twitter'), 'title' => 'view ' . $this->DisplayName . '’s twitter profile'];
+          if($c->steam)
+            $links[] = ['type' => 'steam', 'url' => self::ExpandProfileLink($c->steam, 'steam'), 'title' => 'view ' . $this->DisplayName . '’s steam community profile'];
+        }
+      return $links;
+    }
+
+    public function OldID() {
+      return $this->ID;
+    }
   }
 ?>
