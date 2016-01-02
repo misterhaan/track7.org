@@ -100,7 +100,7 @@
                   else { // show registration form
                     // TODO: check if e-mail is already linked (might be handled by javascript later instead)
                     $_SESSION['registering'] = $auth::SOURCE;
-                    $_SESSION[$auth::SOURCE] = [$auth::FIELD => $auth->ID, 'avatar' => $auth->Avatar, 'profile' => $auth->ProfileFull];
+                    $_SESSION[$auth::SOURCE] = [$auth::FIELD => $auth->ID, 'avatar' => $auth->Avatar, 'profile' => $auth->ProfileFull, 'remember' => $auth->Remember, 'continue' => $auth->Continue];
                     self::OpenPage($auth::SOURCE);
 ?>
       <p>
