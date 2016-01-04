@@ -41,24 +41,52 @@ where srctbl='blog_comments' and id=new.id;
 create trigger blog_comment_deleted after delete on blog_comments for each row
 delete from contributions where srctbl='blog_comments' and id=old.id;
 
+drop trigger if exists blog_entry_added;
+delimiter ;;
 create trigger blog_entry_added after insert on blog_entries for each row
-insert into contributions set
-  srctbl='blog_entries',
-  id=new.id,
-  conttype='post',
-  posted=new.posted,
-  url=concat('/bln/', new.url),
-  author=1,
-  title= new.title,
-  preview=left(new.content, locate('</p>', new.content) + 3),
-  hasmore=length(new.content)-length(replace(new.content, '</p>', ''))>4;
+begin
+  if new.status='published' then
+    insert into contributions set
+      srctbl='blog_entries',
+      id=new.id,
+      conttype='post',
+      posted=new.posted,
+      url=concat('/bln/', new.url),
+      author=1,
+      title=new.title,
+      preview=left(new.content, locate('</p>', new.content) + 3),
+      hasmore=length(new.content)-length(replace(new.content, '</p>', ''))>4;
+  end if;
+end;;
 
+drop trigger if exists blog_entry_changed;
+delimiter ;;
 create trigger blog_entry_changed after update on blog_entries for each row
-update contributions set
-  title=new.title,
-  preview=left(new.content, locate('</p>', new.content) + 3),
-  hasmore=length(new.content)-length(replace(new.content, '</p>', ''))>4
-where srctbl='blog_entries' and id=new.id;
+begin
+  if new.status='published' then
+    if old.status='draft' then
+      insert into contributions set
+        srctbl='blog_entries',
+        id=new.id,
+        conttype='post',
+        posted=new.posted,
+        url=concat('/bln/', new.url),
+        author=1,
+        title=new.title,
+        preview=left(new.content, locate('</p>', new.content) + 3),
+        hasmore=length(new.content)-length(replace(new.content, '</p>', ''))>4;
+    else
+      update contributions set
+        title=new.title,
+        preview=left(new.content, locate('</p>', new.content) + 3),
+        hasmore=length(new.content)-length(replace(new.content, '</p>', ''))>4
+      where srctbl='blog_entries' and id=new.id;
+    end if;
+    update contributions set
+      title=new.title
+    where srctbl='blog_comments' and id in (select * from (select c.id from blog_comments as c left join blog_entries as e on e.id=c.entry where e.id=new.id) as c1);
+  end if;
+end;;
 
 create trigger blog_entry_deleted after delete on blog_entries for each row
 delete from contributions where srctbl='blog_entries' and id=old.id;
