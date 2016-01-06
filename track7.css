@@ -790,7 +790,7 @@ h1 img {
 #features {
   margin: .25em;
 }
-@media (min-width: 40em) {
+@media (min-width: 48.5em) {
   #features {
     float: right;
     margin-top: -230px;
@@ -803,7 +803,7 @@ h1 img {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap;
 }
-@media (min-width: 40em) {
+@media (min-width: 48.5em) {
   #features nav {
     -webkit-flex-direction: column;
     flex-direction: column;
@@ -818,7 +818,7 @@ h1 img {
   margin: .0625em;
   line-height: 32px;
 }
-@media (min-width: 40em) {
+@media (min-width: 48.5em) {
   #features nav a {
     border-radius: .25em 0 0 .25em;
     margin: .0625em 0;
