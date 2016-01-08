@@ -1,13 +1,16 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('$_SERVER');
+<?php
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+  $html = new t7html([]);
+  $html->Open('$_SERVER')
 ?>
-      <table class="columns" cellspacing="0">
-<?
-  foreach($_SERVER as $tag => $data)
-    echo "        <tr><th>$tag</th><td>$data</td></tr>\n";
+      <h1>$_SERVER</h1>
+<?php
+  foreach($_SERVER as $tag => $data) {
 ?>
-      </table>
-<?
-  $page->End();
+      <h2><?php echo $tag; ?></h2>
+      <pre><code><?php echo $data; ?></code></pre>
+
+<?php
+  }
+  $html->Close();
 ?>

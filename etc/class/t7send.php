@@ -43,6 +43,8 @@
      * @return object Response from Twitter with code and text fields.
      */
     public static function Tweet($message, $url = false) {
+      if($_SERVER['SERVER_PORT'] != 80)
+        return false;
       // fix up the message and add / shorten the url if present
       if($url) {
         if(substr($url, 0, 13) != 'http://bit.ly')
