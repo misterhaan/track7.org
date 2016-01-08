@@ -751,20 +751,34 @@ main span.checkbox {
 body > footer {
   font-size: .9em;
   color: #fff;
-  margin: .5em;
+  margin: .25em 0;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 @media (min-width: 25em) {
   body > footer {
-    margin: .5em 1em;
+    margin: .25em .5em;
   }
 }
 @media (min-width: 40em) {
   body > footer {
-    margin: .5em;
+    margin: .25em 0;
   }
 }
 body > footer a {
   color: #fff;
+}
+body > footer > * {
+  margin: .25em .5em;
+  -webkit-flex: 0 0 auto;
+  flex: 0 0 auto;
+}
+body > footer div {
+  -webkit-flex: 1 0 auto;
+  flex: 1 0 auto;
+  text-align: right;
 }
 
 /*--------------------------------------------------------------[ /404.php ]--*/

@@ -134,7 +134,7 @@
               } else
                 $ajax->Fail('entry published but could not find tags to recount.');
             else
-              $ajax->Fail('entry not updated.  this should only happen if the id does’nt exist or the entry is already published.');
+              $ajax->Fail('entry not updated.  this should only happen if the id doesn’t exist or the entry is already published.');
           else
             $ajax->Fail('database error publishing entry.');
         else
