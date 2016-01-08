@@ -81,7 +81,7 @@
       curl_setopt($c, CURLOPT_TIMEOUT, 30);
       curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($c, CURLOPT_HEADER, false);
-      curl_setopt($c, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded', 'Authorization: OAuth ' . implode(', ', $header)]);
+      curl_setopt($c, CURLOPT_HTTPHEADER, ['Authorization: OAuth ' . implode(', ', $header)]);
       curl_setopt($c, CURLOPT_POSTFIELDS, ['status' => $message]);
       $response = new stdClass();
       $response->text = curl_exec($c);

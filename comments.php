@@ -42,6 +42,9 @@
                 : 'insert into ' . $_POST['type'] . '_comments (' . KeyName($_POST['type']) . ', posted, name, contacturl, html, markdown) values (\'' . $db->escape_string($_POST['key']) . '\', \'' . $ajax->Data->posted . '\', \'' . $db->escape_string($ajax->Data->name) . '\', \'' . $db->escape_string($ajax->Data->contacturl) . '\', \'' . $db->escape_string(t7format::Markdown($_POST['md'])) . '\', \'' . $db->escape_string($_POST['md']) . '\')';
               if($db->real_query($ins)) {
                 $ajax->Data->id = $db->insert_id;
+                if($act = $db->query('select title, url from contributions where srctbl=\'' . $_POST['type'] . '_comments\' and id=\'' . +$ajax->Data->id . '\''))
+                  if($act = $act->fetch_object())
+                    t7send::Tweet('comment on ' . $act->title, $act->url);
                 $ajax->Data->posted = t7format::TimeTag('g:i a \o\n l F jS Y', $ajax->Data->posted);
                 if($user->IsLoggedIn()) {
                   // TODO:  maybe recalculate from scratch instead of incrementing

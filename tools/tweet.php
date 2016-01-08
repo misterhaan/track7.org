@@ -1,21 +1,38 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  if(!$user->GodMode)
-    $page->Show404();
+<?php
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  $page->Start('auSend::Tweet tester');
-
-  $page->Info('anything entered into this form gets sent to <a href="http://twitter.com/track7feed">twitter</a>, so remember to delete test tweets.');
-
-  $frm = new auForm('tweettest');
-  $frm->Add(new auFormString('message', 'message', 'enter a message to tweet'));
-  $frm->Add(new auFormButtons('tweet', 'send this message to twitter'));
-  $frm->WriteHTML(true);
-  if($frm->Submitted()) {
-    $response = auSend::Tweet($_POST['message']);
-    $page->Heading('Response Code ' . $response->code);
-    echo auText::BB2HTML($response->text, false, false);
+  if(!$user->IsAdmin()) {
+    header('HTTP/1.0 404 Not Found');
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/404.php';
+    die;
   }
 
-  $page->End();
+  $html = new t7html([]);
+  $html->Open('tweet test');
+?>
+      <h1>tweet test</h1>
+      <p>
+        anything entered into this form gets sent to <a href="http://twitter.com/track7feed">twitter</a>,
+        so remember to delete test tweets.
+      </p>
+      <form method=post>
+        <label title="enter a message to tweet">
+          <span class=label>message:</span>
+          <span class=field><input name=message id=message></span>
+        </label>
+        <label title="enter a url to send with the tweet (optional)">
+          <span class=label>url:</span>
+          <span class=field><input name=url id=url></span>
+        </label>
+        <button>tweet</button>
+      </form>
+<?php
+  if(isset($_POST['message'])) {
+    $tweet = t7send::Tweet(trim($_POST['message']), trim($_POST['url']));
+?>
+      <h2>response code <?php echo $tweet->code; ?></h2>
+      <pre><code><?php echo $tweet->text; ?></code></pre>
+<?php
+  }
+  $html->Close();
 ?>
