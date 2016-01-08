@@ -112,7 +112,7 @@ $(function() {
   $("#detecttime").click(function() {
     var now = new Date();
     var hour = now.getHours();
-    $("#currenttime").val((hour == 0 ? 12 : hour > 12 ? hour - 12 : hour) + (now.getMinutes() < 10 ? ":0" : ":") + now.getMinutes() + (hour >= 12 ? " PM" : " AM"));
+    $("#currenttime").val((hour == 0 ? 12 : hour > 12 ? hour - 12 : hour) + (now.getMinutes() < 10 ? ":0" : ":") + now.getMinutes() + (hour >= 12 ? " pm" : " am"));
     var jan = new Date(now.getFullYear(), 1, 1);
     var jul = new Date(now.getFullYear(), 7, 1);
     $("#dst").prop("checked", jan.getTimezoneOffset() != jul.getTimezoneOffset());
