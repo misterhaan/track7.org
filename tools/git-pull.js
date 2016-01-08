@@ -1,5 +1,5 @@
 $(function() {
-  $("#pull").click(function() {
+  $("a[href$='#pull']").click(function() {
     $.post("?ajax=pull", {}, function(data, status, xhr) {
       var result = $.parseJSON(xhr.responseText);
       if(!result.fail) {

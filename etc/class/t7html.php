@@ -35,7 +35,6 @@
       }
 ?>
     <script src="/track7.js" type="text/javascript"></script>
-    <meta data-debug="<?php echo substr($_SERVER['SCRIPT_NAME'], 0, 10); ?>">
 <?php
       if(substr($_SERVER['SCRIPT_NAME'], 0, 10) == '/user/via/') {
 ?>
