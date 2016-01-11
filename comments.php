@@ -44,7 +44,7 @@
                 $ajax->Data->id = $db->insert_id;
                 if($act = $db->query('select title, url from contributions where srctbl=\'' . $_POST['type'] . '_comments\' and id=\'' . +$ajax->Data->id . '\''))
                   if($act = $act->fetch_object())
-                    t7send::Tweet('comment on ' . $act->title, $act->url);
+                    t7send::Tweet('comment on ' . $act->title, 'http://' . $_SERVER['HTTP_HOST'] . $act->url);
                 $ajax->Data->posted = t7format::TimeTag('g:i a \o\n l F jS Y', $ajax->Data->posted);
                 if($user->IsLoggedIn()) {
                   // TODO:  maybe recalculate from scratch instead of incrementing

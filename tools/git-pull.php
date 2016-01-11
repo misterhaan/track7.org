@@ -14,6 +14,7 @@
         exec('git pull', $output, $retcode);
         $ajax->Data->output = implode("\n", $output);
         $ajax->Data->retcode = $retcode;
+        // TODO:  parse $output for files that cloudflare caches (for example, js), and use https://api.cloudflare.com/#zone-purge-individual-files-by-url-and-cache-tags to purge them
         break;
       default:
         $ajax->Fail('unknown function name.  supported function names are: pull.');

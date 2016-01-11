@@ -34,7 +34,7 @@
 
       <h2>test php functions</h2>
       <ul>
-        <li><a href="bitly.php">auSend::Bitly tester</a></li>
+        <li><a href="bitly.php">t7Send::Bitly tester</a></li>
         <li><a href="tweet.php">t7Send::Tweet tester</a></li>
         <li><a href="regex.php">regular expression tester</a></li>
         <li><a href="timestamps.php">timestamp converter</a></li>
