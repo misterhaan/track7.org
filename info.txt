@@ -3,8 +3,8 @@
 
 url: track7.org/
 site_owner: misterhaan
-address1: ICQ 6567017
-address2: AIM misterhaan
+address1: 
+address2: 
 city: 
 state: 
 country: 

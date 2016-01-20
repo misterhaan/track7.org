@@ -1,87 +1,72 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('few rights reserved', null, '', '', array('links', 'credit', 'tell me', 'borrowed'), array('reasoning', 'linking', 'credit', 'tellme', 'borrowed'));
+<?php
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+  $html = new t7html([]);
+  $html->Open('few rights reserved');
 ?>
+      <h1>few rights reserved</h1>
+
       <p>
-        the contents of track7 are copyright “few rights reserved” instead of
-        “all rights reserved” like you are probably more used to seeing.&nbsp;
-        the basic idea is that i don’t have any reason to try to impose a lot of
-        limitations on how my work is allowed to be used.&nbsp; so instead of
-        reserving all rights, i’m only reserving a few.&nbsp; please note that
-        some of the contents of track7 are under someone else’s copyright (these
-        are all noted at the bottom of this page).&nbsp; i cannot give
-        permission to use that content for any other purposes, and in some cases
-        i do not have explicit permission myself.&nbsp; for copyright holders
-        who are displeased with my use of your work on track7,
-        <a href="/user/sendmessage?user=1">send me a message</a> with your
-        specific complaint and i will work something out with you.
+        the contents of track7 are copyright <em>few</em> rights reserved
+        instead of <em>all</em> rights reserved.  i don’t have much reason to
+        impose limitations on how my work is used, so instead of reserving all
+        rights i’m only reserving a few.  note that some of the contents of
+        track7 (mainly icons) come from other sources so it’s not up to me how
+        other people can use them.  most of what i’ve used that i didn’t create
+        myself has a license that allows for my use, but some of it i couldn’t
+        find license info.
       </p>
 
-<?
-  $page->Heading('linking to track7', 'linking');
-  $page->SubHeading('pages');
-?>
+      <h2>linking / sharing</h2>
       <p>
-        some sites seek to disallow linking to any page other than the root
-        page and / or require that all links are phrased a certain way or use
-        certain images.&nbsp; if you would like to link to track7 from your
-        website, go ahead and link directly to any page you want!
+        i put things on track7 because i want other people to have access to
+        them.  if you find something interesting or useful enough that you want
+        to share it, please do!  link to or share any page of track7 however you
+        see fit.  i do not provide quick-share links you can just click to
+        quickly share a page from track7 on facebook or twitter or whatever, but
+        that’s because i expect that my visitors know how to copy from the
+        address bar and paste into the social media site of their choice and
+        that i don’t pretend to be aware of every single such site out there.
+        to share and image or download from track7 please link to or share my
+        page that contains the image or file download link where possible.
       </p>
-<?
-  $page->SubHeading('downloads');
-?>
       <p>
-        if you want to link to a download file (that means anything that starts
-        with <?=$_SERVER['HTTP_HOST']; ?>/files/), i prefer if you link to my
-        page that contains the link.&nbsp; if you have a strong preference to
-        link directly to the file anyway, please make it clear that it’s not
-        your file (see the next section).
-      </p>
-<?
-  $page->SubHeading('images');
-?>
-      <p>
-        you should not display any image hosted on <?=$_SERVER['HTTP_HOST']; ?>
-        directly on any other site.&nbsp; this process is known as
-        <a href="http://en.wikipedia.org/wiki/Inline_Linking">hotlinking</a>
-        (plus a few other names) and is troublesome in that the site actually
-        hosting the image has to send the image to everyone who visits the page
-        displaying the image, and that comes out of a monthly quota.&nbsp;
-        you’re welcome to save images from my site, put them on a different
-        server, and include them on your pages from there — just please make it
-        clear that you didn’t create the image (see the next section).&nbsp; if
-        i find cases of my images being hotlinked from other sites, i will
-        replace them with <a href="/hotlink.png">this</a> instead.
+        linking to my pages and not directly to my files is especially important
+        for images.  track7 doesn’t see a lot of traffic, which means it doesn’t
+        cost me a lot to keep it running.  if one of my images gets linked to
+        directly from a page that does see a lot of traffic (for example, a
+        popular forum), that means track7 needs to serve that image every time
+        that page on the other site gets visited.  enough of that (or one
+        instance with a busy enough page) can cost me real money.  that’s not to
+        say i don’t want my images to appear on other sites, just if a lot of
+        people are going to see it then it may help me out if you first download
+        my image and put it up on an image hosting site.
       </p>
 
-<?
-  $page->Heading('don’t take credit for my work', 'credit');
-?>
+      <h2>credit</h2>
       <p>
-        you’re welcome to use anything you want from track7 (with the exception
-        of things not of my own creation, listed below).&nbsp; if you do use
-        something of mine, i ask that you refrain from presenting my work as
-        your own.&nbsp; often the act of using someone else’s work without
-        saying that it is someone else's work is the same as saying that it is
-        your own work, so give appropriate credit — preferably with a link
-        to track7.
+        when using something from track7, don’t make it look like it’s your own
+        work.  sharing a link to a page on track7 makes it pretty clear it’s
+        from track7, but linking directly to a download or posting an image do
+        not.  if at all possible add a link to either the page where you found
+        it or to the track7 home page, with a statement that it comes from
+        track7.  if you used something you learned here to create something of
+        your own then that’s something new and i’ll leave it up to you whether
+        mentioning track7 makes sense.
       </p>
 
-<?
-  $page->Heading('let me know', 'tellme');
-?>
+      <h2>i want to know</h2>
       <p>
-        if you do use something from track7, i would love to know what you’ve
-        done with it!&nbsp; as long as you’re not presenting my work as your own
-        i’m not going to be upset with you, so go to the
-        <a href="/neighbors.php" title="track7 neighborhood">neighborhood page</a>
-        and tell me how you found some part of track7 useful.&nbsp; if you have
-        a website i will most likely link to it from track7 unless you prefer
-        that i don’t.
+        have you used something from track7?  i’d love to see what you’ve done
+        with it!  this is by no means a requirement, but if you can share with
+        me please do because i am definitely interested.  mostly it’s that i’m
+        curious, but i’m also happy to link to what you’ve done if i like it and
+        you want me to.  check <a href="/user/misterhaan/" title="view misterhaan’s profile">my profile</a>
+        for ways to contact me.
       </p>
+<?php
+  $html->Close();
 
-<?
-  $page->Heading('borrowed content', 'borrowed');
+  die;  // TODO:  remove this and the remaining code
 ?>
       <p>
         as mentioned earlier on this page, some of the content on track7 is
@@ -89,12 +74,6 @@
         reserved” idea may not apply to these:
       </p>
       <ul>
-        <li>
-          dreamhost, linux, apache, php, and mysql logos belong to other people,
-          probably the organizations that provide the software (or service, in
-          the case of dreamhost).&nbsp; i shrunk their logos to fit into my
-          “powered by” images, the rest of which i created on my own.
-        </li>
         <li>
           cover art for all your bass are belong to us, rants and raves, khaos
           theory, save the party, and the ska-skank redemption are based
@@ -126,7 +105,7 @@
           icons are free for anyone to use under the
           <a href="http://creativecommons.org/licenses/by-sa/2.5/se/deed.en_US">creative commons attribution-share alike 2.5 sweden license</a>.&nbsp;
           qute icons don’t list a license so i assume it to be under the same
-          license as kempleton. 
+          license as kempleton.
         </li>
         <li>
           the rss icon (<img src="/style/feed.png" alt="" />) is available all over the
@@ -140,7 +119,3 @@
           search.&nbsp; i no longer remember what websites these came from.
         </li>
       </ul>
-
-<?
-  $page->End();
-?>

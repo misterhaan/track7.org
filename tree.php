@@ -1,4 +1,5 @@
 <?
+  // TODO: delete once site is fully transitioned
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
   if($user->GodMode)
     require_once 'auForm.php';
