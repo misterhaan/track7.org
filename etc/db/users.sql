@@ -11,7 +11,7 @@ create table users_settings (
   id smallint unsigned primary key,
   timebase enum('server', 'gmt') not null default 'server' comment 'whether times should be based off server time (dst) or gmt',
   timeoffset smallint not null default 0 comment 'seconds to add to the timebase to get to local time for the user',
-  foreign key(id) references users(id)
+  foreign key(id) references users(id) on delete cascade
 );
 
 create table users_email (
@@ -19,7 +19,7 @@ create table users_email (
   email varchar(64) not null default '',
   vis_email enum('none', 'friends', 'users', 'all') not null default 'none' comment 'who can see the email address',
   key(email),
-  foreign key(id) references users(id)
+  foreign key(id) references users(id) on delete cascade
 );
 
 create table users_profiles (
@@ -34,15 +34,15 @@ create table users_profiles (
   vis_facebook enum('friends', 'all') not null default 'friends',
   steam varchar(32) not null default '',
   vis_steam enum('friends', 'all') not null default 'friends',
-  foreign key(id) references users(id)
+  foreign key(id) references users(id) on delete cascade
 );
 
 create table users_friends (
   fan smallint unsigned not null,
   friend smallint unsigned not null,
   primary key(fan, friend),
-  foreign key(fan) references users(id),
-  foreign key(friend) references users(id)
+  foreign key(fan) references users(id) on delete cascade,
+  foreign key(friend) references users(id) on delete cascade
 );
 
 create table users_stats (
@@ -57,11 +57,11 @@ create table users_stats (
   key(comments),
   posts smallint unsigned not null default 0,
   key(posts),
-  foreign key(id) references users(id)
+  foreign key(id) references users(id) on delete cascade
 );
 
 create table transition_users (
   id smallint unsigned primary key,
   olduid smallint unsigned not null,
-  foreign key(id) references users(id)
+  foreign key(id) references users(id) on delete cascade
 );

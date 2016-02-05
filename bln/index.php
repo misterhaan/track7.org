@@ -45,18 +45,13 @@
             if($more = $db->query('select 1 from blog_entries where status=\'published\' and posted<\'' . +$lastdate . '\''))
               $ajax->Data->hasMore = $more->num_rows > 0;
           }
-          if(count($ids)) {
-            $tags = 'select et.entry, t.name from blog_entrytags as et left join blog_tags as t on et.tag=t.id where et.entry in (' . implode(', ', $ids) . ')';
-            if($tags = $db->query($tags))
-              while($tag = $tags->fetch_object()) {
+          if(count($ids))
+            if($tags = $db->query('select et.entry, t.name from blog_entrytags as et left join blog_tags as t on et.tag=t.id where et.entry in (' . implode(', ', $ids) . ')'))
+              while($tag = $tags->fetch_object())
                 if(isset($idmap[$tag->entry]))
                   $ajax->Data->entries[$idmap[$tag->entry]]->tags[] = $tag->name;
-              }
-          }
-        } else {
-          $ajax->Data->fail = true;
-          $ajax->Data->message = 'error getting latest blog entries.';
-        }
+        } else
+          $ajax->Fail('error getting latest blog entries.');
         break;
       default:
         $ajax->Data->fail = true;
@@ -97,7 +92,7 @@
       </h1>
 
       <nav class=tagcloud data-bind="visible: tags().length">
-        <header><img src="/style/tag.png" alt=#></header>
+        <header>tags</header>
         <!-- ko foreach: tags -->
         <a data-bind="text: name, attr: { href: name + '/', title: 'entries tagged ' + name, 'data-count': count }"></a>
         <!-- /ko -->
@@ -127,7 +122,7 @@
         <li data-bind="text: $data"></li>
       </ul>
 
-      <p data-bind="visible: !entries().length">
+      <p data-bind="visible: !entries().length && !loadingEntries()">
         this blog is empty!
       </p>
 
@@ -136,7 +131,7 @@
         <header>
           <h2><a data-bind="text: title, attr: {href: url}" title="view this post with its comments"></a></h2>
           <p class=postmeta>
-            posted by <a href="/user/misterhaan" title="view misterhaan’s profile">misterhaan</a>
+            posted by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a>
             <!-- ko if: tags.length -->in <!-- ko foreach: tags --><!-- ko if: $index() > 0 -->, <!-- /ko --><a class=tag data-bind="text: $data, attr: {href: ($root.tagid ? '../' : '') + $data + '/', title: 'entries tagged ' + $data}"></a><!-- /ko --><!-- /ko -->
             <!-- ko if: posted.datetime != "1970-01-01T00:00:00+00:00" -->on <time data-bind="text: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time><!-- /ko -->
           </p>
@@ -228,7 +223,7 @@
    */
   function ShowActions($tagid = false) {
     global $user;
-    if($user->IsAdmin()) {  // TODO:  make new entry go somewhere that works
+    if($user->IsAdmin()) {
 ?>
       <nav class=actions>
         <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>start a new entry</a>

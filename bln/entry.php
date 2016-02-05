@@ -65,7 +65,7 @@
 <?php
     if($entry->status == 'draft') {
 ?>
-        <a id=publishentry class=new href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this entry</a>
+        <a id=publishentry class=publish href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this entry</a>
         <a id=delentry class=del href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=delete">delete this entry</a>
 <?php
     }

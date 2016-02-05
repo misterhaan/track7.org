@@ -29,7 +29,11 @@
 }
 @font-face {
   font-family: inconsolata;
-  src: url(Inconsolata.woff);
+  src: url(InconsolataGo-Regular.woff);
+}
+@font-face {
+  font-family: fontawesome;
+  src: url(fontawesome-webfont.woff);
 }
 
 body {
@@ -332,7 +336,7 @@ h1 {
   height: 14px;
   border-radius: 2px;
   vertical-align: middle;
-  margin: 0 0 1px 2px;
+  margin: 0 0 1px 5px;
   font-size: .533em;
 }
 
@@ -344,42 +348,56 @@ h1 {
 }
 .actions a,
 a.action {
-  padding: 0 0 0 20px;
   margin: 0 .25em;
   background-position: left;
   background-repeat: no-repeat;
   white-space: nowrap;
 }
-.actions a.new {
-  background-image: url(/images/action/new.png);
+.actions a:before,
+a.action:before {
+  font-family: fontawesome;
+  font-weight: normal;
+  font-size: .8em;
+  color: #998;
+  margin-right: .325em;
+  display: inline-block;
 }
-.actions a.edit,
-a.action.edit {
-  background-image: url(/images/action/edit.png);
+.actions a.new:before,
+a.action.new:before {
+  content: "\f067";
 }
-.actions a.okay,
-a.action.okay {
-  background-image: url(/images/action/okay.png);
+.actions a.edit:before,
+a.action.edit:before {
+  content: "\f040";
 }
-.actions a.cancel,
-a.action.cancel {
-  background-image: url(/images/action/cancel.png);
+.actions a.publish:before,
+a.action.publish:before {
+  content: "\f093";
 }
-.actions a.del,
-a.action.del {
-  background-image: url(/images/action/del.png);
+.actions a.okay:before,
+a.action.okay:before {
+  content: "\f00c";
 }
-.actions a.message,
-a.action.message {
-  background-image: url(/images/action/message.png);
+.actions a.cancel:before,
+a.action.cancel:before {
+  content: "\f05e";
 }
-.actions a.addfriend,
-a.action.addfriend {
-  background-image: url(/images/action/friend/add.png);
+.actions a.del:before,
+a.action.del:before {
+  content: "\f00d";
+  color: #b64;
 }
-.actions a.removefriend,
-a.action.removefriend {
-  background-image: url(/images/action/friend/remove.png);
+.actions a.message:before,
+a.action.message:before {
+  content: "\f1d8";
+}
+.actions a.addfriend:before,
+a.action.addfriend:before {
+  content: "\f234";
+}
+.actions a.removefriend:before,
+a.action.removefriend:before {
+  content: "\f235";
 }
 @media (min-width: 25em) {
   .actions {
@@ -412,10 +430,14 @@ a.action.removefriend {
 }
 .tagcloud header {
   display: inline;
+  margin: 0 .75em 0 .25em;
 }
-.tagcloud header:after {
-  content: "tags";
-  margin: 0 .5em 0 .25em;
+.tagcloud header:before {
+  font-family: fontawesome;
+  content: "\f02c";
+  color: #997;
+  font-size: .75em;
+  margin-right: .325em;
 }
 @media (min-width: 40em) {
   .tagcloud header {
@@ -425,6 +447,9 @@ a.action.removefriend {
     margin: -.25em -.5em 0;
     padding: .25em .5em;
     border-radius: .5em .5em 0 0;
+  }
+  .tagcloud header:before {
+    color: #888;
   }
 }
 .tagcloud img {
@@ -438,13 +463,12 @@ a.action.removefriend {
 .tagcloud a:after {
   margin: 0 .5em 0 .25em;
   content: "(" attr(data-count) ")";
-  font-weight: normal;
   color: #666;
 }
 @media (min-width: 40em) {
   .tagcloud a:before {
     display: block;
-    content: "";
+    content: ""; /* need to specify content or it gets ignored */
   }
   .tagcloud a:after {
     margin: 0 0 0 .25em;
@@ -470,21 +494,80 @@ article > header h2 a:link,
 article > header h2 a:visited {
   color: #333;
 }
-.postmeta {
+.postmeta,
+.guidemeta {
   margin: 0 0 .75em;
   padding: 0 .625em;
   font-size: .8em;
 }
-article > header .postmeta {
+article > header .postmeta,
+article > header .guidemeta {
   background-color: #ccc;
   color: #333;
   padding: 0 .625em .15em;
 }
 @media (min-width: 25em) {
-  article > header .postmeta {
-    margin: 0 .625em .75em;
+  article > header .postmeta,
+  article > header .guidemeta {
+  margin: 0 .625em .75em;
     border-radius: 0 0 .625em .625em;
   }
+}
+.guidemeta > * {
+  margin-right: .75em;
+}
+.guidemeta > *:before {
+  font-family: fontawesome;
+  font-size: .75em;
+  color: #998;
+  margin-right: .325em;
+}
+.guidemeta .guidelevel:before {
+  content: "\f19d";
+}
+.guidemeta .tags:before {
+  content: "\f02c";
+}
+.guidemeta .views:before {
+  content: "\f1e5";
+}
+.guidemeta .posted:before {
+  content: "\f073";
+}
+.guidemeta .author:before {
+  content: "\f007";
+}
+.guidemeta .rating:before {
+  font-size: .9em;
+  color: #444;
+  margin-right: 0;
+}
+.guidemeta .rating[data-stars="1"]:before {
+  content: "\f005\f006\f006\f006\f006";
+}
+.guidemeta .rating[data-stars="1.5"]:before {
+  content: "\f005\f123\f006\f006\f006";
+}
+.guidemeta .rating[data-stars="2"]:before {
+  content: "\f005\f005\f006\f006\f006";
+}
+.guidemeta .rating[data-stars="2.5"]:before {
+  content: "\f005\f005\f123\f006\f006";
+}
+.guidemeta .rating[data-stars="3"]:before {
+  content: "\f005\f005\f005\f006\f006";
+}
+.guidemeta .rating[data-stars="3.5"]:before {
+  content: "\f005\f005\f005\f123\f006";
+}
+.guidemeta .rating[data-stars="4"]:before {
+  content: "\f005\f005\f005\f005\f006";
+}
+.guidemeta .rating[data-stars="4.5"]:before {
+  content: "\f005\f005\f005\f005\f123";
+}
+.guidemeta .rating[data-stars="5"]:before {
+  content: "\f005\f005\f005\f005\f005";
 }
 
 p,
@@ -592,6 +675,11 @@ p.comments {
   border-top: .0625em dashed #777;
   margin: 1em 0 0;
   padding: .375em .4em 0;
+}
+#comments h2:before {
+  font-family: fontawesome;
+  content: "\f0e6";
+  margin-right: .325em;
 }
 
 section.comment {
@@ -726,7 +814,7 @@ span.validation::after {
   }
   span.validation::after {
     content: none;
-    margin-left: none;
+    margin-left: 0;
   }
 }
 main span.checkbox {
@@ -1069,6 +1157,13 @@ section#contact a img {
   color: #333;
   margin: -.125em -.625em 0;
   padding: .25em .5em;
+}
+#rank header:before {
+  font-family: fontawesome;
+  content: "\f091";
+  font-size: .75em;
+  margin-right: .325em;
+  color: #888;
 }
 @media  (min-width: 25em) {
   #rank header {

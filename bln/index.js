@@ -26,7 +26,7 @@ function vm() {
           self.tags.push(result.tags[t]);
       else
         self.errors.push(result.message);
-    });;
+    });
   };
 
   self.LoadEntries = function() {

@@ -3,7 +3,7 @@
   define('LONGDATEFMT', 'g:i a \o\n l F jS Y');
   define('FORUM_POSTS_PER_PAGE', 20);
   require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-  $html = new t7html([]);
+  $html = new t7html(['rss' => ['title' => 'unifeed', 'url' => '/feed.rss']]);
   $html->Open('track7');
 ?>
       <h1><img alt=track7 src="/images/track7.png"></h1>
