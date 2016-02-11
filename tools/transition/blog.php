@@ -5,6 +5,7 @@
   define('STEP_COPYTAGS', 3);
   define('STEP_LINKTAGS', 4);
   define('STEP_COPYCOMMENTS', 5);
+  define('STEP_TIMETAGS', 6);
 
   require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
   $html = new t7html([]);
@@ -85,6 +86,12 @@
         if($db->real_query('insert into blog_comments (entry, posted, user, name, contacturl, html) select e.id, c.instant, u.id, c.name, c.url, replace(replace(replace(c.comments, \'&nbsp;\', \' \'), \'&rsquo;\', \'’\'), \'&mdash;\', \'—\') from track7_t7data.comments as c left join blog_entries as e on e.url=substr(c.page, 6) left join transition_users as u on u.olduid=c.uid where page like \'/bln/%\' order by c.instant'))
           $db->real_query('update transition_status set stepnum=' . STEP_COPYCOMMENTS . ', status=\'completed\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_COPYCOMMENTS);
         break;
+      case 'timetags':
+        if($db->real_query('update blog_tags set lastused=(select max(e.posted) as lastused from blog_entrytags as et left join blog_entries as e on e.id=et.entry where et.tag=blog_tags.id group by et.tag)'))
+          $db->real_query('update transition_status set stepnum=' . STEP_TIMETAGS . ', status=\'completed\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_TIMETAGS);
+        else
+          echo '<pre><code>' . $db->error . '</code></pre>';
+        break;
     }
 
   if($status = $db->query('select stepnum, status from transition_status where id=' . TR_BLOG))
@@ -157,10 +164,26 @@
         } else {
 ?>
       <p>
-        all blog comments have been copied to the new database.  we’re done
-        here!
+        all blog comments have been copied to the new database.
+      </p>
+
+      <h2>tags last used</h2>
+<?php
+          if($status->stepnum < STEP_TIMETAGS) {
+?>
+      <p>
+        i forgot to set the last used timestamp on blog tags, so they need to be
+        recalculated.
+      </p>
+      <nav class=actions><a href="?dostep=timetags">find tag last used times</a></nav>
+<?php
+          } else {
+?>
+      <p>
+        tags last used times have been updated.  we’re done here!
       </p>
 <?php
+          }
         }
       }
     }
