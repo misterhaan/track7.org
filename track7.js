@@ -38,6 +38,50 @@ $(function() {
     return false;
   });
 
+  // voting
+  if($("#vote").length) {
+    $("#vote, #vote span").click(function() {
+      $.post("/votes.php?ajax=cast", {type: $("#vote").data("type"), key: $("#vote").data("key"), vote: $(this).data("vote")}, function(data, status, xhr) {
+        var result = $.parseJSON(xhr.responseText);
+        if(!result.fail) {
+          $("#vote, #vote span").removeClass("voted");
+          $("#vote").addClass("voted");
+          $("#vote span").each(function() {
+            if(+$(this).data("vote") <= result.vote)
+              $(this).addClass("voted");
+          });
+          if(result.rating)
+            $("span.rating").attr("data-stars", Math.round(2*result.rating)/2);
+          if(result.rating && result.votes)
+            $("span.rating").attr("title", "rated " + result.rating + " stars by " + (result.votes == 1 ? "1 person" : result.votes + " people"));
+        } else
+          alert(result.message);
+      });
+      return false;
+    });
+  }
+
+  // comments
+  if(typeof ko === 'object' && $("#comments").length) {
+    ko.applyBindings(window.Comments = new CommentsViewModel(), $("#comments")[0]);
+    window.Comments.LoadComments();
+    $("#addcomment").submit(function() {
+      var formdata = {md: $("#newcomment").val(), type: $(this).data("type"), key: $(this).data("key")};
+      if($("#authorname").length)
+        $.extend(formdata, {name: $("#authorname").val(), contact: $("#authorcontact").val()});
+      $.post("/comments.php?ajax=add", formdata, function(data, status, xhr) {
+        var result = $.parseJSON(xhr.responseText);
+        if(!result.fail) {
+          window.Comments.AddComment(result);
+          $("#newcomment").val("");
+        }
+        else
+          alert(result.message);
+      });
+      return false;
+    });
+  }
+
   // tabbed layout
   $(".tabs a").click(function() {
     var hash = $(this).prop("hash");
@@ -89,3 +133,84 @@ function UpdateLoginType() {
     button.html("choose site to sign in through");
   }
 }
+
+/**
+ * view model for comments on the page.  automatically loaded if knockout is
+ * available and an element with the id "comments" exists.
+ */
+function CommentsViewModel() {
+  var self = this;
+
+  self.comments = ko.observableArray([]);
+
+  self.loadingComments = ko.observable(false);
+  self.hasMoreComments = ko.observable(false);
+  self.error = ko.observable(false);
+
+  self.AddComment = function(comment) {
+    comment.html = ko.observable(comment.html);
+    if(!comment.editing)
+      comment.editing = ko.observable(false);
+    if(!comment.markdown)
+      comment.markdown = ko.observable("");
+    self.comments.push(comment);
+  }
+
+  self.LoadComments = function() {
+    self.hasMoreComments(false);
+    self.loadingComments(true);
+    var pathparts = window.location.pathname.split("/");
+    $.get("/comments.php", {ajax: "get", type: $("#addcomment").data("type"), key: $("#addcomment").data("key")}, function(data, status, xhr) {
+      var result = $.parseJSON(xhr.responseText);
+      if(!result.fail) {
+        for(var e = 0; e < result.comments.length; e++)
+          self.AddComment(result.comments[e]);
+        //self.hasMoreComments(result.hasMore);
+      } else
+        self.error(result.message);
+      self.loadingComments(false);
+    });
+  };
+
+  self.EditComment = function(comment) {
+    $.post("/comments.php?ajax=edit", {type: $("#addcomment").data("type"), id: comment.id}, function(data, status, xhr) {
+      var result = $.parseJSON(xhr.responseText);
+      if(!result.fail) {
+        comment.markdown(result.markdown);
+        comment.editing(true);
+      } else
+        alert(result.message);
+    });
+    return false;
+  }
+
+  self.SaveComment = function(comment) {
+    $.post("/comments.php?ajax=save", {type: $("#addcomment").data("type"), id: comment.id, markdown: comment.markdown()}, function(data, status, xhr) {
+      var result = $.parseJSON(xhr.responseText);
+      if(!result.fail) {
+        comment.html(result.html);
+        comment.editing(false);
+      } else
+        alert(result.message);
+    });
+    return false;
+  }
+
+  self.UneditComment = function(comment) {
+    comment.editing(false);
+    return false;
+  }
+
+  self.DeleteComment = function(comment) {
+    if(confirm("do you really want to delete your comment?  you won’t be able to get it back."))
+      $.post("/comments.php?ajax=delete", {type: $("#addcomment").data("type"), id: comment.id}, function(data, status, xhr) {
+        var result = $.parseJSON(xhr.responseText);
+        if(!result.fail)
+          self.comments.remove(comment);
+        else
+          alert(result.message);
+      });
+    return false;
+  };
+}
+

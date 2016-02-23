@@ -72,6 +72,32 @@ header a:link, header a:visited, main a:link, main a:visited {
   text-decoration: none;
   font-weight: bold;
 }
+fieldset {
+  margin: 1em 0 .75em;
+  padding: 0;
+  border: none;
+  border-left: .5em solid #abc;
+}
+
+legend {
+  margin: 0 .75em .75em -.25em;
+  padding: .1em .5em .25em .75em;
+  background-color: #abc;
+  float: left;
+  border-radius: 0 .325em .325em 0;
+}
+@media (min-width: 25em) {
+  fieldset {
+    border-radius: .325em 0 0 .325em;
+    margin: 1em 0 .75em .5em;
+  }
+  legend {
+    padding: .1em .5em .25em .825em;
+  }
+}
+fieldset label {
+  clear: left;
+}
 label,
 label * {
   vertical-align: middle;
@@ -387,6 +413,14 @@ a.action.del:before {
   content: "\f00d";
   color: #b64;
 }
+.actions a.up:before,
+a.action.up:before {
+  content: "\f139";
+}
+.actions a.down:before,
+a.action.down:before {
+  content: "\f13a";
+}
 .actions a.message:before,
 a.action.message:before {
   content: "\f1d8";
@@ -570,6 +604,26 @@ article > header .guidemeta {
   content: "\f005\f005\f005\f005\f005";
 }
 
+.readmore a.page1:before {
+  content: "\f016";
+  margin-right: .325em;
+  font-size: .8em;
+  font-family: fontawesome;
+  color: #998;
+  display: inline-block;
+  font-weight: normal;
+}
+.readmore a.allpages:before {
+  margin-left: 1em;
+  content: "\f0c5";
+  margin-right: .325em;
+  font-size: .8em;
+  font-family: fontawesome;
+  color: #998;
+  display: inline-block;
+  font-weight: normal;
+}
+
 p,
 table,
 blockquote {
@@ -624,6 +678,76 @@ pre {
   margin: -.1em 0;
   border-radius: .2em;
 }
+/* token stuff excepted from prism.css */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: slategray;
+}
+
+.token.punctuation {
+  color: #999;
+}
+
+.namespace {
+  opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #a75;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #07a;
+}
+
+.token.function {
+  color: #d46;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #e90;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
 
 .tabs {
   margin: .5em .25em;
@@ -659,6 +783,34 @@ pre {
 }
 .tabcontent {
   display: none;
+}
+
+#vote {
+  cursor: pointer;
+  margin-left: .5em;
+}
+#vote:before,
+#vote span:before {
+  content: "\f006";
+  color: #ddc;
+  font-family: fontawesome;
+  margin-right: .25em;
+}
+#vote.voted:before,
+#vote.voted span:before,
+#vote:hover:before,
+#vote:hover span:before {
+  color: #357;
+}
+#vote.voted:before,
+#vote.voted span.voted:before,
+#vote.voted:hover span:hover:before,
+#vote:hover:before,
+#vote span:hover:before {
+  content: "\f005";
+}
+#vote.voted:hover span:before {
+  content: "\f006";
 }
 
 p.comments {
@@ -825,6 +977,9 @@ main span.checkbox {
     display: -webkit-flex;
     display: flex;
     align-items: center;
+  }
+  main label.multiline {
+    align-items: flex-start;
   }
   #addcomment span.label {
     -webkit-flex: 0 0 5em;
@@ -997,6 +1152,50 @@ article.activity img.photothumb {
   #editentry button {
     margin: .75em 1em .75em 4em;
   }
+}
+
+/*------------------------------------------------------[ /guides/edit.php ]--*/
+@media (min-width: 40em) {
+  #editguide span.label {
+    -webkit-flex: 0 0 4.75em;
+    flex: 0 0 4.75em;
+  }
+  #editguide button {
+    margin: .75em 1em .75em 5.75em;
+  }
+}
+
+/*------------------------------------------------------[ /guides/view.php ]--*/
+ol.toc {
+  list-style-type: none;
+  padding: 0 .5em;
+  background-color: #ccc;
+  margin: .5em 0;
+  line-height: 1.5em;
+  counter-reset: pagenum;
+}
+@media (min-width: 25em) {
+  ol.toc {
+    border-radius: .25em;
+    margin: .5em;
+  }
+}
+ol.toc li:before {
+  content: "page " counter(pagenum) ": ";
+  counter-increment: pagenum;
+}
+ol.toc li.allpages:before {
+  font-family: fontawesome;
+  font-size: .8em;
+  margin-left: 2.75em;
+  margin-right: .5em;
+  content: "\f0c5";
+}
+ol.toc li.selected:after {
+  font-family: fontawesome;
+  font-size: .8em;
+  margin-left: .5em;
+  content: "\f177";
 }
 
 /*-------------------------------------------------------[ /user/index.php ]--*/

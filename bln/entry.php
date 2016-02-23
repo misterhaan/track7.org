@@ -32,7 +32,7 @@
   }
 
   $html = new t7html(['ko' => true]);
-  $html->Open($entry->title . ($tag ? ' - ' . $tag . ' - blog' : ' - blog'));
+  $html->Open(htmlspecialchars($entry->title) . ($tag ? ' - ' . $tag . ' - blog' : ' - blog'));
 ?>
       <h1><?php echo htmlspecialchars($entry->title); ?></h1>
 <?php
@@ -141,6 +141,6 @@
         </form>
       </section>
 <?php
-  // TODO:  move comment stuff to t7html; show add comment form; make edit / delete links do something
+  // TODO:  move comment stuff to t7html
   $html->Close();
 ?>

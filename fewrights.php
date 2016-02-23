@@ -72,7 +72,9 @@
         code font is <a href="https://www.google.com/fonts/specimen/Inconsolata">inconsolata</a>,
         and icon font is <a href="http://fontawesome.io/">fontawesome</a>.
         markdown gets parsed into html by <a href="http://parsedown.org/">parsedown</a>
-        in php.  <a href="http://jquery.com/">jquery</a> makes my javascript
+        in php.  <a href="http://prismjs.com/">prism</a> puts syntax
+        highlighting on code blocks (only using their javascript not their css).
+        <a href="http://jquery.com/">jquery</a> makes my javascript
         work better and <a href="http://knockoutjs.com/">knockout</a> helps me
         load lots of the same type of content onto a page.
       </p>

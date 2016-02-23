@@ -1,6 +1,7 @@
 <?php
   define('TR_USERS', 1);
   define('TR_BLOG', 2);
+  define('TR_GUIDES', 3);
   require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
   $db->real_query('create table if not exists transition_status ('
@@ -15,6 +16,7 @@
 
   initStatus(TR_USERS);
   initStatus(TR_BLOG);
+  initStatus(TR_GUIDES);
 
   $html = new t7html([]);
   $html->Open('database transitions');
@@ -30,6 +32,7 @@
         <tbody>
           <tr><td><a href="users.php">users</a></td><td><?php echo $status[TR_USERS]->stepnum; ?></td><td><?php echo $status[TR_USERS]->status; ?></td></tr>
           <tr><td><a href="blog.php">blog</a></td><td><?php echo $status[TR_BLOG]->stepnum; ?></td><td><?php echo $status[TR_BLOG]->status; ?></td></tr>
+          <tr><td><a href="guides.php">guides</a></td><td><?php echo $status[TR_GUIDES]->stepnum; ?></td><td><?php echo $status[TR_GUIDES]->status; ?></td></tr>
         </tbody>
       </table>
 <?php

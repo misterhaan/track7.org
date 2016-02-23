@@ -37,18 +37,12 @@
               if($tags = $db->query('select t.name from blog_entrytags as et left join blog_tags as t on t.id=et.tag where et.entry=\'' . +$_GET['id'] . '\''))
                 while($tag = $tags->fetch_object())
                   $ajax->Data->tags[] = $tag->name;
-            } else {
-              $ajax->Data->fail = true;
-              $ajax->Data->message = 'entry not found.';
-            }
-          } else {
-            $ajax->Data->fail = true;
-            $ajax->Data->message = 'database error looking up entry for editing.';
-          }
-        } else {
-          $ajax->Data->fail = true;
-          $ajax->Data->message = 'get requires an id.';
-        }
+            } else
+              $ajax->Fail('entry not found.');
+          } else
+            $ajax->Fail('database error looking up entry for editing.');
+        } else
+          $ajax->Fail('get requires an id.');
         break;
       case 'save':
         $ajax->Data->fieldIssues = [];
@@ -153,6 +147,7 @@
         break;
       default:
         $ajax->Fail('unknown function name.  supported function names are: get, save, publish, delete.');
+        break;
     }
     $ajax->Send();
     die;
@@ -172,7 +167,7 @@
           <span class=label>url:</span>
           <span class=field><input id=url maxlength=32 required pattern="[a-z0-9\-_]+" data-bind="value: url"></span>
         </label>
-        <label>
+        <label class=multiline>
           <span class=label>entry:</span>
           <span class=field><textarea id=content required rows="" cols="" data-bind="value: content"></textarea></span>
         </label>
