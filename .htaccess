@@ -13,6 +13,9 @@ RewriteRule \.snapshot/ - [F]
 RewriteRule etc/ - [F]
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
+RedirectPermanent /feeds/unifeed.rss http://www.track7.org/feed.rss
+RedirectPermanent /feeds/entries.rss http://www.track7.org/bln/feed.rss
+RedirectPermanent /feeds/guides.rss http://www.track7.org/guides/feed.rss
 RedirectPermanent /output/pen/bln/ http://www.track7.org/bln/
 RedirectPermanent /pen/bln/ http://www.track7.org/bln/
 RedirectPermanent /output/gfx/album/ http://www.track7.org/album/

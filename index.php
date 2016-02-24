@@ -60,7 +60,7 @@
       </section>
 <?php
   // get last MAXITEMS from contributions, updates, posts, comments, and photos
-  $act = $update = $forum = $comment = $photo = $guide = $art = $round = false;
+  $act = $update = $forum = $comment = $photo = $art = $round = false;
   if($acts = $db->query('select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author order by c.posted desc limit ' . MAXITEMS))
     $act = $acts->fetch_object();
   if($updates = $db->query('select instant as posted, `change` as preview from track7_t7data.updates order by instant desc limit ' . MAXITEMS))
@@ -71,33 +71,28 @@
     $comment = $comments->fetch_object();
   if($photos = $db->query('select added as posted, id, caption as title from track7_t7data.photos order by posted desc limit ' . MAXITEMS))
     $photo = $photos->fetch_object();
-  if($guides = $db->query('select g.id, g.dateadded as posted, g.title, g.description as preview, u.username, u.displayname from track7_t7data.guides as g left join track7_t7data.users as ou on ou.uid=g.author left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id order by posted desc limit ' . MAXITEMS))
-    $guide = $guides->fetch_object();
   if($arts = $db->query('select id, name as title, `type`, adddate as posted from track7_t7data.art order by posted desc limit ' . MAXITEMS))
     $art = $arts->fetch_object();
   if($rounds = $db->query('select r.id, r.instant as posted, c.name, r.player as authorname, \'\' as authorurl, u.username, u.displayname, r.roundtype, r.tees, r.score, r.comments from track7_t7data.dgrounds as r left join track7_t7data.dgcourses as c on c.id=r.courseid left join track7_t7data.users as ou on ou.uid=r.uid left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id where r.entryuid is null or r.uid=0 order by posted desc limit ' . MAXITEMS))
     $round = $rounds->fetch_object();
 
   $items = 0;
-  while($items < MAXITEMS && ($act || $update || $forum || $comment || $photo || $guide || $art || $round)) {
-    if($act && (!$update || $act->posted > $update->posted) && (!$forum || $act->posted > $forum->posted) && (!$comment || $act->posted > $comment->posted) && (!$photo || $act->posted > $photo->posted) && (!$guide || $act->posted > $guide->posted) && (!$art || $act->posted > $art->posted) && (!$round || $act->posted > $round->posted)) {
+  while($items < MAXITEMS && ($act || $update || $forum || $comment || $photo || $art || $round)) {
+    if($act && (!$update || $act->posted > $update->posted) && (!$forum || $act->posted > $forum->posted) && (!$comment || $act->posted > $comment->posted) && (!$photo || $act->posted > $photo->posted) && (!$art || $act->posted > $art->posted) && (!$round || $act->posted > $round->posted)) {
       ShowContribution($act);
       $act = $acts->fetch_object();
-    } elseif($update && (!$forum || $update->posted > $forum->posted) && (!$comment || $update->posted > $comment->posted) && (!$photo || $update->posted > $photo->posted) && (!$guide || $update->posted > $guide->posted) && (!$art || $update->posted > $art->posted) && (!$round || $update->posted > $round->posted)) {
+    } elseif($update && (!$forum || $update->posted > $forum->posted) && (!$comment || $update->posted > $comment->posted) && (!$photo || $update->posted > $photo->posted) && (!$art || $update->posted > $art->posted) && (!$round || $update->posted > $round->posted)) {
       ShowUpdate($update);
       $update = $updates->fetch_object();
-    } elseif($forum && (!$comment || $forum->posted > $comment->posted) && (!$photo || $forum->posted > $photo->posted) && (!$guide || $forum->posted > $guide->posted) && (!$art || $forum->posted > $art->posted) && (!$round || $forum->posted > $round->posted)) {
+    } elseif($forum && (!$comment || $forum->posted > $comment->posted) && (!$photo || $forum->posted > $photo->posted) && (!$art || $forum->posted > $art->posted) && (!$round || $forum->posted > $round->posted)) {
       ShowForum($forum);
       $forum = $forums->fetch_object();
-    } elseif($comment && (!$photo || $comment->posted > $photo->posted) && (!$guide || $comment->posted > $guide->posted) && (!$round || $comment->posted > $round->posted)) {
+    } elseif($comment && (!$photo || $comment->posted > $photo->posted) && (!$round || $comment->posted > $round->posted)) {
       ShowContribution($comment);
       $comment = $comments->fetch_object();
-    } elseif($photo && (!$guide || $photo->posted > $guide->posted) && (!$art || $photo->posted > $art->posted) && (!$round || $photo->posted > $round->posted)) {
+    } elseif($photo && (!$art || $photo->posted > $art->posted) && (!$round || $photo->posted > $round->posted)) {
       ShowPhoto($photo);
       $photo = $photos->fetch_object();
-    } elseif($guide && (!$art || $guide->posted > $art->posted) && (!$round || $guide->posted > $round->posted)) {
-      ShowGuide($guide);
-      $guide = $guides->fetch_object();
     } elseif($art && (!$round || $art->posted > $round->posted)) {
       ShowArt($art);
       $art = $arts->fetch_object();
@@ -176,21 +171,6 @@
           <h2><a href="/album/photo=<?php echo $photo->id; ?>"><?php echo $photo->title; ?></a> by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></h2>
           <p><a href="/album/photo=<?php echo $photo->id; ?>"><img class=photothumb src="/album/photos/<?php echo $photo->id; ?>.jpg" alt=""></a></p>
           <p class=readmore><a href="/album/photo=<?php echo $photo->id; ?>">⇨  see larger</a></p>
-        </div>
-      </article>
-<?php
-  }
-
-  function ShowGuide($guide) {
-?>
-      <article class="activity guide">
-        <div class=whatwhen title="guide at <?php echo t7format::LocalDate(LONGDATEFMT, $guide->posted); ?>">
-          <time datetime="<?php echo gmdate('c', $guide->posted); ?>"><?php echo t7format::SmartDate($guide->posted); ?></time>
-        </div>
-        <div>
-          <h2><a href="/guides/<?php echo $guide->id; ?>"><?php echo $guide->title; ?></a> by <?php echo AuthorLink($guide); ?></h2>
-          <p><?php echo $guide->preview; ?></p>
-          <p class=readmore><a href="/guides/<?php echo $guide->id; ?>">⇨  read more</a></p>
         </div>
       </article>
 <?php

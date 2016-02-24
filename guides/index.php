@@ -1,171 +1,185 @@
 <?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->ResetFlag(_FLAG_PAGES_COMMENTS);
-  if(isset($_GET['tag'])) {
-    $tag = htmlspecialchars($_GET['tag']);
-    $page->AddFeed('guides [' . $tag . ']', '/feeds/guides.rss?tags=' . $tag);
-    $page->Start($tag . ' - guides', 'guides [' . $tag . ']<a class="feed" href="/feeds/guides.rss?tags=' . $tag . '" title="rss feed of ' . $tag . ' guides"><img src="/style/feed.png" alt="feed" /></a>');
-    $page->ShowTagDescription('guides', $tag);
-    if($user->GodMode)
-      $page->Info('<a href="/tools/taginfo.php?type=guides&amp;name=' . $tag . '">add/edit tag description</a>');
-  } else {
-    $tag = false;
-    $page->AddFeed('guides', '/feeds/guides.rss');
-    $page->Start('guides', 'guides<a class="feed" href="/feeds/guides.rss" title="rss feed of all guides"><img src="/style/feed.png" alt="feed" /></a>');
-?>
-      <p>
-        i tend to figure things out on my own as much as i can, but sometimes it
-        sure is nice to find helpful information on the internet.&nbsp; with
-        that in mind, i’ve written up a few things i’ve figured out and think
-        might be of use to other people.&nbsp; if you have something you would
-        like to contribute, use the link below and i’ll review it and probably
-        put it up here.
-      </p>
-<?
+  define('NUM_GUIDES', 10);  // how many guides per "page"
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+
+  if(isset($_GET['ajax'])) {
+    $ajax = new t7ajax();
+    switch($_GET['ajax']) {
+      case 'guides':
+        if(isset($_GET['tagid']) && +$_GET['tagid']) {
+          $guides = 'select g.id, g.url, g.posted, g.updated, g.title, g.summary, g.level, g.rating, g.votes, g.views, count(c.guide) as comments from guide_taglinks as tl left join guides as g on g.id=tl.guide left join guide_comments as c on c.guide=g.id where tl.tag=\'' . +$_GET['tagid'] . '\' and g.status=\'published\'';
+          if(isset($_GET['before']) && +$_GET['before'])
+            $guides .= ' and g.posted<\'' . +$_GET['before'] . '\'';
+            $guides .= ' group by g.id order by g.updated desc limit ' . NUM_GUIDES;
+        } else {
+          $guides = 'select g.id, g.url, g.posted, g.updated, g.title, g.summary, g.level, g.rating, g.votes, g.views, count(c.guide) as comments from guides as g left join guide_comments as c on c.guide=g.id where status=\'published\'';
+          if(isset($_GET['before']) && +$_GET['before'])
+            $guides .= ' and g.posted<\'' . +$_GET['before'] . '\'';
+            $guides .= ' group by g.id order by g.updated desc limit ' . NUM_GUIDES;
+        }
+        $ajax->Data->query = $guides;
+        if($guides = $db->query($guides)) {
+          $idmap = [];
+          $ids = [];
+          $ajax->Data->guides = [];
+          $lastdate = 0;
+          while($guide = $guides->fetch_object()) {
+            $ids[] = $guide->id;
+            $idmap[$guide->id] = count($ajax->Data->guides);
+            if($guide->views > 9999)
+              $guide->views = number_format($guide->views);
+            $posted = new stdClass();
+            $posted->timestamp = $guide->posted;
+            //$posted->datetime = gmdate('c', $guide->posted);
+            //$posted->display = t7format::SmartDate($guide->posted);
+            $posted->title = strtolower(date('g:i a \o\n l F jS Y', $guide->posted));
+            $guide->posted = $posted;
+            $lastdate = $guide->updated;
+            $updated = new stdClass();
+            $updated->timestamp = $guide->updated;
+            $updated->datetime = gmdate('c', $guide->updated);
+            $updated->display = t7format::SmartDate($guide->updated);
+            $updated->title = strtolower(date('g:i a \o\n l F jS Y', $guide->updated));
+            $guide->updated = $updated;
+            $guide->tags = [];
+            unset($guide->id);
+            $ajax->Data->guides[] = $guide;
+          }
+          if(isset($_GET['tagid']) && +$_GET['tagid']) {
+            if($more = $db->query('select 1 from guide_taglinks as tl left join guides as g on g.id=tl.guide where tl.tag=\'' . +$_GET['tagid'] . '\' and g.status=\'published\' and g.updated<\'' . +$lastdate . '\''))
+              $ajax->Data->hasMore = $more->num_rows > 0;
+          } else {
+            if($more = $db->query('select 1 from guides where status=\'published\' and updated<\'' . +$lastdate . '\''))
+              $ajax->Data->hasMore = $more->num_rows > 0;
+          }
+          if(count($ids))
+            if($tags = $db->query('select tl.guide, t.name from guide_taglinks as tl left join guide_tags as t on tl.tag=t.id where tl.guide in (' . implode(', ', $ids) . ')'))
+              while($tag = $tags->fetch_object())
+                if(isset($idmap[$tag->guide]))
+                  $ajax->Data->guides[$idmap[$tag->guide]]->tags[] = $tag->name;
+        } else
+          $ajax->Fail('error looking up latest guides');
+        break;
+      default:
+        $ajax->Fail('unknown function name.  supported function names are:  guides.');
+    }
+    $ajax->Send();
+    die;
   }
-?>
-      <ul><li><a href="contribute">contribute a guide</a></li></ul>
-<?
-  if(!$tag)
-    $page->TagCloud('guides', 'tag=');
-  switch($_GET['sort']) {
-    case 'views':
-      $sort = 'most viewed';
-      $guides = 's.hits';
-      break;
-    case 'rating':
-      $sort = 'highest rated';
-      $guides = 'rating';
-      break;
-    case 'added':
-      $sort = 'newest';
-      $guides = 'g.dateadded';
-    default:
-      $sort = 'last updated';
-      $guides = 'g.dateupdated';
-      break;
-  }
+
+  $html = false;
+
+  $tag = false;
+  if(isset($_GET['tag']) && $tag = $db->query('select id, name, description from guide_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))
+    $tag = $tag->fetch_object();
   if($tag) {
-    $tags = addslashes($_GET['tag']);
-    $tags = 'and (g.tags=\'' . $tags . '\' or g.tags like \'' . $tags . ',%\' or g.tags like \'%,' . $tags . '\' or g.tags like \'%,' . $tags . ',%\') ';
-  } elseif($user->GodMode) {
-    $pendguides = 'select g.id, g.title, g.description, g.status, g.pages, u.login from guides as g left join users as u on u.uid=g.author where status=\'new\' or status=\'pending\'';
-    if($pendguides = $db->Get($pendguides, 'error checking for pending guides', '')) {
-      $page->Heading('pending guides');
+    $html = new t7html(['ko' => true, 'rss' => ['title' => $tag->name . ' guides', 'url' => dirname($_SERVER['PHP_SELF']) . '/feed.rss?tags=' . $tag->name]]);
+    $html->Open($tag->name . ' - guides');
 ?>
-      <dl class="guides">
-<?
-      while($guide = $pendguides->NextRecord()) {
-?>
-        <dt><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
-        <dd>
-          <div class="guideinfo">
-            <span>status:&nbsp; <?=$guide->status; ?></span>
-            <span>author:&nbsp; <a href="/user/<?=$guide->login; ?>/"><?=$guide->login; ?></a></span>
-            <span>pages:&nbsp; <?=$guide->pages; ?></span>
-          </div>
-          <?=$guide->description; ?>
+      <h1>
+        latest guides — <?php echo $tag->name; ?>
+        <a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> guides"><img alt=feed src="/images/feed.png"></a>
+      </h1>
 
-        </dd>
-<?
+<?php
+    ShowActions($tag->id);
+?>
+      <p id=taginfo data-tagid=<?php echo $tag->id; ?>>
+        showing guides dealing with <?php echo $tag->description; ?>  go back to <a href="/guides/">all guides</a>.
+      </p>
+<?php
+  } else {
+    $html = new t7html(['ko' => true, 'rss' => ['title' => 'guides', 'url' => dirname($_SERVER['PHP_SELF']) . '/feed.rss']]);
+    $html->Open('guides');
+?>
+      <h1>
+        latest guides
+        <a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of all guides"><img alt=feed src="/images/feed.png"></a>
+      </h1>
+
+      <nav class=tagcloud data-bind="visible: tags().length">
+        <header>tags</header>
+        <!-- ko foreach: tags -->
+        <a data-bind="text: name, attr: { href: name + '/', title: 'guides tagged ' + name, 'data-count': count }"></a>
+        <!-- /ko -->
+      </nav>
+
+<?php
+    ShowActions();
+
+    if($user->IsAdmin() && $drafts = $db->query('select url, title from guides where status=\'draft\' order by posted desc'))
+      if($drafts->num_rows) {
+?>
+      <h2>draft entries</h2>
+      <ul>
+<?php
+        while($draft = $drafts->fetch_object()) {
+?>
+        <li><a href="<?php echo $draft->url; ?>/1"><?php echo $draft->title; ?></a></li>
+<?php
+        }
+?>
+      </ul>
+<?php
       }
-?>
-      </dl>
-<?
-    }
-  } elseif($user->Valid) {
-    $userguides = 'select id, title, description, status, pages from guides where author=\'' . $user->ID . '\' and (status=\'new\' or status=\'pending\')';
-    if($userguides = $db->Get($userguides, 'error checking for your pending guides', '')) {
-      $page->Heading($user->Name . '’s pending guides');
-?>
-      <dl class="guides">
-<?
-      while($guide = $userguides->NextRecord()) {
-?>
-        <dt><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
-        <dd>
-          <div class="guideinfo">
-            <span>status:&nbsp; <?=$guide->status; ?></span>
-            <span>author:&nbsp; <a href="/user/<?=$user->Name; ?>/"><?=$user->Name; ?></a></span>
-            <span>pages:&nbsp; <?=$guide->pages; ?></span>
-          </div>
-          <?=$guide->description; ?>
-
-        </dd>
-<?
-      }
-?>
-      </dl>
-<?
-    }
   }
-  $guides = 'select g.id, g.title, g.description, g.skill, g.tags, g.dateadded, g.dateupdated, g.pages, g.author, u.login, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, s.hits from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join hitdetails as s on (s.value=concat(concat(\'/guides/\', g.id), \'/\') and s.type=\'request\' and s.date=\'forever\') where g.status=\'approved\' ' . $tags . 'order by ' . $guides . ' desc';
-  if($guides = $db->GetSplit($guides, 20, 0, '', '', 'error getting list of guides', 'no guides found')) {
-    $page->Heading($sort . ' guides');
 ?>
-      <div id="sortoptions">
-        sort guides by:&nbsp;
-        <?=$sort == 'last updated' ? 'last updated' : '<a href="/guides/">last updated</a>'; ?>  |
-        <?=$sort == 'newest' ? 'newest' : '<a href="sort=added">newest</a>'; ?> |
-        <?=$sort == 'highest rated' ? 'highest rated' : '<a href="sort=rating">highest rated</a>'; ?> |
-        <?=$sort == 'most viewed' ? 'most viewed' : '<a href="sort=views">most viewed</a>'; ?>
-      </div>
+      <ul class=errors data-bind="visible: errors().length, foreach: errors">
+        <li data-bind="text: $data"></li>
+      </ul>
 
-      <dl class="guides">
-<?
-    while($guide = $guides->NextRecord()) {
-?>
-        <dt><span class="when"><?=GuideDate($user, $guide->dateadded, $guide->dateupdated); ?></span><a href="<?=$guide->id; ?>/"><?=$guide->title; ?></a></dt>
-        <dd>
-          <div class="guideinfo">
-            <span>author:&nbsp; <?=$guide->author ? '<a href="/user/' . $guide->login . '/">' . $guide->login . '</a>' : ''; ?></span>
-            <span>level:&nbsp; <?=$guide->skill; ?></span>
-            <span>pages:&nbsp; <?=$guide->pages; ?></span>
-            <span>rated:&nbsp; <?=round($guide->rating, 2); ?> (<?=+$guide->votes; ?> vote<?=$guide->votes != 1 ? 's' : ''; ?>)</span>
-            <span>views:&nbsp; <?=+$guide->hits; ?></span>
-            <span class="tags">tags:&nbsp; <?=TagLinks($guide->tags); ?></span>
-          </div>
-          <?=$guide->description; ?>
+      <p data-bind="visible: !guides().length && !loadingGuides()">
+        no guides!  how will we know what to do?
+      </p>
 
-        </dd>
-<?
-    }
-?>
-      </dl>
-<?
-    $page->SplitLinks();
-  }
-  $page->End();
+      <!-- ko foreach: guides -->
+      <article>
+        <header>
+          <h2><a data-bind="text: title, attr: {href: url + '/1'}" title="read this guide"></a></h2>
+          <p class=guidemeta>
+            <span class=guidelevel data-bind="text: level, attr: {title: level + ' level'}"></span>
+            <span class=tags data-bind="visible: tags.length, attr: {title: tags.length == 1 ? '1 tag' : tags.length + ' tags'}, foreach: tags"><!-- ko if: $index() > 0 -->, <!-- /ko --><a class=tag data-bind="text: $data, attr: {href: ($root.tagid ? '../' : '') + $data + '/', title: 'guides tagged ' + $data}"></a></span>
+            <span class=views data-bind="text: views, attr: {title: 'viewed ' + views + ' times'}"></span>
+            <span class=rating data-bind="attr: {'data-stars': Math.round(rating*2)/2, title: 'rated ' + rating + ' stars by ' + (votes == 0 ? 'nobody' : (votes == 1 ? '1 person' : votes + ' people'))}"></span>
+            <time class=posted data-bind="text: updated.display, attr: {datetime: updated.datetime, title: 'posted ' + (updated.datetime == posted.datetime ? updated.title : updated.title + ' (originally ' + posted.title + ')')}"></time>
+            <span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
+          </p>
+        </header>
+        <div class=summary data-bind="html: summary">
+        </div>
+        <footer><p class=readmore>
+          <a class=page1 data-bind="attr: {href: url + '/1'}">start with page 1</a>
+          <a class=allpages data-bind="attr: {href: url + '/all'}">read all pages together</a>
+        </p></footer>
+      </article>
+
+      <!-- /ko -->
+
+      <p class=loading data-bind="visible: loadingGuides">loading more guides . . .</p>
+      <p class=more data-bind="visible: hasMoreGuides"><a href=#nextpage data-bind="click: LoadGuides">load more guides</a></p>
+<?php
+  $html->Close();
 
   /**
-   * Turn a list of tags into HTML links.
-   *
-   * @param string $tags comma-separated list of tags
-   * @return HTML tag links
+   * create the menu of actions.
+   * @param integer $tagid id of the tag to edit from this page, if any
    */
-  function TagLinks($tags) {
-    if(!$tags)
-      return '<em>(none)</em>';
-    $tags = explode(',', $tags);
-    foreach($tags as $tag)
-      if($tag)
-        $links[] = '<a href="tag=' . $tag . '">' . $tag . '</a>';
-    return implode(', ', $links);
-  }
+  function ShowActions($tagid = false) {
+    global $user;
+    if($user->IsAdmin()) {
+?>
+      <nav class=actions>
+        <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/new" class=new>start a new guide</a>
+<?php
+      if($tagid) {  // TODO:  make tag description edit go somewhere that works
+?>
+        <a href="#tagedit" class=edit>edit tag description</a>
+<?php
+      }
+?>
+      </nav>
 
-  /**
-   * Show the date added (and updated, if different) for a guide.
-   *
-   * @param auUserTrack7 $user user viewing the page
-   * @param int $added Unix timestamp of when the guide was added to track7
-   * @param int $updated Unix timestamp of when the guide was last updated
-   * @return formatted date the guide was added and possibly updated.
-   */
-  function GuideDate($user, $added, $updated) {
-    $added = strtolower(auText::SmartTime($added, $user));
-    $updated = strtolower(auText::SmartTime($updated, $user));
-    if($added == $updated)
-      return $added;
-    return $added . ' (updated ' . $updated . ')';
+<?php
+    }
   }
 ?>

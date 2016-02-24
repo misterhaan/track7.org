@@ -1,168 +1,120 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
+<?php
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  if($guide = GetGuide($db, $user, $_GET['guide'])) {
-    $page->Start($guide->title . ' - guides', $guide->title, 'by ' . $guide->login . ', ' . GuideDate($user, $guide->dateadded, $guide->dateupdated));
-    if($guide->author == $user->ID || $user->GodMode)
-      $page->info('as the author of this guide, you may <a href="edit">edit</a> it');
-    if($guide->status == 'new')
-      $page->info('this guide has not yet been <a href="edit&amp;page=end">submitted for approval</a>, so only you as the author can see it');
-    elseif($guide->status == 'pending')
-      $page->info('this guide is pending approval from the administrator.&nbsp; it is only visible to you as the author until it is approved.');
+  $tag = false;
+  if(isset($_GET['tag']))
+    if($tag = $db->query('select name from guide_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))
+      if($tag = $tag->fetch_object())
+        $tag = $tag->name;
+    else {  // tag not found, so try getting to the guide without the tag
+      header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['url'] . '/' . $_GET['page']);
+      die;
+    }
+
+  $guide = false;
+
+  if(isset($_GET['url']) && $guide = $db->query('select g.id, g.url, g.title, g.status, g.posted, g.updated, g.summary, g.level, g.rating, g.votes, g.views, g.author, v.vote from guides as g left join guide_votes as v on g.id=v.guide and v.' . ($user->IsLoggedIn() ? 'voter=' . +$user->ID . ' and v.ip=0' : 'voter=0 and v.ip=inet_aton(\'' . $_SERVER['REMOTE_ADDR'] . '\')') . ' where g.url=\'' . $db->escape_string($_GET['url']) . '\' limit 1'))
+    $guide = $guide->fetch_object();
+  if(!$guide || $guide->status != 'published' && !$user->IsAdmin()) {
+    header('HTTP/1.0 404 Not Found');
+    $html = new t7html([]);
+    $html->Open($tag ? 'guide not found - ' . $tag . ' - guides' : 'guide not found - guides');
+?>
+      <h1>404 guide not found</h1>
+
+      <p>
+        sorry, we don’t seem to have a guide by that name.  try the list of
+        <a href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">all guides</a>.
+      </p>
+<?php
+    $html->Close();
+    die;
+  }
+  $pages = [];
+  if($pageinfo = $db->query('select id, number, heading, html from guide_pages where guide=\'' . +$guide->id . '\' order by number')) {
+    while($p = $pageinfo->fetch_object())
+      $pages[$p->number] = $p;
+    if($_GET['page'] != 'all' && !isset($pages[$_GET['page']]))
+      if($_GET['page'] != 1) {
+        // invalid page, so go to page 1 (if page 1 is invalid it will get handled later)
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' . ($tag ? $tag . '/' : '') . $_GET['url'] . '/1');
+        die;
+      }
+  }
+
+  $html = new t7html(['ko' => true]);
+  $html->Open(htmlspecialchars($guide->title) . ($tag ? ' - ' . $tag . ' - guides' : ' - guides'));
+  if($guide->status == 'published')
+    $db->real_query('update guides set views=views+1 where id=' . +$guide->id);
+  $tags = [];
+  if($ts = $db->query('select t.name from guide_taglinks as l left join guide_tags as t on t.id=l.tag where l.guide=' . +$guide->id))
+    while($t = $ts->fetch_object())
+      $tags[] = '<a href="' . ($tag ? '../../' : '../') . $t->name . '/" title="guides tagged ' . $t->name . '">' . $t->name . '</a>';
+?>
+      <h1><?php echo htmlspecialchars($guide->title); ?></h1>
+      <p class=guidemeta>
+        <span class=guidelevel title="<?php echo $guide->level; ?> level"><?php echo $guide->level; ?></span>
+        <span class=tags><?php echo implode(', ', $tags); ?></span>
+        <span class=views title="viewed <?php echo $guide->views; ?> times"><?php echo $guide->views; ?></span>
+        <span class=rating data-stars=<?php echo round($guide->rating*2)/2; ?> title="rated <?php echo $guide->rating; ?> stars by <?php echo $guide->votes == 0 ? 'nobody' : ($guide->votes == 1 ? '1 person' : $guide->votes . ' people'); ?>"></span>
+        <time class=posted datetime="<?php echo gmdate('c', $guide->updated); ?>" title="posted <?php echo $guide->updated == $guide->posted ? strtolower(date('g:i a \o\n l F jS Y', $guide->updated)) : strtolower(date('g:i a \o\n l F jS Y', $guide->updated)) . ' (originally ' . strtolower(date('g:i a \o\n l F jS Y', $guide->posted)) . ')'; ?>"><?php echo t7format::SmartDate($guide->updated) ; ?></time>
+        <span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
+      </p>
+<?php
+  if($user->IsAdmin() || $guide->author == $user->ID) {
+?>
+      <nav class=actions data-id=<?php echo $guide->id; ?>>
+        <a class=edit href=edit>edit this guide</a>
+<?php
+    if($user->IsAdmin() && $guide->status == 'draft') {
+?>
+        <a class=publish href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this guide</a>
+        <a class=del href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=delete">delete this guide</a>
+<?php
+    }
+?>
+      </nav>
+<?php
+  }
+  echo $guide->summary;
+  echo $guide->toc = MakeTOC($pages);
+  if($_GET['page'] == 'all')
+    foreach($pages as $page) {
+?>
+      <h2><?php echo $page->heading; ?></h2>
+<?php
+      echo $page->html;
+    }
+  elseif(isset($pages[$_GET['page']])) {
+?>
+      <h2><?php echo $pages[$_GET['page']]->heading; ?></h2>
+<?php
+    echo $pages[$_GET['page']]->html;
+  } else {
+?>
+      <p class=error>oops, this guide doesn’t have a first page.</p>
+<?php
+  }
+  echo $guide->toc;
 ?>
       <p>
-        <?=$guide->description; ?>
-
+        how was it?  <?php $html->ShowVote('guide', $guide->id, $guide->vote); ?>
       </p>
+<?php
+  $html->ShowComments('guide', 'guide', $guide->id);
+  $html->Close();
 
-      <div class="tagcloud"><?=TagLinks($guide->tags); ?></div>
-
-<?
-    // all-pages view
-    if($_GET['page'] == 'all')
-      for($num = 1; $num <= $guide->pages; $num++)
-        ShowPage($db, $user, $page, $guide, $num);
-    else {
-      if(!is_numeric($_GET['page']) || $_GET['page'] < 1 || $_GET['page'] > $guide->pages)
-        $_GET['page'] = 1;
-      ShowPage($db, $user, $page, $guide, +$_GET['page']);
-    }
-?>
-      <div id="guidetools">
-<?
-    ShowTableOfContents($db, $user, $guide, $_GET['page']);
-?>
-      </div>
-<?
-    auRating::Show('guide', $guide->id, $guide->rating, $guide->votes, $guide->vote);
-    $page->End();
-  } else {  // couldn't read guide
-    $page->Start('guides');
-    $page->End();
-  }
-
-  /**
-   * Get the guide from the database.
-   *
-   * @param auDBBase $db Database connection object
-   * @param auUserTrack7 $user Currently logged-in user object
-   * @param string $id ID of the guide to look up
-   * @return object Guide object from the database
-   */
-  function GetGuide(&$db, &$user, $id) {
-    $where = 'g.id=\'' . addslashes($id) . '\' and (g.status=\'approved\'';
-    if($user->GodMode)
-      $where .= ' or g.status=\'new\' and g.author=\'' . $user->ID . '\' or g.status=\'pending\')';
-    elseif($user->Valid)
-      $where .= ' or g.author=\'' . $user->ID . '\' and (g.status=\'new\' or g.status=\'pending\'))';
-    else
-      $where .= ')';
-    $guide = 'select g.id, g.pages, g.status, g.tags, g.title, g.description, g.author, g.dateadded, g.dateupdated, u.login, ifnull(r.rating,0) as rating, ifnull(r.votes,0) as votes, v.vote from guides as g left join users as u on g.author=u.uid left join ratings as r on g.id=r.selector left join votes as v on v.ratingid=r.id and (v.uid=' . $user->ID . ' or v.ip=\'' . addslashes($_SERVER['REMOTE_ADDR']) . '\') where ' . $where;
-    return $db->GetRecord($guide, 'error looking up guide content', 'guide content not found', true);
-  }
-
-  /**
-   * Get a page of the guide from the database and display it.
-   *
-   * @param auDBDase $db Database connection object
-   * @param auUserTrack7 $user Currently logged-in user object
-   * @param auPage $page Page object for writing headings
-   * @param object $guide Current guide object from the database
-   * @param integer $num Page number to look up
-   */
-  function ShowPage(&$db, &$user, &$page, $guide, $num) {
-    $pg = 'select heading, content, version from guidepages where guideid=\'' . addslashes($guide->id) . '\' and pagenum=\'' . $num . '\'';
-    if($user->ID != $guide->author && !$user->GodMode)
-      $pg .= ' and version>-1';
-    $pg .= ' order by version';
-    if($pg = $db->GetRecord($pg, 'error looking up page ' . $num, 'page ' . $num . ' not found')) {
-      if($pg->version < 0)
-        if($user->GodMode)
-          $page->Heading($pg->heading . ' (new version, not yet approved) <a href="diff' . $num . '">diff</a>');
-        else
-          $page->Heading($pg->heading . ' (new version, not yet approved)');
+  function MakeTOC($pages) {
+    $ret = '<ol class=toc>';
+    foreach($pages as $page)
+      if(+$page->number == +$_GET['page'])
+        $ret .= '<li class=selected>' . $page->heading . '</li>';
       else
-        $page->Heading($pg->heading);
-      if($user->ID == $guide->author || $user->GodMode)
-        $page->Info('as the author of this guide, you may <a href="edit&amp;page=' . $num . '">edit this page</a>');
-?>
-      <?=$pg->content; ?>
-
-<?
-    }
-  }
-
-  /**
-   * Display table of contents links for the guide.
-   *
-   * @param auDBBase $db Database connection object
-   * @param auUserTrack7 $user Currently logged-in user object
-   * @param object $guide Current guide object from the database
-   * @param int|string $thisnum Current page number, or 'all'
-   */
-  function ShowTableOfContents($db, $user, $guide, $thisnum) {
-    $pages = 'select heading, pagenum from guidepages where guideid=\'' . addslashes($guide->id) . '\'' . (($user->ID == $guide->author || $user->GodMode) ? '' : ' and version>-1') . ' group by pagenum order by pagenum, version';
-    if($pages = $db->Get($pages, 'error looking up pages', 'no pages found')) {
-?>
-        <ol class="toc">
-<?
-      while($p = $pages->NextRecord())
-        if(+$p->pagenum == +$thisnum) {
-?>
-          <li class="active">page <?=$p->pagenum; ?>:&nbsp; <?=$p->heading; ?></li>
-<?
-        } else {
-?>
-          <li>page <?=$p->pagenum; ?>:&nbsp; <a href="page<?=$p->pagenum; ?>"><?=$p->heading; ?></a></li>
-<?
-        }
-      if($thisnum == 'all') {
-?>
-          <li class="active">all <?=$guide->pages; ?> pages</li>
-<?
-      } else {
-?>
-          <li><a href="all">all <?=$guide->pages; ?> pages</a></li>
-<?
-      }
-?>
-          </ol>
-
-<?
-    }
-  }
-
-  /**
-   * Show the date added (and updated, if different) for a guide.
-   *
-   * @param auUserTrack7 $user user viewing the page
-   * @param int $added Unix timestamp of when the guide was added to track7
-   * @param int $updated Unix timestamp of when the guide was last updated
-   * @return formatted date the guide was added and possibly updated.
-   */
-  function GuideDate($user, $added, $updated) {
-    if(!$added)
-      return '';
-    $added = strtolower(auText::SmartTime($added, $user));
-    $updated = strtolower(auText::SmartTime($updated, $user));
-    if($added == $updated)
-      return $added;
-    return $added . ' (updated ' . $updated . ')';
-  }
-
-  /**
-   * Turn a list of tags into HTML links.
-   *
-   * @param string $tags comma-separated list of tags
-   * @return HTML tag links
-   */
-  function TagLinks($tags) {
-    if(!$tags)
-      return '<em>(none)</em>';
-    $tags = explode(',', $tags);
-    foreach($tags as $tag)
-      if($tag)
-        $links[] = '<a href="/geek/guides/tag=' . $tag . '">' . $tag . '</a>';
-    return implode(', ', $links);
+        $ret .= '<li><a href="' . $page->number . '">' . $page->heading . '</a></li>';
+    if($_GET['page'] == 'all')
+      $ret .= '<li class="selected allpages">all ' . count($pages) . ' pages</li>';
+    else
+      $ret .= '<li class=allpages><a href=all>all ' . count($pages) . ' pages</a></li>';
+    return $ret . '</ol>';
   }
 ?>

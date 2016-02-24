@@ -7,20 +7,18 @@
       case 'list':
         switch($_GET['type']) {
           case 'blog':
-            $tags = $db->query('select name, count from blog_tags where count>1 order by lastused desc');
+          case 'guide':
+            $tags = $db->query('select name, count from ' . $_GET['type'] . '_tags where count>1 order by lastused desc');
             if($tags) {
               $ajax->Data->tags = [];
-              while($tag = $tags->fetch_object()) {
+              while($tag = $tags->fetch_object())
                 $ajax->Data->tags[] = $tag;
-              }
-            } else {
-              $ajax->Data->fail = true;
-              $ajax->Data->message = 'error getting list of blog tags.';
-            }
+            } else
+              $ajax->Fail('error getting list of guide tags.');
             break;
           default:
             $ajax->Data->fail = true;
-            $ajax->Data->message = 'unknown tag type for list.  supported tag types are: blog.';
+            $ajax->Data->message = 'unknown tag type for list.  supported tag types are: blog, guide.';
             break;
         }
         break;
