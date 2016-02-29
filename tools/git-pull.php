@@ -29,7 +29,7 @@
 ?>
     <h1>update track7 from github</h1>
 
-    <nav class=actions><a href="#pull">update</a></nav>
+    <nav class=actions><a class=get href="#pull">update</a></nav>
 <?php
   $html->Close();
 ?>

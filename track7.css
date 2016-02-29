@@ -396,6 +396,10 @@ a.action.new:before {
 a.action.edit:before {
   content: "\f040";
 }
+.actions a.get:before,
+a.action.get:before {
+  content: "\f019";
+}
 .actions a.publish:before,
 a.action.publish:before {
   content: "\f093";

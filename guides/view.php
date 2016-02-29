@@ -96,14 +96,17 @@
 <?php
   }
   echo $guide->toc;
+
+  if($guide->status == 'published') {
 ?>
       <p>
         how was it?  <?php $html->ShowVote('guide', $guide->id, $guide->vote); ?>
       </p>
 <?php
-  $html->ShowComments('guide', 'guide', $guide->id);
+    $html->ShowComments('guide', 'guide', $guide->id);
+  }
   $html->Close();
-
+  
   function MakeTOC($pages) {
     $ret = '<ol class=toc>';
     foreach($pages as $page)
