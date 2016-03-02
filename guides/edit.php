@@ -56,7 +56,7 @@
           $q = 'guides set url=\'' . $db->escape_string($guide->url) . '\', title=\'' . $db->escape_string(trim($guide->title)) . '\', summary_markdown=\'' . $db->escape_string(trim($guide->summary)) . '\', summary=\'' . $db->escape_string(t7format::Markdown(trim($guide->summary))) . '\', level=\'' . $db->escape_string($guide->level) . '\'';
           if($guide->status != 'published' || !$guide->correctionsOnly)
             $q .= ', updated=\'' . +time() . '\'';
-          $q = $guide->id ? 'update ' . $q . ' where id=\'' . +$guide->id . '\' limit 1' : 'insert into ' . $q;
+          $q = $guide->id ? 'update ' . $q . ' where id=\'' . +$guide->id . '\' limit 1' : 'insert into ' . $q . ', author=1';
           if($db->real_query($q)) {
             if(!$guide->id)
               $guide->id = $db->insert_id;
@@ -99,7 +99,7 @@
         break;
       case 'publish':
         if(isset($_POST['id']) && $_POST['id'] == +$_POST['id'])
-          if($db->real_query('update guides set status=\'published\', posted=\'' . +time() . '\' where id=\'' . +$_POST['id'] . '\' and status=\'draft\' limit 1'))
+          if($db->real_query('update guides set status=\'published\', posted=\'' . +time() . '\', updated=\'' . +time() . '\' where id=\'' . +$_POST['id'] . '\' and status=\'draft\' limit 1'))
             if($db->affected_rows) {
               $db->real_query('update guide_tags inner join guide_taglinks as tl on tl.tag=guide_tags.id and tl.guide=\'' . +$_POST['id'] .'\' set count=(select count(1) as count from guide_taglinks as tl left join guides as g on g.id=tl.guide where g.status=\'published\' and tl.tag=guide_tags.id group by tl.tag), lastused=(select max(g.updated) as lastused from guide_taglinks as tl left join guides as g on g.id=tl.guide where g.status=\'published\' and tl.tag=guide_tags.id group by tl.tag)');
               if($guide = $db->query('select url, title from guides where id=\'' . +$_POST['id'] . '\' limit 1'))

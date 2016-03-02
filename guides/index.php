@@ -141,7 +141,7 @@
             <span class=tags data-bind="visible: tags.length, attr: {title: tags.length == 1 ? '1 tag' : tags.length + ' tags'}, foreach: tags"><!-- ko if: $index() > 0 -->, <!-- /ko --><a class=tag data-bind="text: $data, attr: {href: ($root.tagid ? '../' : '') + $data + '/', title: 'guides tagged ' + $data}"></a></span>
             <span class=views data-bind="text: views, attr: {title: 'viewed ' + views + ' times'}"></span>
             <span class=rating data-bind="attr: {'data-stars': Math.round(rating*2)/2, title: 'rated ' + rating + ' stars by ' + (votes == 0 ? 'nobody' : (votes == 1 ? '1 person' : votes + ' people'))}"></span>
-            <time class=posted data-bind="text: updated.display, attr: {datetime: updated.datetime, title: 'posted ' + (updated.datetime == posted.datetime ? updated.title : updated.title + ' (originally ' + posted.title + ')')}"></time>
+            <time class=posted data-bind="html: updated.display, attr: {datetime: updated.datetime, title: 'posted ' + (updated.datetime == posted.datetime ? updated.title : updated.title + ' (originally ' + posted.title + ')')}"></time>
             <span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
           </p>
         </header>
