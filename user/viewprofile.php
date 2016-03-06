@@ -195,6 +195,8 @@
     switch($type) {
       case 'comment':
         return 'commented on';
+      case 'guide':
+        return 'posted guide';
     }
     return $type . 'ed';
   }
