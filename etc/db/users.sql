@@ -11,7 +11,9 @@ create table users_settings (
   id smallint unsigned primary key,
   timebase enum('server', 'gmt') not null default 'server' comment 'whether times should be based off server time (dst) or gmt',
   timeoffset smallint not null default 0 comment 'seconds to add to the timebase to get to local time for the user',
-  foreign key(id) references users(id) on delete cascade
+  emailnewmsg bool not null default 1 comment 'whether the user should be e-mailed when sent a message',
+  unreadmsgs tinyint unsigned not null default 0 comment 'number of conversations with unread messages',
+  foreign key(id) references users(id) on delete cascade on update cascade
 );
 
 create table users_email (
@@ -19,7 +21,7 @@ create table users_email (
   email varchar(64) not null default '',
   vis_email enum('none', 'friends', 'users', 'all') not null default 'none' comment 'who can see the email address',
   key(email),
-  foreign key(id) references users(id) on delete cascade
+  foreign key(id) references users(id) on delete cascade on update cascade
 );
 
 create table users_profiles (
@@ -34,15 +36,15 @@ create table users_profiles (
   vis_facebook enum('friends', 'all') not null default 'friends',
   steam varchar(32) not null default '',
   vis_steam enum('friends', 'all') not null default 'friends',
-  foreign key(id) references users(id) on delete cascade
+  foreign key(id) references users(id) on delete cascade on update cascade
 );
 
 create table users_friends (
   fan smallint unsigned not null,
   friend smallint unsigned not null,
   primary key(fan, friend),
-  foreign key(fan) references users(id) on delete cascade,
-  foreign key(friend) references users(id) on delete cascade
+  foreign key(fan) references users(id) on delete cascade on update cascade,
+  foreign key(friend) references users(id) on delete cascade on update cascade
 );
 
 create table users_stats (
@@ -57,11 +59,60 @@ create table users_stats (
   key(comments),
   posts smallint unsigned not null default 0,
   key(posts),
-  foreign key(id) references users(id) on delete cascade
+  foreign key(id) references users(id) on delete cascade on update cascade
 );
+
+create table users_messages (
+  id smallint unsigned primary key auto_increment,
+  sent int not null comment 'timestamp when the message was sent',
+  key(sent),
+  conversation smallint unsigned not null default 0,
+  key(conversation),
+  author smallint unsigned comment 'user who sent this message',
+  foreign key(author) references users(id) on delete cascade on update cascade,
+  name varchar(48) not null default '' comment 'name of anonymous message sender',
+  contacturl varchar(255) not null default '' comment 'contact url for anonymous message sender',
+  subject varchar(128) not null default '' comment 'message subject',
+  html text not null default '' comment 'html format of message text, generated from markdown',
+  markdown text not null default '' comment 'editable version of message text',
+  hasread bool not null default 0 comment 'whether this message has been read',
+  key(hasread),
+  hasreplied bool not null default 0 comment 'whether a reply to this message has been sent'
+);
+
+create table users_conversations (
+  id smallint unsigned auto_increment,
+  key(id),
+  thisuser smallint unsigned not null comment 'one of the users in this conversation',
+  foreign key(thisuser) references users(id) on delete cascade on update cascade,
+  thatuser smallint unsigned not null comment 'the other user in this conversation, or 0 if anonymous',
+  primary key(thisuser, thatuser),
+  latestmessage smallint unsigned,
+  foreign key(latestmessage) references users_messages(id) on delete set null on update cascade
+);
+
+delimiter ;;
+create function GetConversationID(user1 smallint unsigned, user2 smallint unsigned)
+returns smallint unsigned
+begin
+  if user2 is null
+  then
+    set user2 = 0;
+  end if;
+  if(select not exists(select id from users_conversations where thisuser=user1 and thatuser=user2))
+  then
+    insert into users_conversations (thisuser, thatuser) values (user1, user2);
+    if user2 > 0 and user1 != user2
+    then
+      insert into users_conversations (id, thisuser, thatuser) values (last_insert_id(), user2, user1);
+    end if;
+  end if;
+  return (select id from users_conversations where thisuser=user1 and thatuser=user2);
+end;;
+delimiter ;
 
 create table transition_users (
   id smallint unsigned primary key,
   olduid smallint unsigned not null,
-  foreign key(id) references users(id) on delete cascade
+  foreign key(id) references users(id) on delete cascade on update cascade
 );

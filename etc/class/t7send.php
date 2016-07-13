@@ -31,6 +31,60 @@
     }
 
     /**
+     * Sends an e-mail.  Only $body may contain line breaks.
+     * @param string $subject Subject of the e-mail.
+     * @param string $body Body of the e-mail.
+     * @param string $from e-mail address of the sender.
+     * @param string $to e-mail address of the recipient.
+     * @param string $fromname Display name of the sender (optional).
+     * @param string $toname Display name of the recipient (optional).
+     * @param string $cc e-mail addresses to carbon copy (optional).
+     * @param string $bcc e-mail addresses to blind carbon copy (optional).
+     * @param string $reply e-mail address for replies, or true to use $from (optional).
+     * @return boolean Whether an e-mail was sent.
+     */
+    public static function Email($subject, $body, $from, $to, $fromname = false, $toname = false, $cc = false, $bcc = false, $reply = false) {
+      if(+$_SERVER['SERVER_PORT'] > 8000)
+        return false;
+      // subject may not contain line breaks
+      if(strpos($subject, "\r") !== false || strpos($subject, "\n") !== false)
+        return false;
+      if($fromname)
+        $from = $fromname . ' <' . $from . '>';
+      // sender may not contain line breaks
+      if(strpos($from, "\r") !== false || strpos($from, "\n") !== false)
+        return false;
+      if($toname)
+        $to = $toname . '<' . $to . '>';
+      // recipient may not contain line breaks
+      if(strpos($to, "\r") !== false || strpos($to, "\n") !== false)
+        return false;
+      $headers = ['X-Mailer: t7send/php' . phpversion(), 'From: ' . $from];
+      if($cc) {
+        // cc may not contain line breaks
+        if(strpos($cc, "\r") !== false || strpos($cc, "\n") !== false)
+          return false;
+        $headers[] = 'Cc: ' . $cc;
+      }
+      if($bcc) {
+        // bcc may not contain line breaks
+        if(strpos($bcc, "\r") !== false || strpos($bcc, "\n") !== false)
+          return false;
+        $headers[] = 'Bcc: ' . $bcc;
+      }
+      if($reply)
+        if($reply === true)
+          $headers[] = 'Reply-To: ' . $from;
+        else {
+          // reply-to may not contain line breaks
+          if(strpos($reply, "\r") !== false || strpos($reply, "\n") !== false)
+            return false;
+          $headers[] = 'Reply-To: ' . $reply;
+        }
+      return @mail($to, $subject, $body, implode("\r\n", $headers));
+    }
+
+    /**
      * Sends a message to Twitter to be posted as a tweet.  The following
      * constants must be defined correctly for the Twitter account the message
      * should be posted to:
@@ -43,7 +97,7 @@
      * @return object Response from Twitter with code and text fields.
      */
     public static function Tweet($message, $url = false) {
-      if($_SERVER['SERVER_PORT'] != 80)
+      if(+$_SERVER['SERVER_PORT'] > 8000)
         return false;
       // fix up the message and add / shorten the url if present
       if($url) {

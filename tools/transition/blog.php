@@ -13,7 +13,6 @@
 ?>
       <h1>blog migration</h1>
 <?php
-
   if(isset($_GET['dostep']))
     switch($_GET['dostep']) {
       case 'checkusers':
@@ -110,7 +109,7 @@
   } else {
 ?>
       <p>
-        all blog commentors have been migrated.
+        all blog commenters have been migrated.
       </p>
 
       <h2>entries</h2>
