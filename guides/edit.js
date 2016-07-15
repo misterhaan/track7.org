@@ -38,10 +38,12 @@ function GuideViewModel() {
         self.title(result.title);
         self.url(result.url);
         self.summary(result.summary);
+        autosize.update($("textarea[data-bind*='summary']"));
         self.level(result.level);
         self.taglist(result.tags);
         for(var p = 0; p < result.pages.length; p++)
           self.pages.push(new Page(result.pages[p]));
+        autosize($("textarea[data-bind*='markdown']"));
         self.originalTaglist = result.tags;
       } else
         alert(result.message);
@@ -51,6 +53,7 @@ function GuideViewModel() {
 
   self.AddPage = function() {
     self.pages.push(new Page({id: false, number: self.pages().length + 1, heading: "", markdown: ""}));
+    autosize($("textarea[data-bind*='markdown']").last());
   }
 
   self.Save = function() {
@@ -94,7 +97,7 @@ function Page(page) {
     }
     return false;
   };
-  
+
   self.Remove = function() {
     if(confirm("do you really want to remove this page?  any changes to its content will be lost.")) {
       var index = window.GuideViewModel.pages.indexOf(self);

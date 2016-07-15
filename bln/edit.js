@@ -17,6 +17,7 @@ function LoadEntry() {
         $("#title").val(result.title);
         $("#url").val(result.url);
         $("#content").val(result.content);
+        autosize.update($("#content"));
         $("#tags").val(result.tags.join(","));
         window.originalTags = result.tags;
       } else

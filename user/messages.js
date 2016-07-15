@@ -60,7 +60,7 @@ function ConversationsViewModel() {
     self.loading(true);
     $.get("messages.php", {ajax: "list"}, function(data, status, xhr) {
       var result = $.parseJSON(xhr.responseText);
-      if(!result.fail)
+      if(!result.fail) {
         for(var c = 0; c < result.conversations.length; c++) {
           result.conversations[c].messages = ko.observableArray([]);
           result.conversations[c].hasmore = ko.observable(false);
@@ -69,6 +69,8 @@ function ConversationsViewModel() {
           result.conversations[c].response = ko.observable('');
           self.conversations.push(result.conversations[c]);
         }
+        autosize($("textarea[data-bind*='response']"));
+      }
       else
         self.error(result.message);
       self.loading(false);
@@ -180,6 +182,7 @@ function ConversationsViewModel() {
     };
     self.conversations.splice(0, 0, conv);
     self.Select(conv, true);
+    autosize($("textarea[data-bind*=response]:visible"));
     self.usermatch('');
   }
 }

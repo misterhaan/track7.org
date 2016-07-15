@@ -39,7 +39,7 @@ $(function() {
   });
 
   // textareas
-  $("textarea").autogrow();
+  autosize($("textarea"));
 
   // voting
   if($("#vote").length) {
@@ -181,6 +181,13 @@ function CommentsViewModel() {
       if(!result.fail) {
         comment.markdown(result.markdown);
         comment.editing(true);
+        var ta = $("textarea[data-bind*='markdown']:visible");
+        if(ta.data("asinit"))
+          autosize.update(ta);
+        else {
+          autosize(ta);
+          ta.data("asinit", true);
+        }
       } else
         alert(result.message);
     });
@@ -216,4 +223,3 @@ function CommentsViewModel() {
     return false;
   };
 }
-

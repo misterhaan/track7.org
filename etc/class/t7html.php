@@ -27,7 +27,7 @@
     <title><?php echo $title; ?></title>
     <link rel=stylesheet href="/track7.css">
     <script src="/jquery-2.1.4.min.js" type="text/javascript"></script>
-    <script src="/autogrow.min.js" type="text/javascript"></script>
+    <script src="/autosize.min.js" type="text/javascript"></script>
 <?php
       if(isset($this->params['ko']) && $this->params['ko']) {
 ?>
