@@ -27,6 +27,7 @@
     <title><?php echo $title; ?></title>
     <link rel=stylesheet href="/track7.css">
     <script src="/jquery-2.1.4.min.js" type="text/javascript"></script>
+    <script src="/autogrow.min.js" type="text/javascript"></script>
 <?php
       if(isset($this->params['ko']) && $this->params['ko']) {
 ?>
@@ -91,19 +92,20 @@
 ?>
       </div>
     </header>
-    <div id=usermenu>
 <?php
       if($user->IsLoggedIn()) {
 ?>
+    <div id=usermenu>
       <nav id=useractions>
         <a href="/user/<?php echo $user->Username; ?>/">profile</a>
         <a href="/user/settings.php">settings</a>
-        <a href="/user/message.php">messages</a>
+        <a href="/user/messages.php">messages<?php if($user->UnreadMsgs) echo '(' . $user->UnreadMsgs . ')'; ?></a>
         <a id=logoutlink href="?logout">sign out</a>
       </nav>
 <?php
       } else {
 ?>
+    <div id=loginmenu>
       <form id=signinform>
         sign in securely with your account from one of these sites:
         <div id=authchoices>
@@ -224,7 +226,7 @@
 <?php
       }
 ?>
-          <label title="enter your comments using markdown">
+          <label class=multiline title="enter your comments using markdown">
             <span class=label>comment:</span>
             <span class=field><textarea id=newcomment></textarea></span>
           </label>

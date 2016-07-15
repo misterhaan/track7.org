@@ -75,8 +75,9 @@
         in php.  <a href="http://prismjs.com/">prism</a> puts syntax
         highlighting on code blocks (only using their javascript not their css).
         <a href="http://jquery.com/">jquery</a> makes my javascript
-        work better and <a href="http://knockoutjs.com/">knockout</a> helps me
-        load lots of the same type of content onto a page.
+        work better (i’m also using an <a href="https://github.com/ultimatedelman/autogrow">autogrow</a>
+        plugin for text box height) and <a href="http://knockoutjs.com/">knockout</a>
+        helps me load lots of the same type of content onto a page.
       </p>
 <?php
   $html->Close();

@@ -72,6 +72,11 @@ header a:link, header a:visited, main a:link, main a:visited {
   text-decoration: none;
   font-weight: bold;
 }
+sup {
+  font-size: .75em;
+  line-height: 0;
+  vertical-align: .325em;
+}
 fieldset {
   margin: 1em 0 .75em;
   padding: 0;
@@ -117,7 +122,7 @@ button {
   font-size: inherit;
 }
 textarea {
-  height: 12em;
+  height: 2em;
 }
 button {
   font-weight: bold;
@@ -226,25 +231,47 @@ body > header a {
   margin-bottom: 3px;
   vertical-align: middle;
 }
+#loginmenu,
 #usermenu {
   display: none;
   background-color: #357;
   color: #ccc;
   padding: .25em .5em .5em;
 }
+#usermenu {
+  position: absolute;
+  z-index: 1;  /* don't hide under main */
+  margin-left: auto;
+  padding: .25em .5em .5em;
+  right: .25em;
+  border-radius: 0 0 .625em .625em;
+}
 @media (min-width: 25em) {
-  #usermenu {
+  #loginmenu {
     padding: .25em 1.5em .5em;
   }
 }
+@media (min-width: 35em) {
+  #loginmenu {
+    position: absolute;
+    z-index: 1;  /* don't hide under main */
+    margin-left: auto;
+    padding: .25em .5em .5em;
+    right: .25em;
+    border-radius: 0 0 .625em .625em;
+  }
+}
 @media (min-width: 40em) {
-  #usermenu {
+  #loginmenu {
     position: absolute;
     z-index: 1;  /* don't hide under main */
     margin-left: auto;
     padding: .25em .5em .5em;
     right: 2em;
     border-radius: 0 0 .625em .625em;
+  }
+  #usermenu {
+    right: 2em;
   }
 }
 #signinform {
@@ -303,16 +330,16 @@ body > header a {
   border-radius: .25em;
   padding: 0 .25em .1em;
 }
-#usermenu label[for=rememberlogin] {
+#signinform label[for=rememberlogin] {
   width: 13em;
   margin: .5em auto;
 }
-#usermenu button {
+#signinform button {
   border-color: #000;
   display: block;
   margin: 0 auto;
 }
-#usermenu button:enabled:hover {
+#signinform button:enabled:hover {
   background-color: #fff;
   color: #357;
 }
@@ -838,39 +865,46 @@ p.comments {
   margin-right: .325em;
 }
 
-section.comment {
+section.comment,
+ol.messages li {
   margin: .75em 0 1.25em;
 }
 @media (min-width: 25em) {
-  section.comment {
+  section.comment,
+  ol.messages li {
     margin: .75em 1em 1.25em;
     display: -webkit-flex;
     display: flex;
   }
 }
-section.comment .userinfo {
+section.comment .userinfo,
+ol.messages li .userinfo {
   padding: 0 .25em 0 .5em;
   background-color: #abc;
   -webkit-flex: none;
   flex: none;
 }
 @media (min-width: 25em) {
-  section.comment .userinfo {
+  section.comment .userinfo,
+  ol.messages li .userinfo {
     padding: 0 .25em;
     border-radius: .25em 0 0 .25em;
   }
 }
 @media (min-width: 40em) {
-  section.comment .userinfo {
+  section.comment .userinfo,
+  ol.messages li .userinfo {
     padding: .125em .5em;
     text-align: center;
   }
 }
-section.comment .userinfo img.avatar {
+section.comment .userinfo img.avatar,
+ol.messages li .userinfo img.avatar {
   display: none;
 }
 @media (min-width: 25em) {
-  section.comment .userinfo img.avatar {
+  section.comment .userinfo img.avatar,
+  ol.messages li .userinfo img.avatar {
     display: block;
     margin: .25em auto;
     max-width: 64px;
@@ -891,13 +925,15 @@ section.comment .userinfo .userlevel {
     flex: 1 0;
   }
 }
-section.comment .comment header {
+section.comment .comment header,
+ol.messages li .message header {
   background-color: #ccc;
   font-size: .8em;
   padding: .15625em .625em;
 }
 @media (min-width: 25em) {
-  section.comment .comment header {
+  section.comment .comment header,
+  ol.messages li .message header {
     border-radius: 0 .3125em 0 0;
   }
 }
@@ -905,13 +941,16 @@ section.comment .comment header {
   text-align: right;
   font-size: .8em;
 }
-section.comment .comment .content p {
+section.comment .comment .content p,
+ol.messages li .message .content p {
   margin: .75em .5em;
 }
-section.comment .comment .content p:first-child {
+section.comment .comment .content p:first-child,
+ol.messages li .message .content p:first-child {
   margin-top: .5em;
 }
-section.comment .comment .content p:last-child {
+section.comment .comment .content p:last-child,
+ol.messages li .message .content p:last-child {
   margin-bottom: .5em;
 }
 section.comment .comment .content.edit {
@@ -939,7 +978,7 @@ main label span.checkbox,
 main label span.checkbox * {
   vertical-align: baseline;
 }
-main span.field {
+main .field {
   display: block;
   display: -webkit-flex;
   display: flex;
@@ -947,9 +986,9 @@ main span.field {
   -webkit-flex: 1 0;
   flex: 1 0;
 }
-main span.field input,
-main span.field select,
-main span.field textarea {
+main .field input,
+main .field select,
+main .field textarea {
   -webkit-flex: 1 0;
   flex: 1 0;
   margin: 0;
@@ -1214,6 +1253,200 @@ a.profile img.avatar {
   margin-right: .5em;
 }
 
+/*----------------------------------------------------[ /user/messages.php ]--*/
+@media (min-width: 40em) {
+  #sendmessage span.label {
+    -webkit-flex: 0 0 4.5em;
+    flex: 0 0 4.5em;
+  }
+  #sendmessage button {
+    margin: .75em 1em .75em 5.5em;
+  }
+}
+#sendmessage label img.avatar {
+  height: 1.25em;
+}
+ol.usersuggest {
+  position: absolute;
+  list-style-type: none;
+  margin: -.75em 0 0 .75em;
+  padding: 0 3px 3px;
+  background-color: #ace;
+  border-radius: 0 0 3px 3px;
+}
+@media (min-width: 25em) {
+  ol.usersuggest {
+    margin-top: -.8em;
+    margin-left: 1.5em;
+  }
+}
+@media (min-width: 40em) {
+  #sendmessage ol.usersuggest {
+    margin-left: 5.75em;
+  }
+}
+ol.usersuggest li {
+  background-color: #fff;
+  margin: 0;
+  padding: .25em .25em;
+  border-radius: 0;
+  cursor: pointer;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+}
+ol.usersuggest li.suggesteduser:hover,
+ol.usersuggest li.suggesteduser.highlight {
+  background-color: #ace;
+}
+ol.usersuggest li.suggesteduser img.avatar {
+  height: 20px;
+}
+ol.usersuggest li.suggesteduser span {
+  -webkit-flex: 1 0 auto;
+  flex: 1 0 auto;
+  padding: 0 .5em;
+}
+ol.conversations {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+ol.conversations > li {
+  margin: .75em .5em;
+  padding: 0;
+  border-radius: .375em;
+}
+@media (min-width: 25em) {
+  ol.conversations li {
+    margin: .75em 1em;
+  }
+}
+#conversations ol li.selected {
+  border: .125em solid #357;
+  margin: .625em .375em;
+}
+@media (min-width: 25em) {
+  #conversations ol li.selected {
+    margin: .625em .875em;
+  }
+}
+#conversations ol li > header {
+  line-height: 2em;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+#conversations ol li > header > * {
+  margin: 0 .25em;
+}
+#conversations ol header span {
+  -webkit-flex: 1 0 auto;
+  flex: 1 0 auto;
+}
+#conversations ol header.incoming {
+  padding-right: 2.25em;
+}
+#conversations ol header.outgoing {
+  padding-left: 2.25em;
+}
+#conversations ol header.incoming:before {
+  width: 2em;
+  line-height: 2em;
+  margin-right: .25em;
+  font-family: fontawesome;
+  display: inline-block;
+  background-color: #abc;
+  color: #fff;
+  text-align: center;
+  content: "\f0e0";
+  border-radius: .25em 0 0 .25em;
+}
+#conversations ol header.incoming.read:before {
+  content: "\f003";
+}
+#conversations ol header.outgoing:after {
+  width: 2em;
+  line-height: 2em;
+  margin-left: .25em;
+  font-family: fontawesome;
+  display: inline-block;
+  background-color: #ccc;
+  color: #fff;
+  text-align: center;
+  content: "\f1d8";
+  border-radius: 0 .25em .25em 0;
+}
+#conversations ol header.outgoing.read:after {
+  content: "\f1d9";
+}
+#conversations ol header > img.avatar {
+  height: 1.5em;
+}
+ol.messages {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+ol.messages li.showmore a.action {
+  margin: 0 auto;
+  background-color: #ccc;
+  border-radius: .25em;
+  padding: .125em .5em;
+}
+ol.messages li.reply .message {
+  -webkit-flex: 1 0;
+  flex: 1 0;
+}
+ol.messages li.reply .label {
+  display: none;
+}
+@media (min-width: 25em) {
+  ol.messages li.reply label,
+  ol.messages li.reply button {
+    margin-top: 0;
+    margin-left: 0;
+  }
+}
+ol.messages .outgoing .userinfo,
+ol.messages .outgoing header {
+  text-align: right;
+}
+@media (min-width: 25em) {
+  ol.messages .outgoing {
+    -webkit-flex-direction: row-reverse;
+    flex-direction: row-reverse;
+  }
+  ol.messages .outgoing .userinfo {
+    border-radius: 0 .25em .25em 0;
+  }
+  #messages ol.messages .outgoing header {
+    border-radius: .3125em 0 0;
+  }
+}
+#conversationpane {
+  display: none;
+}
+@media (min-width: 50em) {
+  #messages {
+    display: -webkit-flex;
+    display: flex;
+  }
+  #conversations {
+    width: 22em;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+  }
+  #conversationpane {
+    display: block;
+  }
+  #conversations ol.messages {
+    display: none;
+  }
+}
+
 /*----------------------------------------------------[ /user/settings.php ]--*/
 @media (min-width: 40em) {
   #profile span.label {
@@ -1249,6 +1482,15 @@ main #detecttime {
 }
 .contactmethod {
   margin: 1.5em 0;
+}
+@media (min-width: 40em) {
+  #notification span.label {
+    -webkit-flex: 0 0 5em;
+    flex: 0 0 5em;
+  }
+  #notification button {
+    margin: .75em 1em .75em 6em;
+  }
 }
 .linkedaccounts {
   margin: .75em .5em;

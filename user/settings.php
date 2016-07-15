@@ -199,6 +199,31 @@
         else
           $ajax->Fail('unable to save contact information because you are not signed in.  this can happen if you have left the page open for too long.');
         break;
+      case 'loadnotification':
+        if($user->IsLoggedIn())
+          if($notif = $db->query('select e.email, coalesce(s.emailnewmsg, 1) as emailnewmsg from users as u left join users_email as e on e.id=u.id left join users_settings as s on s.id=u.id where u.id=\'' . +$user->ID . '\' limit 1'))
+            if($notif = $notif->fetch_object()) {
+              $notif->emailnewmsg = $notif->emailnewmsg == true;
+              $ajax->Data = $notif;
+            } else
+              $ajax->Data = (object)['email' => '', 'emailnewmsg' => true];
+          else
+            $ajax->Fail('error looking up notification settings.');
+        else
+          $ajax->Fail('unable to load notification settings because you are not signed in.  this can happen if you have left the page open for too long.');
+          break;
+      case 'savenotification':
+        if($user->IsLoggedIn())
+          if(isset($_POST['notifymsg']))
+            if($db->query('insert into users_settings (id, emailnewmsg) values (\'' . +$user->ID . '\', \'' . +$_POST['notifymsg'] . '\') on duplicate key update emailnewmsg=\'' . +$_POST['notifymsg'] . '\''))
+              ;  // nothing to send back
+            else
+              $ajax->Fail('error saving notification settings.');
+          else
+            $ajax->Fail('required field not present.');
+        else
+          $ajax->Fail('unable to save notification settings because you are not signed in.  this can happen if you have left the page open for too long.');
+        break;
       case 'removetransition':
         if($user->IsLoggedIn())
           if(UserHasSecureLogin()) {
@@ -223,7 +248,7 @@
           $ajax->Fail('unable to remove sign-in account because you are not signed in.  most likely your session has expired because it’s been too long since you’ve done anything, in which case you need to sign in again.');
         break;
       default:
-        $ajax->Fail('unknown function name.  supported function names are: loadprofile, saveprofile, loadtime, savetime, loadcontact, checkurl, checktwitter, checkgoogle, checkfacebook, checksteam, savecontact, removetransition, removeaccount.');
+        $ajax->Fail('unknown function name.  supported function names are: loadprofile, saveprofile, loadtime, savetime, loadcontact, checkurl, checktwitter, checkgoogle, checkfacebook, checksteam, savecontact, loadnotification, savenotification, removetransition, removeaccount.');
         break;
     }
     $ajax->Send();
@@ -252,6 +277,7 @@
           <a href=#profile title="name and avatar">profile</a>
           <a href=#timezone title="configure times to display for where you are">time zone</a>
           <a href=#contact title="e-mail and profiles on other sites">contact</a>
+          <a href=#notification title="choose when track7 should notify you">notification</a>
           <a href=#linkedaccounts title="manage which accounts you use to sign in to track7">sign-in accounts</a>
         </nav>
 
@@ -374,6 +400,28 @@
             </label>
           </div>
           <button class=save>save</button>
+        </form>
+
+        <form class=tabcontent id=notification>
+          <label>
+            <span class=label>e-mail:</span>
+            <span class=field><span id=emaillabel></span> (change this in the contact section)</span>
+          </label>
+          <label>
+            <span class=label>messages:</span>
+            <span class=field><span><input type=checkbox id=notifymsg> notify me by e-mail when someone sends me a message</span></span>
+          </label>
+          <button class=save>save</button>
+          <p>
+            another way to keep up-to-date with track7 is to subscribe to an
+            <a href="/feed.rss">rss feed</a> or follow
+            <a href="https://twitter.com/track7feed">@track7feed</a> on twitter.
+            these include the information on the track7 front page; there is no
+            feed for your messages so you will need to enable e-mail
+            notifications or visit the site to know when someone has sent you a
+            message.  some sections of track7 have an orange rss icon at the top
+            linked to a feed for just that section’s content.
+          </p>
         </form>
 
         <form class=tabcontent id=linkedaccounts>

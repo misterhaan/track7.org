@@ -6,7 +6,7 @@ $(function() {
       document.popup.hide();
       document.popup = false;
     } else {
-      document.popup = $("#usermenu");
+      document.popup = $("#usermenu, #loginmenu");
       document.popup.show();
     }
     return false;
@@ -14,7 +14,7 @@ $(function() {
   $(document).click(function(event) {
     var target = event.target;
     while(target) {
-      if(target.id == "usermenu")
+      if(target.id == "usermenu" || target.id == "loginmenu")
         return;
       target = target.parentNode;
     }
@@ -37,6 +37,9 @@ $(function() {
     });
     return false;
   });
+
+  // textareas
+  $("textarea").autogrow();
 
   // voting
   if($("#vote").length) {

@@ -49,7 +49,7 @@
       case 'register':
         if(isset($_POST['csrf']))
           if(t7auth::CheckCSRF($_POST['csrf']))
-            // TODO:  add other provides to in_array
+            // TODO:  add other providers to in_array
             if(isset($_SESSION['registering']) && in_array($_SESSION['registering'], ['google', 'twitter', 'facebook']) && isset($_SESSION[$_SESSION['registering']]))
               if(isset($_POST['username'])) {
                 $msg = t7user::CheckUsername($_POST['username'] = trim($_POST['username']));
@@ -136,8 +136,37 @@
         else
           $ajax->Fail('cannot remove friend when not signed in.  if you thought you were signed in, you may have timed out and need to sign in again.');
         break;
+      case 'suggest':
+        if(isset($_GET['match']) && strlen($_GET['match']) >= 3) {
+          $matchsql = $db->escape_string(trim($_GET['match']));
+          $matchlike = $db->escape_string(str_replace(['_', '%'], ['\\_', '\\%'], trim($_GET['match'])));
+          // some columns aren't needed except to make the order by use unique columns
+          if($us = $db->query('select u.id, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.displayname, u.username, f.fan as isfriend, u.username=\'' . $matchsql . '\' as exactuser, u.displayname=\'' . $matchsql . '\' as exactdisplay, u.username like \'' . $matchlike . '%\' as startuser, u.displayname like \'' . $matchlike . '%\' as startdisplay from users as u left join users_friends as f on f.fan=\'' . +$user->ID . '\' and f.friend=u.id where u.id!=\'' . +$user->ID . '\' and (u.username like \'%' . $matchlike . '%\' or u.displayname like \'%' . $matchlike . '%\') order by isfriend desc, exactuser desc, exactdisplay desc, startuser desc, startdisplay desc, coalesce(nullif(u.displayname, \'\'), u.username) limit 8')) {
+            $ajax->Data->users = [];
+            while($u = $us->fetch_object()) {
+              // remove ordering columns
+              unset($u->exactuser, $u->exactdisplay, $u->startuser, $u->startdisplay);
+              $ajax->Data->users[] = $u;
+            }
+          } else
+          $ajax->Fail('error looking for user suggestions.');
+        } else
+          $ajax->Fail('at least 3 characters are required to suggest users.');
+        break;
+      case 'userinfo':
+        if(isset($_GET['username']))
+          if($u = $db->query('select id, coalesce(nullif(avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, displayname, username from users where username=\'' . $db->escape_string($_GET['username']) . '\' and id!=\'' . +$user->ID . '\' limit 1'))
+            if($u = $u->fetch_object())
+              $ajax->Data->user = $u;
+            else
+              $ajax->Fail('user not found.');
+          else
+            $ajax->Fail('error looking up user.');
+        else
+          $ajax->Fail('required field missing.');
+        break;
       default:
-        $ajax->Fail('unknown function name.  supported function names are:  listusers, checkusername, checkname, checkemail, register, addfriend, removefriend.');
+        $ajax->Fail('unknown function name.  supported function names are:  listusers, checkusername, checkname, checkemail, register, addfriend, removefriend, suggest, userinfo.');
         break;
     }
     $ajax->Send();

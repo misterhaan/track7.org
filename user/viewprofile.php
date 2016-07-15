@@ -32,8 +32,12 @@
         </div>
       </header>
       <nav class=actions>
-        <a class=message title="send <?php echo $u->DisplayName; ?> a private message" href="/user/sendmessage.php?to=<?php echo htmlspecialchars($u->Username); ?>">send message</a>
 <?php
+      if($u->ID != $user->ID) {
+?>
+        <a class=message title="send <?php echo $u->DisplayName; ?> a private message" href="/user/messages.php#!to=<?php echo htmlspecialchars($u->Username); ?>">send message</a>
+<?php
+      }
       if($user->IsLoggedIn())
         if($u->ID == $user->ID) {
 ?>

@@ -44,6 +44,20 @@ $(function() {
           $("#vis_facebook").val(result.vis_facebook);
           $("#steam").val(result.steam).change();
           $("#vis_steam").val(result.vis_steam);
+          $("#contact").data("loaded", true);
+        } else
+          alert(result.message);
+      });
+  });
+
+  $("a[href$='#notification']").click(function() {
+    if(!$("#notification").data("loaded"))
+      $.get("/user/settings.php?ajax=loadnotification", {}, function(data, status, xhr) {
+        var result = $.parseJSON(xhr.responseText);
+        if(!result.fail) {
+          $("#emaillabel").text(result.email);
+          $("#notifymsg")[0].checked = result.emailnewmsg;
+          $("#notification").data("loaded", true);
         } else
           alert(result.message);
       });
@@ -262,6 +276,16 @@ $(function() {
 
   $("#contact").submit(function() {
     $.post("/user/settings.php?ajax=savecontact", {email: $("#email").val(), vis_email: $("#vis_email").val(), website: $("#website").val(), vis_website: $("#vis_website").val(), twitter: $("#twitter").val(), vis_twitter: $("#vis_twitter").val(), google: $("#google").val(), vis_google: $("#vis_google").val(), facebook: $("#facebook").val(), vis_facebook: $("#vis_facebook").val(), steam: $("#steam").val(), vis_steam: $("#vis_steam").val()}, function(data, status, xhr) {
+      var result = $.parseJSON(xhr.responseText);
+      if(!result.fail) {
+        // TODO:  indicate success; update form?
+      } else
+        alert(result.message);
+    });
+  });
+
+  $("#notification").submit(function() {
+    $.post("/user/settings.php?ajax=savenotification", {notifymsg: $("#notifymsg")[0].checked ? 1 : 0}, function(data, status, xhr) {
       var result = $.parseJSON(xhr.responseText);
       if(!result.fail) {
         // TODO:  indicate success; update form?

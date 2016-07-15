@@ -24,6 +24,7 @@
 
     public $DST = true;  // true for server time (which observes daylight saving time)
     public $tzOffset = 0;  // offset (in seconds) from server time (if $DST is true) or gmt
+    public $UnreadMsgs = 0;  // number of conversations this user hasn't read yet
 
     /**
      * Checks a name for uniqueness, length, and allowed characters.
@@ -322,10 +323,11 @@
      */
     private function GetSettings() {
       global $db;
-      if($s = $db->query('select timebase, timeoffset from users_settings where id=\'' . $db->real_escape_string($this->ID) . '\' limit 1'))
+      if($s = $db->query('select timebase, timeoffset, unreadmsgs from users_settings where id=\'' . $db->real_escape_string($this->ID) . '\' limit 1'))
         if($s = $s->fetch_object()) {
           $this->DST = $s->timebase != 'gmt';
           $this->tzOffset = $s->timeoffset;
+          $this->UnreadMsgs = $s->unreadmsgs;
           return true;
         }
       return false;
