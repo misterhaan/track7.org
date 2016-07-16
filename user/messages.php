@@ -120,7 +120,7 @@
         <div id=conversations>
           <form id=sendtouser>
             <label title="search for a user to send a message to"><span class=field>
-              <input type=search placeholder="find a person" autocomplete=off data-bind="textInput: usermatch">
+              <input id=usermatch placeholder="find a person" autocomplete=off data-bind="textInput: usermatch">
             </span></label>
           </form>
           <ol class=usersuggest data-bind="visible: usermatch().length >= 3">
@@ -129,7 +129,7 @@
             <li class=suggesteduser data-bind="click: $parent.GetConversation, css: {highlight: id == $parent.cursor().id}">
               <img class=avatar alt="" data-bind="attr: {src: avatar}">
               <span data-bind="text: displayname || username"></span>
-              <img src="/images/friend.png" alt="*" data-bind="if: isfriend, attr: {title: (displayname || username) + ' is your friend'}">
+              <img src="/images/friend.png" alt="*" data-bind="visible: isfriend == 1, attr: {title: (displayname || username) + ' is your friend'}">
             </li>
             <!-- /ko -->
             <li class=message data-bind="visible: !findingusers() && matchingusers().length < 1">nobody here by that name</li>
@@ -160,7 +160,7 @@
         <label title="user who will receive this message">
           <span class=label>to:</span>
           <span class=field>
-            <input id=usermatch type=search autocomplete=off data-bind="textInput: usermatch, visible: !chosenuser()">
+            <input id=usermatch autocomplete=off data-bind="textInput: usermatch, visible: !chosenuser()">
             <span data-bind="visible: chosenuser">
               <img class=avatar data-bind="attr: {src: chosenuser().avatar}">
               <a data-bind="attr: {href: '/user/' + chosenuser().username + '/'}, text: chosenuser().displayname || chosenuser().username"></a>

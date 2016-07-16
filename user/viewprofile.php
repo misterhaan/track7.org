@@ -31,30 +31,34 @@
           <p><?php echo $u->GetLevelName(); ?>, joined <time datetime="<?php echo gmdate('c', $stats->registered); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $stats->registered); ?>"><?php echo t7format::HowLongAgo($stats->registered); ?> ago</time></p>
         </div>
       </header>
+<?php
+      if(!is_a($u, 'oldUser')) {
+?>
       <nav class=actions>
 <?php
-      if($u->ID != $user->ID) {
+        if($u->ID != $user->ID) {
 ?>
         <a class=message title="send <?php echo $u->DisplayName; ?> a private message" href="/user/messages.php#!to=<?php echo htmlspecialchars($u->Username); ?>">send message</a>
 <?php
-      }
-      if($user->IsLoggedIn())
-        if($u->ID == $user->ID) {
+        }
+        if($user->IsLoggedIn())
+          if($u->ID == $user->ID) {
 ?>
         <a class=edit title="edit your profile" href="/user/settings.php">edit profile</a>
 <?php
-        } elseif($u->Fan) {
+          } elseif($u->Fan) {
 ?>
         <a class=removefriend title="remove <?php echo $u->DisplayName; ?> from your friends" href="/user/?ajax=removefriend&amp;friend=<?php echo $u->ID; ?>">remove friend</a>
 <?php
-        } else {
+          } else {
 ?>
         <a class=addfriend title="add <?php echo $u->DisplayName; ?> as a friend" href="/user/?ajax=addfriend&amp;friend=<?php echo $u->ID; ?>">add friend</a>
 <?php
-        }
+          }
 ?>
       </nav>
 <?php
+      }
       if(count($links = $u->GetContactLinks())) {
 ?>
       <section id=contact>

@@ -1390,6 +1390,10 @@ ol.messages {
   padding: 0;
   list-style-type: none;
 }
+ol.messages li.loading,
+ol.messages li.showmore {
+  text-align: center;
+}
 ol.messages li.showmore a.action {
   margin: 0 auto;
   background-color: #ccc;

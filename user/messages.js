@@ -4,7 +4,7 @@ $(function() {
     window.Conversations.Load();
   } else if($("#sendmessage").length)
     ko.applyBindings(window.SendMessage = new SendMessageViewModel(), $("#sendmessage")[0]);
-  $("input[type=search]").keydown(function(e) {
+  $("#usermatch").keydown(function(e) {
     var sm = window.SendMessage || window.Conversations;
     if(sm.matchingusers().length && (sm.cursor() && e.which == 13 || e.which == 38 || e.which == 40)) {
       if(sm.cursor())
@@ -27,6 +27,11 @@ $(function() {
         sm.cursor(e.which == 38 ? sm.matchingusers()[sm.matchingusers().length - 1] : sm.matchingusers()[0]);
       e.preventDefault();
     }
+  });
+  $("#usermatch").blur(function() {
+    setTimeout(function() {
+      (window.Conversations || window.SendMessage).usermatch("");
+    }, 250);
   });
   if(location.hash.substring(0, 5) == "#!to=") {
     $.get("/user/", {ajax: "userinfo", username: location.hash.substring(5)}, function(data, status, xhr) {

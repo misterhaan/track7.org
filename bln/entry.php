@@ -1,6 +1,12 @@
 <?php
   require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
+  // handle old tag= format for tags
+  if(isset($_GET['name']) && substr($_GET['name'], 0, 4) == 'tag=') {
+    header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' . substr($_GET['name'], 4) . '/');
+    die;
+  }
+
   $tag = false;
   if(isset($_GET['tag']))
     if($tag = $db->query('select name from blog_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))

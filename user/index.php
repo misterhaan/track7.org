@@ -141,15 +141,15 @@
           $matchsql = $db->escape_string(trim($_GET['match']));
           $matchlike = $db->escape_string(str_replace(['_', '%'], ['\\_', '\\%'], trim($_GET['match'])));
           // some columns aren't needed except to make the order by use unique columns
-          if($us = $db->query('select u.id, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.displayname, u.username, f.fan as isfriend, u.username=\'' . $matchsql . '\' as exactuser, u.displayname=\'' . $matchsql . '\' as exactdisplay, u.username like \'' . $matchlike . '%\' as startuser, u.displayname like \'' . $matchlike . '%\' as startdisplay from users as u left join users_friends as f on f.fan=\'' . +$user->ID . '\' and f.friend=u.id where u.id!=\'' . +$user->ID . '\' and (u.username like \'%' . $matchlike . '%\' or u.displayname like \'%' . $matchlike . '%\') order by isfriend desc, exactuser desc, exactdisplay desc, startuser desc, startdisplay desc, coalesce(nullif(u.displayname, \'\'), u.username) limit 8')) {
+          if($us = $db->query('select u.id, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.displayname, u.username, f.fan as isfriend, u.username=\'' . $matchsql . '\' or u.displayname=\'' . $matchsql . '\' as exact, u.username like \'' . $matchlike . '%\' or u.displayname like \'' . $matchlike . '%\' as start from users as u left join users_friends as f on f.fan=\'' . +$user->ID . '\' and f.friend=u.id where u.id!=\'' . +$user->ID . '\' and (u.username like \'%' . $matchlike . '%\' or u.displayname like \'%' . $matchlike . '%\') order by isfriend desc, exact desc, start desc, coalesce(nullif(u.displayname, \'\'), u.username) limit 8')) {
             $ajax->Data->users = [];
             while($u = $us->fetch_object()) {
               // remove ordering columns
-              unset($u->exactuser, $u->exactdisplay, $u->startuser, $u->startdisplay);
+              unset($u->exact, $u->start);
               $ajax->Data->users[] = $u;
             }
           } else
-          $ajax->Fail('error looking for user suggestions.');
+            $ajax->Fail('error looking for user suggestions.');
         } else
           $ajax->Fail('at least 3 characters are required to suggest users.');
         break;
