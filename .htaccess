@@ -7,53 +7,50 @@ ErrorDocument 403 /403.php
 ErrorDocument 401 /401.php
 
 RewriteEngine on
+RewriteBase /
 RewriteRule \.git/ - [F]
 RewriteRule \.svn/ - [F]
 RewriteRule \.snapshot/ - [F]
 RewriteRule etc/ - [F]
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
-RedirectPermanent /feeds/unifeed.rss http://www.track7.org/feed.rss
-RedirectPermanent /feeds/entries.rss http://www.track7.org/bln/feed.rss
-RedirectPermanent /feeds/guides.rss http://www.track7.org/guides/feed.rss
-RedirectPermanent /output/pen/bln/ http://www.track7.org/bln/
-RedirectPermanent /pen/bln/ http://www.track7.org/bln/
-RedirectPermanent /output/gfx/album/ http://www.track7.org/album/
-RedirectPermanent /output/album/ http://www.track7.org/album/
-RedirectPermanent /output/lego.php http://www.track7.org/art/lego/
-RedirectPermanent /geek/guides/ http://www.track7.org/guides/
-RedirectPermanent /geek/discgolf/ http://www.track7.org/discgolf/
-RedirectPermanent /output/pen/ http://www.track7.org/pen/
-RedirectPermanent /output/gfx/ http://www.track7.org/art/
-RedirectPermanent /output/ http://www.track7.org/art/
-RedirectPermanent /geek/hits/ http://www.track7.org/hits/
-RedirectPermanent /track7.php http://www.track7.org/
-RedirectPermanent /ready.shtml http://www.track7.org/pen/theory/ready.php
-RedirectPermanent /ready.html http://www.track7.org/pen/theory/ready.php
-RedirectPermanent /news/ready.php http://www.track7.org/pen/theory/ready.php
-RedirectPermanent /oldguestbook.php http://www.track7.org/gb-view.php
-RedirectPermanent /news/linz.php http://www.track7.org/output/gfx/linz.php
-RedirectPermanent /news/nazi.php http://www.track7.org/output/gfx/nazi.php
-RedirectPermanent /news/pentium4.php http://www.track7.org/pen/theory/pentium4.php
-RedirectPermanent /user/profile.php http://www.track7.org/user/editprofile.php
-RedirectPermanent /shop/ http://www.track7.org/art/shop/
-RedirectPermanent /av/lego.php http://www.track7.org/art/lego/
-RedirectPermanent /av/lego/ http://www.track7.org/art/lego/
-RedirectPermanent /av/compilations.php http://www.track7.org/art/compilations.php
-RedirectPermanent /av/cd/ http://www.track7.org/art/cd/
-RedirectPermanent /av/ http://www.track7.org/art/
+RewriteRule ^feeds/unifeed.rss /feed.rss [R=301]
+RewriteRule ^feeds/entries.rss /bln/feed.rss [R=301]
+RewriteRule ^feeds/guides.rss /guides/feed.rss [R=301]
+RewriteRule ^output/pen/bln/(.*) /bln/$1 [R=301]
+RewriteRule ^pen/bln/(.*) /bln/$1 [R=301]
+RewriteRule ^output/gfx/album/(.*) /album/$1 [R=301]
+RewriteRule ^output/album/(.*) /album/ [R=301]
+RewriteRule ^output/lego.php /art/lego/ [R=301]
+RewriteRule ^geek/guides/(.*) /guides/$1 [R=301]
+RewriteRule ^geek/discgolf/(.*) /discgolf/$1 [R=301]
+RewriteRule ^output/pen/(.*) /pen/$1 [R=301]
+RewriteRule ^output/gfx/(.*) /art/$1 [R=301]
+RewriteRule ^output/(.*) /art/$1 [R=301]
+RewriteRule ^geek/hits/(.*) /hits/$1 [R=301]
+RewriteRule ^track7.php / [R=301]
+RewriteRule ^ready.shtml /pen/theory/ready.php [R=301]
+RewriteRule ^ready.html /pen/theory/ready.php [R=301]
+RewriteRule ^news/ready.php /pen/theory/ready.php [R=301]
+RewriteRule ^oldguestbook.php /gb-view.php [R=301]
+RewriteRule ^news/linz.php /art/linz.php [R=301]
+RewriteRule ^news/nazi.php /art/nazi.php [R=301]
+RewriteRule ^news/pentium4.php /pen/theory/pentium4.php [R=301]
+RewriteRule ^user/profile.php /user/editprofile.php [R=301]
+RewriteRule ^shop/ /art/shop/ [R=301]
+RewriteRule ^av/lego.php /art/lego/ [R=301]
+RewriteRule ^av/(.*) /art/$1 [R=301]
 
 RewriteRule ^source/([a-z0-9/\-]+\.(php|css|js))$ https://github.com/misterhaan/track7.org/blob/master/$1
 RewriteRule ^files/(.+\.(zip|wsz|xpi|msi|cab))$ /download.php?file=$1
 RewriteRule ^robots.txt /robots.php
-RewriteRule ^oi/f[0-9]+/t([0-9]+) /hb/thread$1/ [R]
-RewriteRule ^oi /hb [R]
+RewriteRule ^oi/f[0-9]+/t([0-9]+) /hb/thread$1/ [R=301]
+RewriteRule ^oi /hb [R=301]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.*)$ $1.php
 
-# RewriteCond %{HTTP_REFERER} ^http://[^/]*$ [NC,OR] # IE actually sends referrers missing the trailing slash
 RewriteCond %{HTTP_REFERER} ^http://(www\.)?a-b-l-o-g\.com.*$ [NC,OR]
 RewriteCond %{HTTP_REFERER} ^http://(www\.)?absolutelycaninephotography\.com.*$ [NC,OR]
 RewriteCond %{HTTP_REFERER} ^http://(www\.)?adultsitescenter\.com.*$ [NC,OR]
@@ -130,10 +127,4 @@ deny from 91.207.5.74
 deny from 91.207.4.210
 allow from all
 
-# AddHandler application/x-httpd-php .php
 AddType application/x-xpinstall .xpi
-
-# php_value session.use_trans_sid 0
-# php_value register_globals 0
-# php_value magic_quote_gpc 0
-# php_value include_path .:/usr/lib/php:/usr/local/lib/php:/home/misterhaan/inc

@@ -1,19 +1,18 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('401 authorization required', '401 you are not me');
+<?php
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+
+  $html = new t7html([]);
+  $html->Open('401 authorization required');
 ?>
-      <p>
-        if you are seeing this page, it means that you were unable to prove that
-        you are me, or you are using a browser which didn't ask you if you were
-        me.
-      </p>
+      <h1>401 you are not me</h1>
+
       <p>
         the page you requested is only for me, and since you did not prove that
-        you are me, i am not going to let you see it.&nbsp; if you ever become
-        me, then by all means come back -- otherwise quit poking around in my
-        site's private parts.
+        you are me, you cannot see it.
       </p>
 
-<?
-  $page->End();
+      <p class=calltoaction><a href="/" class=action>go to the track7 front page</a></p>
+
+<?php
+  $html->Close();
 ?>

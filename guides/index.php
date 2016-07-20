@@ -156,7 +156,7 @@
       <!-- /ko -->
 
       <p class=loading data-bind="visible: loadingGuides">loading more guides . . .</p>
-      <p class=more data-bind="visible: hasMoreGuides"><a href=#nextpage data-bind="click: LoadGuides">load more guides</a></p>
+      <p class="more calltoaction" data-bind="visible: hasMoreGuides"><a class="action get" href=#nextpage data-bind="click: LoadGuides">load more guides</a></p>
 <?php
   $html->Close();
 

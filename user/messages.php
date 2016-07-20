@@ -208,7 +208,7 @@
                 <li class=loading data-bind="visible: loading">
                   loading messages...
                 </li>
-                <li class=showmore data-bind="visible: hasmore">
+                <li class="showmore calltoaction" data-bind="visible: hasmore">
                   <a class="action get" data-bind="click: $parent.LoadMessages" href="#!LoadMessages">load older messages</a>
                 </li>
                 <!-- ko foreach: messages -->

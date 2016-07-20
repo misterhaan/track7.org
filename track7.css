@@ -406,6 +406,15 @@ a.action {
   background-repeat: no-repeat;
   white-space: nowrap;
 }
+.calltoaction {
+  text-align: center;
+}
+.calltoaction a.action {
+  margin: 0 auto;
+  background-color: #ccc;
+  border-radius: .25em;
+  padding: .125em .5em;
+}
 .actions a:before,
 a.action:before {
   font-family: fontawesome;
@@ -1390,15 +1399,8 @@ ol.messages {
   padding: 0;
   list-style-type: none;
 }
-ol.messages li.loading,
-ol.messages li.showmore {
+ol.messages li.loading {
   text-align: center;
-}
-ol.messages li.showmore a.action {
-  margin: 0 auto;
-  background-color: #ccc;
-  border-radius: .25em;
-  padding: .125em .5em;
 }
 ol.messages li.reply .message {
   -webkit-flex: 1 0;

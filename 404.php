@@ -10,7 +10,7 @@
         sorry, that’s not a thing.  if you followed a link and expected to find
         a thing, you should tell the owner of the link there’s nothing here so
         they can fix it.  if the link was from track7,
-        <a href="/user/sendmessage.php?to=misterhaan">tell misterhaan</a>.  if
+        <a href="/user/messages.php#!to=misterhaan">tell misterhaan</a>.  if
         you were just making stuff up, you might do better with this google
         search of everything on track7:
       </p>
