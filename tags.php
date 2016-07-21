@@ -8,27 +8,91 @@
         switch($_GET['type']) {
           case 'blog':
           case 'guide':
-            $tags = $db->query('select name, count from ' . $_GET['type'] . '_tags where count>1 order by lastused desc');
+            $tags = $db->query('select name, count' . (isset($_GET['full']) ? ', id, lastused, description' : '') . ' from ' . $_GET['type'] . '_tags where count>1 order by lastused desc');
             if($tags) {
               $ajax->Data->tags = [];
-              while($tag = $tags->fetch_object())
+              while($tag = $tags->fetch_object()) {
+                if(isset($_GET['full']))
+                  $tag->lastused = t7format::TimeTag('ago', $tag->lastused, 'g:i a \o\n l F jS Y');
                 $ajax->Data->tags[] = $tag;
+              }
             } else
-              $ajax->Fail('error getting list of guide tags.');
+              $ajax->Fail('error getting list of ' . $_GET['type'] . ' tags.');
             break;
           default:
-            $ajax->Data->fail = true;
-            $ajax->Data->message = 'unknown tag type for list.  supported tag types are: blog, guide.';
+            $ajax->Fail('unknown tag type for list.  supported tag types are: blog, guide.');
             break;
         }
         break;
+      case 'setdesc':
+        if($user->IsAdmin())
+          if(isset($_POST['description']) && isset($_POST['id']) && $_POST['id'] == +$_POST['id'])
+            switch($_GET['type']) {
+              case 'blog':
+              case 'guide':
+                if(!$db->real_query('update ' . $_GET['type'] . '_tags set description=\'' . $db->escape_string($_POST['description']) . '\' where id=\'' . +$_POST['id'] . '\' limit 1'))
+                  $ajax->Fail('database error saving description.');
+                break;
+              default:
+                $ajax->Fail('unknown tag type for setdesc.  supported tag types are: blog, guide.');
+            }
+          else
+            $ajax->Fail('required fields missing or id non-numeric.');
+        else
+          $ajax->Fail('only the administrator can set tag descriptions.');
+        break;
       default:
-        $ajax->Data->fail = true;
-        $ajax->Data->message = 'unknown function name.  supported function names are: list.';
+        $ajax->Fail('unknown function name.  supported function names are: list, setdesc.');
         break;
     }
     $ajax->Send();
     die;
   }
-  // TODO:  some sort of html, probably listing tags with their descriptions and allowing admin to edit them
+
+  $html = new t7html(['ko' => true]);
+  $html->Open('tags');
+?>
+      <h1>tag information</h1>
+      <div class=tabbed>
+        <nav class=tabs>
+          <a href="#blog" title="tags for blog entries">blog entries</a>
+          <a href="#guide" title="tags for guides">guides</a>
+        </nav>
+        <ul id=taginfo data-bind="foreach: tags">
+          <li>
+            <div class=tagdata>
+              <a data-bind="text: name, attr: {href: $parent.MakeUrl(name)}"></a>
+              <span class=count data-bind="text: count + ' uses'"></span>
+              <time data-bind="text: lastused.display + ' ago'"></time>
+            </div>
+            <p class=description>
+              <span class=prefix data-bind="text: $parent.prefix"></span>
+              <span class=editable data-bind="html: description, visible: !editing()"></span>
+<?php
+  if($user->IsAdmin()) {
+?>
+              <label data-bind="visible: editing()">
+                <span class=field><input data-bind="value: $parent.descriptionedit"></span>
+                <span>
+                  <a href="#save" title="save tag description" class="action okay" data-bind="click: $parent.Save"></a>
+                  <a href="#cancel" title="cancel editing" class="action cancel" data-bind="click: $parent.Cancel"></a>
+                </span>
+              </label>
+<?php
+  }
+?>
+              <span class=postfix data-bind="text: $parent.postfix"></span>
+<?php
+  if($user->IsAdmin()) {
+?>
+              <a href="#edit" class="action edit" data-bind="visible: !editing() && $parent.descriptionedit() === false, click: $parent.Edit"></a>
+<?php
+  }
+?>
+            </p>
+          </li>
+        </ul>
+      </div>
+<?php
+  $html->Close();
 ?>

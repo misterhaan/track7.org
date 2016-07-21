@@ -37,8 +37,14 @@
       </p>
 
       <dl>
+<?php
+  if(isset($_SERVER['HTTP_REFERER'])) {
+?>
         <dt>HTTP_REFERER</dt>
         <dd><?php echo htmlspecialchars($_SERVER['HTTP_REFERER']); ?></dd>
+<?php
+  }
+?>
         <dt>REMOTE_ADDR</dt>
         <dd><?php echo htmlspecialchars($_SERVER['REMOTE_ADDR']); ?></dd>
         <dt>HTTP_USER_AGENT</dt>

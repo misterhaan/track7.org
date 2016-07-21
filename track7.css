@@ -1195,6 +1195,12 @@ article.activity img.photothumb {
   border-radius: .25em;
 }
 
+/*-------------------------------------------------------------[ /tags.php ]--*/
+.description .prefix,
+.description .postfix {
+  color: #999;
+}
+
 /*---------------------------------------------------------[ /bln/edit.php ]--*/
 @media (min-width: 40em) {
   #editentry span.label {
