@@ -85,7 +85,22 @@
     ShowActions($tag->id);
 ?>
       <p id=taginfo data-tagid=<?php echo $tag->id; ?>>
-        showing guides dealing with <?php echo $tag->description; ?>  go back to <a href="/guides/">all guides</a>.
+        showing guides dealing with
+<?php
+    if($user->IsAdmin()) {
+?>
+        <label class=multiline id=editdesc>
+          <span class=field><textarea></textarea></span>
+          <span>
+            <a href="#save" title="save tag description" class="action okay"></a>
+            <a href="#cancel" title="cancel editing" class="action cancel"></a>
+          </span>
+        </label>
+<?php
+    }
+?>
+        <span class=editable><?php echo $tag->description; ?></span>
+        go back to <a href="/guides/">all guides</a>.
       </p>
 <?php
   } else {
@@ -171,7 +186,7 @@
       <nav class=actions>
         <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/new" class=new>start a new guide</a>
 <?php
-      if($tagid) {  // TODO:  make tag description edit go somewhere that works
+      if($tagid) {
 ?>
         <a href="#tagedit" class=edit>edit tag description</a>
 <?php

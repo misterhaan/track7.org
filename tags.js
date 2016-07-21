@@ -3,6 +3,17 @@ $(function() {
   $("nav.tabs a").click(function() {
     window.Tags.Load($(this).attr("href").substring(1));
   });
+  if(window.Tags.type() == "") {  // this needs to be after the tab click handler
+    if($("a[href$='" + location.hash + "']").length)
+      $("a[href$='" + location.hash + "']").click();
+    else {
+      $("a[href$='#blog']").click();
+      if(history.replaceState)
+        history.replaceState(null, null, "#blog");
+      else
+        location.hash = "#blog";
+    }
+  }
 });
 
 function TagsViewModel() {

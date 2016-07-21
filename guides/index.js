@@ -3,6 +3,30 @@ $(function() {
   if($("nav.tagcloud").length)
     window.ViewModel.LoadTags();
   window.ViewModel.LoadGuides();
+  $("#editdesc").hide();
+  $("a[href$='#tagedit']").click(function(e) {
+    $("#editdesc textarea").val($("#taginfo .editable").html());
+    $("#editdesc").show().focus();
+    $("a[href$='#tagedit']").hide();
+    e.preventDefault();
+  });
+  $("a[href$='#save']").click(function(e) {
+    $.post("/tags.php?ajax=setdesc&type=guide", {id: $("#taginfo").data("tagid"), description: $("#editdesc textarea").val()}, function(data, status, xhr) {
+      var result = $.parseJSON(xhr.responseText);
+      if(!result.fail) {
+        $("#taginfo .editable").html($("#editdesc textarea").val());
+        $("a[href$='#tagedit']").show();
+        $("#editdesc").hide();
+      } else
+        alert(result.message);
+    });
+    e.preventDefault();
+  });
+  $("a[href$='#cancel']").click(function(e) {
+    $("a[href$='#tagedit']").show();
+    $("#editdesc").hide();
+    e.preventDefault();
+  });
 });
 
 function vm() {

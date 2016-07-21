@@ -8,7 +8,7 @@
         switch($_GET['type']) {
           case 'blog':
           case 'guide':
-            $tags = $db->query('select name, count' . (isset($_GET['full']) ? ', id, lastused, description' : '') . ' from ' . $_GET['type'] . '_tags where count>1 order by lastused desc');
+            $tags = $db->query('select name, count' . (isset($_GET['full']) ? ', id, lastused, description' : '') . ' from ' . $_GET['type'] . '_tags where count>' . (isset($_GET['full']) ? '=' : '') . '1 order by lastused desc');
             if($tags) {
               $ajax->Data->tags = [];
               while($tag = $tags->fetch_object()) {
@@ -65,14 +65,14 @@
               <span class=count data-bind="text: count + ' uses'"></span>
               <time data-bind="text: lastused.display + ' ago'"></time>
             </div>
-            <p class=description>
+            <div class=description>
               <span class=prefix data-bind="text: $parent.prefix"></span>
               <span class=editable data-bind="html: description, visible: !editing()"></span>
 <?php
   if($user->IsAdmin()) {
 ?>
-              <label data-bind="visible: editing()">
-                <span class=field><input data-bind="value: $parent.descriptionedit"></span>
+              <label class=multiline data-bind="visible: editing()">
+                <span class=field><textarea data-bind="value: $parent.descriptionedit"></textarea></span>
                 <span>
                   <a href="#save" title="save tag description" class="action okay" data-bind="click: $parent.Save"></a>
                   <a href="#cancel" title="cancel editing" class="action cancel" data-bind="click: $parent.Cancel"></a>
@@ -89,7 +89,7 @@
 <?php
   }
 ?>
-            </p>
+            </div>
           </li>
         </ul>
       </div>
