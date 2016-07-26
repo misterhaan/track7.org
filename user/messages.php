@@ -250,6 +250,6 @@
     global $user, $db;
     if(!$uid)
       $uid = $user->ID;
-    $db->query('update users_settings as us set unreadmsgs=(select count(1) from users_conversations as uc left join users_messages as um on um.id=uc.latestmessage where uc.thisuser=\'' . +$uid . '\' and um.author!=\'' . +$uid . '\' and um.hasread=0);');
+    $db->query('update users_settings as us set unreadmsgs=(select count(1) from users_conversations as uc left join users_messages as um on um.id=uc.latestmessage where uc.thisuser=\'' . +$uid . '\' and (um.author!=\'' . +$uid . '\' or um.author is null) and um.hasread=0) where id=\'' . +$uid . '\'');
   }
 ?>
