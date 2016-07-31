@@ -49,7 +49,7 @@
     /**
      * Format a timestamp two or three ways for use in an html time tag.  Format
      * parameters will eventually be used in the php date function.
-     * @param string $format Display format, or 'ago' to show how long ago
+     * @param string $format Display format, or 'ago' to show how long ago, or 'smart' to format according to age
      * @param integer $timestamp Unix timestamp to format
      * @param string $tooltipformat Optional format for tooltip.
      * @return object with ->datetime for datetime attribute, display for content, and optionally title for title attribute
@@ -59,6 +59,8 @@
       $datetime->datetime = gmdate('c', $timestamp);
       if($format == 'ago' || $format == 'since')
         $datetime->display = self::HowLongAgo($timestamp);
+      elseif($format == 'smart')
+        $datetime->display = self::SmartDate($timestamp);
       else
         $datetime->display = strtolower(self::LocalDate($format, $timestamp));
       if($tooltipformat)
@@ -125,6 +127,18 @@
       if($user->DST)
         return date($format, $timestamp + $user->tzOffset);
       return gmdate($format, $timestamp + $user->tzOffset);
+    }
+
+    /**
+     * Get a timestamp from a formatted string that's in the user's timezone.
+     * @param string $timestring Formatted date / time string (see php.net/strtotime)
+     * @return integer
+     */
+    public static function LocalStrtotime($timestring) {
+      global $user;
+      if($user->DST)
+        return strtotime($timestring) - $user->tzOffset;
+      return strtotime(strtotime($timestring) . ' seconds GMT') - $user->tzOffset;
     }
 
     /**

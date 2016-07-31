@@ -30,7 +30,7 @@ create table guide_tags (
   name varchar(16) not null comment 'used for both display and links',
   unique (name),
   count smallint not null default 0 comment 'how many published guides use this tag',
-  lastused int not null default 0 comment 'unix timestamp for the last time an guide was published or updated using this tag',
+  lastused int not null default 0 comment 'unix timestamp for the last time a guide was published or updated using this tag',
   key (lastused),
   description text not null default ''
 );

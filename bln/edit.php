@@ -10,7 +10,7 @@
     }
     header('HTTP/1.0 404 Not Found');
     $html = new t7html([]);
-    $html->Open($tag ? 'entry not found - ' . $tag . ' - blog' : 'entry not found - blog');
+    $html->Open('entry not found - blog');
 ?>
       <h1>404 blog entry not found</h1>
 

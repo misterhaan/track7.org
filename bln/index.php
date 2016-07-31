@@ -54,8 +54,8 @@
           $ajax->Fail('error getting latest blog entries.');
         break;
       default:
-        $ajax->Data->fail = true;
-        $ajax->Data->message = 'unknown function name.  supported function names are: entries.';
+        $ajax->Fail('unknown function name.  supported function names are: entries.');
+        break;
     }
     $ajax->Send();
     die;

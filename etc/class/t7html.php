@@ -74,7 +74,7 @@
     <meta name="msapplication-TileColor" content="#335577">
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
   </head>
-  <body class=text>
+  <body class=<?php echo isset($this->params['bodytype']) ? $this->params['bodytype'] : 'text'; ?>>
     <header>
       <a id=gohome href="/" title="track7 home"><img src="/images/home.png" alt="track7"></a>
       <div id=userstatus>

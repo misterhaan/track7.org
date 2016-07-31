@@ -12,10 +12,10 @@
     if($tag = $db->query('select name from blog_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))
       if($tag = $tag->fetch_object())
         $tag = $tag->name;
-    else {  // tag not found, so try getting to the entry without the tag
-      header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['name']);
-      die;
-    }
+      else {  // tag not found, so try getting to the entry without the tag
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['name']);
+        die;
+      }
 
   $entry = false;
 

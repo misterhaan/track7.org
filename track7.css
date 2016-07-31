@@ -569,7 +569,8 @@ article > header h2 a:visited {
   color: #333;
 }
 .postmeta,
-.guidemeta {
+.guidemeta,
+.photometa {
   margin: 0 0 .75em;
   padding: 0 .625em;
   font-size: .8em;
@@ -587,10 +588,12 @@ article > header .guidemeta {
     border-radius: 0 0 .625em .625em;
   }
 }
-.guidemeta > * {
+.guidemeta > *,
+.photometa > * {
   margin-right: .75em;
 }
-.guidemeta > *:before {
+.guidemeta > *:before,
+.photometa > *:before {
   font-family: fontawesome;
   font-size: .75em;
   color: #998;
@@ -599,17 +602,22 @@ article > header .guidemeta {
 .guidemeta .guidelevel:before {
   content: "\f19d";
 }
-.guidemeta .tags:before {
+.guidemeta .tags:before,
+.photometa .tags:before {
   content: "\f02c";
 }
 .guidemeta .views:before {
   content: "\f1e5";
 }
-.guidemeta .posted:before {
+.guidemeta .posted:before,
+.photometa .posted:before {
   content: "\f073";
 }
 .guidemeta .author:before {
   content: "\f007";
+}
+.photometa .taken:before {
+  content: "\f083";
 }
 .guidemeta .rating:before {
   font-size: .9em;
@@ -1233,6 +1241,101 @@ ul#taginfo {
 .description .prefix,
 .description .postfix {
   color: #999;
+}
+
+/*------------------------------------------------------[ /album/index.php ]--*/
+ol.gallery {
+  list-style-type: none;
+  margin: .75em .5em;
+  padding: 0;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+ol#photogallery {
+  background-color: #ddc;
+  margin: .75em 0;
+}
+@media (min-width: 25em) {
+  ol#photogallery {
+    border-radius: .25em;
+    padding: .5em;
+    margin: .75em 1em;
+  }
+}
+ol#photogallery a.photothumb {
+  background-color: #fff;
+  border-radius: .25em;
+  margin: .75em .5em;
+  display: block;
+  text-align: center;
+}
+ol#photogallery a.photothumb img {
+  display: block;
+  padding: 7px;
+  margin: 0 auto;
+  border-radius: 9px;
+}
+ol#photogallery a.photothumb .caption {
+  display: block;
+  padding: 0 .25em 7px;
+}
+
+/*------------------------------------------------------[ /album/photo.php ]--*/
+img.photo,
+iframe.photo {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #333;
+  border-radius: .25em;
+  display: block;
+  margin: 0 auto;
+}
+p.photometa {
+  text-align: center;
+}
+nav.tagprevnext {
+  text-align: center;
+  font-size: .8em;
+}
+nav.tagprevnext a {
+  margin: 0 .25em;
+}
+nav.tagprevnext a:before {
+  font-family: fontawesome;
+  font-size: .8em;
+  color: #998;
+  margin-right: .325em;
+  display: inline-block;
+}
+nav.tagprevnext a.prev:before {
+  content: "\f137";
+}
+nav.tagprevnext a.tag:before {
+  content: "\f02b";
+}
+nav.tagprevnext a.gallery:before {
+  content: "\f00a";
+}
+nav.tagprevnext a.next:before {
+  content: "\f138";
+}
+
+/*-------------------------------------------------------[ /album/edit.php ]--*/
+@media (min-width: 40em) {
+  #editphoto span.label {
+    -webkit-flex: 0 0 4.5em;
+    flex: 0 0 4.5em;
+  }
+  #editphoto button {
+    margin: .75em 1em .75em 5.5em;
+  }
+}
+img.photo.preview {
+  max-height: 200px;
 }
 
 /*---------------------------------------------------------[ /bln/edit.php ]--*/
