@@ -54,6 +54,8 @@ function TagsViewModel() {
         return "/bln/" + name + "/";
       case "guide":
         return "/guides/" + name + "/";
+      case "photos":
+        return "/album/" + name + "/";
       default:
         return "";
     }

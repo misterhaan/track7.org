@@ -441,16 +441,16 @@
   function VerifyCommonFields($ajax, $req, $field2 = 'key') {
     if(isset($req['type']))
       switch($req['type']) {
-      // TODO:  add other types as tables get created (also in the fail comment at the default case)
         case 'blog':
         case 'guide':
+        case 'photos':
           if(isset($req[$field2]))
             return true;
           else
             $ajax->Fail($field2 . ' is required');
           break;
         default:
-          $ajax->Fail('invalid comment type specified.  valid types are:  blog, guide.');
+          $ajax->Fail('invalid comment type specified.  valid types are:  blog, guide, photos.');
           break;
       }
     else
@@ -462,6 +462,8 @@
     switch($type) {
       case 'blog':
         return 'entry';
+      case 'photos':
+        return 'photo';
       default:
         return $type;
     }
