@@ -14,7 +14,7 @@
   if(isset($_GET['dostep']))
     switch($_GET['dostep']) {
       case 'copyphotos':
-        if($db->real_query('insert into photos (url, youtube, posted, taken, year, caption, story) select id as url, youtubeid as youtube, added as posted, if(taken>9999,taken,null) as taken, if(taken>9999,year(from_unixtime(taken)),taken) as year, replace(replace(replace(replace(caption,\'&rsquo;\',\'’\'),\'&ccdeil;\',\'ç\'),\'&ouml;\',\'ö\'), \'&uuml;\', \'ü\') as caption, replace(replace(replace(replace(replace(replace(description,\'&nbsp;\',\' \'),\'<br />\',\'</p><p>\'),\'&rsquo;\',\'’\'),\'&ldquo;\',\'“\'),\'&rdquo;\',\'”\'),\'&mdash;\',\'—\') as story from track7_t7data.photos'))
+        if($db->real_query('insert into photos (url, youtube, posted, taken, year, caption, story) select id as url, youtubeid as youtube, added as posted, if(taken>9999,taken,null) as taken, if(taken>9999,year(from_unixtime(taken)),taken) as year, replace(replace(replace(replace(caption,\'&rsquo;\',\'’\'),\'&ccdeil;\',\'ç\'),\'&ouml;\',\'ö\'), \'&uuml;\', \'ü\') as caption, concat(\'<p>\',replace(replace(replace(replace(replace(replace(description,\'&nbsp;\',\' \'),\'<br />\',\'</p><p>\'),\'&rsquo;\',\'’\'),\'&ldquo;\',\'“\'),\'&rdquo;\',\'”\'),\'&mdash;\',\'—\'),\'</p>\') as story from track7_t7data.photos'))
           $db->real_query('update transition_status set stepnum=' . STEP_COPYPHOTOS . ', status=\'photos copied\' where id=' . TR_PHOTOS . ' and stepnum<' . STEP_COPYPHOTOS);
         else {
 ?>

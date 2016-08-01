@@ -82,6 +82,9 @@ function TagsViewModel() {
   self.Edit = function(tag) {
     tag.editing(true);
     self.descriptionedit(tag.description());
+    autosize($("textarea:visible"));
+    autosize.update($("textarea:visible"));
+    $("textarea:visible").focus();
   }
 
   self.Cancel = function(tag) {
