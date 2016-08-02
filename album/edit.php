@@ -136,7 +136,7 @@
                       $db->real_query('delete from photos_taglinks where photo=\'' . +$photo->id . '\' and tag in (select id from photos_tags where name in (\'' . implode('\', \'', $deltags) . '\'))');
                     $tags = array_merge($addtags, $deltags);
                     if(count($tags))
-                      if(!$db->real_query('update photos_tags set count=(select count(1) as count from photos_taglinks as tl left join photos as p on p.id=tl.photo where tl.tag=photos_tags.id group by tl.tag), lastused=(select max(g.updated) as lastused from photos_taglinks as tl left join photos as p on p.id=tl.photo where and tl.tag=photos_tags.id group by tl.tag) where name in (\'' . implode('\', \'', $tags) . '\')'))
+                      if(!$db->real_query('update photos_tags set count=(select count(1) as count from photos_taglinks as tl left join photos as p on p.id=tl.photo where tl.tag=photos_tags.id group by tl.tag), lastused=(select max(g.updated) as lastused from photos_taglinks as tl left join photos as p on p.id=tl.photo where tl.tag=photos_tags.id group by tl.tag) where name in (\'' . implode('\', \'', $tags) . '\')'))
                         $ajax->Fail('error updating tag stats:  ' . $db->error);
                     $ajax->Data->url = dirname($_SERVER['SCRIPT_NAME']) . '/' . $photo->url;
                   } else
