@@ -1288,7 +1288,6 @@ ol#photogallery a.photothumb .caption {
 img.photo,
 iframe.photo {
   max-width: 100%;
-  height: auto;
   border: 1px solid #333;
   border-radius: .25em;
   display: block;

@@ -47,8 +47,7 @@
                     t7send::Tweet('comment on ' . $act->title, 'http://' . $_SERVER['HTTP_HOST'] . $act->url);
                 $ajax->Data->posted = t7format::TimeTag('g:i a \o\n l F jS Y', $ajax->Data->posted);
                 if($user->IsLoggedIn()) {
-                  // TODO:  maybe recalculate from scratch instead of incrementing
-                  $db->real_query('update users_stats set comments=comments+1 where id=\'' . $user->ID . '\' limit 1');
+                  $db->real_query('update users_stats set comments=(select count(1) from contributions where conttype=\'comment\' and author=\'' . +$user->ID . '\' group by author) where id=\'' . +$user->ID . '\'');
                   $ajax->Data->canchange = true;
                   $ajax->Data->username = $user->Username;
                   $ajax->Data->displayname = $user->DisplayName;
@@ -112,8 +111,7 @@
               if($comment = $comment->fetch_object())
                 if($user->ID == $comment->user || $user->IsAdmin())
                   if($db->real_query('delete from ' . $_POST['type'] . '_comments where id=\'' . +$_POST['id'] . '\' limit 1'))
-                    // TODO:  maybe recalculate from scratch instead of incrementing
-                    $db->real_query('update user_stats set comments=comments-1 where id=\'' . $comment->user . '\' limit 1');
+                    $db->real_query('update users_stats set comments=(select count(1) from contributions where conttype=\'comment\' and author=\'' . +$user->ID . '\' group by author) where id=\'' . +$user->ID . '\'');
                   else
                     $ajax->Fail('error deleting comment.');
                 else

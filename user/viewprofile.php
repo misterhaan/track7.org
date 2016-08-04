@@ -112,8 +112,8 @@
       if($acts = $db->query('select conttype, posted, url, title from contributions where author=\'' . +$u->ID . '\' order by posted desc limit 12'))
         $act = $acts->fetch_object();
       if($u->OldID()) {  // this is only for users that existed in the old database; otherwise it picks up everything anonymous
-        // filtering out blog and guide comments since those have been converted
-        if($comments = $olddb->query('select page as url, instant as posted from comments where uid=\'' . +$u->OldID() . '\' and left(page, 5) != \'/bln/\' and left(page, 8) != \'/guides/\' order by instant desc limit 12'))
+        // filtering out blog, guide, and photo comments since those have been converted
+        if($comments = $olddb->query('select page as url, instant as posted from comments where uid=\'' . +$u->OldID() . '\' and left(page, 5) != \'/bln/\' and left(page, 8) != \'/guides/\' and left(page, 7) != \'/album/\' order by instant desc limit 12'))
           $comment = $comments->fetch_object();
         if($forums = $olddb->query('select concat(\'/hb/thread\', thread, \'/#p\', id) as url, subject as title, instant as posted from hbposts where uid=\'' . +$u->OldID() . '\' order by instant desc limit 12'))
           $forum = $forums->fetch_object();
