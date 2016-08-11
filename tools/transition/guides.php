@@ -6,7 +6,7 @@
   define('STEP_COPYTAGS', 4);
   define('STEP_LINKTAGS', 5);
   define('STEP_COPYCOMMENTS', 6);
-  define('STEP_COPYVOTES', 7);  // this will also need to calculate ratings, or maybe do that as the next step
+  define('STEP_COPYVOTES', 7);
 
   require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
   $html = new t7html([]);
@@ -207,6 +207,7 @@
       <p>
         all guide votes have been copied and ratings recalculated.  we’re done
         here!
+      </p>
 <?php
             }
           }

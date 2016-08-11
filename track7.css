@@ -619,36 +619,37 @@ article > header .guidemeta {
 .photometa .taken:before {
   content: "\f083";
 }
+.photometa .rating:before,
 .guidemeta .rating:before {
   font-size: .9em;
   color: #444;
   margin-right: 0;
 }
-.guidemeta .rating[data-stars="1"]:before {
+.rating[data-stars="1"]:before {
   content: "\f005\f006\f006\f006\f006";
 }
-.guidemeta .rating[data-stars="1.5"]:before {
+.rating[data-stars="1.5"]:before {
   content: "\f005\f123\f006\f006\f006";
 }
-.guidemeta .rating[data-stars="2"]:before {
+.rating[data-stars="2"]:before {
   content: "\f005\f005\f006\f006\f006";
 }
-.guidemeta .rating[data-stars="2.5"]:before {
+.rating[data-stars="2.5"]:before {
   content: "\f005\f005\f123\f006\f006";
 }
-.guidemeta .rating[data-stars="3"]:before {
+.rating[data-stars="3"]:before {
   content: "\f005\f005\f005\f006\f006";
 }
-.guidemeta .rating[data-stars="3.5"]:before {
+.rating[data-stars="3.5"]:before {
   content: "\f005\f005\f005\f123\f006";
 }
-.guidemeta .rating[data-stars="4"]:before {
+.rating[data-stars="4"]:before {
   content: "\f005\f005\f005\f005\f006";
 }
-.guidemeta .rating[data-stars="4.5"]:before {
+.rating[data-stars="4.5"]:before {
   content: "\f005\f005\f005\f005\f123";
 }
-.guidemeta .rating[data-stars="5"]:before {
+.rating[data-stars="5"]:before {
   content: "\f005\f005\f005\f005\f005";
 }
 
@@ -1255,31 +1256,36 @@ ol.gallery {
   justify-content: center;
   align-items: center;
 }
-ol#photogallery {
+ol.gallery {
   background-color: #ddc;
   margin: .75em 0;
 }
 @media (min-width: 25em) {
-  ol#photogallery {
+  ol.gallery {
     border-radius: .25em;
     padding: .5em;
     margin: .75em 1em;
   }
 }
-ol#photogallery a.photothumb {
-  background-color: #fff;
-  border-radius: .25em;
+ol.gallery a.thumb {
   margin: .75em .5em;
   display: block;
   text-align: center;
 }
-ol#photogallery a.photothumb img {
+ol.gallery a.photo.thumb {
+  background-color: #fff;
+  border-radius: .25em;
+}
+ol.gallery a.thumb img {
   display: block;
+  border-radius: .25em;
+}
+ol.gallery a.photo.thumb img{
   padding: 7px;
   margin: 0 auto;
   border-radius: 9px;
 }
-ol#photogallery a.photothumb .caption {
+ol.gallery a.thumb .caption {
   display: block;
   padding: 0 .25em 7px;
 }
@@ -1334,6 +1340,29 @@ nav.tagprevnext a.next:before {
   }
 }
 img.photo.preview {
+  max-height: 200px;
+}
+
+/*----------------------------------------------------------[ /art/art.php ]--*/
+img.art {
+  max-width: 100%;
+  border-radius: .25em;
+  display: block;
+  margin: 0 auto;
+}
+
+
+/*---------------------------------------------------------[ /art/edit.php ]--*/
+@media (min-width: 40em) {
+  #editart span.label {
+    -webkit-flex: 0 0 5.5em;
+    flex: 0 0 5.5em;
+  }
+  #editart button {
+    margin: .75em 1em .75em 6.5em;
+  }
+}
+img.art.preview {
   max-height: 200px;
 }
 

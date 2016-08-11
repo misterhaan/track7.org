@@ -79,7 +79,7 @@
                           break;
                       }
                     $aspect = $size[0] / $size[1];
-                    if(!$photo->youtube) {
+                    if(!$photo->youtube)
                       if($size[0] > MAX_PHOTO_SIZE || $size[1] > MAX_PHOTO_SIZE) {
                         if($aspect > 1) {
                           $width = MAX_PHOTO_SIZE;
@@ -92,8 +92,8 @@
                         imagecopyresampled($fullsize, $image, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
                         imagejpeg($fullsize, dirname($_SERVER['SCRIPT_FILENAME']) . '/photos/' . $photo->url . '.jpeg');
                         imagedestroy($fullsize);
-                      }
-                    }
+                      } else
+                        imagejpeg($image, dirname($_SERVER['SCRIPT_FILENAME']) . '/photos/' . $photo->url . '.jpeg');
                     if($aspect > 1) {
                       $w = MAX_THUMB_SIZE;
                       $h = round(MAX_THUMB_SIZE / $aspect);

@@ -442,13 +442,14 @@
         case 'blog':
         case 'guide':
         case 'photos':
+        case 'art':
           if(isset($req[$field2]))
             return true;
           else
             $ajax->Fail($field2 . ' is required');
           break;
         default:
-          $ajax->Fail('invalid comment type specified.  valid types are:  blog, guide, photos.');
+          $ajax->Fail('invalid comment type specified.  valid types are:  blog, guide, photos, art.');
           break;
       }
     else

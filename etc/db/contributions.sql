@@ -1,8 +1,8 @@
 create table contributions (
-  srctbl enum('blog_comments', 'blog_entries', 'guides', 'guide_comments', 'photos', 'photos_comments') not null comment 'name of the table this activity is fully stored in',
+  srctbl enum('blog_comments', 'blog_entries', 'guides', 'guide_comments', 'photos', 'photos_comments', 'art', 'art_comments') not null comment 'name of the table this activity is fully stored in',
   id smallint unsigned not null comment 'id of this activity in srctbl',
   primary key(srctbl, id),
-  conttype enum('comment', 'guide', 'post', 'photo'),
+  conttype enum('comment', 'guide', 'post', 'photo', ' art'),
   posted int not null,
   key(posted),
   url varchar(32) not null default '' comment 'url to this contribution (blank for site updates)',
@@ -199,13 +199,14 @@ begin
   where srctbl='photos_comments' and id in (select * from (select c.id from photos_comments as c where c.photo=new.id) as cl);
 end;;
 
+drop trigger photo_comment_added;
 create trigger photo_comment_added after insert on photos_comments for each row
 insert into contributions set
   srctbl='photos_comments',
   id=new.id,
   conttype='comment',
   posted=new.posted,
-  url=concat('/album/', (select url from photos where id=new.photo), '/#comments'),
+  url=concat('/album/', (select url from photos where id=new.photo), '#comments'),
   author=new.user,
   authorname=new.name,
   authorurl=new.contacturl,
@@ -221,3 +222,52 @@ where srctbl='photos_comments' and id=new.id;
 
 create trigger photo_comment_deleted after delete on photos_comments for each row
 delete from contributions where srctbl='photos_comments' and id=old.id;
+
+create trigger art_added after insert on art for each row
+insert into contributions set
+  srctbl='art',
+  id=new.id,
+  conttype='art',
+  posted=new.posted,
+  url=concat('/art/', new.url),
+  author=1,
+  title=new.title,
+  preview=concat('<p><img class=art src="/art/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>'),
+  hasmore=1;
+
+delimeter ;;
+create trigger art_changed after update on art for each row
+begin
+  update contributions set
+    url=concat('/art/', new.url),
+    title=new.title,
+    preview=concat('<p><img class=art src="/art/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>')
+  where srctbl='art' and id=new.id;
+  update contributions set
+    url=concat('/art/', new.url, '#comments'),
+    title=new.title
+  where srctbl='art_comments' and id in (select * from (select c.id from art_comments as c where c.art=new.id) as cl);
+end;;
+
+create trigger art_comment_added after insert on art_comments for each row
+insert into contributions set
+  srctbl='art_comments',
+  id=new.id,
+  conttype='comment',
+  posted=new.posted,
+  url=concat('/art/', (select url from art where id=new.art), '#comments'),
+  author=new.user,
+  authorname=new.name,
+  authorurl=new.contacturl,
+  title=(select title from art where id=new.art),
+  preview=left(new.html, locate('</p>', new.html) + 3),
+  hasmore=length(new.html)-length(replace(new.html, '</p>', ''))>4;
+
+create trigger art_comment_changed after update on art_comments for each row
+update contributions set
+  preview=left(new.html, locate('</p>', new.html) + 3),
+  hasmore=length(new.html)-length(replace(new.html, '</p>', ''))>4
+where srctbl='art_comments' and id=new.id;
+
+create trigger art_comment_deleted after delete on art_comments for each row
+delete from contributions where srctbl='art_comments' and id=old.id;

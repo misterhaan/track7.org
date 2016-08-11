@@ -1,20 +1,18 @@
 $(function() {
-  ko.applyBindings(window.PhotoViewModel = new PhotoViewModel(), $("#editphoto")[0]);
-  if($("#editphoto").data("photoid"))
-    window.PhotoViewModel.Load();
+  ko.applyBindings(window.ArtViewModel = new ArtViewModel(), $("#editart")[0]);
+  if($("#editart").data("artid"))
+    window.ArtViewModel.Load();
 });
 
-function PhotoViewModel() {
+function ArtViewModel() {
   var self = this;
 
   self.id = ko.observable(false);
-  self.caption = ko.observable("");
+  self.title = ko.observable("");
   self.url = ko.observable("");
-  self.youtube = ko.observable("");
-  self.photo = ko.observable(false);
-  self.storymd = ko.observable("");
-  self.taken = ko.observable("");
-  self.year = ko.observable("");
+  self.ext = ko.observable("");
+  self.art = ko.observable(false);
+  self.descmd = ko.observable("");
   self.taglist = ko.observableArray([]);
   self.tags = ko.pureComputed({
     read: function() { return self.taglist().join(","); },
@@ -26,18 +24,15 @@ function PhotoViewModel() {
 
   self.Load = function() {
     self.loading(true);
-    $.get("/album/edit.php", {ajax: "get", id: $("#editphoto").data("photoid")}, function(data, status, xhr) {
+    $.get("/art/edit.php", {ajax: "get", id: $("#editart").data("artid")}, function(data, status, xhr) {
       var result = $.parseJSON(xhr.responseText);
       if(!result.fail) {
         self.id(result.id);
-        self.caption(result.caption);
+        self.title(result.title);
         self.url(result.url);
-        self.youtube(result.youtube);
-        self.storymd(result.storymd);
-        autosize.update($("textarea[data-bind*='storymd']"));
-        self.taken(result.taken);
-        if(result.year > 0)
-          self.year(result.year);
+        self.ext(result.ext);
+        self.descmd(result.descmd);
+        autosize.update($("textarea[data-bind*='descmd']"));
         self.taglist(result.tags);
         self.originalTaglist = result.tags;
       } else
@@ -47,7 +42,7 @@ function PhotoViewModel() {
   };
 
   self.Save = function() {
-    $.post("/album/edit.php?ajax=save", {photojson: ko.toJSON(self)}, function(data, status, xhr) {
+    $.post("/art/edit.php?ajax=save", {artjson: ko.toJSON(self)}, function(data, status, xhr) {
       var result = $.parseJSON(xhr.responseText);
       if(!result.fail)
         window.location.href = result.url;
@@ -56,12 +51,12 @@ function PhotoViewModel() {
     });
   };
 
-  self.CachePhoto = function(data, e) {
+  self.CacheArt = function(data, e) {
     var f = e.target.files[0];
     if(f) {
       var fr = new FileReader();
       fr.onloadend = function() {
-        self.photo(fr.result);
+        self.art(fr.result);
       };
       fr.readAsDataURL(f);
     }

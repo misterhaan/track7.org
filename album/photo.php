@@ -18,7 +18,7 @@
   if(!$photo) {
     header('HTTP/1.0 404 Not Found');
     $html = new t7html([]);
-    $html->Open($tag ? 'photo not found - ' . $tag->name . ' - blog' : 'photo not found - blog');
+    $html->Open($tag ? 'photo not found - ' . $tag->name . ' - photo album' : 'photo not found - photo album');
 ?>
       <h1>404 photo not found</h1>
 

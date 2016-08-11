@@ -7,10 +7,11 @@
         if(isset($_POST['type']) && isset($_POST['key']) && isset($_POST['vote']))
           switch($_POST['type']) {
             case 'guide':
+            case 'art':
               if($db->real_query('insert into ' . $_POST['type'] . '_votes (' . $_POST['type'] . ', voter, ip, vote, posted) values (\'' . $db->escape_string($_POST['key']) . '\', \'' . ($user->IsLoggedIn() ? +$user->ID : 0) . '\', ' . ($user->IsLoggedIn() ? 0 : 'inet_aton(\'' . $_SERVER['REMOTE_ADDR'] . '\')') . ', \'' . +$_POST['vote'] . '\', \'' . +time() . '\') on duplicate key update vote=\'' . +$_POST['vote'] . '\', posted=\'' . +time() .'\'')) {
                 $ajax->Data->vote = +$_POST['vote'];
-                if($db->real_query('update ' . $_POST['type'] . 's set rating=(select round((sum(vote)+3)/(count(vote)+1), 2) from ' . $_POST['type'] . '_votes where ' . $_POST['type'] . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . $_POST['type'] . '), votes=(select count(vote) from ' . $_POST['type'] . '_votes where ' . $_POST['type'] . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . $_POST['type'] . ') where id=\'' . $db->escape_string($_POST['key']) . '\'')) {
-                  if($gi = $db->query('select rating, votes from ' . $_POST['type'] . 's where id=\'' . $db->escape_string($_POST['key']) . '\' limit 1'))
+                if($db->real_query('update ' . $_POST['type'] . ($_POST['type'] == 'guide' ? 's' : '') . ' set rating=(select round((sum(vote)+3)/(count(vote)+1), 2) from ' . $_POST['type'] . '_votes where ' . $_POST['type'] . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . $_POST['type'] . '), votes=(select count(vote) from ' . $_POST['type'] . '_votes where ' . $_POST['type'] . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . $_POST['type'] . ') where id=\'' . $db->escape_string($_POST['key']) . '\'')) {
+                  if($gi = $db->query('select rating, votes from ' . $_POST['type'] . ($_POST['type'] == 'guide' ? 's' : '') . ' where id=\'' . $db->escape_string($_POST['key']) . '\' limit 1'))
                     if($gi = $gi->fetch_object()) {
                       $ajax->Data->rating = +$gi->rating;
                       $ajax->Data->votes = +$gi->votes;

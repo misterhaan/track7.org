@@ -9,6 +9,7 @@
           case 'blog':
           case 'guide':
           case 'photos':
+          case 'art':
             $tags = $db->query('select name, count' . (isset($_GET['full']) ? ', id, lastused, description' : '') . ' from ' . $_GET['type'] . '_tags where count>' . (isset($_GET['full']) ? '=' : '') . '1 order by lastused desc');
             if($tags) {
               $ajax->Data->tags = [];
@@ -21,7 +22,7 @@
               $ajax->Fail('error getting list of ' . $_GET['type'] . ' tags.');
             break;
           default:
-            $ajax->Fail('unknown tag type for list.  supported tag types are: blog, guide, photos.');
+            $ajax->Fail('unknown tag type for list.  supported tag types are: blog, guide, photos, art.');
             break;
         }
         break;
@@ -32,11 +33,12 @@
               case 'blog':
               case 'guide':
               case 'photos':
+              case 'art':
                 if(!$db->real_query('update ' . $_GET['type'] . '_tags set description=\'' . $db->escape_string($_POST['description']) . '\' where id=\'' . +$_POST['id'] . '\' limit 1'))
                   $ajax->Fail('database error saving description.');
                 break;
               default:
-                $ajax->Fail('unknown tag type for setdesc.  supported tag types are: blog, guide, photos.');
+                $ajax->Fail('unknown tag type for setdesc.  supported tag types are: blog, guide, photos, art.');
             }
           else
             $ajax->Fail('required fields missing or id non-numeric.');
@@ -60,6 +62,7 @@
           <a href="#blog" title="tags for blog entries">blog entries</a>
           <a href="#guide" title="tags for guides">guides</a>
           <a href="#photos" title="tags for photos">photos</a>
+          <a href="#art" title="tags for art">art</a>
         </nav>
         <ul id=taginfo data-bind="foreach: tags">
           <li>
