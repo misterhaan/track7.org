@@ -223,6 +223,7 @@ where srctbl='photos_comments' and id=new.id;
 create trigger photo_comment_deleted after delete on photos_comments for each row
 delete from contributions where srctbl='photos_comments' and id=old.id;
 
+drop trigger art_added;
 create trigger art_added after insert on art for each row
 insert into contributions set
   srctbl='art',
@@ -232,16 +233,17 @@ insert into contributions set
   url=concat('/art/', new.url),
   author=1,
   title=new.title,
-  preview=concat('<p><img class=art src="/art/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>'),
+  preview=concat('<p><img class=art src="/art/img/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>'),
   hasmore=1;
 
+drop trigger art_changed;
 delimeter ;;
 create trigger art_changed after update on art for each row
 begin
   update contributions set
     url=concat('/art/', new.url),
     title=new.title,
-    preview=concat('<p><img class=art src="/art/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>')
+    preview=concat('<p><img class=art src="/art/img/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>')
   where srctbl='art' and id=new.id;
   update contributions set
     url=concat('/art/', new.url, '#comments'),

@@ -59,8 +59,8 @@
         </nav>
       </section>
 <?php
-  // get last MAXITEMS from contributions, updates, posts, comments, and photos
-  $act = $update = $forum = $comment = $art = $round = false;
+  // get last MAXITEMS from contributions, updates, posts, and comments
+  $act = $update = $forum = $comment = $round = false;
   if($acts = $db->query('select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author order by c.posted desc limit ' . MAXITEMS))
     $act = $acts->fetch_object();
   if($updates = $db->query('select instant as posted, `change` as preview from track7_t7data.updates order by instant desc limit ' . MAXITEMS))
@@ -69,28 +69,23 @@
     $forum = $forums->fetch_object();
   if($comments = $db->query('select \'comment\' as conttype, c.instant as posted, c.page as url, u.username, u.displayname, c.name as authorname, c.url as authorurl, substring_index(c.page, \'/\', -1) as title, c.comments as preview, 0 as hasmore from track7_t7data.comments as c left join track7_t7data.users as ou on ou.uid=c.uid left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id where not (c.page like \'/bln/%\') and not (c.page like \'/guides/%\') and not (c.page like \'/album/%\') order by instant desc limit ' . MAXITEMS))
     $comment = $comments->fetch_object();
-  if($arts = $db->query('select id, name as title, `type`, adddate as posted from track7_t7data.art order by posted desc limit ' . MAXITEMS))
-    $art = $arts->fetch_object();
   if($rounds = $db->query('select r.id, r.instant as posted, c.name, r.player as authorname, \'\' as authorurl, u.username, u.displayname, r.roundtype, r.tees, r.score, r.comments from track7_t7data.dgrounds as r left join track7_t7data.dgcourses as c on c.id=r.courseid left join track7_t7data.users as ou on ou.uid=r.uid left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id where r.entryuid is null or r.uid=0 order by posted desc limit ' . MAXITEMS))
     $round = $rounds->fetch_object();
 
   $items = 0;
   while($items < MAXITEMS && ($act || $update || $forum || $comment || $photo || $art || $round)) {
-    if($act && (!$update || $act->posted > $update->posted) && (!$forum || $act->posted > $forum->posted) && (!$comment || $act->posted > $comment->posted) && (!$art || $act->posted > $art->posted) && (!$round || $act->posted > $round->posted)) {
+    if($act && (!$update || $act->posted > $update->posted) && (!$forum || $act->posted > $forum->posted) && (!$comment || $act->posted > $comment->posted) && (!$round || $act->posted > $round->posted)) {
       ShowContribution($act);
       $act = $acts->fetch_object();
-    } elseif($update && (!$forum || $update->posted > $forum->posted) && (!$comment || $update->posted > $comment->posted) && (!$art || $update->posted > $art->posted) && (!$round || $update->posted > $round->posted)) {
+    } elseif($update && (!$forum || $update->posted > $forum->posted) && (!$comment || $update->posted > $comment->posted) && (!$round || $update->posted > $round->posted)) {
       ShowUpdate($update);
       $update = $updates->fetch_object();
-    } elseif($forum && (!$comment || $forum->posted > $comment->posted) && (!$art || $forum->posted > $art->posted) && (!$round || $forum->posted > $round->posted)) {
+    } elseif($forum && (!$comment || $forum->posted > $comment->posted) && (!$round || $forum->posted > $round->posted)) {
       ShowForum($forum);
       $forum = $forums->fetch_object();
     } elseif($comment && (!$round || $comment->posted > $round->posted)) {
       ShowContribution($comment);
       $comment = $comments->fetch_object();
-    } elseif($art && (!$round || $art->posted > $round->posted)) {
-      ShowArt($art);
-      $art = $arts->fetch_object();
     } elseif($round) {
       ShowRound($round);
       $round = $rounds->fetch_object();
@@ -151,25 +146,6 @@
         <div>
           <h2><a href="<?php echo $forum->url; ?>"><?php echo $forum->title; ?></a> by <?php echo AuthorLink($forum); ?></h2>
           <?php echo $forum->preview; ?>
-        </div>
-      </article>
-<?php
-  }
-
-  function ShowArt($art) {
-    if($art->type == 'digital')
-      $art->type = 'digital art';
-    if(!$art->title)
-      $art->title = str_replace('-', ' ', $art->id);
-?>
-      <article class="activity art">
-        <div class=whatwhen title="<?php echo $art->type; ?> at <?php echo t7format::LocalDate(LONGDATEFMT, $art->posted); ?>">
-          <time datetime="<?php echo gmdate('c', $art->posted); ?>"><?php echo t7format::SmartDate($art->posted); ?></time>
-        </div>
-        <div>
-          <h2><a href="/output/gfx/sketch.php#<?php echo $art->id; ?>"><?php echo $art->title; ?></a> by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></h2>
-          <p><a href="/output/gfx/sketch.php#<?php echo $art->id; ?>"><img class=photothumb src="/output/gfx/<?php echo $art->id; ?>-prev.png" alt=""></a></p>
-          <p class=readmore><a href="/output/gfx/sketch.php#<?php echo $art->id; ?>">⇨  see larger</a></p>
         </div>
       </article>
 <?php

@@ -1280,10 +1280,13 @@ ol.gallery a.thumb img {
   display: block;
   border-radius: .25em;
 }
-ol.gallery a.photo.thumb img{
+ol.gallery a.photo.thumb img {
   padding: 7px;
   margin: 0 auto;
   border-radius: 9px;
+}
+ol.gallery a.art.thumb img {
+  box-shadow: 2px 2px 3px #777;
 }
 ol.gallery a.thumb .caption {
   display: block;

@@ -27,7 +27,7 @@
         <li><a href="/bln/feed.rss">bln entries</a></li>
         <li><a href="/album/feed.rss">album photos</a></li>
         <li><a href="/guides/feed.rss">guides</a></li>
-        <li><a href="art.rss">art</a></li>
+        <li><a href="/art/feed.rss">art</a></li>
         <li><a href="rounds.rss">disc golf rounds</a></li>
       </ul>
 <?

@@ -20,6 +20,10 @@ RewriteCond %{REQUEST_URI} ^feeds/
 RewriteRule ^feeds/entries.rss /bln/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^feeds/
 RewriteRule ^feeds/guides.rss /guides/feed.rss [R=301]
+RewriteCond %{REQUEST_URI} ^feeds/
+RewriteRule ^feeds/photos.rss /album/feed.rss [R=301]
+RewriteCond %{REQUEST_URI} ^feeds/
+RewriteRule ^feeds/art.rss /art/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^output/
 RewriteRule ^output/pen/bln/(.*) /bln/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^pen/
