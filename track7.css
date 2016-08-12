@@ -1286,7 +1286,8 @@ ol.gallery a.photo.thumb img {
   border-radius: 9px;
 }
 ol.gallery a.art.thumb img {
-  box-shadow: 2px 2px 3px #777;
+  -webkit-filter:drop-shadow(2px 2px 1px #777);
+  filter:drop-shadow(2px 2px 1px #777);
 }
 ol.gallery a.thumb .caption {
   display: block;
