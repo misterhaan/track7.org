@@ -4,6 +4,7 @@
   define('TR_GUIDES', 3);
   define('TR_MESSAGES', 4);
   define('TR_PHOTOS', 5);
+  define('TR_ART', 6);
   require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
   $db->real_query('create table if not exists transition_status ('
@@ -21,6 +22,7 @@
   initStatus(TR_GUIDES);
   initStatus(TR_MESSAGES);
   initStatus(TR_PHOTOS);
+  initStatus(TR_ART);
 
   $html = new t7html([]);
   $html->Open('database transitions');
@@ -39,6 +41,7 @@
           <tr><td><a href="guides.php">guides</a></td><td><?php echo $status[TR_GUIDES]->stepnum; ?></td><td><?php echo $status[TR_GUIDES]->status; ?></td></tr>
           <tr><td><a href="messages.php">messages</a></td><td><?php echo $status[TR_MESSAGES]->stepnum; ?></td><td><?php echo $status[TR_MESSAGES]->status; ?></td></tr>
           <tr><td><a href="photos.php">photos</a></td><td><?php echo $status[TR_PHOTOS]->stepnum; ?></td><td><?php echo $status[TR_PHOTOS]->status; ?></td></tr>
+          <tr><td><a href="art.php">art</a></td><td><?php echo $status[TR_ART]->stepnum; ?></td><td><?php echo $status[TR_ART]->status; ?></td></tr>
         </tbody>
       </table>
 <?php

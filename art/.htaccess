@@ -4,3 +4,6 @@ RedirectPermanent lego.php http://www.track7.org/art/lego/
 RewriteEngine On
 RewriteOptions inherit
 RewriteRule ^cd/([a-z]+)\.php$ compilations.php?cd=$1
+RewriteRule ^([^\/\.]+)/$ index.php?tag=$1
+RewriteRule ^([^\/\.]+)$ art.php?art=$1
+RewriteRule ^([^\/\.]+)/([^\/\.]+)$ art.php?tag=$1&art=$2
