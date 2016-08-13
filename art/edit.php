@@ -132,8 +132,10 @@
                   $q = 'art set title=\'' . $db->escape_string($art->title) . '\', url=\'' . $db->escape_string(trim($art->url)) . '\', ' . ($art->art ? 'format=(select id from image_formats where ext=\'' . $ext . '\'), ' : '') . 'descmd=\'' . $db->escape_string(trim($art->descmd)) . '\', deschtml=\'' . $db->escape_string(t7format::Markdown(trim($art->descmd))) . '\'';
                   $q = $art->id ? 'update ' . $q . ' where id=\'' . +$art->id . '\' limit 1' : 'insert into ' . $q . ', posted=\'' . +time() . '\'';
                   if($db->real_query($q)) {
-                    if(!$art->id)
+                    if(!$art->id) {
                       $art->id = $db->insert_id;
+                      t7send::Tweet('new art: ' . $art->title, 'http://' . $_SERVER['HTTP_HOST'] . '/art/' . $art->url);
+                    }
                     $addtags = array_diff($art->taglist, $art->originalTaglist);
                     if(count($addtags)) {
                       $qat = $db->prepare('insert into art_tags (name) values (?) on duplicate key update id=id');

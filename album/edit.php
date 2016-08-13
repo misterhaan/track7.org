@@ -114,8 +114,10 @@
                   $q = 'photos set caption=\'' . $db->escape_string($photo->caption) . '\', url=\'' . $db->escape_string(trim($photo->url)) . '\', youtube=\'' . ($photo->youtube ? $db->escape_string(trim($photo->youtube)) : '') . '\', storymd=\'' . $db->escape_string(trim($photo->storymd)) . '\', story=\'' . $db->escape_string(t7format::Markdown(trim($photo->storymd))) . '\', taken=' . ($photo->taken ? '\'' . +$photo->taken . '\'' : 'null') . ', year=' . +$photo->year;
                   $q = $photo->id ? 'update ' . $q . ' where id=\'' . +$photo->id . '\' limit 1' : 'insert into ' . $q . ', posted=\'' . +time() . '\'';
                   if($db->real_query($q)) {
-                    if(!$photo->id)
+                    if(!$photo->id) {
                       $photo->id = $db->insert_id;
+                      t7send::Tweet(($photo->youtube ? 'new video: ' : 'new photo: ') . $photo->caption, 'http://' . $_SERVER['HTTP_HOST'] . '/album/' . $photo->url);
+                    }
                     $addtags = array_diff($photo->taglist, $photo->originalTaglist);
                     if(count($addtags)) {
                       $qat = $db->prepare('insert into photos_tags (name) values (?) on duplicate key update id=id');
