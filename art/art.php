@@ -105,20 +105,20 @@
     }
     if($tag) {
 ?>
-        <a class=tag title="see all photos posted in <?php echo $tag->name; ?>" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . '/' . $tag->name . '/'; ?>"><?php echo $tag->name; ?></a>
+        <a class=tag title="see all art posted in <?php echo $tag->name; ?>" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . '/' . $tag->name . '/'; ?>"><?php echo $tag->name; ?></a>
 <?php
     } else {
 ?>
-        <a class=gallery title="see all photos" href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">everything</a>
+        <a class=gallery title="see all art" href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">everything</a>
 <?php
     }
     if($prev) {
 ?>
-        <a class=next title="see the photo posted before this<?php if($tag) echo ' in ' . $tag->name; ?>" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . ($tag ? '/' . $tag->name . '/' : '/') . $prev->url; ?>"><?php echo htmlspecialchars($prev->title); ?></a>
+        <a class=next title="see the art posted before this<?php if($tag) echo ' in ' . $tag->name; ?>" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . ($tag ? '/' . $tag->name . '/' : '/') . $prev->url; ?>"><?php echo htmlspecialchars($prev->title); ?></a>
 <?php
     }
 ?>
       </nav>
 <?php
   }
-  ?>
+?>

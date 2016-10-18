@@ -12,7 +12,7 @@
     }
     header('HTTP/1.0 404 Not Found');
     $html = new t7html([]);
-    $html->Open('art not found - blog');
+    $html->Open('art not found');
 ?>
       <h1>404 art not found</h1>
 
@@ -194,7 +194,7 @@
         <label title="upload the art" data-bind="visible: !art()">
           <span class=label>art:</span>
           <span class=field>
-            <input type=file accept="image/jpeg, image/jpg, image/png" data-bind="event: {change: CacheArt}">
+            <input type=file accept=".jpg, .jpeg, .png, image/jpeg, image/jpg, image/png" data-bind="event: {change: CacheArt}">
           </span>
         </label>
         <label class=multiline title="the art" data-bind="visible: art()">

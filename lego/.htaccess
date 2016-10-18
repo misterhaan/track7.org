@@ -1,0 +1,5 @@
+Options -Multiviews
+RewriteEngine On
+RewriteOptions inherit
+RewriteBase /lego/
+RewriteRule ^([^/\.]+)$ model.php?model=$1

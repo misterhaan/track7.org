@@ -14,72 +14,74 @@ RewriteRule \.snapshot/ - [F]
 RewriteRule etc/ - [F]
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
-RewriteCond %{REQUEST_URI} ^feeds/
+RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/unifeed.rss /feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^feeds/
+RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/entries.rss /bln/feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^feeds/
+RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/guides.rss /guides/feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^feeds/
+RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/photos.rss /album/feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^feeds/
+RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/art.rss /art/feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^output/
+RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/pen/bln/(.*) /bln/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^pen/
+RewriteCond %{REQUEST_URI} ^/?pen/
 RewriteRule ^pen/bln/(.*) /bln/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^output/
+RewriteCond %{REQUEST_URI} ^/?art/
+RewriteRule ^art/lego/(.*) /lego/$1 [R=301]
+RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/gfx/album/(.*) /album/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^output/
+RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/album/(.*) /album/ [R=301]
-RewriteCond %{REQUEST_URI} ^output/
-RewriteRule ^output/lego.php /art/lego/ [R=301]
-RewriteCond %{REQUEST_URI} ^geek/
+RewriteCond %{REQUEST_URI} ^/?output/
+RewriteRule ^output/lego.php /lego/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?geek/
 RewriteRule ^geek/guides/(.*) /guides/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^geek/
+RewriteCond %{REQUEST_URI} ^/?geek/
 RewriteRule ^geek/discgolf/(.*) /discgolf/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^output/
+RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/pen/(.*) /pen/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^output/
+RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/gfx/(.*) /art/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^output/
+RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/(.*) /art/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^geek/
+RewriteCond %{REQUEST_URI} ^/?geek/
 RewriteRule ^geek/hits/(.*) /hits/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^track7\.php
+RewriteCond %{REQUEST_URI} ^/?track7\.php
 RewriteRule ^track7.php / [R=301]
-RewriteCond %{REQUEST_URI} ^ready
+RewriteCond %{REQUEST_URI} ^/?ready
 RewriteRule ^ready.shtml /pen/theory/ready.php [R=301]
-RewriteCond %{REQUEST_URI} ^ready
+RewriteCond %{REQUEST_URI} ^/?ready
 RewriteRule ^ready.html /pen/theory/ready.php [R=301]
-RewriteCond %{REQUEST_URI} ^news/
+RewriteCond %{REQUEST_URI} ^/?news/
 RewriteRule ^news/ready.php /pen/theory/ready.php [R=301]
-RewriteCond %{REQUEST_URI} ^oldguest
+RewriteCond %{REQUEST_URI} ^/?oldguest
 RewriteRule ^oldguestbook.php /gb-view.php [R=301]
-RewriteCond %{REQUEST_URI} ^news/
+RewriteCond %{REQUEST_URI} ^/?news/
 RewriteRule ^news/linz.php /art/linz.php [R=301]
-RewriteCond %{REQUEST_URI} ^news/
+RewriteCond %{REQUEST_URI} ^/?news/
 RewriteRule ^news/nazi.php /art/nazi.php [R=301]
-RewriteCond %{REQUEST_URI} ^news/
+RewriteCond %{REQUEST_URI} ^/?news/
 RewriteRule ^news/pentium4.php /pen/theory/pentium4.php [R=301]
-RewriteCond %{REQUEST_URI} ^user/
+RewriteCond %{REQUEST_URI} ^/?user/
 RewriteRule ^user/profile.php /user/editprofile.php [R=301]
-RewriteCond %{REQUEST_URI} ^shop/
+RewriteCond %{REQUEST_URI} ^/?shop/
 RewriteRule ^shop/ /art/shop/ [R=301]
-RewriteCond %{REQUEST_URI} ^av/
-RewriteRule ^av/lego.php /art/lego/ [R=301]
-RewriteCond %{REQUEST_URI} ^av/
+RewriteCond %{REQUEST_URI} ^/?av/
+RewriteRule ^av/lego.php /lego/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?av/
 RewriteRule ^av/(.*) /art/$1 [R=301]
 
-RewriteCond %{REQUEST_URI} ^source/
+RewriteCond %{REQUEST_URI} ^/?source/
 RewriteRule ^source/([a-z0-9/\-]+\.(php|css|js))$ https://github.com/misterhaan/track7.org/blob/master/$1
-RewriteCond %{REQUEST_URI} ^files/
+RewriteCond %{REQUEST_URI} ^/?files/
 RewriteRule ^files/(.+\.(zip|wsz|xpi|msi|cab))$ /download.php?file=$1
-RewriteCond %{REQUEST_URI} ^robots
+RewriteCond %{REQUEST_URI} ^/?robots
 RewriteRule ^robots.txt /robots.php
-RewriteCond %{REQUEST_URI} ^oi
+RewriteCond %{REQUEST_URI} ^/?oi
 RewriteRule ^oi/f[0-9]+/t([0-9]+) /hb/thread$1/ [R=301]
-RewriteCond %{REQUEST_URI} ^oi
+RewriteCond %{REQUEST_URI} ^/?oi
 RewriteRule ^oi /hb [R=301]
 
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -473,6 +473,10 @@ a.action.addfriend:before {
 a.action.removefriend:before {
   content: "\f235";
 }
+.actions a.download:before,
+a.action.download:before {
+  content: "\f019";
+}
 @media (min-width: 25em) {
   .actions {
     border-radius: .25em;
@@ -1187,6 +1191,9 @@ article.activity.guide .whatwhen {
 article.activity.art .whatwhen {
   background-image: url(/images/storytype/art.png);
 }
+article.activity.lego .whatwhen {
+  background-image: url(/images/storytype/art.png);
+}
 article.activity.round .whatwhen {
   background-image: url(/images/storytype/round.png);
 }
@@ -1285,9 +1292,10 @@ ol.gallery a.photo.thumb img {
   margin: 0 auto;
   border-radius: 9px;
 }
-ol.gallery a.art.thumb img {
-  -webkit-filter:drop-shadow(2px 2px 1px #777);
-  filter:drop-shadow(2px 2px 1px #777);
+ol.gallery a.art.thumb img,
+ol.gallery a.lego.thumb img {
+  -webkit-filter: drop-shadow(2px 2px 1px #777);
+  filter: drop-shadow(2px 2px 1px #777);
 }
 ol.gallery a.thumb .caption {
   display: block;
@@ -1423,6 +1431,32 @@ ol.toc li.selected:after {
   font-size: .8em;
   margin-left: .5em;
   content: "\f177";
+}
+
+/*--------------------------------------------------------[ /lego/edit.php ]--*/
+@media (min-width: 40em) {
+  #editlego span.label {
+    -webkit-flex: 0 0 6em;
+    flex: 0 0 6em;
+  }
+  #editlego button {
+    margin: .75em 1em .75em 7em;
+  }
+}
+
+/*-------------------------------------------------------[ /lego/model.php ]--*/
+img.lego {
+  max-width: 100%;
+  border-radius: .25em;
+  display: block;
+  margin: 0 auto;
+  -webkit-filter:drop-shadow(4px 4px 2px #777);
+  filter:drop-shadow(4px 4px 2px #777);
+}
+
+p.actions.image {
+  display: table;
+  margin: .75em auto;
 }
 
 /*-------------------------------------------------------[ /user/index.php ]--*/
