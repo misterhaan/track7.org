@@ -26,8 +26,8 @@
             <img src="/discgolf/favicon.png" alt="">
             disc golf
           </a>
-          <a href="/art/lego/" title="download instructions for custom lego models">
-            <img src="/art/lego/favicon.png" alt="">
+          <a href="/lego/" title="download instructions for custom lego models">
+            <img src="/lego/favicon.png" alt="">
             lego models
           </a>
           <a href="/art/" title="see sketches and digital artwork">

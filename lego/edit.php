@@ -69,8 +69,11 @@
                         imagecopyresampled($fullsize, $image, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
                         imagepng($fullsize, dirname($_SERVER['SCRIPT_FILENAME']) . '/data/' . $lego->url . '.png');
                         imagedestroy($fullsize);
-                      } else
+                      } else {
+                        imagealphablending($image, false);
+                        imagesavealpha($image, true);
                         imagepng($image, dirname($_SERVER['SCRIPT_FILENAME']) . '/data/' . $lego->url . '.png');
+                      }
                       if($aspect > 1) {
                         $w = MAX_THUMB_SIZE;
                         $h = round(MAX_THUMB_SIZE / $aspect);
