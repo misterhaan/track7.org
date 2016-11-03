@@ -11,8 +11,8 @@
   require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/.t7keys.php';
 
   $db = new mysqli(t7keysDB::HOST, t7keysDB::USER, t7keysDB::PASS, t7keysDB::NAME);
-  $db->real_query('set names \'utf8\'');
-  $db->set_charset('utf8');
+  $db->real_query('set names \'utf8mb4\'');
+  $db->set_charset('utf8mb4');
 
   $user = new t7user();
 
