@@ -34,12 +34,12 @@
         if($stories = $db->query('select id, url from stories where storyhtml=\'\' limit ' . MAX_HTML))
           if($stories->num_rows) {
             $id = false;
-            $html = false;
+            $storyhtml = false;
             $import = $db->prepare('update stories set storyhtml=? where id=? limit 1');
-            $import->bind_param('si', $html, $id);
+            $import->bind_param('si', $storyhtml, $id);
             while($story = $stories->fetch_object()) {
               $id = $story->id;
-              $html = str_replace(['&nbsp;', '&eacute;'], [' ', 'é'], file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/pen/' . $story->url . '.html'));
+              $storyhtml = str_replace(['&nbsp;', '&eacute;'], [' ', 'é'], file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/pen/' . $story->url . '.html'));
               $import->execute();
             }
             $import->close();
