@@ -9,7 +9,7 @@
         $legoq = 'select url, title, posted from lego_models';
         if(isset($_GET['before']) && +$_GET['before'])
           $legoq .= ' where posted<\'' . +$_GET['before'] . '\'';
-          $legoq .= ' order by posted desc, id desc limit ' . MAX_LEGO;
+        $legoq .= ' order by posted desc, id desc limit ' . MAX_LEGO;
         $ajax->Data->legos = [];
         if($legos = $db->query($legoq))
           while($lego = $legos->fetch_object()) {

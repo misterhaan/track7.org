@@ -21,8 +21,7 @@ function vm() {
         for(var l = 0; l < result.legos.length; l++)
           self.legos.push(result.legos[l]);
         self.hasMoreLegos(result.hasMore);
-      }
-      else
+      } else
         self.errors.push(result.message);
       self.loadingLegos(false);
     });

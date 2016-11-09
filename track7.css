@@ -1458,6 +1458,29 @@ p.actions.image {
   margin: .75em auto;
 }
 
+/*--------------------------------------------------------[ /pen/index.php ]--*/
+.series h2:before {
+  font-family: fontawesome;
+  font-weight: normal;
+  font-size: .8em;
+  color: #998;
+  margin-right: .325em;
+  display: inline-block;
+  content: "\f0c5";
+}
+p.story {
+  text-indent: 2em;
+  margin: 0 .5em;
+}
+@media (min-width: 25em) {
+  p.story {
+    margin: 0 1em;
+  }
+}
+.indent {
+  text-indent: 2em;
+}
+
 /*-------------------------------------------------------[ /user/index.php ]--*/
 a.profile {
   display: -webkit-flex;
