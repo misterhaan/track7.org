@@ -1,4 +1,8 @@
 RewriteEngine on
 RewriteOptions inherit
-RewriteRule ^[^/]+/(.+)\.php$ story.php?id=$1
-RewriteRule ^(.*)\.html$ story.php?id=$1
+RewriteRule ^([^/]+)/([^/\.]+)$ story.php?story=$2&series=$1
+RewriteRule ^([^/\.]+)$ story.php?story=$1
+RewriteRule ^([^/]+)/$ series.php?series=$1
+
+RewriteRule ^[^/]+/(.+)\.php$ story.php?story=$1
+RewriteRule ^(.*)\.html$ story.php?story=$1
