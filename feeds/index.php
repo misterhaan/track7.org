@@ -1,14 +1,5 @@
 <?
   require_once  dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->AddFeed('track7', '/feed.rss');
-  $page->AddFeed('track7 site updates', '/feeds/updates.rss');
-  $page->AddFeed('track7 forum posts', '/feeds/posts.rss');
-  $page->AddFeed('track7 page comments', '/feeds/comments.rss');
-  $page->AddFeed('track7 bln entries', '/bln/feed.rss');
-  $page->AddFeed('track7 album photos', '/album/feed.rss');
-  $page->AddFeed('track7 guides', '/guides/feed.rss');
-  $page->AddFeed('track7 art', '/feeds/art.rss');
-  $page->AddFeed('track7 disc golf rounds', '/feeds/rounds.rss');
   $page->Start('feeds');
 ?>
       <p>
@@ -22,13 +13,15 @@
       <ul class="feeds">
         <li><a href="/feed.rss">unifeed</a> (contains everything listed below)</li>
         <li><a href="updates.rss">site updates</a></li>
-        <li><a href="posts.rss">forum posts</a></li>
         <li><a href="comments.rss">page comments</a></li>
         <li><a href="/bln/feed.rss">bln entries</a></li>
         <li><a href="/album/feed.rss">album photos</a></li>
         <li><a href="/guides/feed.rss">guides</a></li>
-        <li><a href="/art/feed.rss">art</a></li>
         <li><a href="rounds.rss">disc golf rounds</a></li>
+        <li><a href="/lego/feed.rss">lego models</a></li>
+        <li><a href="/art/feed.rss">art</a></li>
+        <li><a href="/pen/feed.rss">stories</a></li>
+        <li><a href="posts.rss">forum posts</a></li>
       </ul>
 <?
   $page->End();

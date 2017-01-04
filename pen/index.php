@@ -25,7 +25,10 @@
   $html = new t7html(['ko' => true]);
   $html->Open('stories');
 ?>
-      <h1>stories</h1>
+      <h1>
+        stories
+        <a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of stories"><img alt=feed src="/images/feed.png"></a>
+      </h1>
 
       <p>
         one of the things i did to pass the time at school was write stories.
