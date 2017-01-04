@@ -3,7 +3,10 @@
   $html = new t7html([]);
   $html->Open('applications');
 ?>
-      <h1>applications</h1>
+      <h1>
+        applications
+        <a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of application releases"><img alt=feed src="/images/feed.png"></a>
+      </h1>
 <?php
   if($user->IsAdmin()) {
 ?>
