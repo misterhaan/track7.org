@@ -43,9 +43,11 @@
                       $ins .= '\', bin32url=\'' . $db->escape_string($_POST['bin32url']);
                     $ins .= '\', srcurl=\'' . $db->escape_string($_POST['srcurl']) . '\'';
                     $ajax->Data->query = $ins;
-                    if($db->real_query($ins))
+                    if($db->real_query($ins)) {
                       $ajax->Data->url = $app->url;
-                    else
+                      if(time() - $released < 604800)  // within the last week
+                        t7send::Tweet($app->url . ' v' . $_POST['version'] . ' released', 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $app->url);
+                    } else
                       $ajax->Fail('error saving release to database.');
                   } else
                     $ajax->Fail('unable to save source code.');
