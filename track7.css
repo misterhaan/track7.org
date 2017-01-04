@@ -414,6 +414,8 @@ a.action {
   background-color: #ccc;
   border-radius: .25em;
   padding: .125em .5em;
+  display: inline-block;
+  white-space: nowrap;
 }
 .actions a:before,
 a.action:before {
@@ -477,6 +479,31 @@ a.action.removefriend:before {
 a.action.download:before {
   content: "\f019";
 }
+.actions a.list:before,
+a.action.list:before {
+  content: "\f03a";
+}
+.actions a.msi:before,
+a.action.msi:before {
+  content: "\f019";
+}
+.actions a.zip:before,
+a.action.zip:before {
+  content: "\f187";
+}
+.actions a.github:before,
+a.action.github:before {
+  content: "\f09b";
+}
+.actions a.documentation:before,
+a.action.documentation:before {
+  content: "\f02d";
+}
+.actions a.link:before,
+a.action.link:before {
+  content: "\f08e";
+}
+
 @media (min-width: 25em) {
   .actions {
     border-radius: .25em;
@@ -1193,6 +1220,9 @@ article.activity.art .whatwhen {
 article.activity.lego .whatwhen {
   background-image: url(/images/storytype/art.png);
 }
+article.activity.code .whatwhen {
+  background-image: url(/images/storytype/code.png);
+}
 article.activity.round .whatwhen {
   background-image: url(/images/storytype/round.png);
 }
@@ -1385,6 +1415,119 @@ img.art.preview {
   }
   #editentry button {
     margin: .75em 1em .75em 4em;
+  }
+}
+
+/*-------------------------------------------------------[ /code/index.php ]--*/
+#codetypes section {
+  margin-top: 1em;
+  background-color: #ccc;
+  padding-bottom: .0125em;
+}
+#codetypes h2 {
+  text-align: center;
+  margin: 0;
+}
+#codetypes h2 a {
+  display: block;
+  font-weight: normal;
+  background-color: #abc;
+  color: #000;
+  padding: .125em .25em .25em;
+}
+#codetypes h2:after {
+  font-family: fontawesome;
+  font-weight: normal;
+  font-size: 3em;
+  text-decoration: none;
+  color: #776;
+  display: block;
+  line-height: 1em;
+  margin-top: .25em;
+}
+section#codevs h2:after {
+  content: "\f108";
+}
+section#codescr h2:after {
+  content: "\f121";
+}
+section#codeti h2:after {
+  content: "\f1ec";
+}
+section#codemzx h2:after {
+  content: "\f118";
+}
+
+@media (min-width: 25em) {
+  #codetypes section {
+    border-radius: .25em;
+  }
+  #codetypes section h2 a {
+    border-radius: .25em .25em 0 0;
+  }
+}
+
+@media (min-width: 40em) {
+  nav#codetypes {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-justify-content: center;
+    justify-content: center;
+    margin: 0 .5em 1em;
+  }
+  nav#codetypes section {
+    width: calc(50% - 1em);
+    margin: 1em .5em 0;
+  }
+}
+
+@media(min-width: 57em) {
+  nav#codetypes section {
+    width: calc(33.333333% - 1em);
+  }
+}
+@media(min-width: 76em) {
+  nav#codetypes section {
+    width: calc(25% - 1em);
+  }
+}
+
+/*---------------------------------------------------[ /code/vs/addrel.php ]--*/
+@media (min-width: 40em) {
+  #addrel span.label {
+    -webkit-flex: 0 0 4.75em;
+    flex: 0 0 4.75em;
+  }
+  #addrel button {
+    margin: .75em 1em .75em 5.75em;
+  }
+}
+
+/*----------------------------------------------[ /code/vs/application.php ]--*/
+img.icon {
+  vertical-align: middle;
+  margin-right: .125em;
+}
+
+.downloads {
+  text-align: left;
+  margin: 0 1em;
+}
+.downloads a.action {
+  margin: 0 .375em .75em;
+}
+
+
+/*--------------------------------------------------[ /code/vs/editapp.php ]--*/
+@media (min-width: 40em) {
+  #editapp span.label {
+    -webkit-flex: 0 0 5.5em;
+    flex: 0 0 5.5em;
+  }
+  #editapp button {
+    margin: .75em 1em .75em 6.5em;
   }
 }
 

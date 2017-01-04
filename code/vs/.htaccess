@@ -1,0 +1,7 @@
+RewriteEngine on
+RewriteOptions inherit
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\/]+)$ application.php?url=$1
