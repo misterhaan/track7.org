@@ -28,7 +28,6 @@
             if(isset($_GET['before']) && +$_GET['before'])
               $ms .= '\' and sent<\'' . +$_GET['before'];
             $ms .= '\' order by m.sent desc limit 4) as m order by sent';
-            $ajax->Data->query = $ms;
             if($ms = $db->query($ms)) {
               $ajax->Data->messages = [];
               $firstsent = false;
