@@ -445,13 +445,14 @@
         case 'art':
         case 'lego':
         case 'stories':
+        case 'code_vs':
           if(isset($req[$field2]))
             return true;
           else
             $ajax->Fail($field2 . ' is required');
           break;
         default:
-          $ajax->Fail('invalid comment type specified.  valid types are:  blog, guide, photos, art, lego, stories.');
+          $ajax->Fail('invalid comment type specified.  valid types are:  blog, guide, photos, art, lego, stories, code_vs.');
           break;
       }
     else
@@ -467,6 +468,8 @@
         return 'photo';
       case 'stories':
         return 'story';
+      case 'code_vs':
+        return 'application';
       default:
         return $type;
     }

@@ -20,7 +20,7 @@
     die;
   }
 
-  $html = new t7html([]);
+  $html = new t7html(['ko' => true]);
   $html->Open(htmlspecialchars($app->name));
 ?>
       <h1>
@@ -86,6 +86,7 @@
       </article>
 <?php
     }
+  $html->ShowComments('application', 'code_vs', $app->id);
   $html->Close();
 
   function GetName($url, $version, $bits = 0) {

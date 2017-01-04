@@ -206,6 +206,8 @@
       case 'guide':
         return 'posted guide';
     }
+    if(substr($type, -1) == 'e')
+      return $type . 'd';
     return $type . 'ed';
   }
 
