@@ -78,15 +78,15 @@
         <input type=hidden name=app value=<?php echo $app->id; ?>>
         <label>
           <span class=label>version:</span>
-          <span class=field><input id=version name=version maxlength=10 pattern="[0-9]+\.[0-9]+\.[0-9]+" required></span>
+          <span class=field><input name=version maxlength=10 pattern="[0-9]+\.[0-9]+\.[0-9]+" required></span>
         </label>
         <label>
           <span class=label>date:</span>
-          <span class=field><input id=released name=released></span>
+          <span class=field><input name=released></span>
         </label>
         <label>
           <span class=label>language:</span>
-          <span class=field><select id=language name=language>
+          <span class=field><select name=language>
 <?php
         if($langs = $db->query('select id, name from code_vs_lang order by name'))
           while($lang = $langs->fetch_object()) {
@@ -99,7 +99,7 @@
         </label>
         <label>
           <span class=label>.net:</span>
-          <span class=field><select id=dotnet name=dotnet>
+          <span class=field><select name=dotnet>
 <?php
         if($dotnets = $db->query('select id, version from code_vs_dotnet order by id desc'))
           while($dotnet = $dotnets->fetch_object()) {
@@ -113,7 +113,7 @@
         </label>
         <label>
           <span class=label>studio:</span>
-          <span class=field><select id=studio name=studio>
+          <span class=field><select name=studio>
 <?php
         if($studios = $db->query('select version, name from code_vs_studio order by version desc'))
           while($studio = $studios->fetch_object()) {
@@ -126,27 +126,27 @@
         </label>
         <label>
           <span class=label>bin url:</span>
-          <span class=field><input id=binurl name=binurl maxlength=128></span>
+          <span class=field><input name=binurl maxlength=128></span>
         </label>
         <label>
           <span class=label>binary:</span>
-          <span class=field><input type=file id=binfile name=binfile></span>
+          <span class=field><input type=file name=binfile></span>
         </label>
         <label>
           <span class=label>bin32 url:</span>
-          <span class=field><input id=bin32url name=bin32url maxlength=128></span>
+          <span class=field><input name=bin32url maxlength=128></span>
         </label>
         <label>
           <span class=label>binary32:</span>
-          <span class=field><input type=file id=bin32file name=bin32file></span>
+          <span class=field><input type=file name=bin32file></span>
         </label>
         <label>
           <span class=label>src url:</span>
-          <span class=field><input id=srcurl name=srcurl maxlength=128></span>
+          <span class=field><input name=srcurl maxlength=128></span>
         </label>
         <label>
           <span class=label>source:</span>
-          <span class=field><input type=file id=srcfile name=srcfile></span>
+          <span class=field><input type=file name=srcfile></span>
         </label>
         <button id=save>save</button>
       </form>
@@ -174,7 +174,7 @@
     }
     $filename .= '.' . strtolower(GetExtension($_FILES[$type . 'file']['name']));
     if(move_uploaded_file($_FILES[$type . 'file']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['PHP_SELF']) . '/files/' . $filename))
-      return $filename;
+      return 'files/' . $filename;
     return false;
   }
 
