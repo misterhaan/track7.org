@@ -36,13 +36,12 @@ function CacheFile() {
 
 function SaveApp() {
   // TODO:  clear general error message
-  $.post("editapp.php?ajax=save", { id: $("#editapp").data("appid"), name: $("#name").val(), url: $("#url").val(), desc: $("#desc").val(), icon: $("#icon")[0].cachedFile, github: $("#github").val(), wiki: $("#wiki").val()}, function(data, status, xhr) {
-    var result = $.parseJSON(xhr.responseText);
+  $.post("editapp.php?ajax=save", { id: $("#editapp").data("appid"), name: $("#name").val(), url: $("#url").val(), desc: $("#desc").val(), icon: $("#icon")[0].cachedFile, github: $("#github").val(), wiki: $("#wiki").val()}, function(result) {
     if(!result.fail)
       window.location.href = result.url;
     else {
       // TODO:  highlight problematic fields or show general error message
     }
-  });
+  }, "json");
   return false;
 }
