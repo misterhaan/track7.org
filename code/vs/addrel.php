@@ -41,7 +41,7 @@
                     $ins .= '\', studio=\'' . +$_POST['studio'] . '\', binurl=\'' . $db->escape_string($_POST['binurl']);
                     if(isset($_POST['bin32url']) && $_POST['bin32url'])
                       $ins .= '\', bin32url=\'' . $db->escape_string($_POST['bin32url']);
-                    $ins .= '\', srcurl=\'' . $db->escape_string($_POST['srcurl']) . '\'';
+                    $ins .= '\', srcurl=\'' . $db->escape_string($_POST['srcurl']) . '\', changelog=\'' . $db->escape_string(t7format::Markdown($_POST['changelog'])) . '\'';
                     $ajax->Data->query = $ins;
                     if($db->real_query($ins)) {
                       $ajax->Data->url = $app->url;
@@ -147,6 +147,10 @@
         <label>
           <span class=label>source:</span>
           <span class=field><input type=file name=srcfile></span>
+        </label>
+        <label class=multiline>
+          <span class=label>changes:</span>
+          <span class=field><textarea name=changelog></textarea></span>
         </label>
         <button id=save>save</button>
       </form>
