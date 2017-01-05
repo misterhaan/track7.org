@@ -36,10 +36,10 @@
 ?>
         <article>
           <header>
-            <h2>
+            <h2><a href="<?php echo $app->url; ?>">
               <img class=icon src="files/<?php echo $app->url; ?>.png" alt="">
               <?php echo htmlspecialchars($app->name); ?>
-            </h2>
+            </a></h2>
             <p class=guidemeta>
               <span class=version title="latest version <?php echo $app->version; ?>">v<?php echo $app->version; ?></span>
               <time class=posted title="latest release <?php echo $app->released->title; ?>" datetime="<?php echo $app->released->datetime; ?>"><?php echo $app->released->display; ?></time>
