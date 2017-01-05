@@ -25,7 +25,7 @@
         subversion, and zip files before that.
       </p>
 <?php
-  if($apps = $db->query('select a.url, a.name, a.deschtml, r.version, r.released, r.binurl, r.bin32url from code_vs_applications as a left join (select * from (select application, concat(major, \'.\', minor, \'.\', revision) as version, released, binurl, bin32url from code_vs_releases order by released desc) as rls) as r on r.application=a.id where r.application is not null group by a.id order by released desc')) {
+  if($apps = $db->query('select a.url, a.name, a.deschtml, r.version, r.released, r.binurl, r.bin32url from code_vs_applications as a left join (select * from (select application, concat(major, \'.\', minor, \'.\', revision) as version, released, binurl, bin32url from code_vs_releases order by application, released desc) as rls) as r on r.application=a.id where r.application is not null group by a.id order by released desc')) {
     $is64 = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'x86_64';
     $is64 = stripos($is64, 'x86_64') !== false || stripos($is64, 'x86-64') !== false || stripos($is64, 'win64') !== false || stripos($is64, 'x64;') !== false || stripos($is64, 'amd64') !== false || stripos($is64, 'wow64') !== false || stripos($is64, 'x64_64') !== false;
 ?>
