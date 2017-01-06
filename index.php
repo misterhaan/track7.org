@@ -38,8 +38,8 @@
             <img src="/pen/favicon.png" alt="">
             stories
           </a>
-          <a href="/analogu/" title="download free software with source code">
-            <img src="/analogu/favicon.png" alt="">
+          <a href="/code/" title="download free software with source code">
+            <img src="/code/favicon.png" alt="">
             software
           </a>
           <a href="/hb/" title="join or start conversations">

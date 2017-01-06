@@ -21,6 +21,7 @@
         <li><a href="/lego/feed.rss">lego models</a></li>
         <li><a href="/art/feed.rss">art</a></li>
         <li><a href="/pen/feed.rss">stories</a></li>
+        <li><a href="/code/vs/feed.rss">application releases</a></li>
         <li><a href="posts.rss">forum posts</a></li>
       </ul>
 <?
