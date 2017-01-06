@@ -10,6 +10,7 @@ create table blog_entries (
   posted int not null comment 'unix timestamp when the entry was published or last time the draft was saved',
   key (posted),
   title varchar(128) not null comment 'display title',
+  markdown text not null default '' comment 'markdown version of content, for editing',
   content text not null
 );
 

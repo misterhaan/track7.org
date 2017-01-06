@@ -28,11 +28,11 @@
     switch($_GET['ajax']) {
       case 'get':
         if(isset($_GET['id']) && $_GET['id']) {
-          if($entry = $db->query('select url, title, content from blog_entries where id=\'' . +$_GET['id'] . '\' limit 1')) {
+          if($entry = $db->query('select url, title, coalesce(nullif(markdown, \'\'),content) as markdown from blog_entries where id=\'' . +$_GET['id'] . '\' limit 1')) {
             if($entry = $entry->fetch_object()) {
               $ajax->Data->url = $entry->url;
               $ajax->Data->title = $entry->title;
-              $ajax->Data->content = $entry->content;
+              $ajax->Data->content = $entry->markdown;
               $ajax->Data->tags = [];
               if($tags = $db->query('select t.name from blog_entrytags as et left join blog_tags as t on t.id=et.tag where et.entry=\'' . +$_GET['id'] . '\''))
                 while($tag = $tags->fetch_object())
@@ -74,14 +74,14 @@
         if(!$ajax->Data->fail) {
           $id = false;
           if(isset($_POST['id']))
-            if($db->query('update blog_entries set title=\'' . $db->escape_string($_POST['title']) . '\', url=\'' . $db->escape_string($_POST['url']) . '\', content=\'' . $db->escape_string($_POST['content']) . '\' where id=\'' . +$_POST['id'] . '\' limit 1'))
+            if($db->query('update blog_entries set title=\'' . $db->escape_string($_POST['title']) . '\', url=\'' . $db->escape_string($_POST['url']) . '\', markdown=\'' . $db->escape_string($_POST['content']) . '\', content=\'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\' where id=\'' . +$_POST['id'] . '\' limit 1'))
               $id = +$_POST['id'];
             else {
               $ajax->Data->fail = true;
               $ajax->Data->message = 'failed to update entry due to database error.';
             }
           else
-            if($db->query('insert into blog_entries (title, url, content, posted) values (\'' . $db->escape_string($_POST['title']) . '\', \'' . $db->escape_string($_POST['url']) . '\', \'' . $db->escape_string($_POST['content']) . '\', \'' . +time() . '\')'))
+            if($db->query('insert into blog_entries (title, url, markdown, content, posted) values (\'' . $db->escape_string($_POST['title']) . '\', \'' . $db->escape_string($_POST['url']) . '\', \'' . $db->escape_string($_POST['content']) . '\', \'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\', \'' . +time() . '\')'))
               $id = $db->insert_id;
             else {
               $ajax->Data->fail = true;
