@@ -1,6 +1,6 @@
 $(function() {
   ko.applyBindings(window.LegoViewModel = new LegoViewModel(), $("#editlego")[0]);
-  if($("#editlego").data("legoid"))
+  if($("#legoid").length)
     window.LegoViewModel.Load();
 });
 
@@ -11,16 +11,18 @@ function LegoViewModel() {
   self.title = ko.observable("");
   self.url = ko.observable("");
   self.image = ko.observable(false);
-  self.ldraw = false;
-  self.instructions = false;
   self.pieces = ko.observable("");
   self.descmd = ko.observable("");
+
+  self.title.subscribe(function() {
+    $("#url").attr("placeholder", self.title().toLowerCase().replace(" ", "-"));
+  });
 
   self.loading = ko.observable(false);
 
   self.Load = function() {
     self.loading(true);
-    $.get("/lego/edit.php", {ajax: "get", id: $("#editlego").data("legoid")}, function(data, status, xhr) {
+    $.get("/lego/edit.php", {ajax: "get", id: $("#legoid").val()}, function(data, status, xhr) {
       var result = $.parseJSON(xhr.responseText);
       if(!result.fail) {
         self.id(result.id);
@@ -36,13 +38,15 @@ function LegoViewModel() {
   };
 
   self.Save = function() {
-    $.post("/lego/edit.php?ajax=save", {legojson: ko.toJSON(self)}, function(data, status, xhr) {
-      var result = $.parseJSON(xhr.responseText);
+    $("#save").prop("disabled", true).addClass("working");
+    $.post({url: "/lego/edit.php?ajax=save", data: new FormData($("#editlego")[0]), cache: false, contentType: false, processData: false, success: function(result) {
       if(!result.fail)
         window.location.href = result.url;
-      else
+      else {
+        $("#save").prop("disabled", false).removeClass("working");
         alert(result.message);
-    });
+      }
+    }, dataType: "json"});
   };
 
   self.CacheImage = function(data, e) {
@@ -52,28 +56,6 @@ function LegoViewModel() {
       fr.onloadend = function() {
         self.image(fr.result);
       };
-      fr.readAsDataURL(f);
-    }
-  };
-
-  self.CacheLdraw = function(data, e) {
-    var f = e.target.files[0];
-    if(f) {
-      var fr = new FileReader();
-      fr.onloadend = function() {
-        self.ldraw = fr.result;
-      }
-      fr.readAsDataURL(f);
-    }
-  };
-
-  self.CacheInstructions = function(data, e) {
-    var f = e.target.files[0];
-    if(f) {
-      var fr = new FileReader();
-      fr.onloadend = function() {
-        self.instructions = fr.result;
-      }
       fr.readAsDataURL(f);
     }
   };

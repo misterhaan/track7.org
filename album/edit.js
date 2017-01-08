@@ -1,6 +1,6 @@
 $(function() {
   ko.applyBindings(window.PhotoViewModel = new PhotoViewModel(), $("#editphoto")[0]);
-  if($("#editphoto").data("photoid"))
+  if($("#photoid").length)
     window.PhotoViewModel.Load();
 });
 
@@ -26,15 +26,14 @@ function PhotoViewModel() {
 
   self.Load = function() {
     self.loading(true);
-    $.get("/album/edit.php", {ajax: "get", id: $("#editphoto").data("photoid")}, function(data, status, xhr) {
-      var result = $.parseJSON(xhr.responseText);
+    $.get("/album/edit.php", {ajax: "get", id: $("#photoid").val()}, function(result) {
       if(!result.fail) {
         self.id(result.id);
         self.caption(result.caption);
         self.url(result.url);
         self.youtube(result.youtube);
         self.storymd(result.storymd);
-        autosize.update($("textarea[data-bind*='storymd']"));
+        autosize.update($("textarea[name='storymd']"));
         self.taken(result.taken);
         if(result.year > 0)
           self.year(result.year);
@@ -43,17 +42,25 @@ function PhotoViewModel() {
       } else
         alert(result.message);
       self.loading(false);
-    });
+    }, "json");
   };
 
+  self.caption.subscribe(function() {
+    $("#url").attr("placeholder", self.caption().split(" ").join("-"));
+  });
+
   self.Save = function() {
-    $.post("/album/edit.php?ajax=save", {photojson: ko.toJSON(self)}, function(data, status, xhr) {
-      var result = $.parseJSON(xhr.responseText);
+    $("#save").prop("disabled", true).addClass("working");
+    var fdata = new FormData($("#editphoto")[0]);
+    fdata.append("originalTaglist", self.originalTaglist.join(","));
+    $.post({url: "/album/edit.php?ajax=save", data: fdata, cache: false, contentType: false, processData: false, success: function(result) {
       if(!result.fail)
         window.location.href = result.url;
-      else
+      else {
+        $("#save").prop("disabled", false).removeClass("working");
         alert(result.message);
-    });
+      }
+    }, dataType: "json"});
   };
 
   self.CachePhoto = function(data, e) {

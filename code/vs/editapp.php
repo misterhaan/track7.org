@@ -47,7 +47,7 @@
         }
         $_POST['url'] = trim($_POST['url']);
         if(!$_POST['url'])
-          $_POST['url'] = preg_replace('/[^a-z0-9\.\-_]*/', '', str_replace(' ', '-', $_POST['name']));
+          $_POST['url'] = preg_replace('/[^a-z0-9\.\-_]*/', '', str_replace(' ', '-', strtolower($_POST['name'])));
         if(!preg_match('/^[a-z0-9\.\-_]{1,32}$/', $_POST['url'])) {
           $ajax->Data->fail = true;
           $ajax->Data->fieldIssues[] = ['field' => 'url', 'issue' => 'url must be 1 - 32 lowercase letters, numbers, dashes, and periods.'];
@@ -67,11 +67,8 @@
           $ajax->Data->message = 'at least one field is invalid.';
         else {
           unset($ajax->Data->fieldIssues);
-          if(isset($_POST['icon']) && strpos($_POST['icon'], ',') !== false)
-            if($f = fopen($_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['PHP_SELF']) . '/files/' . $_POST['url'] . '.png', 'w')) {
-              fwrite($f, base64_decode(explode(',', $_POST['icon'])[1]));
-              fclose($f);
-            }
+          if(isset($_FILES['icon']) && $_FILES['icon']['size'])
+            move_uploaded_file($_FILES['icon']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['PHP_SELF']) . '/files/' . $_POST['url'] . '.png');
           $ajax->Data->url = $_POST['url'];
           $id = false;
           if(isset($_POST['id']))
@@ -96,30 +93,37 @@
   $html->Open(($id ? 'edit' : 'add') . ' application - software');
 ?>
       <h1><?php echo $id ? 'edit' : 'add'; ?> application</h1>
-      <form id=editapp<?php if($id) echo ' data-appid="' . $id . '"'; ?>>
+      <form id=editapp method=post enctype="">
+<?php
+  if($id) {
+?>
+        <input type=hidden id=appid name=id value="<?php echo $id; ?>">
+<?php
+  }
+?>
         <label>
           <span class=label>name:</span>
-          <span class=field><input id=name maxlength=32 required data-bind="value: name"></span>
+          <span class=field><input id=name name=name maxlength=32 required data-bind="value: name"></span>
         </label>
         <label>
           <span class=label>url:</span>
-          <span class=field><input id=url maxlength=32 required pattern="[a-z0-9\-\._]+" data-bind="value: url"></span>
+          <span class=field><input id=url name=url maxlength=32 pattern="[a-z0-9\-\._]+" data-bind="value: url"></span>
         </label>
         <label class=multiline>
           <span class=label>description:</span>
-          <span class=field><textarea id=desc required rows="" cols="" data-bind="value: desc"></textarea></span>
+          <span class=field><textarea id=desc name=desc required rows="" cols="" data-bind="value: desc"></textarea></span>
         </label>
         <label>
           <span class=label>icon:</span>
-          <span class=field><input type=file id=icon></span>
+          <span class=field><input type=file name=icon></span>
         </label>
         <label>
           <span class=label>github:</span>
-          <span class=field>https://github.com/misterhaan/<input id=github maxlength=16></span>
+          <span class=field>https://github.com/misterhaan/<input id=github name=github maxlength=16></span>
         </label>
         <label>
           <span class=label>auwiki:</span>
-          <span class=field>http://wiki.track7.org/<input id=wiki maxlength=32></span>
+          <span class=field>http://wiki.track7.org/<input id=wiki name=wiki maxlength=32></span>
         </label>
         <button id=save>save</button>
       </form>

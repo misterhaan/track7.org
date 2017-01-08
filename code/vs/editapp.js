@@ -1,17 +1,13 @@
 $(function() {
   LoadApp();
-  // TODO:  fill blank url field based on title field
-  // TODO:  set url field to only accept allowed characters
   // TODO:  set url field to verify uniqueness
-  $("#icon")[0].cachedFile = false;
-  $("#icon").change(CacheFile);
+  $("#name").change(UpdateDefaultURL);
   $("#editapp").submit(SaveApp);
 });
 
 function LoadApp() {
   if($("#editapp").data("appid")) {
-    $.get("editapp.php", {ajax: "get", id: $("#editapp").data("appid")}, function(data, status, xhr) {
-      var result = $.parseJSON(xhr.responseText);
+    $.get("editapp.php", {ajax: "get", id: $("#editapp").data("appid")}, function(result) {
       if(!result.fail) {
         $("#name").val(result.name);
         $("#url").val(result.url);
@@ -21,27 +17,25 @@ function LoadApp() {
         $("#wiki").val(result.wiki);
       } else
         alert(result.message);
-    });
+    }, "json");
   }
 }
 
-function CacheFile() {
-  var fld = this;
-  var fr = new FileReader();
-  fr.onloadend = function() {
-    fld.cachedFile = this.result;
-  };
-  fr.readAsDataURL(fld.files[0]);
+function UpdateDefaultURL() {
+  $("#url").attr("placeholder", $("#name").val().toLowerCase().replace(/[^a-z0-9\.\-_]*/g, ""));
 }
 
 function SaveApp() {
   // TODO:  clear general error message
-  $.post("editapp.php?ajax=save", { id: $("#editapp").data("appid"), name: $("#name").val(), url: $("#url").val(), desc: $("#desc").val(), icon: $("#icon")[0].cachedFile, github: $("#github").val(), wiki: $("#wiki").val()}, function(result) {
+  $("#save").prop("disabled", true).addClass("working");
+  $.post({url: "editapp.php?ajax=save", data: new FormData($("#editapp")[0]), cache: false, contentType: false, processData: false, success: function(result) {
     if(!result.fail)
       window.location.href = result.url;
     else {
-      // TODO:  highlight problematic fields or show general error message
+      // TODO:  highlight problematic fields and/or show general error message
+      $("#save").prop("disabled", false).removeClass("working");
+      alert(result.message);
     }
-  }, "json");
+  }, dataType: "json"});
   return false;
 }
