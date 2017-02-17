@@ -102,6 +102,7 @@
         <a href="/user/messages.php">messages<?php if($user->UnreadMsgs) echo '(' . $user->UnreadMsgs . ')'; ?></a>
         <a id=logoutlink href="?logout">sign out</a>
       </nav>
+    </div>
 <?php
       } else {
 ?>
@@ -126,10 +127,10 @@
         <label for=rememberlogin><input type=checkbox id=rememberlogin name=remember> remember me</label>
         <button id=dologin disabled>choose site to sign in through</button>
       </form>
+    </div>
 <?php
       }
 ?>
-    </div>
     <main role=main>
 <?php
 

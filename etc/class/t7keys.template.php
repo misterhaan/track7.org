@@ -2,8 +2,9 @@
   /**
    * access keys template for t7 classes.  copy one directory level up from
    * document root, name .t7keys.php, and fill in with access values.  this
-   * obviously needs to be left blank in svn to avoid sharing secrets.
+   * obviously needs to be left blank on github to avoid sharing secrets.
    */
+
   class t7keysDB {
     /**
      * hostname for database (often this is localhost)
