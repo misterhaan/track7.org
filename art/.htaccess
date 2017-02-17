@@ -4,6 +4,7 @@ RewriteBase /art/
 RewriteRule ^cd/([a-z]+)\.php$ /art/cover/$1 [R=301]
 RewriteRule ^compilations.php$ /art/cover/ [R=301]
 RewriteRule ^(digital|sketch).php$ /art/$1/ [R=301]
+RewriteRule ^lego/(.*) /lego/$1 [R=301]
 RewriteRule ^([^\/\.]+)/$ index.php?tag=$1
 RewriteRule ^([^\/\.]+)$ art.php?art=$1
 RewriteRule ^([^\/\.]+)/([^\/\.]+)$ art.php?tag=$1&art=$2

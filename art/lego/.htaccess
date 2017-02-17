@@ -1,3 +1,0 @@
-Options -Multiviews
-RewriteEngine On
-RewriteRule ^([^/\.]+)$ model.php?id=$1
