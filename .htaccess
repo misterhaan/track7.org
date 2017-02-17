@@ -50,12 +50,6 @@ RewriteCond %{REQUEST_URI} ^/?geek/
 RewriteRule ^geek/hits/(.*) /hits/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?track7\.php
 RewriteRule ^track7.php / [R=301]
-RewriteCond %{REQUEST_URI} ^/?ready
-RewriteRule ^ready.shtml /pen/theory/ready.php [R=301]
-RewriteCond %{REQUEST_URI} ^/?ready
-RewriteRule ^ready.html /pen/theory/ready.php [R=301]
-RewriteCond %{REQUEST_URI} ^/?news/
-RewriteRule ^news/ready.php /pen/theory/ready.php [R=301]
 RewriteCond %{REQUEST_URI} ^/?oldguest
 RewriteRule ^oldguestbook.php /gb-view.php [R=301]
 RewriteCond %{REQUEST_URI} ^/?news/
@@ -72,7 +66,20 @@ RewriteCond %{REQUEST_URI} ^/?av/
 RewriteRule ^av/lego.php /lego/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?av/
 RewriteRule ^av/(.*) /art/$1 [R=301]
-
+RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/(index\.php)?$ /code/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/net/(index\.php)?$ /code/vs/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/net/([^/]+)/ /code/vs/$1 [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/vb\.(s?html|php) /code/vs/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/ti8x\.s?html /analogu/ti8x.php [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/gameworlds\.s?html /analogu/gameworlds.php [R=301]
+RewriteCond %{REQUEST_URI} ^/analogu/
+RewriteRule ^analogu/scripts\.php /analogu/scripts/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?source/
 RewriteRule ^source/([a-z0-9/\-]+\.(php|css|js))$ https://github.com/misterhaan/track7.org/blob/master/$1
 RewriteCond %{REQUEST_URI} ^/?files/
