@@ -24,7 +24,7 @@
       $rss->AddItem($act->preview, ContributionPrefix($act->conttype) . $act->title . ' by ' . AuthorName($act), $act->url, $act->posted, $act->url, true);
       $act = $acts->fetch_object();
     } elseif($update && (!$forum || $update->posted > $forum->posted) && (!$comment || $update->posted > $comment->posted) && (!$round || $update->posted > $round->posted)) {
-      $rss->AddItem('<p>' . $update->preview . '</p>', 'track7 update by misterhaan', 'http://' . $_SERVER['HTTP_HOST'] . '/', $update->posted, 'http://' . $_SERVER['HTTP_HOST'] . '/', true);
+      $rss->AddItem('<p>' . $update->preview . '</p>', 'track7 update by misterhaan', '/', $update->posted, '/', true);
       $update = $updates->fetch_object();
     } elseif($forum && (!$comment || $forum->posted > $comment->posted) && (!$round || $forum->posted > $round->posted)) {
       $forum->url = '/hb/thread' . $forum->thread . '/';
