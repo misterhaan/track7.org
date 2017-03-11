@@ -1257,7 +1257,7 @@ article.activity.round .whatwhen {
   background-image: url(/images/storytype/round.png);
 }
 article.activity .whatwhen time {
-  padding-top: 48px;
+  padding-top: calc(48px + .25em);
   display: block;
   text-align: center;
 }

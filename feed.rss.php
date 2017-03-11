@@ -1,5 +1,6 @@
 <?php
   define('MAXITEMS', 16);
+  define('FORUM_POSTS_PER_PAGE', 20);
   require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
   $rss = new t7feed('track7 unifeed', '/', 'all track7 activity', 'copyright 2006 - 2016 track7');
 
