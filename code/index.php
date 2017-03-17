@@ -21,7 +21,7 @@
           </p>
         </section>
         <section id=codescr>
-          <h2><a  href="/analogu/scripts/">web scripts</a></h2>
+          <h2><a  href="web/">web scripts</a></h2>
           <p>
             i have taken some parts of track7 and packaged them up for anyone
             interested in modifying the scripts to work for their own site.  i

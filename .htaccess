@@ -75,11 +75,15 @@ RewriteRule ^analogu/net/([^/]+)/ /code/vs/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/vb\.(s?html|php) /code/vs/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/scripts/(index\.php)?$ /code/web/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/scripts/([^/]+) /code/web/$1 [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/ti8x\.s?html /analogu/ti8x.php [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/gameworlds\.s?html /analogu/gameworlds.php [R=301]
 RewriteCond %{REQUEST_URI} ^/analogu/
-RewriteRule ^analogu/scripts\.php /analogu/scripts/ [R=301]
+RewriteRule ^analogu/scripts\.php /code/web/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?source/
 RewriteRule ^source/([a-z0-9/\-]+\.(php|css|js))$ https://github.com/misterhaan/track7.org/blob/master/$1
 RewriteCond %{REQUEST_URI} ^/?files/
