@@ -89,7 +89,7 @@ begin
   update contributions set
     url=concat('/code/vs/', new.url, '#comments'),
     title=new.name
-  where srctbl='code_vs_comments' and id=new.id;
+  where srctbl='code_vs_comments' and id in (select * from (select id from code_vs_comments where application=new.id) as c1);
 end;;
 
 create trigger code_vs_release_added after insert on code_vs_releases for each row

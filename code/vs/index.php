@@ -32,7 +32,7 @@
       <nav id=vsapps>
 <?php
     while($app = $apps->fetch_object()) {
-      $app->released = t7format::TimeTag('smart', $app->released, 'M j, Y \a\t g:i a')
+      $app->released = t7format::TimeTag('smart', $app->released, 'M j, Y \a\t g:i a');
 ?>
         <article>
           <header>

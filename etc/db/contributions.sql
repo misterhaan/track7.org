@@ -1,5 +1,5 @@
 create table contributions (
-  srctbl enum('blog_comments', 'blog_entries', 'guides', 'guide_comments', 'photos', 'photos_comments', 'art', 'art_comments', 'lego_models', 'lego_comments', 'stories', 'stories_comments', 'code_vs_releases', 'code_vs_comments') not null comment 'name of the table this activity is fully stored in',
+  srctbl enum('blog_comments', 'blog_entries', 'guides', 'guide_comments', 'photos', 'photos_comments', 'art', 'art_comments', 'lego_models', 'lego_comments', 'stories', 'stories_comments', 'code_vs_releases', 'code_vs_comments', 'code_web_scripts', 'code_web_comments') not null comment 'name of the table this activity is fully stored in',
   id smallint unsigned not null comment 'id of this activity in srctbl',
   primary key(srctbl, id),
   conttype enum('comment', 'guide', 'post', 'photo', ' art', 'lego', 'story', 'code'),

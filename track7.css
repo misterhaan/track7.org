@@ -83,7 +83,6 @@ fieldset {
   border: none;
   border-left: .5em solid #abc;
 }
-
 legend {
   margin: 0 .75em .75em -.25em;
   padding: .1em .5em .25em .75em;
@@ -102,6 +101,17 @@ legend {
 }
 fieldset label {
   clear: left;
+}
+fieldset.selectafield,
+fieldset.checkboxes {
+	margin: -.75em 0; /* due to non-collapsing child margins */
+	border-left: none;
+}
+fieldset.checkboxes legend {
+	background: none;
+	float: none;
+	margin: 0;
+	padding: 0;
 }
 label,
 label * {
@@ -686,6 +696,9 @@ article > header .guidemeta {
   color: #444;
   margin-right: 0;
 }
+.guidemeta .scripttype:before {
+	content: "\f121";
+}
 .rating[data-stars="1"]:before {
   content: "\f005\f006\f006\f006\f006";
 }
@@ -1043,27 +1056,56 @@ section.comment .comment .content.edit textarea {
 }
 
 main label,
-main button {
+main button,
+fieldset.checkboxes,
+fieldset.selectafield div {
   margin: .75em .5em;
   display: block;
 }
 @media (min-width: 25em) {
   main label,
-  main button {
+  main button,
+  fieldset.checkboxes,
+  fieldset.selectafield div {
     margin: .75em 1em;
   }
+}
+fieldset.selectafield label {
+	margin: 0;
+}
+fieldset.selectafield .label input[type="radio"] {
+	margin: 0 .2em 0 0;
 }
 main label span.checkbox,
 main label span.checkbox * {
   vertical-align: baseline;
 }
-main .field {
+main .field,
+fieldset.selectafield label.field {
   display: block;
   display: -webkit-flex;
   display: flex;
   margin: .1em 0;
   -webkit-flex: 1 0;
   flex: 1 0;
+  -webkit-align-items: center;
+  align-items: center;
+}
+fieldset.checkboxes .field {
+	-webkit-flex-wrap: wrap;
+	flex-wrap: wrap;
+}
+.field label.checkbox {
+	display: inline-flex;
+	margin: 0;
+	-webkit-align-items: center;
+	align-items: center;
+	margin-right: 1em;
+}
+.field label.checkbox input {
+	margin-right: .25em;
+	margin-top: .2em;
+	width: inherit;
 }
 main .field input,
 main .field select,
@@ -1071,6 +1113,7 @@ main .field textarea {
   -webkit-flex: 1 0;
   flex: 1 0;
   margin: 0;
+  width: 100%;
 }
 span.validation {
   margin-top: -.5em;
@@ -1095,7 +1138,9 @@ main span.checkbox {
   display: inline;
 }
 @media (min-width: 40em) {
-  main label {
+  main label,
+  fieldset.selectafield div,
+  fieldset.checkboxes {
     display: -webkit-flex;
     display: flex;
     align-items: center;
@@ -1559,6 +1604,23 @@ img.icon {
   #editapp button {
     margin: .75em 1em .75em 6.5em;
   }
+}
+
+/*-------------------------------------------------[ /code/web/editscr.php ]--*/
+@media (min-width: 40em) {
+	#editscr .label {
+		-webkit-flex: 0 0 6em;
+		flex: 0 0 6em;
+	}
+	#editscr legend {
+		position: absolute;
+	}
+	#editscr fieldset.checkboxes .field {
+		margin-left: 6em;
+	}
+	#editscr button {
+		margin: .75em 1em .75em 7em;
+	}
 }
 
 /*------------------------------------------------------[ /guides/edit.php ]--*/
