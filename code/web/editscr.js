@@ -33,7 +33,9 @@ function ScriptViewModel() {
 				self.url(result.url);
 				self.usetype(result.usetype);
 				self.desc(result.desc);
+				autosize.update($("#desc"));
 				self.instr(result.instr);
+				autosize.update($("#instr"));
 				self.link(result.link);
 				self.filelocation(result.link ? "link" : "upload");
 				self.reqslist(result.reqslist);

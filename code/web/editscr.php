@@ -63,11 +63,11 @@ if($types = $db->query('select id, name from code_web_usetype order by name'))
 				</label>
 				<label class=multiline>
 					<span class=label>description:</span>
-					<span class=field><textarea required rows="" cols="" data-bind="value: desc"></textarea></span>
+					<span class=field><textarea id=desc required rows="" cols="" data-bind="value: desc"></textarea></span>
 				</label>
 				<label class=multiline>
 					<span class=label>instructions:</span>
-					<span class=field><textarea rows="" cols="" data-bind="value: instr"></textarea></span>
+					<span class=field><textarea id=instr rows="" cols="" data-bind="value: instr"></textarea></span>
 				</label>
 				<fieldset class=selectafield>
 					<div>
@@ -76,7 +76,7 @@ if($types = $db->query('select id, name from code_web_usetype order by name'))
 					</div>
 					<div>
 						<label class=label><input type=radio name=filelocation value=link data-bind="checked: filelocation">link:</label>
-						<label class=field><input type=url data-bind="value: link"></label>
+						<label class=field><input type=url data-bind="value: link" maxlength=64></label>
 					</div>
 				</fieldset>
 				<fieldset class=checkboxes>
@@ -194,8 +194,10 @@ function SaveScript() {
 			if($save = $db->prepare($sql)) {
 				if($save->bind_param('ssiisssssssi', $url, $name, $released, $usetype, $download, $github, $wiki, $desc, $deschtml, $instr, $intsrhtml, $id))
 					if($save->execute()) {
-						if(!$id)
+						if(!$id) {
 							$id = $save->insert_id;
+							t7send::Tweet('new web script: ' . $name, 'http://' . $_SERVER['HTTP_HOST'] . '/code/web/' . $url);
+						}
 						$save->close();
 						$ajax->Data->url = $url;
 						if($remreq = $db->prepare('delete from code_web_requirements where script=?'))
