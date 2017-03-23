@@ -69,6 +69,8 @@ RewriteRule ^av/(.*) /art/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/(index\.php)?$ /code/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
+RewriteRule ^analogu/ti8x\.(php|s?html) /code/calc/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/net/(index\.php)?$ /code/vs/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/net/([^/]+)/ /code/vs/$1 [R=301]
@@ -78,8 +80,6 @@ RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/scripts/(index\.php)?$ /code/web/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/scripts/([^/]+) /code/web/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^/?analogu/
-RewriteRule ^analogu/ti8x\.s?html /analogu/ti8x.php [R=301]
 RewriteCond %{REQUEST_URI} ^/?analogu/
 RewriteRule ^analogu/gameworlds\.s?html /analogu/gameworlds.php [R=301]
 RewriteCond %{REQUEST_URI} ^/analogu/

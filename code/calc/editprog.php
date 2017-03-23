@@ -80,6 +80,7 @@ if($mods = $db->query('select id, name from code_calc_model order by name'))
 				<button id=save>save</button>
 			</form>
 <?php
+$html->Close();
 
 function LoadProg() {
 	global $ajax, $db;
