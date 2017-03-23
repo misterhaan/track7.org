@@ -699,6 +699,12 @@ article > header .guidemeta {
 .guidemeta .scripttype:before {
 	content: "\f121";
 }
+.guidemeta .schoolsubject:before {
+	content: "\f02d";
+}
+.guidemeta .calculator:before {
+	content: "\f1ec";
+}
 .rating[data-stars="1"]:before {
   content: "\f005\f006\f006\f006\f006";
 }
@@ -1567,6 +1573,17 @@ section#codemzx h2:after {
   nav#codetypes section {
     width: calc(25% - 1em);
   }
+}
+
+/*-----------------------------------------------[ /code/calc/editprog.php ]--*/
+@media (min-width: 40em) {
+	#editprog span.label {
+		-webkit-flex: 0 0 5.5em;
+		flex: 0 0 5.5em;
+	}
+	#editprog button {
+		margin: .75em 1em .75em 6.5em;
+	}
 }
 
 /*---------------------------------------------------[ /code/vs/addrel.php ]--*/

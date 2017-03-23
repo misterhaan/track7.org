@@ -230,7 +230,7 @@ function SaveScript() {
 	}
 }
 
-function VerifyUniqueUrl($url) {
+function VerifyUniqueUrl($url, $id) {
 	global $ajax, $db;
 	if($chk = $db->prepare('select id, name from code_web_scripts where url=? and id!=? limit 1')) {
 		if($chk->bind_param('si', $url, $id))

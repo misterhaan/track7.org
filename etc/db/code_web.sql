@@ -24,7 +24,7 @@ insert into code_web_reqinfo (name, url) values
 
 create table code_web_scripts (
 	id smallint unsigned primary key auto_increment,
-	url varchar(32) not null comment 'unique portion of the url to this application',
+	url varchar(32) not null comment 'unique portion of the url to this script',
 	unique(url),
 	name varchar(32) not null,
 	released int not null default 0 comment 'date this script was released',
