@@ -705,6 +705,9 @@ article > header .guidemeta {
 .guidemeta .calculator:before {
 	content: "\f1ec";
 }
+.guidemeta .gameengine:before {
+	content: "\f118";
+}
 .rating[data-stars="1"]:before {
   content: "\f005\f006\f006\f006\f006";
 }
@@ -1582,6 +1585,29 @@ section#codemzx h2:after {
 		flex: 0 0 5.5em;
 	}
 	#editprog button {
+		margin: .75em 1em .75em 6.5em;
+	}
+}
+
+/*-------------------------------------------------[ /code/games/index.php ]--*/
+.screenshot {
+	display: block;
+	margin: .75em auto;
+}
+@media (min-width: 25em) {
+	.screenshot {
+		float: right;
+		margin: .25em 1em .25em .5em;
+	}
+}
+
+/*-----------------------------------------------[ /code/games/editwld.php ]--*/
+@media (min-width: 40em) {
+	#editwld span.label {
+		-webkit-flex: 0 0 5.5em;
+		flex: 0 0 5.5em;
+	}
+	#editwld button {
 		margin: .75em 1em .75em 6.5em;
 	}
 }
