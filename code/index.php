@@ -34,11 +34,13 @@ $html->Open('software');
 					<p>
 						i had a ti-85 and then a ti-86 graphing calculator in high school
 						and college, and i wrote a few programs for them that did some of
-						the stuff i was learning in my classes.
+						the stuff i was learning in my classes.  haven’t had much use for a
+						programmable calculator since college so don’t expect anything new
+						here.
 					</p>
 				</section>
 				<section id=codemzx>
-					<h2><a href="/analogu/gameworlds.php">game worlds</a></h2>
+					<h2><a href="games/">game worlds</a></h2>
 					<p>
 						i made a few game worlds for megazeux and started a couple more.
 						the oldest one is actually for zzt.  the most recent two have been
