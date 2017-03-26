@@ -149,7 +149,7 @@
 
       <!-- ko foreach: guides -->
       <article>
-        <header>
+        <header class=floatbgstop>
           <h2><a data-bind="text: title, attr: {href: url + '/1'}" title="read this guide"></a></h2>
           <p class=guidemeta>
             <span class=guidelevel data-bind="text: level, attr: {title: level + ' level'}"></span>
@@ -175,26 +175,24 @@
 <?php
   $html->Close();
 
-  /**
-   * create the menu of actions.
-   * @param integer $tagid id of the tag to edit from this page, if any
-   */
-  function ShowActions($tagid = false) {
-    global $user;
-    if($user->IsAdmin()) {
+/* create the menu of actions.
+ * @param integer $tagid id of the tag to edit from this page, if any
+ */
+function ShowActions($tagid = false) {
+	global $user;
+	if($user->IsAdmin()) {
 ?>
-      <nav class=actions>
-        <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/new" class=new>start a new guide</a>
+			<div class=floatbgstop><nav class=actions>
+				<a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/new" class=new>start a new guide</a>
 <?php
-      if($tagid) {
+		if($tagid) {
 ?>
-        <a href="#tagedit" class=edit>edit tag description</a>
+				<a href="#tagedit" class=edit>edit tag description</a>
 <?php
-      }
+		}
 ?>
-      </nav>
+			</nav></div>
 
 <?php
-    }
-  }
-?>
+	}
+}

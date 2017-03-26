@@ -1,11 +1,11 @@
 <?php
-  define('NUM_ENTRIES', 10);  // how many entries per "page"
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+define('NUM_ENTRIES', 10);  // how many entries per "page"
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  if(isset($_GET['ajax'])) {
-    $ajax = new t7ajax();
-    switch($_GET['ajax']) {
-      case 'entries':
+if(isset($_GET['ajax'])) {
+	$ajax = new t7ajax();
+	switch($_GET['ajax']) {
+		case 'entries':
         if(isset($_GET['tagid']) && +$_GET['tagid']) {
           $entries = 'select e.id, e.url, e.posted, e.title, e.content, count(c.entry) as comments from blog_entrytags as et left join blog_entries as e on e.id=et.entry left join blog_comments as c on c.entry=e.id where et.tag=\'' . +$_GET['tagid'] . '\' and e.status=\'published\'';
           if(isset($_GET['before']) && +$_GET['before'])
@@ -143,7 +143,7 @@
 
       <!-- ko foreach: entries -->
       <article>
-        <header>
+        <header class=floatbgstop>
           <h2><a data-bind="text: title, attr: {href: url}" title="view this post with its comments"></a></h2>
           <p class=postmeta>
             posted by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a>
@@ -167,26 +167,25 @@
 <?php
   $html->Close();
 
-  /**
-   * create the menu of actions.
-   * @param integer $tagid id of the tag to edit from this page, if any
-   */
-  function ShowActions($tagid = false) {
-    global $user;
-    if($user->IsAdmin()) {
+/**
+ * create the menu of actions.
+ * @param integer $tagid id of the tag to edit from this page, if any
+ */
+function ShowActions($tagid = false) {
+	global $user;
+	if($user->IsAdmin()) {
 ?>
-      <nav class=actions>
-        <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>start a new entry</a>
+			<div class=floatbgstop><nav class=actions>
+				<a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>start a new entry</a>
 <?php
-      if($tagid) {
+		if($tagid) {
 ?>
-        <a href="#tagedit" class=edit>edit tag description</a>
+				<a href="#tagedit" class=edit>edit tag description</a>
 <?php
-      }
+		}
 ?>
-      </nav>
+			</nav></div>
 
 <?php
-    }
-  }
-?>
+	}
+}

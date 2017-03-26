@@ -121,16 +121,16 @@
     global $user;
     if($user->IsAdmin()) {
 ?>
-      <nav class=actions>
-        <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>add a photo or video</a>
+			<div class=floatbgstop><nav class=actions>
+				<a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>add a photo or video</a>
 <?php
       if($tagid) {
 ?>
-        <a href="#tagedit" class=edit>edit tag description</a>
+				<a href="#tagedit" class=edit>edit tag description</a>
 <?php
       }
 ?>
-      </nav>
+			</nav></div>
 
 <?php
     }
