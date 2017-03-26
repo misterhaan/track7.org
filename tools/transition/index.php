@@ -8,6 +8,7 @@ define('TR_ART', 6);
 define('TR_LEGOS', 7);
 define('TR_STORIES', 8);
 define('TR_WEB_SCRIPTS', 9);
+define('TR_UPDATES', 10);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
 $db->real_query('create table if not exists transition_status (id tinyint unsigned primary key not null, stepnum tinyint not null default 0, status varchar(64) not null default \'not started\')');
@@ -26,6 +27,7 @@ initStatus(TR_ART);
 initStatus(TR_LEGOS);
 initStatus(TR_STORIES);
 initStatus(TR_WEB_SCRIPTS);
+initStatus(TR_UPDATES);
 
 $html = new t7html([]);
 $html->Open('database transitions');
@@ -48,6 +50,7 @@ $html->Open('database transitions');
 					<tr><td><a href="legos.php">legos</a></td><td><?php echo $status[TR_LEGOS]->stepnum; ?></td><td><?php echo $status[TR_LEGOS]->status; ?></td></tr>
 					<tr><td><a href="stories.php">stories</a></td><td><?php echo $status[TR_STORIES]->stepnum; ?></td><td><?php echo $status[TR_STORIES]->status; ?></td></tr>
 					<tr><td><a href="code-web.php">web scripts</a></td><td><?php echo $status[TR_WEB_SCRIPTS]->stepnum; ?></td><td><?php echo $status[TR_WEB_SCRIPTS]->status; ?></td></tr>
+					<tr><td><a href="updates.php">site updates</a></td><td><?php echo $status[TR_UPDATES]->stepnum; ?></td><td><?php echo $status[TR_UPDATES]->status; ?></td></tr>
 				</tbody>
 			</table>
 <?php

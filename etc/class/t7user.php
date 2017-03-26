@@ -368,11 +368,9 @@
           $ret->comments = $s->comments;
           $ret->posts = $s->posts;
         }
-      if($s = $olddb->query('select posts as forum, comments, rounds from userstats where uid=\'' . +$this->OldID() . '\' limit 1'))
+      if($s = $olddb->query('select posts as forum from userstats where uid=\'' . +$this->OldID() . '\' limit 1'))
         if($s = $s->fetch_object()) {
           $ret->forum = $s->forum;
-          $ret->comments += $s->comments;
-          $ret->rounds = $s->rounds;
         }
       return $ret;
     }

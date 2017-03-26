@@ -38,8 +38,6 @@ RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/lego.php /lego/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?geek/
 RewriteRule ^geek/guides/(.*) /guides/$1 [R=301]
-RewriteCond %{REQUEST_URI} ^/?geek/
-RewriteRule ^geek/discgolf/(.*) /discgolf/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/pen/(.*) /pen/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?output/

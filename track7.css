@@ -1,72 +1,72 @@
 @font-face {
-  font-family: rosario;
-  font-style: normal;
-  font-weight: normal;
-  src: url(Rosario-Regular.woff);
+	font-family: rosario;
+	font-style: normal;
+	font-weight: normal;
+	src: url(Rosario-Regular.woff);
 }
 @font-face {
-  font-family: rosario;
-  font-style: normal;
-  font-weight: bold;
-  src: url(Rosario-Bold.woff);
+	font-family: rosario;
+	font-style: normal;
+	font-weight: bold;
+	src: url(Rosario-Bold.woff);
 }
 @font-face {
-  font-family: rosario;
-  font-style: italic;
-  font-weight: normal;
-  src: url(Rosario-Italic.woff);
+	font-family: rosario;
+	font-style: italic;
+	font-weight: normal;
+	src: url(Rosario-Italic.woff);
 }
 @font-face {
-  font-family: rosario;
-  font-style: italic;
-  font-weight: bold;
-  src: url(Rosario-BoldItalic.woff);
+	font-family: rosario;
+	font-style: italic;
+	font-weight: bold;
+	src: url(Rosario-BoldItalic.woff);
 }
 @font-face {
-  font-family: monda;
-  font-weight: bold;
-  src: url(Monda-Bold.woff);
+	font-family: monda;
+	font-weight: bold;
+	src: url(Monda-Bold.woff);
 }
 @font-face {
-  font-family: inconsolata;
-  src: url(InconsolataGo-Regular.woff);
+	font-family: inconsolata;
+	src: url(InconsolataGo-Regular.woff);
 }
 @font-face {
-  font-family: fontawesome;
-  src: url(fontawesome-webfont.woff);
+	font-family: fontawesome;
+	src: url(fontawesome-webfont.woff);
 }
 
 body {
-  background-color: #777;
-  padding: 0;
-  margin: 0;
-  -moz-text-size-adjust: none;
-  -webkit-text-size-adjust: 100%;
-  font-family: rosario;
-  font-size: 1.1em;
+	background-color: #777;
+	padding: 0;
+	margin: 0;
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: 100%;
+	font-family: rosario;
+	font-size: 1.1em;
 }
 body.text {
-  max-width: 75em;
-  margin: 0 auto;
+	max-width: 75em;
+	margin: 0 auto;
 }
 @media (min-width: 40em) {
-  body {
-    padding: 0 1.5em;
-    position: relative;
-  }
+	body {
+		padding: 0 1.5em;
+		position: relative;
+	}
 }
 h1, h2 {
-  font-family: monda;
-  line-height: 1.125em;
+	font-family: monda;
+	line-height: 1.125em;
 }
 @-moz-document url-prefix() {
-  h1, h2 {
-    font-weight: normal;  /* prevent firefox double-bolding */
-  }
+	h1, h2 {
+		font-weight: normal;  /* prevent firefox double-bolding */
+	}
 }
 
 header, main, footer {
-  display: block;
+	display: block;
 }
 header a:link, header a:visited, main a:link, main a:visited {
   text-decoration: none;
@@ -431,6 +431,15 @@ h1 {
   vertical-align: middle;
   margin: 0 0 1px 5px;
   font-size: .533em;
+}
+
+.floatbgstop {
+	display: -webkit-flex;
+	display: flex;
+}
+.floatbgstop > * {
+	-webkit-flex: 1 0 auto;
+	flex: 1 0 auto;
 }
 
 .actions {
@@ -1666,6 +1675,34 @@ img.icon {
 	}
 }
 
+/*------------------------------------------------------[ /feeds/index.php ]--*/
+ul.twitter, ul.feeds {
+	list-style-type: none;
+}
+ul.twitter a:before,
+ul.feeds a:before {
+	font-family: fontawesome;
+	font-weight: normal;
+	/*font-size: .8em;*/
+	margin-right: .5em;
+	display: inline-block;
+	vertical-align: middle;
+}
+ul.twitter a:before {
+	content: "\f099";
+	color: #1da1f2;
+	margin-right: .4em;
+}
+ul.feeds a:before {
+	font-size: .8em;
+	content: "\f09e";
+	color: #fff;
+	background-color: #fda933;
+	border-radius: .125em;
+	padding: .15em .19em 0 .15em;
+	margin-top: -.1em;
+}
+
 /*------------------------------------------------------[ /guides/edit.php ]--*/
 @media (min-width: 40em) {
   #editguide span.label {
@@ -1757,6 +1794,17 @@ p.story {
 }
 .indent {
   text-indent: 2em;
+}
+
+/*------------------------------------------------------[ /updates/new.php ]--*/
+@media (min-width: 40em) {
+	#editupdate span.label {
+		-webkit-flex: 0 0 4em;
+		flex: 0 0 4em;
+	}
+	#editupdate button {
+		margin: .75em 1em .75em 5em;
+	}
 }
 
 /*-------------------------------------------------------[ /user/index.php ]--*/

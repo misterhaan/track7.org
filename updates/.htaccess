@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteOptions inherit
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9]+)$ update.php?id=$1

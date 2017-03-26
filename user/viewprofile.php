@@ -72,7 +72,7 @@
       </section>
 <?php
       }
-      if($stats->fans || $stats->comments || $stats->posts || $stats->forum || $stats->rounds) {
+      if($stats->fans || $stats->comments || $stats->posts || $stats->forum) {
 ?>
       <section id=rank>
         <header>rankings</header>
@@ -93,11 +93,6 @@
           <li>#<?php echo Rank('posts', $stats->posts); ?> in <a href="/bln/" title="view all of <?php echo $u->Username; ?>’s blog posts">blog posts</a> with <?php echo $stats->posts; ?></li>
 <?php
         }
-        if($stats->rounds) {
-?>
-          <li>#<?php echo Rank('rounds', $stats->rounds); ?> in <a href="/discgolf/rounds.php?player=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s disc golf rounds">disc golf rounds</a> with <?php echo $stats->rounds; ?></li>
-<?php
-        }
         if($stats->forum) {
 ?>
           <li>#<?php echo Rank('forum', $stats->forum); ?> in <a href="/hb/recentposts.php?author=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s forum posts">forum posts</a> with <?php echo $stats->forum; ?></li>
@@ -108,44 +103,29 @@
       </section>
 <?php
       }
-      $act = $comment = $forum = $round = false;
+      $act = $comment = $forum = false;
       if($acts = $db->query('select conttype, posted, url, title from contributions where author=\'' . +$u->ID . '\' order by posted desc limit 12'))
         $act = $acts->fetch_object();
       if($u->OldID()) {  // this is only for users that existed in the old database; otherwise it picks up everything anonymous
-        // filtering out blog, guide, and photo comments since those have been converted
-        if($comments = $olddb->query('select page as url, instant as posted from comments where uid=\'' . +$u->OldID() . '\' and left(page, 5) != \'/bln/\' and left(page, 8) != \'/guides/\' and left(page, 7) != \'/album/\' order by instant desc limit 12'))
-          $comment = $comments->fetch_object();
         if($forums = $olddb->query('select concat(\'/hb/thread\', thread, \'/#p\', id) as url, subject as title, instant as posted from hbposts where uid=\'' . +$u->OldID() . '\' order by instant desc limit 12'))
           $forum = $forums->fetch_object();
-        if($rounds = $olddb->query('select r.id, r.instant as posted, r.score, r.courseid, c.name from dgrounds as r left join dgcourses as c on c.id=r.courseid where r.uid=\'' . $u->OldID() . '\' order by r.instant desc limit 12'))
-          $round = $rounds->fetch_object();
       }
-      if($act || $comment || $forum || $round) {
+      if($act || $forum) {
 ?>
       <ol id=activity>
 <?php
         $count = 0;
-        while($count < 12 && ($act || $comment || $forum || $round)) {
-          if($act && (!$comment || $act->posted > $comment->posted) && (!$forum || $act->posted > $forum->posted) && (!$round || $act->posted > $round->posted)) {
+        while($count < 12 && ($act || $forum)) {
+          if($act && (!$forum || $act->posted > $forum->posted)) {
 ?>
         <li class=<?php echo $act->conttype; ?>><?php echo ActionWords($act->conttype); ?> <a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a> <time datetime="<?php echo gmdate('c', $act->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $act->posted); ?>"><?php echo t7format::HowLongAgo($act->posted); ?> ago</time></li>
 <?php
             $act = $acts->fetch_object();
-          } elseif($comment && (!$forum || $comment->posted > $forum->posted) && (!$round || $comment->posted > $round->posted)) {
-?>
-        <li class=comment>commented on <a href="<?php echo $comment->url; ?>"><?php echo array_pop(explode('/', trim($comment->url, '/'))); ?></a> <time datetime="<?php echo gmdate('c', $comment->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $comment->posted); ?>"><?php echo t7format::HowLongAgo($comment->posted); ?> ago</time></li>
-<?php
-            $comment = $comments->fetch_object();
-          } elseif($forum && (!$round || $forum->posted > $round->posted)) {
+          } elseif($forum) {
 ?>
         <li class=forum>posted <a href="<?php echo $forum->url; ?>"><?php echo $forum->title; ?></a> <time datetime="<?php echo gmdate('c', $forum->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $forum->posted); ?>"><?php echo t7format::HowLongAgo($forum->posted); ?> ago</time></li>
 <?php
             $forum = $forums->fetch_object();
-          } elseif($round) {
-?>
-        <li class=round>scored <a href="/discgolf/rounds.php?id=<?php echo $round->id; ?>"><?php echo $round->score; ?></a> at <a href="/discgolf/courses.php?id=<?php echo $round->courseid; ?>"><?php echo $round->name; ?></a> <time datetime="<?php echo gmdate('c', $round->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $round->posted); ?>"><?php echo t7format::HowLongAgo($round->posted); ?> ago</time></li>
-<?php
-            $round = $rounds->fetch_object();
           }
           $count++;
         }
@@ -185,7 +165,6 @@
         break;
       case 'forum':
         $stat = 'posts';
-      case 'rounds':
         if($r = $olddb->query('select count(1) as rank from userstats where ' . $stat . '>=' . +$value))
           if($r = $r->fetch_object())
             return $r->rank;
@@ -248,7 +227,7 @@
 
     public function GetStats() {
       global $olddb;
-      if($s = $olddb->query('select since as registered, fans, comments, posts from userstats where uid=\'' . +$this->ID . '\''))
+      if($s = $olddb->query('select since as registered, fans, comments from userstats where uid=\'' . +$this->ID . '\''))
         if($s = $s->fetch_object())
           return $s;
       return false;
