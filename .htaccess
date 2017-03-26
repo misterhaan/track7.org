@@ -24,6 +24,8 @@ RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/photos.rss /album/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/art.rss /art/feed.rss [R=301]
+RewriteCond %{REQUEST_URI} ^/?feeds/
+RewriteRule ^feeds/updates.rss /updates/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/pen/bln/(.*) /bln/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?pen/
@@ -48,6 +50,8 @@ RewriteCond %{REQUEST_URI} ^/?geek/
 RewriteRule ^geek/hits/(.*) /hits/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?track7\.php
 RewriteRule ^track7.php / [R=301]
+RewriteCond %{REQUEST_URI} ^/?new\.php
+RewriteRule ^new.php /updates/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?oldguest
 RewriteRule ^oldguestbook.php /gb-view.php [R=301]
 RewriteCond %{REQUEST_URI} ^/?news/
