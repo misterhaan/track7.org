@@ -28,7 +28,7 @@ if($user->IsAdmin()) {
 			<!-- ko foreach: updates -->
 			<article class="activity update">
 				<div class=whatwhen data-bind="attr: {title: 'site update at ' + posted.title}">
-					<time data-bind="attr: {datetime: posted.datetime}, text: posted.display"></time>
+					<time data-bind="attr: {datetime: posted.datetime}, html: posted.display"></time>
 				</div>
 				<div>
 					<h2></h2>
