@@ -1,71 +1,92 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  $page->Start('timestamp converter');
+if(isset($_GET['ajax'])) {
+	$ajax = new t7ajax();
+	switch($_GET['ajax']) {
+		case 'analyze': Analyze(); break;
+	}
+	$ajax->Send();
+	die;
+}
 
-  $date = explode(':', date('m:d:Y:H:i:s'));
-  if(!isset($_POST['month']) || strlen($_POST['month']) < 1)
-    $_POST['month'] = $date[0];
-  else
-    $_POST['month'] = sprintf('%02d', $_POST['month']);
-  if(!isset($_POST['day']) || strlen($_POST['day']) < 1)
-    $_POST['day'] = $date[1];
-  else
-    $_POST['day'] = sprintf('%02d', $_POST['day']);
-  if(!isset($_POST['year']) || strlen($_POST['year']) < 1)
-    $_POST['year'] = $date[2];
-  elseif(strlen($_POST['year']) < 4)
-    $_POST['year'] += $_POST['year'] <= 80 ? 2000 : 1900;
-  if(!isset($_POST['hour']) || strlen($_POST['hour']) < 1)
-    $_POST['hour'] = $date[3];
-  else
-    $_POST['hour'] = sprintf('%02d', $_POST['hour']);
-  if(!isset($_POST['min']) || strlen($_POST['min']) < 1)
-    $_POST['min'] = $date[4];
-  else
-    $_POST['min'] = sprintf('%02d', $_POST['min']);
-  if(!isset($_POST['sec']) || strlen($_POST['sec']) < 1)
-    $_POST['sec'] = $date[5];
-  else
-    $_POST['sec'] = sprintf('%02d', $_POST['sec']);
-  if(isset($_POST['to']))
-    switch($_POST['to']) {
-      case 'date':
+$html = new t7html(['ko' => true]);
+$html->Open('timestamp converter');
 ?>
-      <p class="info">timestamp <?=$_POST['timestamp']; ?> translates to <?=strtolower(date('D F j, Y g:i:s a', $_POST['timestamp'])); ?></p>
+			<h1>timestamp converter</h1>
+			<p></p>
 
-      <hr class="minor" />
+			<form id=timestamps data-bind="submit: Analyze">
+				<fieldset class=selectafield>
+					<div>
+						<label class=label><input type=radio name=inputtype value=timestamp data-bind="checked: inputtype">timestamp:</label>
+						<label class=field><input type=number data-bind="value: timestamp" maxlength=10 step=1 min=0 max=4294967295></label>
+					</div>
+					<div>
+						<label class=label><input type=radio name=inputtype value=formatted data-bind="checked: inputtype">formatted:</label>
+						<label class=field><input data-bind="value: formatted" maxlength=64></label>
+					</div>
+				</fieldset>
+				<fieldset class=checkboxes>
+					<legend>time zone:</legend>
+					<span class=field>
+						<label class=checkbox>
+							<input type=radio name=zone value=local data-bind="checked: zone">
+							local
+						</label>
+						<label class=checkbox>
+							<input type=radio name=zone value=utc data-bind="checked: zone">
+							utc
+						</label>
+					</span>
+				</fieldset>
+				<button>analyze</button>
+			</form>
 
-<?
-        break;
-      case 'timestamp':
-?>
-      <p class="info">date <?=implode('-', array($_POST['month'], $_POST['day'], $_POST['year'])); ?> <?=implode(':', array($_POST['hour'], $_POST['min'], $_POST['sec'])); ?> translates to <?=strtotime(implode('-', array($_POST['year'], $_POST['month'], $_POST['day'])) . ' ' . implode(':', array($_POST['hour'], $_POST['min'], $_POST['sec']))); ?></p>
+			<section data-bind="if: hasresults">
+				<h2>results</h2>
+				<dl id=timestampdata>
+					<dt>timestamp</dt><dd data-bind="text: resulttimestamp"></dd>
+					<dt>smart</dt><dd data-bind="html: smart"></dd>
+					<dt>ago</dt><dd data-bind="text: ago"></dd>
+					<dt>year</dt><dd data-bind="text: year"></dd>
+					<dt>month</dt><dd data-bind="text: month"></dd>
+					<dt>day</dt><dd data-bind="text: day"></dd>
+					<dt>weekday</dt><dd data-bind="text: weekday"></dd>
+					<dt>time</dt><dd data-bind="text: time"></dd>
+				</dl>
+			</section>
+<?php
+$html->Close();
 
-      <hr class="minor" />
-
-<?
-        break;
-    }
-
-  $form = new auForm('todate');
-  $form->AddField('timestamp', 'timestamp', 'enter a unix timestamp to convert to a human-readable date/time', false, time());
-  $form->AddButtons('date', 'convert this unix timestamp to a human-readable date', 'to');
-  $form->WriteHTML(true);
-?>
-      <hr class="minor" />
-
-<?
-  $form = new auForm('totimestamp');
-  $form->AddField('month', 'month', 'enter the month (1 - 12)', false, $_POST['month']);
-  $form->AddField('day', 'day', 'enter the day (1 - 31)', false, $_POST['day']);
-  $form->AddField('year', 'year', 'enter the year (YYYY)', false, $_POST['year']);
-  $form->AddField('hour', 'hour', 'enter the hour (0 - 23)', false, $_POST['hour']);
-  $form->AddField('min', 'minute', 'enter the minute (0 - 59)', false, $_POST['min']);
-  $form->AddField('sec', 'second', 'enter the seconds (0 - 59)', false, $_POST['sec']);
-  $form->AddButtons('timestamp', 'convert this date into a unix timestamp', 'to');
-  $form->WriteHTML(true);
-
-  $page->End();
-?>
+function Analyze() {
+	global $ajax;
+	if(isset($_GET['type']) && ($_GET['type'] == 'timestamp' || $_GET['type'] == 'formatted'))
+		if(isset($_GET[$_GET['type']]) && $timestamp = trim($_GET[$_GET['type']]))
+			if(isset($_GET['zone']) && ($_GET['zone'] == 'local' || $_GET['zone'] == 'utc')) {
+				if($_GET['type'] == 'formatted')
+					if($_GET['zone'] == 'local')
+						$timestamp = t7format::LocalStrtotime($timestamp);
+					else {
+						$zone = date_default_timezone_get();
+						date_default_timezone_set('UTC');
+						$timestamp = strtotime($timestamp);
+						date_default_timezone_set($zone);
+					}
+				else
+					$timestamp = +$timestamp;
+				$ajax->Data->timestamp = $timestamp;
+				$ajax->Data->smart = t7format::SmartDate($timestamp);
+				$ajax->Data->ago = t7format::HowLongAgo($timestamp);
+				$ajax->Data->year = t7format::LocalDate('Y', $timestamp);
+				$ajax->Data->month = strtolower(t7format::LocalDate('F (n)', $timestamp));
+				$ajax->Data->day = t7format::LocalDate('jS', $timestamp);
+				$ajax->Data->weekday = strtolower(t7format::LocalDate('l', $timestamp));
+				$ajax->Data->time = t7format::LocalDate('g:i:s a', $timestamp);
+			} else
+				$ajax->Fail('time zone missing or invalid.');
+		else
+			$ajax->Fail('input value missing or blank.');
+	else
+		$ajax->Fail('input type not specified or invalid.');
+}

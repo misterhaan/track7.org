@@ -646,6 +646,7 @@ article > header h2 a:link,
 article > header h2 a:visited {
   color: #333;
 }
+.meta,
 .postmeta,
 .guidemeta,
 .photometa {
@@ -653,6 +654,7 @@ article > header h2 a:visited {
   padding: 0 .625em;
   font-size: .8em;
 }
+article > header .meta,
 article > header .postmeta,
 article > header .guidemeta {
   background-color: #ccc;
@@ -660,16 +662,19 @@ article > header .guidemeta {
   padding: 0 .625em .15em;
 }
 @media (min-width: 25em) {
+  article > header .meta,
   article > header .postmeta,
   article > header .guidemeta {
   margin: 0 .625em .75em;
     border-radius: 0 0 .625em .625em;
   }
 }
+.meta > *,
 .guidemeta > *,
 .photometa > * {
   margin-right: .75em;
 }
+.meta > *:before,
 .guidemeta > *:before,
 .photometa > *:before {
   font-family: fontawesome;
@@ -677,9 +682,11 @@ article > header .guidemeta {
   color: #998;
   margin-right: .325em;
 }
+.meta .guidelevel:before,
 .guidemeta .guidelevel:before {
   content: "\f19d";
 }
+.meta .tags:before,
 .guidemeta .tags:before,
 .photometa .tags:before {
   content: "\f02c";
@@ -1792,6 +1799,68 @@ p.story {
 }
 .indent {
   text-indent: 2em;
+}
+
+/*------------------------------------------------------[ /tools/regex.php ]--*/
+@media (min-width: 40em) {
+	.regextest .label {
+		-webkit-flex: 0 0 4em;
+		flex: 0 0 4em;
+	}
+	.regextest legend {
+		position: absolute;
+	}
+	.regextest fieldset.checkboxes .field {
+		margin-left: 4em;
+	}
+	.regextest button {
+		margin: .75em 1em .75em 5em;
+	}
+}
+ol.matches {
+	padding: none;
+	list-style-type: none;
+	counter-reset: match -1;
+}
+ol.matches li:before {
+	float: left;
+	counter-increment: match;
+	content: "[" counter(match) "]";
+	margin-left: -1.5em;
+}
+
+/*-------------------------------------------------[ /tools/timestamps.php ]--*/
+#timestampdata {
+	margin: .75em .5em;
+}
+#timestampdata dt {
+	position: absolute;
+}
+#timestampdata dt:after {
+	content: ":";
+}
+#timestampdata dd {
+	margin-left: 6.5em;
+}
+@media (min-width: 25em) {
+	#timestampdata {
+		margin: .75em 1em;
+	}
+}
+@media (min-width: 40em) {
+	#timestamps .label {
+		-webkit-flex: 0 0 6.5em;
+		flex: 0 0 6.5em;
+	}
+	#timestamps legend {
+		position: absolute;
+	}
+	#timestamps fieldset.checkboxes .field {
+		margin-left: 6.5em;
+	}
+	#timestamps button {
+		margin: .75em 1em .75em 7.5em;
+	}
 }
 
 /*------------------------------------------------------[ /updates/new.php ]--*/

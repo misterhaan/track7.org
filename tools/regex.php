@@ -1,44 +1,99 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  require_once 'auForm.php';
-  require_once 'auText.php';
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  $page->start('regular expression testing');
-?>
-      <h2>t7code / t7uncode</h2>
-<?
-  $form = new auForm('t7code', null, 'post', true);
-  $form->AddField('t7c', 't7code format', 'enter t7code to translate to html', false, strlen($_POST['t7c']) > 0 ? $_POST['t7c'] : auText::HTML2BB($_POST['t7u']), _AU_FORM_FIELD_BBCODE);
-  $form->AddField('t7u', 'html format', 'enter html to translate to t7code', false, strlen($_POST['t7u']) > 0 ? $_POST['t7u'] : auText::BB2HTML($_POST['t7c']), _AU_FORM_FIELD_MULTILINE);
-  $form->AddButtons('translate', 'fill in the blank field by translating the non-blank field');
-  $form->WriteHTML(true);
-?>
-      <h2><a href="http://php.net/preg_replace">preg_replace()</a></h2>
-<?
-  $form = new auForm('preg_replace');
-  if($_POST['submit'] == 'replace')
-    $form->AddHTML('result', preg_replace($_POST['replacepattern'], $_POST['replacement'], $_POST['replacesubject']));
-  $form->AddField('replacepattern', 'pattern', 'enter a regular expression to replace', true, $_POST['replacepattern']);
-  $form->AddField('replacement', 'replacement', 'enter some text to replace the pattern with', true, $_POST['replacement']);
-  $form->AddField('replacesubject', 'subject', 'enter a block of text to perform the replacement on', true, $_POST['replacesubject'], _AU_FORM_FIELD_MULTILINE);
-  $form->AddButtons('replace', 'test the preg_replace() function');
-  $form->WriteHTML(true);
-?>
-      <h2><a href="http://php.net/preg_match">preg_match()</a></h2>
-<?
-  if($_POST['submit'] == 'match') {
-    if(preg_match($_POST['matchpattern'], $_POST['matchsubject'], $matches)) {
-      echo '<p><pre>';
-      print_r($matches);
-      echo '</pre></p>';
-    } else
-      $page->Info('pattern not found.');
-  }
-  $form = new auForm('preg_match');
-  $form->AddField('matchpattern', 'pattern', 'enter a regular expression to match', true, $_POST['matchpattern']);
-  $form->AddField('matchsubject', 'subject', 'enter a block of text to perform the match on', true, $_POST['matchsubject'], _AU_FORM_FIELD_MULTILINE);
-  $form->AddButtons('match', 'test the preg_match() function');
-  $form->WriteHTML(true);
+if(isset($_GET['ajax'])) {
+	$ajax = new t7ajax();
+	switch($_GET['ajax']) {
+		case 'match': Match(); break;
+		case 'replace': Replace(); break;
+	}
+	$ajax->Send();
+	die;
+}
 
-  $page->End();
+$html = new t7html(['ko' => true]);
+$html->Open('regular expression testing');
 ?>
+			<h1>regular expression testing</h1>
+
+			<div class=tabbed>
+				<nav class=tabs>
+					<a href=#match title="preg_match and preg_match_all">match</a>
+					<a href=#replace title="preg_replace">replace</a>
+				</nav>
+
+				<section id=match class=tabcontent>
+					<h2>match</h2>
+					<p class=meta>
+						using php function
+						<a href="http://php.net/preg_match" data-bind="visible: !match.all()">preg_match</a>
+						<a href="http://php.net/preg_match_all" data-bind="visible: match.all">preg_match_all</a>
+					</p>
+					<form class=regextest data-bind="submit: Match">
+						<label>
+							<span class=label>pattern:</span>
+							<span class=field><input data-bind="value: match.pattern"></span>
+						</label>
+						<label class=multiline>
+							<span class=label>subject:</span>
+							<span class=field><textarea data-bind="value: match.subject"></textarea></span>
+						</label>
+						<label class=checkbox>
+							<span class=label></span>
+							<span class="checkbox"><input type=checkbox data-bind="checked: match.all">find all matches</span>
+						</label>
+						<button>match</button>
+					</form>
+					<div data-bind="if: match.checked">
+						<p data-bind="visible: match.matches().length < 1">no matches found</p>
+						<ol class=matches data-bind="foreach: match.matches">
+							<li><pre><code data-bind="text: $data"></code></pre></li>
+						</ol>
+					</div>
+				</section>
+
+				<section id=replace class=tabcontent>
+					<h2>replace</h2>
+					<p class=meta>
+						using php function <a href="http://php.net/preg_replace">preg_replace</a>
+					</p>
+					<form class=regextest data-bind="submit: Replace">
+						<label>
+							<span class=label>pattern:</span>
+							<span class=field><input data-bind="value: replace.pattern"></span>
+						</label>
+						<label>
+							<span class=label>replace:</span>
+							<span class=field><input data-bind="value: replace.replacement"></span>
+						</label>
+						<label class=multiline>
+							<span class=label>subject:</span>
+							<span class=field><textarea data-bind="value: replace.subject"></textarea></span>
+						</label>
+						<button>replace</button>
+					</form>
+					<pre data-bind="visible: replace.replaced"><code data-bind="text: replace.result"></code></pre>
+				</section>
+			</div>
+
+<?php
+$html->Close();
+
+function Match() {
+	global $ajax;
+	if(isset($_GET['pattern']) && isset($_GET['subject'])) {
+		if(isset($_GET['all']) && $_GET['all'])
+			$ajax->Data->found = preg_match_all($_GET['pattern'], $_GET['subject'], $ajax->Data->matches);
+		else
+			$ajax->Data->found = preg_match($_GET['pattern'], $_GET['subject'], $ajax->Data->matches);
+	} else
+		$ajax->Fail('pattern and subject must be specified.');
+}
+
+function Replace() {
+	global $ajax;
+	if(isset($_GET['pattern']) && isset($_GET['replacement']) && isset($_GET['subject'])) {
+		$ajax->Data->replacedResult = preg_replace($_GET['pattern'], $_GET['replacement'], $_GET['subject']);
+	} else
+		$ajax->Fail('pattern, replacement, and subject must be specified.');
+}

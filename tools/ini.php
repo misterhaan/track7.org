@@ -1,29 +1,21 @@
 <?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  $access[0] = 0;
-  $access[1] = 'user';
-  $access[2] = 'directory';
-  $access[3] = 3;
-  $access[4] = 'system';
-  $access[5] = 5;
-  $access[6] = 'directory or system';
-  $access[7] = 'all';
+$access = [0, 'user', 'directory', 3, 'system', 5, 'directory or system', 'all'];
 
-  $page->Start('php.ini');
+$html = new t7html([]);
+$html->Open('php.ini');
 
-  $ini= ini_get_all();
-  foreach($ini as $key => $values) {
+$ini = ini_get_all();
+foreach($ini as $key => $values) {
 ?>
-      <h2><?=$key; ?></h2>
-      <p>
-        <strong>global:</strong>&nbsp; <?=htmlspecialchars($values['global_value']); ?><br />
-        <strong>local:</strong>&nbsp; <?=htmlspecialchars($values['local_value']); ?><br />
-        <strong>access:</strong>&nbsp; <?=$access[$values['access']]; ?>
-      </p>
+			<h2><?=$key; ?></h2>
+			<p>
+				<strong>global:</strong>&nbsp; <?=htmlspecialchars($values['global_value']); ?><br />
+				<strong>local:</strong>&nbsp; <?=htmlspecialchars($values['local_value']); ?><br />
+				<strong>access:</strong>&nbsp; <?=$access[$values['access']]; ?>
+			</p>
 
 <?
-  }
-
-  $page->End();
-?> 
+}
+$html->Close();
