@@ -88,8 +88,8 @@ RewriteCond %{REQUEST_URI} ^/analogu/
 RewriteRule ^analogu/scripts\.php /code/web/ [R=301]
 RewriteCond %{REQUEST_URI} ^/?source/
 RewriteRule ^source/([a-z0-9/\-]+\.(php|css|js))$ https://github.com/misterhaan/track7.org/blob/master/$1
-RewriteCond %{REQUEST_URI} ^/?files/
-RewriteRule ^files/(.+\.(zip|wsz|xpi|msi|cab))$ /download.php?file=$1
+RewriteCond %{REQUEST_URI} ^/?todo\.php
+RewriteRule ^todo\.php$ https://github.com/misterhaan/track7.org/issues
 RewriteCond %{REQUEST_URI} ^/?robots
 RewriteRule ^robots.txt /robots.php
 RewriteCond %{REQUEST_URI} ^/?oi
