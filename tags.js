@@ -58,6 +58,8 @@ function TagsViewModel() {
         return "/album/" + name + "/";
       case "art":
         return "/art/" + name + "/";
+      case "forum":
+      	return "/forum/" + name + "/";
       default:
         return "";
     }

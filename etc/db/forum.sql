@@ -1,7 +1,7 @@
 create table forum_discussions (
 	id smallint unsigned primary key auto_increment,
 	threadid smallint unsigned comment 'thread id from the old database, used to look up when redirecting',
-	key(oldid),
+	key(threadid),
 	title varchar(255) not null
 );
 
