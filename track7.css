@@ -113,6 +113,11 @@ fieldset.checkboxes legend {
 	margin: 0;
 	padding: 0;
 }
+@media (min-width: 40em) {
+	fieldset.checkboxes legend {
+		position: absolute;
+	}
+}
 label,
 label * {
 	vertical-align: middle;
@@ -154,6 +159,15 @@ button:disabled {
 	font-weight: normal;
 	font-size: .8em;
 	margin-left: .5em;
+	display: inline-block;
+	content: "\f110";
+	-webkit-animation: fa-spin 1s infinite steps(8);
+	animation: fa-spin 1s infinite steps(8);
+}
+.loading:before {
+	font-family: fontawesome;
+	font-size: .8em;
+	margin-right: .5em;
 	display: inline-block;
 	content: "\f110";
 	-webkit-animation: fa-spin 1s infinite steps(8);
@@ -207,6 +221,12 @@ thead th {
 }
 img.avatar {
 	border-radius: 10%;
+}
+img.avatar.inline {
+	height: 1em;
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: -.125em;
 }
 
 /*-------------------------------------------------------------- [ header ] --*/
@@ -676,6 +696,8 @@ article > header .guidemeta {
 	font-size: .75em;
 	color: #998;
 	margin-right: .325em;
+	display: inline-block;
+	vertical-align: middle;
 }
 .meta .guidelevel:before,
 .guidemeta .guidelevel:before {
@@ -689,10 +711,12 @@ article > header .guidemeta {
 .guidemeta .views:before {
 	content: "\f1e5";
 }
+.meta .posted:before,
 .guidemeta .posted:before,
 .photometa .posted:before {
 	content: "\f073";
 }
+.meta .author:before,
 .guidemeta .author:before {
 	content: "\f007";
 }
@@ -716,6 +740,18 @@ article > header .guidemeta {
 }
 .guidemeta .gameengine:before {
 	content: "\f118";
+}
+.meta .firstpost:before {
+	content: "\f0e5";
+}
+.meta .replies:before {
+	content: "\f0e6";
+}
+.meta .lastpost:before {
+	content: "\f27b";
+}
+.meta .edithistory:before {
+	content: "\f044";
 }
 .rating[data-stars="1"]:before {
 	content: "\f005\f006\f006\f006\f006";
@@ -1033,6 +1069,7 @@ section.comment .userinfo .userlevel {
 	section.comment .comment {
 		-webkit-flex: 1 0;
 		flex: 1 0;
+		overflow-x: auto;  /* stop code blocks from widening the whole post */
 	}
 }
 section.comment .comment header,
@@ -1298,7 +1335,7 @@ article.activity.comment .whatwhen {
 article.activity.post .whatwhen {
 	background-image: url(/images/storytype/entry.png);
 }
-article.activity.forum .whatwhen {
+article.activity.discuss .whatwhen {
 	background-image: url(/images/storytype/post.png);
 }
 article.activity.photo .whatwhen {
@@ -1664,9 +1701,6 @@ img.icon {
 		-webkit-flex: 0 0 6em;
 		flex: 0 0 6em;
 	}
-	#editscr legend {
-		position: absolute;
-	}
 	#editscr fieldset.checkboxes .field {
 		margin-left: 6em;
 	}
@@ -1700,6 +1734,31 @@ ul.feeds a:before {
 	border-radius: .125em;
 	padding: .15em .19em 0 .15em;
 	margin-top: -.1em;
+}
+
+/*-------------------------------------------------[ /forum/discussion.php ]--*/
+@media (min-width: 40em) {
+	#addreply span.label {
+		-webkit-flex: 0 0 3.75em;
+		flex: 0 0 3.75em;
+	}
+	#addreply button {
+		margin: .75em 1em .75em 4.75em;
+	}
+}
+
+/*------------------------------------------------------[ /forum/start.php ]--*/
+@media (min-width: 40em) {
+	#editdiscussion .label {
+		-webkit-flex: 0 0 4.5em;
+		flex: 0 0 4.5em;
+	}
+	#editdiscussion fieldset.checkboxes .field {
+		margin-left: 4.5em;
+	}
+	#editdiscussion button {
+		margin: .75em 1em .75em 5.5em;
+	}
 }
 
 /*------------------------------------------------------[ /guides/edit.php ]--*/

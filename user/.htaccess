@@ -6,3 +6,4 @@ RewriteCond %{QUERY_STRING} to=([0-9a-z\_\-]+) [NC]
 RewriteRule ^sendmessage.php messages.php?#!to=%1 [NE,R=301,L]
 
 RewriteRule ^([0-9a-zA-Z\_\-]+)/?$ viewprofile.php?login=$1
+RewriteRule ^([0-9a-zA-Z\_\-]+)/replies$ /forum/replies.php?username=$1 [QSA]

@@ -16,6 +16,8 @@
                 $comment->contacturl = '';
               $comment->canchange = $user->IsLoggedIn() && ($comment->canchange == $user->ID && $comment->markdown || $user->IsAdmin());
               unset($comment->markdown);
+              if($comment->avatar === '')
+              	$comment->avatar = t7user::DEFAULT_AVATAR;
               $ajax->Data->comments[] = $comment;
             }
             // TODO: check if there are more comments (and support loading more)

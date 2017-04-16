@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteOptions inherit
+RewriteRule ^([^/]+)/$ ?tag=$1
+RewriteRule ^([0-9]+)$ discussion.php?id=$1 [QSA]
