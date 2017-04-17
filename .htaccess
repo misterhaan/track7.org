@@ -23,6 +23,8 @@ RewriteRule ^feeds/guides.rss /guides/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/photos.rss /album/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?feeds/
+RewriteRule ^feeds/posts.rss /forum/feed.rss [R=301]
+RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/art.rss /art/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/updates.rss /updates/feed.rss [R=301]
@@ -92,10 +94,12 @@ RewriteCond %{REQUEST_URI} ^/?todo\.php
 RewriteRule ^todo\.php$ https://github.com/misterhaan/track7.org/issues
 RewriteCond %{REQUEST_URI} ^/?robots
 RewriteRule ^robots.txt /robots.php
+RewriteCond %{REQUEST_URI} ^/?hb
+RewriteRule ^hb/thread([0-9]+) /forum/thread$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?oi
-RewriteRule ^oi/f[0-9]+/t([0-9]+) /hb/thread$1/ [R=301]
+RewriteRule ^oi/f[0-9]+/t([0-9]+) /forum/thread$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?oi
-RewriteRule ^oi /hb [R=301]
+RewriteRule ^oi /forum/ [R=301]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.php -f

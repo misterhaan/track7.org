@@ -354,26 +354,17 @@
       return false;
     }
 
-    /**
-     * Look up the user's statistics.
-     * @return object Statistics object, or false in unable to retrieve
-     */
-    public function GetStats() {
-      global $db, $olddb;
-      $ret = (object)['registered' => 0, 'fans' => 0, 'comments' => 0, 'posts' => 0, 'forum' => 0, 'rounds' => 0];
-      if($s = $db->query('select registered, fans, comments, posts from users_stats where id=\'' . +$this->ID . '\' limit 1'))
-        if($s = $s->fetch_object()) {
-          $ret->registered = $s->registered;
-          $ret->fans = $s->fans;
-          $ret->comments = $s->comments;
-          $ret->posts = $s->posts;
-        }
-      if($s = $olddb->query('select posts as forum from userstats where uid=\'' . +$this->OldID() . '\' limit 1'))
-        if($s = $s->fetch_object()) {
-          $ret->forum = $s->forum;
-        }
-      return $ret;
-    }
+	/**
+	 * Look up the user's statistics.
+	 * @return object Statistics object, or false in unable to retrieve
+	 */
+	public function GetStats() {
+		global $db;
+		if($s = $db->query('select registered, fans, comments, replies from users_stats where id=\'' . +$this->ID . '\' limit 1'))
+			if($s = $s->fetch_object())
+				return $s;
+		return (object)['registered' => 0, 'fans' => 0, 'comments' => 0, 'replies' => 0];
+	}
 
     /**
      * Look up the user's contact links.

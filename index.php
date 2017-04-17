@@ -38,8 +38,8 @@ $html->Open('track7');
 						<img src="/code/favicon.png" alt="">
 						software
 					</a>
-					<a href="/hb/" title="join or start conversations">
-						<img src="/hb/favicon.png" alt="">
+					<a href="/forum/" title="join or start conversations">
+						<img src="/forum/favicon.png" alt="">
 						forums
 					</a>
 <?php
@@ -60,73 +60,45 @@ if($user->IsAdmin()) {
 			<div class=floatbgstop><nav class=actions><a class=new href="/updates/new.php">add update message</a></nav></div>
 <?php
 }
-// get last MAXITEMS from contributions and forum posts
-$act = $forum = false;
+// get last MAXITEMS from contributions
 if($acts = $db->query('select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author order by c.posted desc limit ' . MAXITEMS))
-	$act = $acts->fetch_object();
-if($forums = $db->query('select p.id, p.number, p.thread, p.instant as posted, p.subject as title, p.post as preview, u.username, u.displayname from track7_t7data.hbposts as p left join track7_t7data.users as ou on ou.uid=p.uid left join transition_users as tu on tu.olduid=ou.uid left join users as u on u.id=tu.id order by instant desc limit ' . MAXITEMS))
-	$forum = $forums->fetch_object();
-
-$items = 0;
-while($items < MAXITEMS && ($act || $forum)) {
-	if($act && (!$forum || $act->posted > $forum->posted)) {
-		ShowContribution($act);
-		$act = $acts->fetch_object();
-	} elseif($forum) {
-		ShowForum($forum);
-		$forum = $forums->fetch_object();
-	}
-	$items++;
-}
-$html->Close();
-
-function ShowContribution($act) {
+	while($act = $acts->fetch_object()) {
 ?>
 			<article class="activity <?php echo $act->conttype; ?>">
 				<div class=whatwhen title="<?php echo $act->conttype; ?> at <?php echo t7format::LocalDate(LONGDATEFMT, $act->posted); ?>">
 					<time datetime="<?php echo gmdate('c', $act->posted); ?>"><?php echo t7format::SmartDate($act->posted); ?></time>
 				</div>
 				<div>
-					<h2><?php echo ContributionPrefix($act->conttype); ?><a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a> by <?php echo AuthorLink($act); ?></h2>
+					<h2><?php echo ContributionPrefix($act->conttype); ?><a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a><?php echo ContributionPostfix($act->conttype); ?> by <?php echo AuthorLink($act); ?></h2>
 					<div class=summary>
 						<?php echo $act->preview; ?>
 <?php
-	if($act->hasmore) {
+		if($act->hasmore) {
 ?>
 						<p class=readmore><a href="<?php echo htmlspecialchars($act->url); ?>">⇨ read more</a></p>
 <?php
-	}
+		}
 ?>
 					</div>
 				</div>
 			</article>
 <?php
-}
+	}
 
-function ShowForum($forum) {
-	$forum->url = '/hb/thread' . $forum->thread . '/';
-	if($forum->number - 1 > FORUM_POSTS_PER_PAGE)
-		$forum->url .= 'skip=' . floor(($forum->number - 1) / FORUM_POSTS_PER_PAGE) * FORUM_POSTS_PER_PAGE;
-	$forum->url .= '#p' . $forum->id;
-	$forum->authorurl = false;
-	$forum->authorname = 'anonymous';
-?>
-			<article class="activity forum">
-				<div class=whatwhen title="forum post at <?php echo t7format::LocalDate(LONGDATEFMT, $forum->posted); ?>">
-					<time datetime="<?php echo gmdate('c', $forum->posted); ?>"><?php echo t7format::SmartDate($forum->posted); ?></time>
-				</div>
-				<div>
-					<h2><a href="<?php echo $forum->url; ?>"><?php echo $forum->title; ?></a> by <?php echo AuthorLink($forum); ?></h2>
-					<?php echo $forum->preview; ?>
-				</div>
-			</article>
-<?php
-}
+$html->Close();
 
 function ContributionPrefix($type) {
 	switch($type) {
 		case 'comment':
 			return 'comment on ';
+	}
+	return '';
+}
+
+function ContributionPostfix($type) {
+	switch($type) {
+		case 'discuss':
+			return ' discussion';
 	}
 	return '';
 }

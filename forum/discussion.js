@@ -1,4 +1,11 @@
 $(function() {
+	if(window.location.hash.substring(0, 2) == "#p")
+		$.get("oldlink.php", {ajax: "reply", postid: window.location.hash.substring(2)}, function(result) {
+			if(result.fail)
+				alert(result.message);
+			else
+				window.location.hash = "#r" + result.id;
+		}, "json");
 	ko.applyBindings(window.RepliesVM = new RepliesViewModel());
 	$("#addreply").submit(function() {
 		$("#postreply").prop("disabled", true).addClass("waiting");
@@ -32,7 +39,7 @@ function RepliesViewModel() {
 			else {
 				for(var r = 0; r < result.replies.length; r++)
 					self.replies.push(ObserveReply(result.replies[r]));
-				if(window.location.hash)
+				if(window.location.hash && $(window.location.hash).length)
 					$("body").animate({scrollTop: $(window.location.hash).offset().top}, 750);
 			}
 		}, "json");

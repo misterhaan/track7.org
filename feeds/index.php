@@ -23,7 +23,7 @@ $html->Open('feeds');
 				<li><a href="/pen/feed.rss">stories</a></li>
 				<li><a href="/code/vs/feed.rss">application releases</a></li>
 				<li><a href="/code/web/feed.rss">web scripts</a></li>
-				<li><a href="posts.rss">forum posts</a></li>
+				<li><a href="/forum/feed.rss">forum posts</a></li>
 			</ul>
 <?
 $html->Close();

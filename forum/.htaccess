@@ -1,4 +1,5 @@
 RewriteEngine on
 RewriteOptions inherit
+RewriteRule ^thread([0-9]+)/?$ oldlink.php?threadid=$1
 RewriteRule ^([^/]+)/$ ?tag=$1
 RewriteRule ^([0-9]+)$ discussion.php?id=$1 [QSA]

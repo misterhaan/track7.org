@@ -72,7 +72,7 @@
       </section>
 <?php
       }
-      if($stats->fans || $stats->comments || $stats->posts || $stats->forum) {
+      if($stats->fans || $stats->comments || $stats->replies) {
 ?>
       <section id=rank>
         <header>rankings</header>
@@ -88,14 +88,9 @@
           <li>#<?php echo Rank('comments', $stats->comments); ?> in <a href="/comments.php?user=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s comments">comments</a> with <?php echo $stats->comments; ?></li>
 <?php
         }
-        if($stats->posts) {  // TODO:  when others are allowed to posts blogs, this link should be less generic
+        if($stats->replies) {
 ?>
-          <li>#<?php echo Rank('posts', $stats->posts); ?> in <a href="/bln/" title="view all of <?php echo $u->Username; ?>’s blog posts">blog posts</a> with <?php echo $stats->posts; ?></li>
-<?php
-        }
-        if($stats->forum) {
-?>
-          <li>#<?php echo Rank('forum', $stats->forum); ?> in <a href="/hb/recentposts.php?author=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s forum posts">forum posts</a> with <?php echo $stats->forum; ?></li>
+          <li>#<?php echo Rank('replies', $stats->replies); ?> in <a href="/user/<?php echo $u->Username; ?>/replies" title="view all of <?php echo $u->Username; ?>’s forum posts">forum posts</a> with <?php echo $stats->replies; ?></li>
 <?php
         }
 ?>
@@ -103,40 +98,24 @@
       </section>
 <?php
       }
-      $act = $comment = $forum = false;
       if($acts = $db->query('select conttype, posted, url, title from contributions where author=\'' . +$u->ID . '\' order by posted desc limit 12'))
-        $act = $acts->fetch_object();
-      if($u->OldID()) {  // this is only for users that existed in the old database; otherwise it picks up everything anonymous
-        if($forums = $olddb->query('select concat(\'/hb/thread\', thread, \'/#p\', id) as url, subject as title, instant as posted from hbposts where uid=\'' . +$u->OldID() . '\' order by instant desc limit 12'))
-          $forum = $forums->fetch_object();
-      }
-      if($act || $forum) {
+      	if($acts->num_rows) {
 ?>
       <ol id=activity>
 <?php
-        $count = 0;
-        while($count < 12 && ($act || $forum)) {
-          if($act && (!$forum || $act->posted > $forum->posted)) {
+        	while($act = $acts->fetch_object()) {
 ?>
         <li class=<?php echo $act->conttype; ?>><?php echo ActionWords($act->conttype); ?> <a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a> <time datetime="<?php echo gmdate('c', $act->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $act->posted); ?>"><?php echo t7format::HowLongAgo($act->posted); ?> ago</time></li>
 <?php
-            $act = $acts->fetch_object();
-          } elseif($forum) {
-?>
-        <li class=forum>posted <a href="<?php echo $forum->url; ?>"><?php echo $forum->title; ?></a> <time datetime="<?php echo gmdate('c', $forum->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $forum->posted); ?>"><?php echo t7format::HowLongAgo($forum->posted); ?> ago</time></li>
-<?php
-            $forum = $forums->fetch_object();
-          }
-          $count++;
-        }
+        	}
 ?>
       </ol>
 <?php
-      } else {
+      	} else {
 ?>
       <p><?php echo $u->DisplayName; ?> hasn’t posted anything to track7 yet.</p>
 <?php
-      }
+      	}
       $html->Close();
     } else  // user not found; go to user index
       header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/');
@@ -153,19 +132,9 @@
     global $db, $olddb;
     switch($stat) {
       case 'fans':
-      case 'posts':
+      case 'comments':
+      case 'replies':
         if($r = $db->query('select count(1) as rank from users_stats where ' . $stat . '>=' . +$value))
-          if($r = $r->fetch_object())
-            return $r->rank;
-        break;
-      case 'comments':  // comments is a special case because we have to add the two tables together
-        if($r = $db->query('select count(1) as rank from (select id, uid, sum(comments) as comments from ((select s.id, t.olduid as uid, s.comments from users_stats as s left join transition_users as t on t.id=s.id group by s.id) union all (select t.id, s.uid, s.comments from track7_t7data.userstats as s left join transition_users as t on t.olduid=s.uid)) as superstats group by uid, id) as allcomments where comments>=' . +$value))
-          if($r = $r->fetch_object())
-            return $r->rank;
-        break;
-      case 'forum':
-        $stat = 'posts';
-        if($r = $olddb->query('select count(1) as rank from userstats where ' . $stat . '>=' . +$value))
           if($r = $r->fetch_object())
             return $r->rank;
         break;
@@ -215,10 +184,7 @@
           $this->Avatar = $u->avatar ? '/user/avatar/' . $u->login . '.' . $u->avatar : '/images/user.jpg';
           $this->Friend = $u->frienduid;
           $this->Fan = $u->fanuid;
-        } else
-          die('user not found');
-        else
-          die('erorr running query');
+        }
     }
 
     public function IsLoggedIn() {

@@ -10,8 +10,6 @@ if(isset($_GET['tags']) && $_GET['tags']) {
 	$replies = 'select r.id, r.discussion, r.posted, d.title, u.username, u.displayname, r.name, r.html from forum_replies as r left join forum_discussions as d on d.id=r.discussion left join users as u on u.id=r.user order by r.posted desc limit ' . t7feed::MAX_RESULTS;
 }
 if($replies = $db->query($replies))
-	while($reply = $replies->fetch_object()) {
-		$guide->summary = str_replace('href="/', 'href="http://' . $_SERVER['HTTP_HOST'] . '/', $guide->summary);
+	while($reply = $replies->fetch_object())
 		$rss->AddItem($reply->html, $reply->title . ' discussion by ' . ($reply->displayname ? $reply->displayname : $reply->username ? $reply->username : $reply->name), '/forum/' . $reply->discussion . '#r' . $reply->id, $reply->posted, '/forum/' . $reply->discussion . '#r' . $reply->id, true);
-	}
 $rss->End();
