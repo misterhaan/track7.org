@@ -4,7 +4,7 @@ $id = +$_GET['id'];
 if($id)
 	if($update = $db->query('select id, posted, html from update_messages where id=' . $id))
 		if($update = $update->fetch_object()) {
-			$update->posted = t7format::TimeTag('smart', $update->posted);
+			$update->posted = t7format::TimeTag('smart', $update->posted, 'g:i a \o\n l F jS Y');
 			$html = new t7html(['ko' => true]);
 			$html->Open('track7 update');
 ?>
