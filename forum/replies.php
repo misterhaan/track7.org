@@ -36,6 +36,7 @@ if($u) {
 <?php
 }
 ?>
+			<p class=info data-bind="visible: !loading() && replies().length == 0">no forum activity</p>
 
 			<!-- ko foreach: replies -->
 			<h2><a data-bind="text: title, attr: {href: '<?php echo dirname($_SERVER['PHP_SELF']); ?>/' + discussion + '#r' + id}"></a></h2>

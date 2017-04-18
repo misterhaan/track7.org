@@ -28,6 +28,8 @@ RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/art.rss /art/feed.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?feeds/
 RewriteRule ^feeds/updates.rss /updates/feed.rss [R=301]
+RewriteRule %{REQUEST_URI} ^/?feeds/
+RewriteRule ^feeds/comments.rss /comments.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/pen/bln/(.*) /bln/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?pen/
@@ -100,6 +102,8 @@ RewriteCond %{REQUEST_URI} ^/?oi
 RewriteRule ^oi/f[0-9]+/t([0-9]+) /forum/thread$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?oi
 RewriteRule ^oi /forum/ [R=301]
+RewriteCond %{REQUEST_URI} ^/?hb
+RewriteRule ^hb /forum/ [R=301]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.php -f

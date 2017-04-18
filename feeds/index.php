@@ -14,7 +14,7 @@ $html->Open('feeds');
 			<ul class="feeds">
 				<li><a href="/feed.rss">unifeed</a> (contains everything listed below)</li>
 				<li><a href="/updates/feed.rss">site updates</a></li>
-				<li><a href="comments.rss">page comments</a></li>
+				<li><a href="/comments.rss">page comments</a></li>
 				<li><a href="/bln/feed.rss">bln entries</a></li>
 				<li><a href="/album/feed.rss">album photos</a></li>
 				<li><a href="/guides/feed.rss">guides</a></li>
@@ -27,4 +27,3 @@ $html->Open('feeds');
 			</ul>
 <?
 $html->Close();
-?>

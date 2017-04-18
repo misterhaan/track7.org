@@ -1,9 +1,18 @@
 RewriteEngine On
 RewriteOptions inherit
 RewriteBase /user/
+RewriteRule ^(list|friends).php /user/ [R=301,L]
 RewriteRule ^message.php messages.php [R=301,L]
 RewriteCond %{QUERY_STRING} to=([0-9a-z\_\-]+) [NC]
 RewriteRule ^sendmessage.php messages.php?#!to=%1 [NE,R=301,L]
+RewriteCond %{QUERY_STRING} tab=(contact|notification)
+RewriteRule ^editprofile.php settings.php?#%1 [NE,R=301,L]
+RewriteCond %{QUERY_STRING} tab=display
+RewriteRule ^editprofile.php settings.php?#timezone [NE,R=301,L]
+RewriteCond %{QUERY_STRING} tab=password
+RewriteRule ^editprofile.php settings.php?#linkedaccounts [NE,R=301,L]
+RewriteRule ^editprofile.php settings.php? [R=301]
 
 RewriteRule ^([0-9a-zA-Z\_\-]+)/?$ viewprofile.php?login=$1
 RewriteRule ^([0-9a-zA-Z\_\-]+)/replies$ /forum/replies.php?username=$1 [QSA]
+RewriteRule ^([0-9a-zA-Z\_\-]+)/comments$ /comments.php?username=$1 [QSA]

@@ -117,6 +117,7 @@ function ConversationsViewModel() {
             id = $("#pm" + id).is(":hidden") ? "#m" + id : "#pm" + id;
             $("body").animate({scrollTop: $(id).offset().top}, 750);
           }
+          Prism.highlightAll();
         } else
           c.error(result.message);
         c.loading(false);
@@ -131,6 +132,7 @@ function ConversationsViewModel() {
       if(!result.fail) {
         conv.messages.push(result.message);
         conv.response('');
+        Prism.highlightAll();
         // TODO:  move conversation to top of list
       } else
         alert(result.message);

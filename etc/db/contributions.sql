@@ -15,6 +15,7 @@ create table contributions (
 	hasmore bool not null default 0
 );
 
+-- not used yet, but should probably replace the srctbl enum
 create table contributions_srctbls (
 	id tinyint unsigned not null auto_increment primary key,
 	name varchar(32) not null,
@@ -23,6 +24,7 @@ create table contributions_srctbls (
 	foreign key (conttype) references contributions_types(id) on delete cascade on update cascade
 );
 
+-- not used yet, but should probably replace the conttype enum
 create table contribution_types (
 	id tinyint unsigned not null auto_increment primary key,
 	name varchar(16) not null
@@ -222,54 +224,3 @@ where srctbl='photos_comments' and id=new.id;
 
 create trigger photo_comment_deleted after delete on photos_comments for each row
 delete from contributions where srctbl='photos_comments' and id=old.id;
-
-drop trigger art_added;
-create trigger art_added after insert on art for each row
-insert into contributions set
-	srctbl='art',
-	id=new.id,
-	conttype='art',
-	posted=new.posted,
-	url=concat('/art/', new.url),
-	author=1,
-	title=new.title,
-	preview=concat('<p><img class=art src="/art/img/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>'),
-	hasmore=1;
-
-drop trigger art_changed;
-delimeter ;;
-create trigger art_changed after update on art for each row
-begin
-	update contributions set
-		url=concat('/art/', new.url),
-		title=new.title,
-		preview=concat('<p><img class=art src="/art/img/', new.url, '.', (select ext from image_formats where id=new.format), '"></p>')
-	where srctbl='art' and id=new.id;
-	update contributions set
-		url=concat('/art/', new.url, '#comments'),
-		title=new.title
-	where srctbl='art_comments' and id in (select * from (select c.id from art_comments as c where c.art=new.id) as cl);
-end;;
-
-create trigger art_comment_added after insert on art_comments for each row
-insert into contributions set
-	srctbl='art_comments',
-	id=new.id,
-	conttype='comment',
-	posted=new.posted,
-	url=concat('/art/', (select url from art where id=new.art), '#comments'),
-	author=new.user,
-	authorname=new.name,
-	authorurl=new.contacturl,
-	title=(select title from art where id=new.art),
-	preview=left(new.html, locate('</p>', new.html) + 3),
-	hasmore=length(new.html)-length(replace(new.html, '</p>', ''))>4;
-
-create trigger art_comment_changed after update on art_comments for each row
-update contributions set
-	preview=left(new.html, locate('</p>', new.html) + 3),
-	hasmore=length(new.html)-length(replace(new.html, '</p>', ''))>4
-where srctbl='art_comments' and id=new.id;
-
-create trigger art_comment_deleted after delete on art_comments for each row
-delete from contributions where srctbl='art_comments' and id=old.id;

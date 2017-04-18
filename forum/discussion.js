@@ -39,6 +39,7 @@ function RepliesViewModel() {
 			else {
 				for(var r = 0; r < result.replies.length; r++)
 					self.replies.push(ObserveReply(result.replies[r]));
+				Prism.highlightAll();
 				if(window.location.hash && $(window.location.hash).length)
 					$("body").animate({scrollTop: $(window.location.hash).offset().top}, 750);
 			}
@@ -104,6 +105,7 @@ function UpdateReply(reply, stealth) {
 			reply.editing(false);
 			if(result.edit)
 				reply.edits.push(result.edit);
+			Prism.highlightAll();
 		}
 	}, "json");
 }

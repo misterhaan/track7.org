@@ -85,12 +85,12 @@
         }
         if($stats->comments) {
 ?>
-          <li>#<?php echo Rank('comments', $stats->comments); ?> in <a href="/comments.php?user=<?php echo $u->Username; ?>" title="view all of <?php echo $u->Username; ?>’s comments">comments</a> with <?php echo $stats->comments; ?></li>
+          <li>#<?php echo Rank('comments', $stats->comments); ?> in <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/<?php echo $u->Username; ?>/comments" title="view all of <?php echo $u->Username; ?>’s comments">comments</a> with <?php echo $stats->comments; ?></li>
 <?php
         }
         if($stats->replies) {
 ?>
-          <li>#<?php echo Rank('replies', $stats->replies); ?> in <a href="/user/<?php echo $u->Username; ?>/replies" title="view all of <?php echo $u->Username; ?>’s forum posts">forum posts</a> with <?php echo $stats->replies; ?></li>
+          <li>#<?php echo Rank('replies', $stats->replies); ?> in <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/<?php echo $u->Username; ?>/replies" title="view all of <?php echo $u->Username; ?>’s forum posts">forum posts</a> with <?php echo $stats->replies; ?></li>
 <?php
         }
 ?>

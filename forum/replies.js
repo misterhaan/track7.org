@@ -21,6 +21,7 @@ function RepliesViewModel() {
 					self.replies.push(ObserveReply(result.replies[r]));
 				self.more(+result.more);
 				self.latest = result.latest;
+				Prism.highlightAll();
 			}
 		}, "json");
 	};
@@ -83,6 +84,7 @@ function UpdateReply(reply, stealth) {
 			reply.editing(false);
 			if(result.edit)
 				reply.edits.push(result.edit);
+			Prism.highlightAll();
 		}
 	}, "json");
 }

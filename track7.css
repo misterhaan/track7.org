@@ -55,12 +55,12 @@ body.text {
 		position: relative;
 	}
 }
-h1, h2 {
+h1, h2, h3 {
 	font-family: monda;
 	line-height: 1.125em;
 }
 @-moz-document url-prefix() {
-	h1, h2 {
+	h1, h2, h3 {
 		font-weight: normal;  /* prevent firefox double-bolding */
 	}
 }
@@ -661,6 +661,10 @@ article > header h2 a:link,
 article > header h2 a:visited {
 	color: #333;
 }
+h3 {
+	margin: 1em .5em 0;
+	font-size: 1.1em;
+}
 .meta,
 .postmeta,
 .guidemeta,
@@ -1021,6 +1025,7 @@ ol.messages li {
 		margin: .75em 1em 1.25em;
 		display: -webkit-flex;
 		display: flex;
+		overflow-x: auto;
 	}
 }
 section.comment .userinfo,
@@ -1066,7 +1071,9 @@ section.comment .userinfo .userlevel {
 	}
 }
 @media (min-width: 40em) {
-	section.comment .comment {
+	section.comment .comment,
+	ol.messages li .message,
+	ol.messages li .message .content {
 		-webkit-flex: 1 0;
 		flex: 1 0;
 		overflow-x: auto;  /* stop code blocks from widening the whole post */
@@ -1927,18 +1934,6 @@ ol.matches li:before {
 	}
 }
 
-/*-------------------------------------------------------[ /user/index.php ]--*/
-a.profile {
-	display: -webkit-flex;
-	display: flex;
-	align-items: center;
-	margin: .125em 0;
-}
-a.profile img.avatar {
-	height: 22px;
-	margin-right: .5em;
-}
-
 /*----------------------------------------------------[ /user/messages.php ]--*/
 @media (min-width: 40em) {
 	#sendmessage span.label {
@@ -2111,6 +2106,7 @@ ol.messages .outgoing header {
 }
 #conversationpane {
 	display: none;
+	overflow-x: auto;
 }
 @media (min-width: 50em) {
 	#messages {
