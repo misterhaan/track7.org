@@ -17,6 +17,7 @@ $html->Open('404 not found');
 
 			<script>
 				(function() {
+					$("main").append("<gcse:searchbox-only></gcse:searchbox-only>");
 					var cx = '009301861402372195375:8j9q7yqytle';
 					var gcse = document.createElement('script');
 					gcse.type = 'text/javascript';
@@ -26,6 +27,5 @@ $html->Open('404 not found');
 					s.parentNode.insertBefore(gcse, s);
 				})();
 			</script>
-			<gcse:searchbox-only></gcse:searchbox-only>
 <?php
 $html->Close();

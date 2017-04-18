@@ -152,8 +152,7 @@ function CommentsViewModel() {
 
 	self.AddComment = function(comment) {
 		comment.editing = ko.observable(false);
-		if(comment.markdown)
-			comment.markdown = ko.observable(comment.markdown);
+		comment.markdown = ko.observable(comment.markdown);
 		comment.html = ko.observable(comment.html);
 		self.comments.push(comment);
 	}
