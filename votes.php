@@ -88,7 +88,7 @@ $html->Open('votes');
 				<tbody data-bind="foreach: votes">
 					<tr>
 						<td><span class=rating data-bind="attr: {'data-stars': vote}"></span></td>
-						<td><time data-bind="text: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time></td>
+						<td><time data-bind="html: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time></td>
 						<td><img class=votetype data-bind="attr: {src: '/images/storytype/' + type + '.png'}"></td>
 						<td><a data-bind="text: title, attr: {href: url}"></a></td>
 <?php
