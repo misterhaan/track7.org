@@ -1,264 +1,140 @@
 <?
-  if(isset($_GET['ajax'])) {
-    require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-    $ajax = new t7ajax();
-    switch($_GET['ajax']) {
-      case 'cast':
-        if(isset($_POST['type']) && isset($_POST['key']) && isset($_POST['vote']))
-          switch($_POST['type']) {
-            case 'guide':
-            case 'art':
-            case 'lego':
-              if($db->real_query('insert into ' . VoteTableName($_POST['type']) . ' (' . VoteColumnName($_POST['type']) . ', voter, ip, vote, posted) values (\'' . $db->escape_string($_POST['key']) . '\', \'' . ($user->IsLoggedIn() ? +$user->ID : 0) . '\', ' . ($user->IsLoggedIn() ? 0 : 'inet_aton(\'' . $_SERVER['REMOTE_ADDR'] . '\')') . ', \'' . +$_POST['vote'] . '\', \'' . +time() . '\') on duplicate key update vote=\'' . +$_POST['vote'] . '\', posted=\'' . +time() .'\'')) {
-                $ajax->Data->vote = +$_POST['vote'];
-                if($db->real_query('update ' . RatingTableName($_POST['type']) . ' set rating=(select round((sum(vote)+3)/(count(vote)+1), 2) from ' . VoteTableName($_POST['type']) . ' where ' . VoteColumnName($_POST['type']) . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . VoteColumnName($_POST['type']) . '), votes=(select count(vote) from ' . VoteTableName($_POST['type']) . ' where ' . VoteColumnName($_POST['type']) . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . VoteColumnName($_POST['type']) . ') where id=\'' . $db->escape_string($_POST['key']) . '\'')) {
-                  if($gi = $db->query('select rating, votes from ' . RatingTableName($_POST['type']) . ' where id=\'' . $db->escape_string($_POST['key']) . '\' limit 1'))
-                    if($gi = $gi->fetch_object()) {
-                      $ajax->Data->rating = +$gi->rating;
-                      $ajax->Data->votes = +$gi->votes;
-                    }
-                }
-              } else
-                $ajax->Fail('error recording your rating.');
-              break;
-            default:
-              $ajax->Fail('unknown type.  known types are:  guide, art, lego.');
-          }
-        else
-          $ajax->Fail('missing at least one required parameter:  type, key, and vote.');
-        break;
-      default:
-        $ajax->Fail('unknown function name.  supported function names are: cast.');
-        break;
-    }
-    $ajax->Send();
-    die;
-  }
+define('MAX_VOTE_GET', 24);
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  function VoteTableName($type) {
-    switch($type) {
-      default:
-        return $type . '_votes';
-    }
-  }
+if(isset($_GET['ajax'])) {
+	$ajax = new t7ajax();
+	switch($_GET['ajax']) {
+		case 'cast':
+			if(isset($_POST['type']) && isset($_POST['key']) && isset($_POST['vote']))
+				switch($_POST['type']) {
+					case 'art':
+					case 'guide':
+					case 'lego':
+						if($db->real_query('insert into ' . VoteTableName($_POST['type']) . ' (' . VoteColumnName($_POST['type']) . ', voter, ip, vote, posted) values (\'' . $db->escape_string($_POST['key']) . '\', \'' . ($user->IsLoggedIn() ? +$user->ID : 0) . '\', ' . ($user->IsLoggedIn() ? 0 : 'inet_aton(\'' . $_SERVER['REMOTE_ADDR'] . '\')') . ', \'' . +$_POST['vote'] . '\', \'' . +time() . '\') on duplicate key update vote=\'' . +$_POST['vote'] . '\', posted=\'' . +time() .'\'')) {
+							$ajax->Data->vote = +$_POST['vote'];
+							if($db->real_query('update ' . RatingTableName($_POST['type']) . ' set rating=(select round((sum(vote)+3)/(count(vote)+1), 2) from ' . VoteTableName($_POST['type']) . ' where ' . VoteColumnName($_POST['type']) . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . VoteColumnName($_POST['type']) . '), votes=(select count(vote) from ' . VoteTableName($_POST['type']) . ' where ' . VoteColumnName($_POST['type']) . '=\'' . $db->escape_string($_POST['key']) . '\' group by ' . VoteColumnName($_POST['type']) . ') where id=\'' . $db->escape_string($_POST['key']) . '\'')) {
+								if($gi = $db->query('select rating, votes from ' . RatingTableName($_POST['type']) . ' where id=\'' . $db->escape_string($_POST['key']) . '\' limit 1'))
+									if($gi = $gi->fetch_object()) {
+										$ajax->Data->rating = +$gi->rating;
+										$ajax->Data->votes = +$gi->votes;
+									}
+							}
+						} else
+							$ajax->Fail('error recording your rating.');
+						break;
+					default:
+						$ajax->Fail('unknown type.  known types are:  art, guide, lego.');
+				}
+			else
+				$ajax->Fail('missing at least one required parameter:  type, key, and vote.');
+			break;
+		case 'delete':
+			if($user->IsAdmin())
+				if(isset($_POST['type']) && isset($_POST['id']) && isset($_POST['item']) && $_POST['type'] && +$_POST['id'] && $_POST['item'])
+					switch($_POST['type']) {
+						case 'art':
+						case 'guide':
+						case 'lego':
+							if($db->query('delete from ' . VoteTableName($_POST['type']) . ' where id=\'' . +$_POST['id'] . '\'')) {
+								$ajax->Data->deleted = $db->affected_rows;
+								$db->real_query('update ' . RatingTableName($_POST['type']) . ' set rating=(select round((sum(vote)+3)/(count(vote)+1), 2) from ' . VoteTableName($_POST['type']) . ' where ' . VoteColumnName($_POST['type']) . '=\'' . $db->escape_string($_POST['item']) . '\' group by ' . VoteColumnName($_POST['type']) . '), votes=(select count(vote) from ' . VoteTableName($_POST['type']) . ' where ' . VoteColumnName($_POST['type']) . '=\'' . $db->escape_string($_POST['item']) . '\' group by ' . VoteColumnName($_POST['type']) . ') where id=\'' . $db->escape_string($_POST['item']) . '\'');
+							} else
+								$ajax->Fail('error deleting vote:  ' . $db->error);
+							break;
+						default:
+							$ajax->Fail('unknown type.  known types are:  art, guide, lego.');
+							break;
+					}
+				else
+					$ajax->Fail('vote type, id, and item are required.');
+			else
+				$ajax->Fail('votes may only be deleted by the administrator.');
+			break;
+		case 'list':
+			$extracols = $user->IsAdmin() ? ' u.username, u.displayname, inet_ntoa(v.ip) as ip, v.VOTE_COLUMN as item,' : '';
+			$extrajoins = $user->IsAdmin() ? ' left join users as u on u.id=v.voter' : '';
+			$oldest = isset($_GET['oldest']) && $_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
+			if($votes = $db->query('select \'art\' as type, v.id,' . str_replace('VOTE_COLUMN', 'art', $extracols) . ' v.vote, v.posted, a.title, concat(\'/art/\', a.url) as url from art_votes as v' . $extrajoins . ' left join art as a on v.art=a.id where v.posted<\'' . $oldest . '\' union '
+					. 'select \'guide\' as type, v.id,' . str_replace('VOTE_COLUMN', 'guide', $extracols) . ' v.vote, v.posted, g.title, concat(\'/guides/\', g.url, \'/1\') as url from guide_votes as v' . $extrajoins . ' left join guides as g on v.guide=g.id where v.posted<\'' . $oldest . '\' union '
+					. 'select \'lego\' as type, v.id,' . str_replace('VOTE_COLUMN', 'lego', $extracols) . ' v.vote, v.posted, l.title, concat(\'/lego/\', l.url) as url from lego_votes as v' . $extrajoins . ' left join lego_models as l on v.lego=l.id where v.posted<\'' . $oldest . '\' order by posted desc limit ' . MAX_VOTE_GET)) {
+				$ajax->Data->votes = [];
+				$ajax->Data->oldest = 0;
+				while($vote = $votes->fetch_object()) {
+					$ajax->Data->oldest = +$vote->posted;
+					$vote->posted = t7format::TimeTag('smart', $vote->posted, 'g:i a \o\n l F jS Y');
+					$ajax->Data->votes[] = $vote;
+				}
+				if($more = $db->query('select (select count(1) from art_votes where posted<\'' . $ajax->Data->oldest . '\')+(select count(1) from guide_votes where posted<\'' . $ajax->Data->oldest . '\')+(select count(1) from lego_votes where posted<\'' . $ajax->Data->oldest . '\') as num'))
+					if($more = $more->fetch_object())
+						$ajax->Data->more = +$more->num;
+			} else
+				$ajax->Fail('error looking up votes:  ' . $db->error);
+			break;
+		default:
+			$ajax->Fail('unknown function name.  supported function names are: cast, delete, list.');
+			break;
+	}
+	$ajax->Send();
+	die;
+}
 
-  function VoteColumnName($type) {
-    switch($type) {
-      default:
-        return $type;
-    }
-  }
-
-  function RatingTableName($type) {
-    switch($type) {
-      case 'guide':
-        return 'guides';
-      case 'lego':
-        return 'lego_models';
-      default:
-        return $type;
-    }
-  }
-
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-
-  if(is_numeric($_GET['delete']) && $user->GodMode) {
-    $rating = 'select ratingid from votes where id=\'' . +$_GET['delete'] . '\'';
-    if($rating = $db->GetValue($rating, 'error finding which rating this vote is for', 'rating not found')) {
-      $del = 'delete from votes where id=\'' . +$_GET['delete'] . '\'';
-      if(false !== $db->Change($del, 'error deleting vote')) {
-        $stats = 'select sum(vote) as totalrate, count(1) as count from votes where ratingid=\'' .+$_GET['delete'] . '\'';
-        if($stats = $db->GetRecord($stats, 'error re-calculating rating')) {
-          if($stats->count)
-            $rating = 'update ratings set rating=\'' . (1.0 * $stats->totalrate / $stats->count) . '\', votes=\'' . $stats->count . '\' where id=\'' . $rating . '\'';
-          else
-            $rating = 'update ratings set rating=0, votes=0 where id=\'' . $rating . '\'';
-          if(false !== $db->Change($rating, 'error updating rating'))
-            $page->Info('vote deleted successfully');
-        }
-      }
-    }
-  }
-
-  if(is_numeric($_GET['vote']) && $_GET['type'] && $_GET['selector']) {
-    if(!validType($_GET['type'], $db)) {
-      $page->Error('invalid type — cannot vote');
-      if($_POST['return'] == 'xml')
-        $page->SendXmlErrors();
-    } else {
-      $castvote = getVoteForm($_GET['type'], $_GET['selector'], +$_GET['vote']);
-      if($castvote->CheckInput($user->Valid)) {
-        $ratingid = getRating($db, $_GET['type'], $_GET['selector']);
-        $ins = 'replace into votes (ratingid, vote, uid, ip, time) values (' . $ratingid . ', ' . $_POST['vote'] . ', ' . $user->ID . ', \'' . ($user->Valid ? '' : $_SERVER['REMOTE_ADDR']) . '\', ' . time() . ')';
-        if(false !== $db->Put($ins, 'error saving vote')) {
-          $rating = 'select sum(vote) ratesum, count(1) ratecnt from votes where ratingid=' . $ratingid;
-          if($rating = $db->GetRecord($rating, 'error calculating new rating', 'no votes found')) {
-            $update = 'update ratings set rating=' . ($rating->ratesum / ($rating->ratecnt + 1)) . ', votes=' . $rating->ratecnt . ' where id=' . $ratingid;
-            if(false !== $db->Change($update, 'error updating new rating')) {
-              if($_POST['return'] == 'xml') {
-                header('Content-Type: text/xml; charset=utf-8');
-                header('Cache-Control: no-cache');
-                echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+$html = new t7html(['ko' => true]);
+$html->Open('votes');
 ?>
-<response result="success">
-<vote><?=$_POST['vote']; ?></vote>
-<rating><?=round($rating->ratesum / ($rating->ratecnt + 1), 1); ?></rating>
-<votes><?=$rating->ratecnt; ?></votes>
-</response>
-<?
-              } else
-                header('Location: http://' . $_SERVER['HTTP_HOST'] . getItemUrl($_GET['type'], $_GET['selector']));
-              die;
-            }
-          }
-        }
-      }
-      if($_POST['return'] == 'xml')
-        $page->SendXmlErrors();
-      $page->Start('confirm vote');
-      $castvote->WriteHTML($user->Valid);
-      $page->End();
-      die;
-    }
-  }
+			<h1>votes</h1>
 
-  $page->Start('votes');
-
-  $votes = 'select v.id, r.type, r.selector, v.vote, v.uid, u.login, v.ip, v.time from votes as v left join users as u on u.uid=v.uid left join ratings as r on r.id=v.ratingid order by v.time desc';
-  if($votes = $db->GetSplit($votes, 50, 0, '', '', 'error looking up votes', 'no votes found')) {
-    echo "      <table class=\"text\" cellspacing=\"0\">\n";
-    echo '        <thead><tr><th>date</th><th>vote</th><th>item</th>';
-    if($user->GodMode)
-      echo '<th>user / ip</th>';
-    echo "</tr></thead>\n";
-    echo "        <tbody>\n";
-    while($vote = $votes->NextRecord()) {
-      echo '          <tr><td>';
-      echo strtolower(auText::SmartTime($vote->time, $user));
-      echo '</td><td>';
-      echo showVote($vote->vote);
-      echo '</td><td>';
-      echo $vote->type . ':&nbsp; ';
-      echo '<a href="';
-      echo getItemUrl($vote->type, $vote->selector);
-      echo '">';
-      echo $vote->selector;
-      echo '</a>';
-      if($user->GodMode) {
-        echo '</td><td>';
-        if($vote->uid)
-          echo '<a href="/user/' . $vote->login . '/">' . $vote->login . '</a>';
-        else
-          echo $vote->ip;
-        echo '</td><td>';
-        echo '<a href="?delete=' . $vote->id . '"><img src="/images/del.png" alt="del" /></a>';
-      }
-      echo "</td></tr>\n";
-    }
-    echo "        </tbody>\n";
-    echo "      </table>\n";
-    $page->SplitLinks();
-  }
-  $page->End();
-
-  /**
-   * Checks whether a vote type is valid.
-   * @param string $type Vote type to check.
-   * @param auDB $db Database object so vote types can be looked up.
-   * @return boolean Whether the vote type is valid.
-   */
-  function validType($type, &$db) {
-    if($types = $db->Get('show columns from ratings like \'type\'')) {
-      $types = $types->NextRecord();
-      $types = explode('\',\'', substr($types->Type, 6, -2));
-      return in_array($type, $types);
-    }
-    return false;
-  }
-
-  /**
-   * Create and return an auForm object to allow the user to vote.
-   * @param string $type Type of item being voted on.  This should have already passed validType().
-   * @param string $selector Unique identifier for this item within its type.
-   * @param integer $vote Default vote to show in the form.
-   * @return auForm Vote confirmation form.
-   */
-  function getVoteForm($type, $selector, $vote = 0) {
-    $frm = new auForm('vote', '?type=' . $type . '&selector=' . $selector . '&vote=' . $vote);
-    $frm->Add(new auFormText($type, $selector));
-    $frm->Add(new auFormSelect('vote', 'rating', 'choose your rating of this item', true, array(-3 => 'three thumbs down — impossibly intolerable', -2 => 'two thumbs down — fully intolerable', -1 => 'one thumb down — partly intolerable', 0 => 'no thumbs — indifferent', 1 => 'one thumb up — partly amazing', 2 => 'two thumbs up — fully amazing', 3 => 'three thumbs up — impossibly amazing'), $vote));
-    $frm->Add(new auFormButtons('save', 'save your rating'));
-    return $frm;
-  }
-
-  /**
-   * Return the URL for the item specified by the type and selector.
-   * @param string $type Type of item.
-   * @param string $selector Unique identifier for an item of this type.
-   * @return string URL for the item.
-   */
-  function getItemUrl($type, $selector) {
-    switch($type) {
-      case 'lego':    return '/output/lego/#' . $selector;
-      case 'sketch':  return '/output/gfx/sketch.php#' . $selector;
-      case 'digital': return '/output/gfx/digital.php#' . $selector;
-      case 'task':    return '/todo.php?id=' . $selector;
-      case 'guide':   return '/geek/guides/' . $selector . '/';
-    }
-    return '';
-  }
-
-  /**
-   * Finds the rating ID for a given type and selector.  Rating is created if it does not yet exist.
-   * @param auDB $db Database connection.
-   * @param string $type Type of rating to look up / create.
-   * @param string $selector Which rating to look up / create.
-   * @return integer Raating ID.
-   */
-  function getRating(&$db, $type, $selector) {
-    $type = addslashes($type);
-    $selector = addslashes($selector);
-    $rating = $db->GetValue('select id from ratings where type=\'' . $type . '\' and selector=\'' . $selector . '\'', '', '');
-    if(!$rating)
-      $rating = $db->Put('insert into ratings (type, selector) values (\'' . $type . '\', \'' . $selector . '\')');
-    return $rating;
-  }
-
-  /**
-   * Shows a vote as a graphic with a number of thumbs.
-   * @param integer $vote Vote to show (from -3 through 3).
-   * @return string HTML showing the vote.
-   */
-  function showVote($vote) {
-    if(!$vote)
-      return '<div class="vote" title="no thumbs — indifferent"><img src="/images/vote/none.png" alt="none" /></div>';
-    $ret = '<div class="vote" title="';
-    $ret .= describeVote($vote);
-    $ret .= '">';
-    if($vote < 0)
-      for($v = $vote; $v < 0; $v++)
-        $ret .= '<img src="/images/vote/down.png" alt="down" />';
-    else
-      for($v = $vote; $v > 0; $v--)
-        $ret .= '<img src="/images/vote/up.png" alt="up" />';
-    $ret .= '</div>';
-    return $ret;
-  }
-
-  /**
-   * Shows a vote as a description of what the number means.
-   * @param integer $vote Vote to describe.
-   * @return string Description of the vote.
-   */
-  function describeVote($vote) {
-    switch($vote) {
-      case -3: return 'three thumbs down — impossibly intolerable';
-      case -2: return 'two thumbs down — fully intolerable';
-      case -1: return 'one thumb down — partly intolerable';
-      case  0: return 'no thumbs — indifferent';
-      case  1: return 'one thumb up — partly amazing';
-      case  2: return 'two thumbs up — fully amazing';
-      case  3: return 'three thumbs up — impossibly amazing';
-    }
-  }
+			<table id=votes>
+				<tbody data-bind="foreach: votes">
+					<tr>
+						<td><span class=rating data-bind="attr: {'data-stars': vote}"></span></td>
+						<td><time data-bind="text: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time></td>
+						<td><img class=votetype data-bind="attr: {src: '/images/storytype/' + type + '.png'}"></td>
+						<td><a data-bind="text: title, attr: {href: url}"></a></td>
+<?php
+if($user->IsAdmin()) {
 ?>
+						<!-- ko if: username -->
+						<td><a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}"></a></td>
+						<!-- /ko -->
+						<!-- ko ifnot: username -->
+						<td data-bind="text: ip"></td>
+						<!-- /ko -->
+						<td><a class="del action" href="?ajax=delete" data-bind="click: $root.Delete"></a></td>
+<?php
+}
+?>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr data-bind="visible: loading"><td colspan=6 class=loading>loading votes</td></tr>
+					<tr data-bind="visible: more() && !loading()"><td colspan=6 class=calltoaction><a class="get action" href="?ajax=list" data-bind="click: Load">load more votes</a></td></tr>
+				</tfoot>
+			</table>
+<?php
+$html->Close();
+
+function VoteTableName($type) {
+	switch($type) {
+		default:
+			return $type . '_votes';
+	}
+}
+
+function VoteColumnName($type) {
+	switch($type) {
+		default:
+			return $type;
+	}
+}
+
+function RatingTableName($type) {
+	switch($type) {
+		case 'guide':
+			return 'guides';
+		case 'lego':
+			return 'lego_models';
+		default:
+			return $type;
+	}
+}

@@ -1417,6 +1417,19 @@ ul#taginfo {
 	color: #999;
 }
 
+/*------------------------------------------------------------[ /votes.php ]--*/
+#votes .rating:before {
+	font-family: fontawesome;
+	font-size: .8em;
+}
+img.votetype {
+	height: 1.1em;
+	display: block;
+}
+#votes .calltoaction {
+	padding-top: .5em;
+}
+
 /*------------------------------------------------------[ /album/index.php ]--*/
 ol.gallery {
 	list-style-type: none;
