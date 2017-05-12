@@ -33,6 +33,10 @@
 <?php
     while($app = $apps->fetch_object()) {
       $app->released = t7format::TimeTag('smart', $app->released, 'M j, Y \a\t g:i a');
+      if(strpos($app->binurl, '/') === false)
+      	$app->binurl = 'files/' . $app->binurl;
+      if($app->bin32url && strpos($app->bin32url, '/') === false)
+      	$app->bin32url = 'files/' . $app->bin32url;
 ?>
         <article>
           <header>
@@ -46,7 +50,7 @@
             </p>
           </header>
           <?php echo $app->deschtml; ?>
-          <p class="calltoaction downloads"><a class="action download" href="files/<?php echo $is64 || !$app->bin32url ? $app->binurl : $app->binurl; ?>">download latest release<?php if($app->bin32url) echo ' (' . ($is64 ? '64' : '32') . '-bit)'; ?></a></p>
+          <p class="calltoaction downloads"><a class="action download" href="<?php echo $is64 || !$app->bin32url ? $app->binurl : $app->binurl; ?>">download latest release<?php if($app->bin32url) echo ' (' . ($is64 ? '64' : '32') . '-bit)'; ?></a></p>
           <p class="calltoaction downloads"><a class="action list" href="<?php echo $app->url; ?>">other versions and source code</a></p>
         </article>
 <?php

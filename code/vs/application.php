@@ -50,6 +50,10 @@
   if($rels = $db->query('select r.released, concat(r.major, \'.\', r.minor, \'.\', r.revision) as version, r.binurl, r.bin32url, r.srcurl, r.changelog, r.lang, r.dotnet, r.studio from (select r.application, r.released, r.major, r.minor, r.revision, r.binurl, r.bin32url, r.srcurl, r.changelog, l.abbr as lang, if(n.version is not null, concat(\'.net \', n.version), \'\') as dotnet, s.name as studio from code_vs_releases as r left join code_vs_lang as l on l.id=r.lang left join code_vs_dotnet as n on n.id=r.dotnet left join code_vs_studio as s on s.version=r.studio where r.application=\'' . +$app->id . '\' order by major desc, minor desc, revision desc) as r group by major, minor order by r.released desc'))
     while($rel = $rels->fetch_object()) {
       $released = t7format::TimeTag('smart', $rel->released, 'Y-m-d g:i:s a');
+      if(strpos($rel->binurl, '/') === false)
+      	$rel->binurl = 'files/' . $rel->binurl;
+      if($rel->bin32url && strpos($rel->bin32url, '/') === false)
+      	$rel->bin32url = 'files/' . $rel->bin32url;
 ?>
       <article>
         <header>
