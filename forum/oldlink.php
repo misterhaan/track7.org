@@ -23,7 +23,7 @@ if(isset($_GET['threadid']))
 	if($d = $db->query('select id from forum_discussions where threadid=\'' . +$_GET['threadid'] . '\' limit 1'))
 		if($d = $d->fetch_object()) {
 			header('HTTP/1.1 301 Moved Permanently');
-			header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $d->id);
+			header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $d->id));
 			die;
 		}
-header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/');
+header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/'));

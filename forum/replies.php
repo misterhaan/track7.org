@@ -107,7 +107,7 @@ function FindUser() {
 						if($u->fetch())
 							return (object)['id' => $id, 'username' => $username, 'displayname' => $displayname ? $displayname : $username, 'avatar' => $avatar ? $avatar : t7user::DEFAULT_AVATAR];
 		if(substr($_SERVER['REQUEST_URI'], 0, 6) == '/user/') {
-			header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+			header('Location: ' . t7format::FullUrl($_SERVER['PHP_SELF']));
 			die;
 		}
 	}

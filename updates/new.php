@@ -51,7 +51,7 @@ function SaveUpdate() {
 			if($save->bind_param('is', $posted, $html))
 				if($save->execute()) {
 					$ajax->Data->id = $save->insert_id;
-					t7send::Tweet('track7 update', 'http://' . $_SERVER['HTTP_HOST'] . '/updates/' . $ajax->Data->id);
+					t7send::Tweet('track7 update', t7format::FullUrl('/updates/' . $ajax->Data->id));
 				} else
 					$ajax->Fail('error saving update:  ' . $save->error);
 			else

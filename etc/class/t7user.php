@@ -152,7 +152,7 @@ class t7user {
 					$this->CreateRememberToken($uid, $this->StartRememberSeries());
 				if(!$continue)
 					$continue = '/';
-				header('Location: http://' . $_SERVER['HTTP_HOST'] . $continue);
+				header('Location: ' . t7format::FullUrl($continue));
 				die;
 			}
 		}

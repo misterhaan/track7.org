@@ -29,7 +29,7 @@ if(isset($_GET['ajax'])) {
 							$ajax->Data->id = $db->insert_id;
 							if($act = $db->query('select title, url from contributions where srctbl=\'' . $_POST['type'] . '_comments\' and id=\'' . +$ajax->Data->id . '\''))
 								if($act = $act->fetch_object())
-									t7send::Tweet('comment on ' . $act->title, 'http://' . $_SERVER['HTTP_HOST'] . $act->url);
+									t7send::Tweet('comment on ' . $act->title, t7format::FullUrl($act->url));
 							$ajax->Data->posted = t7format::TimeTag('g:i a \o\n l F jS Y', $ajax->Data->posted);
 							if($user->IsLoggedIn()) {
 								$db->real_query('update users_stats set comments=(select count(1) from contributions where conttype=\'comment\' and author=\'' . +$user->ID . '\' group by author) where id=\'' . +$user->ID . '\'');
@@ -177,7 +177,7 @@ function FindUser() {
 						if($u->fetch())
 							return (object)['id' => $id, 'username' => $username, 'displayname' => $displayname ? $displayname : $username, 'avatar' => $avatar ? $avatar : t7user::DEFAULT_AVATAR];
 		if(substr($_SERVER['REQUEST_URI'], 0, 6) == '/user/') {
-			header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+			header('Location: ' . t7format::FullUrl($_SERVER['PHP_SELF']));
 			die;
 		}
 	}

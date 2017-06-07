@@ -196,7 +196,7 @@ function SaveScript() {
 					if($save->execute()) {
 						if(!$id) {
 							$id = $save->insert_id;
-							t7send::Tweet('new web script: ' . $name, 'http://' . $_SERVER['HTTP_HOST'] . '/code/web/' . $url);
+							t7send::Tweet('new web script: ' . $name, t7format::FullUrl('/code/web/' . $url));
 						}
 						$save->close();
 						$ajax->Data->url = $url;

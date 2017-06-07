@@ -7,7 +7,7 @@ if(isset($_GET['tag']))
 		if($tag = $tag->fetch_object())
 			$tag = $tag->name;
 		else {  // tag not found, so try getting to the guide without the tag
-			header('Location: http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/' . +$_GET['id']);
+			header('Location: ' . t7format::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . +$_GET['id']));
 			die;
 		}
 
@@ -192,7 +192,7 @@ function AddReply($discussion, $title) {
 						];
 						if($user->IsLoggedIn())
 							$db->real_query('update users_stats as u set u.replies=(select count(1) from forum_replies where user=u.id) where u.id=\'' . +$user->ID . '\'');
-						t7send::Tweet(($user->IsLoggedIn() ? $user->DisplayName : $name) . ' discussed ' . $title, 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/' . $discussion . '#r' . $id);
+						t7send::Tweet(($user->IsLoggedIn() ? $user->DisplayName : $name) . ' discussed ' . $title, t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $discussion . '#r' . $id));
 					} else
 						$ajax->Fail('error executing query to add reply:  ' . $ins->error);
 				else
