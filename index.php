@@ -1,9 +1,34 @@
 <?php
 define('MAXITEMS', 9);
 define('LONGDATEFMT', 'g:i a \o\n l F jS Y');
-define('FORUM_POSTS_PER_PAGE', 20);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-$html = new t7html(['rss' => ['title' => 'unifeed', 'url' => '/feed.rss']]);
+
+if(isset($_GET['ajax'])) {
+	$ajax = new t7ajax();
+	switch($_GET['ajax']) {
+		case 'activity':
+			$before = isset($_GET['before']) && +$_GET['before'] ? +$_GET['before'] : false;
+			if($acts = t7contrib::GetAll($before, MAXITEMS)) {
+				$ajax->Data->acts = [];
+				$ajax->Data->latest = false;
+				while($act = $acts->fetch_object()) {
+					$ajax->Data->latest = $act->posted;
+					$act->posted = t7format::TimeTag('smart', $act->posted, LONGDATEFMT);
+					$act->prefix = t7contrib::Prefix($act->conttype);
+					$act->postfix = t7contrib::Postfix($act->conttype);
+					$act->hasmore += 0;  // convert to numeric
+					$ajax->Data->acts[] = $act;
+				}
+				// TODO:  consider checking if there is more activity
+			} else
+				$ajax->Fail('error looking up activity:  ' . $db->error);
+			break;
+	}
+	$ajax->Send();
+	die;
+}
+
+$html = new t7html(['ko' => true, 'rss' => ['title' => 'unifeed', 'url' => '/feed.rss']]);
 $html->Open('track7');
 ?>
 			<h1><img alt=track7 src="/images/track7.png"></h1>
@@ -60,56 +85,36 @@ if($user->IsAdmin()) {
 			<div class=floatbgstop><nav class=actions><a class=new href="/updates/new.php">add update message</a></nav></div>
 <?php
 }
-// get last MAXITEMS from contributions
-if($acts = $db->query('select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author order by c.posted desc limit ' . MAXITEMS))
-	while($act = $acts->fetch_object()) {
 ?>
-			<article class="activity <?php echo $act->conttype; ?>">
-				<div class=whatwhen title="<?php echo $act->conttype; ?> at <?php echo t7format::LocalDate(LONGDATEFMT, $act->posted); ?>">
-					<time datetime="<?php echo gmdate('c', $act->posted); ?>"><?php echo t7format::SmartDate($act->posted); ?></time>
-				</div>
-				<div>
-					<h2><?php echo ContributionPrefix($act->conttype); ?><a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a><?php echo ContributionPostfix($act->conttype); ?> by <?php echo AuthorLink($act); ?></h2>
-					<div class=summary>
-						<?php echo $act->preview; ?>
-<?php
-		if($act->hasmore) {
-?>
-						<p class=readmore><a href="<?php echo htmlspecialchars($act->url); ?>">⇨ read more</a></p>
-<?php
-		}
-?>
+			<div id=latestactivity>
+				<!-- ko foreach: activity -->
+				<article class="activity" data-bind="css: conttype">
+					<div class=whatwhen data-bind="attr: {title: conttype + ' at ' + posted.title}">
+						<time data-bind="html: posted.display, attr: {datetime: posted.datetime}"></time>
 					</div>
-				</div>
-			</article>
+					<div>
+						<h2>
+							<span data-bind="text: prefix"></span>
+							<a data-bind="text: title, attr: {href: url}"></a>
+							<span data-bind="text: postfix"></span>
+							by
+							<!-- ko if: username -->
+							<a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/', title: 'view ' + (displayname || username) + '’s profile'}"></a>
+							<!-- /ko -->
+							<!-- ko if: !username && authorurl -->
+							<a data-bind="text: authorname, attr: {href: authorurl}"></a>
+							<!-- /ko -->
+							<!-- ko if: !username && !authorurl -->
+							<span data-bind="text: authorname"></span>
+							<!-- /ko -->
+						</h2>
+						<div class=summary data-bind="html: preview"></div>
+						<p class=readmore data-bind="visible: hasmore"><a data-bind="attr: {href: url}">⇨ read more</a></p>
+					</div>
+				</article>
+				<!-- /ko -->
+				<p class=loading data-bind="visible: loading">loading activity...</p>
+				<p class="more calltoaction"><a class="action get" href="#activity" data-bind="click: Load">show more activity</a></p>
+			</div>
 <?php
-	}
-
 $html->Close();
-
-function ContributionPrefix($type) {
-	switch($type) {
-		case 'comment':
-			return 'comment on ';
-	}
-	return '';
-}
-
-function ContributionPostfix($type) {
-	switch($type) {
-		case 'discuss':
-			return ' discussion';
-	}
-	return '';
-}
-
-function AuthorLink($act) {
-	if($act->username) {
-		if(!$act->displayname)
-			$act->displayname = $act->username;
-		return '<a href="/user/' . htmlspecialchars($act->username) . '/" title="view ' . htmlspecialchars($act->displayname) . '’s profile">' . htmlspecialchars($act->displayname) . '</a>';
-	}
-	if($act->authorurl)
-		return '<a href="'. htmlspecialchars($act->authorurl) . '">' . htmlspecialchars($act->authorname) . '</a>';
-	return htmlspecialchars($act->authorname);
-}

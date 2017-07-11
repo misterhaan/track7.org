@@ -2316,16 +2316,19 @@ section#contact a img {
 	list-style-type: none;
 	margin: .125em .25em;
 }
-#activity {
+#activity ol {
 	margin: .75em .5em;
 	padding: 0;
 	line-height: 1.5em;
 }
 @media (min-width: 25em) {
-	#activity {
+	#activity ol {
 		margin: .75em 1em;
 	}
 }
 #activity li {
 	list-style-type: none;
+}
+#activity .calltoaction {
+	text-align: left;
 }

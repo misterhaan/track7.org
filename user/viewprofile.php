@@ -1,18 +1,41 @@
 <?php
+define('MAXACTIONS', 12);
+
 if(isset($_GET['login'])) {
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-	require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/.dbinfo.track7.php';
-	$olddb = new mysqli(_DB_HOST, _DB_USER, _DB_PASS, _DB_NAME);
-	$olddb->real_query('set names \'utf8\'');
-	$olddb->set_charset('utf8');
-
 	$u = new t7user($_GET['login']);
 	if(!$u->IsLoggedIn())
 		$u = new oldUser($_GET['login']);
+	if(isset($_GET['ajax'])) {
+		$ajax = new t7ajax();
+		if($u->IsLoggedIn())
+			switch($_GET['ajax']) {
+				case 'activity':
+					$before = isset($_GET['before']) && +$_GET['before'] ? +$_GET['before'] : false;
+					if($acts = t7contrib::GetUser($u->ID, $before, MAXACTIONS)) {
+						$ajax->Data->acts = [];
+						$ajax->Data->latest = false;
+						while($act = $acts->fetch_object()) {
+							$ajax->Data->latest = $act->posted;
+							$act->action = t7contrib::ActionWords($act->conttype);
+							$act->posted = t7format::TimeTag('ago', $act->posted, 'g:i a \o\n l F jS Y');
+							// TODO:  conversions
+							$ajax->Data->acts[] = $act;
+						}
+						$ajax->Data->more = t7contrib::More($ajax->Data->latest, $u->ID);
+					} else
+						$ajax->Fail('error looking up activity:  ' . $db->error);
+					break;
+			}
+		else
+			$ajax->Fail('user not found');
+		$ajax->Send();
+		die;
+	}
 	if($u->IsLoggedIn()) {
 		$u->DisplayName = htmlspecialchars($u->DisplayName);
 		$stats = $u->GetStats();
-		$html = new t7html([]);
+		$html = new t7html(['ko' => true]);
 		$html->Open($u->DisplayName);
 ?>
 			<header class=profile>
@@ -98,24 +121,21 @@ if(isset($_GET['login'])) {
 			</section>
 <?php
 		}
-		if($acts = $db->query('select conttype, posted, url, title from contributions where author=\'' . +$u->ID . '\' order by posted desc limit 12'))
-			if($acts->num_rows) {
 ?>
-			<ol id=activity>
+			<section id=activity>
+				<p data-bind="visible: !loading() && activity().length < 1"><?php echo $u->DisplayName; ?> hasn’t posted anything to track7 yet.</p>
+				<ol data-bind="foreach: activity">
+					<li data-bind="css: conttype">
+						<span class=action data-bind="text: action"></span>
+						<a data-bind="text: title, attr: {href: url}"></a>
+						<time data-bind="text: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time>
+						ago
+					</li>
+				</ol>
+				<p class=loading data-bind="visible: loading">loading more activity...</p>
+				<p class="more calltoaction" data-bind="visible: !loading() && more()"><a href=#activity class="action get" data-bind="click: Load">show more activity from <?php echo $u->DisplayName; ?></a></p>
+			</section>
 <?php
-				while($act = $acts->fetch_object()) {
-?>
-				<li class=<?php echo $act->conttype; ?>><?php echo ActionWords($act->conttype); ?> <a href="<?php echo $act->url; ?>"><?php echo $act->title; ?></a> <time datetime="<?php echo gmdate('c', $act->posted); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $act->posted); ?>"><?php echo t7format::HowLongAgo($act->posted); ?> ago</time></li>
-<?php
-				}
-?>
-			</ol>
-<?php
-			} else {
-?>
-			<p><?php echo $u->DisplayName; ?> hasn’t posted anything to track7 yet.</p>
-<?php
-			}
 		$html->Close();
 	} else  // user not found; go to user index
 		header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/'));
@@ -129,7 +149,7 @@ if(isset($_GET['login'])) {
  * @return integer|string value to display as the rank
  */
 function Rank($stat, $value) {
-	global $db, $olddb;
+	global $db;
 	switch($stat) {
 		case 'fans':
 		case 'comments':
@@ -140,23 +160,6 @@ function Rank($stat, $value) {
 			break;
 	}
 	return '<em title=unknown>?</em>';
-}
-
-/**
- * Get the action words for a contribution type.
- * @param string $type Contribution type
- * @return string Action words (defaults to [type]ed) if unknown type
- */
-function ActionWords($type) {
-	switch($type) {
-		case 'comment':
-			return 'commented on';
-		case 'guide':
-			return 'posted guide';
-	}
-	if(substr($type, -1) == 'e')
-		return $type . 'd';
-	return $type . 'ed';
 }
 
 /**
@@ -172,10 +175,15 @@ class oldUser {
 	public $Avatar = false;
 	private $Friend = false;
 	public $Fan = false;
+	private $olddb = false;
 
 	public function oldUser($login) {
-		global $olddb, $user;
-		if($u = $olddb->query('select u.uid, u.login, p.avatar, fa.fanuid, fr.frienduid from users as u left join userprofiles as p on p.uid=u.uid left join userfriends as fr on fr.fanuid=u.uid and fr.frienduid=\'' . $user->OldID() . '\' left join userfriends as fa on fa.frienduid=u.uid and fa.fanuid=\'' . $user->OldID() . '\' where login=\'' . $olddb->escape_string($login) . '\''))
+		global $user;
+		require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/.dbinfo.track7.php';
+		$this->olddb = new mysqli(_DB_HOST, _DB_USER, _DB_PASS, _DB_NAME);
+		$this->olddb->real_query('set names \'utf8\'');
+		$this->olddb->set_charset('utf8');
+		if($u = $this->olddb->query('select u.uid, u.login, p.avatar, fa.fanuid, fr.frienduid from users as u left join userprofiles as p on p.uid=u.uid left join userfriends as fr on fr.fanuid=u.uid and fr.frienduid=\'' . $user->OldID() . '\' left join userfriends as fa on fa.frienduid=u.uid and fa.fanuid=\'' . $user->OldID() . '\' where login=\'' . $this->olddb->escape_string($login) . '\''))
 			if($u = $u->fetch_object()) {
 				$this->found = true;
 				$this->ID = $u->uid;
@@ -192,10 +200,11 @@ class oldUser {
 	}
 
 	public function GetStats() {
-		global $olddb;
-		if($s = $olddb->query('select since as registered, fans, comments from userstats where uid=\'' . +$this->ID . '\''))
-			if($s = $s->fetch_object())
+		if($s = $this->olddb->query('select since as registered, fans, comments from userstats where uid=\'' . +$this->ID . '\''))
+			if($s = $s->fetch_object()) {
+				$s->replies = 0;
 				return $s;
+			}
 		return false;
 	}
 
@@ -204,9 +213,9 @@ class oldUser {
 	}
 
 	public function GetContactLinks() {
-		global $olddb, $user;
+		global $user;
 		$links = [];
-		if($c = $olddb->query('select email, website, twitter, steam, flags from usercontact where uid=\'' . +$this->ID . '\' limit 1'))
+		if($c = $this->olddb->query('select email, website, twitter, steam, flags from usercontact where uid=\'' . +$this->ID . '\' limit 1'))
 			if($c = $c->fetch_object()) {
 				if($c->email && ($c->flags & 1 || $user->IsAdmin()))
 					$links[] = ['type' => 'email', 'url' => 'mailto:' . $c->email, 'title' => 'send ' . $this->DisplayName . ' an e-mail'];
