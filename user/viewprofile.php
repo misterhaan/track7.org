@@ -19,7 +19,6 @@ if(isset($_GET['login'])) {
 							$ajax->Data->latest = $act->posted;
 							$act->action = t7contrib::ActionWords($act->conttype);
 							$act->posted = t7format::TimeTag('ago', $act->posted, 'g:i a \o\n l F jS Y');
-							// TODO:  conversions
 							$ajax->Data->acts[] = $act;
 						}
 						$ajax->Data->more = t7contrib::More($ajax->Data->latest, $u->ID);

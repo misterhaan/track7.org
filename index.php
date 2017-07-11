@@ -19,7 +19,7 @@ if(isset($_GET['ajax'])) {
 					$act->hasmore += 0;  // convert to numeric
 					$ajax->Data->acts[] = $act;
 				}
-				// TODO:  consider checking if there is more activity
+				$ajax->Data->more = t7contrib::More($ajax->Data->latest);
 			} else
 				$ajax->Fail('error looking up activity:  ' . $db->error);
 			break;
@@ -114,7 +114,7 @@ if($user->IsAdmin()) {
 				</article>
 				<!-- /ko -->
 				<p class=loading data-bind="visible: loading">loading activity...</p>
-				<p class="more calltoaction"><a class="action get" href="#activity" data-bind="click: Load">show more activity</a></p>
+				<p class="more calltoaction" data-bind="visible: more() && !loading()"><a class="action get" href="#activity" data-bind="click: Load">show more activity</a></p>
 			</div>
 <?php
 $html->Close();

@@ -6,6 +6,7 @@ function ActivityViewModel() {
 	var self = this;
 	this.activity = ko.observableArray([]);
 	this.latest = 0;
+	this.more = ko.observable(false);
 	this.loading = ko.observable(false);
 
 	this.Load = function() {
@@ -17,6 +18,7 @@ function ActivityViewModel() {
 				for(var a = 0; a < result.acts.length; a++)
 					self.activity.push(result.acts[a]);
 				self.latest = result.latest;
+				self.more(result.more);
 			}
 			self.loading(false);
 		}, "json");
