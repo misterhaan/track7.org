@@ -25,6 +25,7 @@ class t7user {
 
 	public $DST = true;  // true for server time (which observes daylight saving time)
 	public $tzOffset = 0;  // offset (in seconds) from server time (if $DST is true) or gmt
+	public $NotifyCount = 0;  // number of notifications to show in the user menu
 	public $UnreadMsgs = 0;  // number of conversations this user hasn't read yet
 
 	/**
@@ -329,6 +330,7 @@ class t7user {
 				$this->DST = $s->timebase != 'gmt';
 				$this->tzOffset = $s->timeoffset;
 				$this->UnreadMsgs = $s->unreadmsgs;
+				$this->NotifyCount = $this->UnreadMsgs;  // add other types of notifications
 				return true;
 			}
 		return false;

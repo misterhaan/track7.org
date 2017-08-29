@@ -26,12 +26,12 @@ class t7html {
 		<meta name=viewport content="width=device-width, initial-scale=1">
 		<title><?php echo $title; ?></title>
 		<link rel=stylesheet href="/track7.css">
-		<script src="/jquery-3.1.0.min.js" type="text/javascript"></script>
+		<script src="/jquery-3.2.1.min.js" type="text/javascript"></script>
 		<script src="/autosize.min.js" type="text/javascript"></script>
 <?php
 		if(isset($this->params['ko']) && $this->params['ko']) {
 ?>
-		<script src="/knockout-3.3.0.js" type="text/javascript"></script>
+		<script src="/knockout-3.4.2.js" type="text/javascript"></script>
 <?php
 		}
 ?>
@@ -82,7 +82,7 @@ class t7html {
 		global $user;
 		if($user->IsLoggedIn()) {
 ?>
-				<a id=whodat href="/user/<?php echo $user->Username; ?>/"><?php echo htmlspecialchars($user->DisplayName); ?><img class=avatar src="<?php echo $user->Avatar; ?>" alt=""></a>
+				<a id=whodat href="/user/<?php echo $user->Username; ?>/"><?php echo htmlspecialchars($user->DisplayName); ?><?php if($user->NotifyCount) echo '<span class=notifycount>' . $user->NotifyCount . '</span>'; ?><img class=avatar src="<?php echo $user->Avatar; ?>" alt=""></a>
 <?php
 		} else {
 ?>
@@ -97,9 +97,9 @@ class t7html {
 ?>
 		<div id=usermenu>
 			<nav id=useractions>
-				<a href="/user/<?php echo $user->Username; ?>/">profile</a>
-				<a href="/user/settings.php">settings</a>
-				<a href="/user/messages.php">messages<?php if($user->UnreadMsgs) echo '(' . $user->UnreadMsgs . ')'; ?></a>
+				<a class=profile href="/user/<?php echo $user->Username; ?>/">profile</a>
+				<a class=settings href="/user/settings.php">settings</a>
+				<a class=messages href="/user/messages.php">messages<?php if($user->UnreadMsgs) echo '<span class=notifycount>' . $user->UnreadMsgs . '</span>'; ?></a>
 				<a id=logoutlink href="?logout">sign out</a>
 			</nav>
 		</div>

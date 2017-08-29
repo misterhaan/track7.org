@@ -279,7 +279,16 @@ body > header a {
 	padding: 0 .5em;
 	vertical-align: middle;
 }
-#whodat {
+.notifycount {
+	display: inline-block;
+	background-color: #d82;
+	border-radius: .5em;
+	margin-left: .5em;
+	height: 1em;
+	line-height: .9em;
+	padding: 0 .2em;
+	min-width: .6em;
+	text-align: center;
 }
 #signin:hover,
 #whodat:hover {
@@ -407,6 +416,28 @@ body > header a {
 }
 #useractions a:hover {
 	text-decoration: underline;
+}
+#useractions a:before {
+	display: inline-block;
+	font-family: fontawesome;
+	font-size: .9em;
+	margin-right: .5em;
+	color: #ccc;
+	font-weight: normal;
+}
+a.profile:before {
+	content: "\f2bb";
+}
+a.settings:before {
+	content: "\f085";
+}
+a.messages:before {
+	content: "\f0e0";
+}
+a#logoutlink:before {
+	content: "\f08b";
+	-webkit-transform: rotate(180deg);
+	transform: rotate(180deg);
 }
 
 
