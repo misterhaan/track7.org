@@ -1200,7 +1200,7 @@ fieldset.checkboxes .field {
 	margin-top: .2em;
 	width: inherit;
 }
-main .field input,
+main .field input:not([type="checkbox"]),
 main .field select,
 main .field textarea {
 	-webkit-flex: 1 0;
@@ -1208,12 +1208,28 @@ main .field textarea {
 	margin: 0;
 	width: 100%;
 }
-span.validation {
+.validation {
 	margin-top: -.5em;
-	line-height: 16px;
-	height: 16px;
 }
-span.validation::after {
+.validation:before {
+	font-family: fontawesome;
+	font-size: .8em;
+	display: inline-block;
+}
+.validation.checking:before {
+	content: "\f110";
+	-webkit-animation: fa-spin 1s infinite steps(8);
+	animation: fa-spin 1s infinite steps(8);
+}
+.validation.valid:before {
+	content: "\f00c";
+	color: #7b4;
+}
+.validation.invalid:before {
+	content: "\f05e";
+	color: #b52;
+}
+.validation:after {
 	content: attr(title);
 	margin-left: .25em;
 }
@@ -2203,8 +2219,65 @@ main #detecttime {
 		margin: .75em 1em .75em 5.75em;
 	}
 }
-.contactmethod {
-	margin: 1.5em 0;
+.droptrigger {
+	background-color: #eed;
+	border-radius: .25em;
+	margin-left: .5em;
+	padding: .1em 0 .15em;
+	white-space: nowrap;
+}
+main a.droptrigger {
+	font-weight: normal;
+	color: #000;
+}
+.visibility:before {
+	font-family: fontawesome;
+	margin: 0 .5em 0 .25em;
+	display: inline-block;
+	width: 1em;
+	text-align: center;
+}
+.droplist .visibility:before {
+	font-size: .8em;
+	color: #666;
+}
+.visibility[data-value="none"]:before {
+	content: "\f2a8";
+}
+.visibility[data-value="friends"]:before {
+	content: "\f006";
+}
+.visibility[data-value="users"]:before {
+	content: "\f0c0";
+}
+.visibility[data-value="all"]:before {
+	content: "\f0ac";
+}
+.droptrigger:after {
+	content: "\25bc";
+	font-size: .45em;
+	margin-right: .6em;
+	display: inline-block;
+	transform: translateY(-.3em);
+}
+#contact .field {
+	position: relative;
+}
+.droplist {
+	display: none;
+	position: absolute;
+	right: .125em;
+	top: 1.25em;
+	background-color: #eed;
+	padding: .125em 0;
+	border-radius: .25em 0 .25em .25em;
+	-webkit-filter: drop-shadow(2px 2px 1px #777);
+	filter: drop-shadow(2px 2px 1px #777);
+	z-index: 1;  /* on top of the down arrow from .droptrigger:after */
+}
+.droplist a {
+	display: block;
+	padding: .125em .25em;
 }
 @media (min-width: 40em) {
 	#notification span.label {
@@ -2214,6 +2287,9 @@ main #detecttime {
 	#notification button {
 		margin: .75em 1em .75em 6em;
 	}
+}
+#emaillabel {
+	margin-right: .25em;
 }
 .linkedaccounts {
 	margin: .75em .5em;

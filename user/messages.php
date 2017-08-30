@@ -135,7 +135,7 @@ if($user->IsLoggedIn()) {
 					</ol>
 					<ol class=conversations data-bind="foreach: conversations">
 						<li data-bind="css: {selected:  $parent.selected().id == id}">
-							<header data-bind="css: {read: hasread != 0, outgoing: issender, incoming: !issender}, click: $parent.Select"><img class=avatar data-bind="attr: {src: avatar}"><span data-bind="text: displayname"></span><time data-bind="text: sent.display, attr: {datetime: sent.datetime, title: sent.tooltip}"></time></header>
+							<header data-bind="css: {read: +hasread, outgoing: +issender, incoming: !+issender}, click: $parent.Select"><img class=avatar data-bind="attr: {src: avatar}"><span data-bind="text: displayname"></span><time data-bind="text: sent.display, attr: {datetime: sent.datetime, title: sent.tooltip}"></time></header>
 <?php ShowMessages(); ?>
 						</li>
 					</ol>
