@@ -596,6 +596,11 @@ a.action.documentation:before {
 a.action.link:before {
 	content: "\f08e";
 }
+.actions a.unlink:before,
+a.action.unlink:before {
+	content: "\f127";
+	color: #b64;
+}
 
 @media (min-width: 25em) {
 	.actions {
@@ -1227,7 +1232,7 @@ main .field textarea {
 }
 .validation.invalid:before {
 	content: "\f05e";
-	color: #b52;
+	color: #b64;
 }
 .validation:after {
 	content: attr(title);
@@ -2292,16 +2297,87 @@ main a.droptrigger {
 	margin-right: .25em;
 }
 .linkedaccounts {
-	margin: .75em .5em;
+	text-align: center;
 }
 @media (min-width: 25em) {
 	.linkedaccounts {
-		margin: .75em 1em;
+		margin: 0 .5em;
+		text-align: left;
 	}
 }
-img.accounttype {
-	height: 50px;
-	border-radius: 5px;
+.linkedaccount {
+	display: inline-block;
+	display: -webkit-inline-flex;
+	display: inline-flex;
+	align-items: stretch;
+	margin: .75em .5em;
+}
+.linkedaccount:before,
+#authchoices a:before {
+	display: inline-block;
+	font-family: fontawesome;
+	font-size: 2em;
+	line-height: 1em;
+	width: 1em;
+	text-align: center;
+	padding: .25em;
+	border-radius: .125em 0 0 .125em;
+	color: #fff;
+}
+#authchoices a:before {
+	border-radius: 50%;
+	font-weight: normal;
+}
+.linkedaccount.google:before,
+#authchoices a.google:before {
+	content: "\f0d5";
+	background-color: #dd4f43;
+	font-size: 1.75em;
+	line-height: 1.14285714em;
+	width: 1.14285714em;
+	padding: .285714286em;
+	border-radius: .142857143em 0 0 .142857143em;
+}
+#authchoices a.google:before {
+	border-radius: 50%;
+}
+.linkedaccount.twitter:before,
+#authchoices a.twitter:before {
+	content: "\f099";
+	background-color: #1da1f2;
+}
+.linkedaccount.facebook:before,
+#authchoices a.facebook:before {
+	content: "\f09a";
+	background-color: #466ca6;
+}
+.linkedaccount a {
+	display: block;
+}
+.linkedaccount img {
+	display: block;
+	height: 3em;
+	width: 3em;
+}
+.linkedaccount .actions {
+	margin: 0;
+	padding: .125em .25em;
+	border-radius: 0 .25em .25em 0;
+}
+.linkedaccount .actions a {
+	margin: .125em;
+}
+.linkedaccount .actions a:before {
+	margin: 0;
+	font-size: 1em;
+	font-weight: bold;
+}
+@media (min-width: 25em) {
+	main #authchoices {
+		margin: 0 .5em;
+		-webkit-justify-content: left;
+		justify-content: left;
+	}
 }
 
 /*------------------------------------------------------------[ /user/via/ ]--*/

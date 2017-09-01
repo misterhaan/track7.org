@@ -56,7 +56,7 @@ if(isset($_GET['ajax'])) {
 							if($msg === true) {
 								if(!isset($_POST['displayname']) || true !== t7user::CheckName($_POST['displayname'] = trim($_POST['displayname'])))
 									$_POST['displayname'] = '';
-								if(isset($_POST['useavatar']) && isset($_SESSION[$_SESSION['registering']]['avatar'])) {
+								if(isset($_SESSION[$_SESSION['registering']]['avatar'])) {
 									// make sure the avatar url points to a readable image
 									$c = curl_init($_SESSION[$_SESSION['registering']]['avatar']);
 									curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
@@ -65,40 +65,44 @@ if(isset($_GET['ajax'])) {
 									if($avatar = imagecreatefromstring($avatar))
 										imagedestroy($avatar);
 									else
-										$_SESSION[$_SESSION['registering']]['avatar'] = '/images/user.jpg';
+										$_SESSION[$_SESSION['registering']]['avatar'] = '';
 								} else
-									$_SESSION[$_SESSION['registering']]['avatar'] = '/images/user.jpg';
+									$_SESSION[$_SESSION['registering']]['avatar'] = '';
 								if(isset($_POST['website']) && ($_POST['website'] = trim($_POST['website'])) != '' && !t7format::CheckUrl($_POST['website']))
 									$_POST['website'] = '';
 								$db->autocommit(false);  // users row should only actually be created if login row is too
-								if($db->real_query('insert into users (username, displayname, avatar) values (\'' . $db->escape_string($_POST['username']) . '\', \'' . $db->escape_string($_POST['displayname']) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']]['avatar']) . '\')')) {
+								if($db->real_query('insert into users (username, displayname, avatar) values (\'' . $db->escape_string($_POST['username']) . '\', \'' . $db->escape_string($_POST['displayname']) . '\', \'' . (isset($_POST['useavatar']) ? $db->escape_string($_SESSION[$_SESSION['registering']]['avatar']) : '') . '\')')) {
 									$uid = $db->insert_id;
-									$idfld = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid'];
-									if($db->real_query('insert into `login_' . $db->escape_string($_SESSION['registering']) . '` (user, ' . $idfld[$_SESSION['registering']] . ', profile) values (\'' . $db->escape_string($uid) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']][$idfld[$_SESSION['registering']]]) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']]['profile']) . '\')')) {
-										$db->commit();
-										$db->autocommit(true);
-										if(isset($_POST['email']) && t7user::CheckEmail($_POST['email'] = trim($_POST['email'])))
-											$db->real_query('insert into users_email (id, email) values (\'' . $db->escape_string($uid) . '\', \'' . $db->escape_string($_POST['email']) . '\')');
-										if(isset($_POST['website']) || isset($_POST['linkprofile'])) {
-											$ins = 'insert into users_profiles (id';
-											if(isset($_POST['website']) && $_POST['website'])
-												$ins .= ', website';
-											if(isset($_POST['linkprofile']))
-												$ins .= ', ' . $_SESSION['registering'];
-											$ins .= ') values (\'' . $db->escape_string($uid);
-											if(isset($_POST['website']) && $_POST['website'])
-												$ins .= '\', \'' . $db->escape_string($_POST['website']);
-											if(isset($_POST['linkprofile']))
-												$ins .= '\', \'' . $db->escape_string(t7user::CollapseProfileLink($_SESSION[$_SESSION['registering']]['profile'], $_SESSION['registering']));
-											$db->real_query($ins . '\')');
-										}
-										$db->real_query('insert into users_stats (id, registered) values (\'' . $db->escape_string($uid) . '\', \'' . time() . '\')');
-										$user->Login('register', $uid, $_SESSION[$_SESSION['registering']]['remember']);
-										$ajax->Data->continue = $_SESSION[$_SESSION['registering']]['continue'];
-										unset($_SESSION[$_SESSION['registering']]);
-										unset($_SESSION['registering']);
+									if($db->real_query('insert into external_profiles (name, url, avatar, useavatar) values (\'' . $db->escape_string($_SESSION[$_SESSION['registering']]['name']) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']]['profile']) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']]['avatar']) . '\', ' . +isset($_POST['useavatar']) . ')')) {
+										$pid = $db->insert_id;
+										$idfld = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid'];
+										if($db->real_query('insert into `login_' . $db->escape_string($_SESSION['registering']) . '` (user, ' . $idfld[$_SESSION['registering']] . ', profile) values (\'' . $db->escape_string($uid) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']][$idfld[$_SESSION['registering']]]) . '\', \'' . $db->escape_string($pid) . '\')')) {
+											$db->commit();
+											$db->autocommit(true);
+											if(isset($_POST['email']) && t7user::CheckEmail($_POST['email'] = trim($_POST['email'])))
+												$db->real_query('insert into users_email (id, email) values (\'' . $db->escape_string($uid) . '\', \'' . $db->escape_string($_POST['email']) . '\')');
+											if(isset($_POST['website']) || isset($_POST['linkprofile'])) {
+												$ins = 'insert into users_profiles (id';
+												if(isset($_POST['website']) && $_POST['website'])
+													$ins .= ', website';
+												if(isset($_POST['linkprofile']))
+													$ins .= ', ' . $_SESSION['registering'];
+												$ins .= ') values (\'' . $db->escape_string($uid);
+												if(isset($_POST['website']) && $_POST['website'])
+													$ins .= '\', \'' . $db->escape_string($_POST['website']);
+												if(isset($_POST['linkprofile']))
+													$ins .= '\', \'' . $db->escape_string(t7user::CollapseProfileLink($_SESSION[$_SESSION['registering']]['profile'], $_SESSION['registering']));
+												$db->real_query($ins . '\')');
+											}
+											$db->real_query('insert into users_stats (id, registered) values (\'' . $db->escape_string($uid) . '\', \'' . time() . '\')');
+											$user->Login('register', $uid, $_SESSION[$_SESSION['registering']]['remember']);
+											$ajax->Data->continue = $_SESSION[$_SESSION['registering']]['continue'];
+											unset($_SESSION[$_SESSION['registering']]);
+											unset($_SESSION['registering']);
+										} else
+											$ajax->Fail('database error linking sign in account.');
 									} else
-										$ajax->Fail('database error linking sign in account.');
+										$ajax->Fail('database error caching profile information.');
 								} else
 									$ajax->Fail('database error registering user.');
 							} else

@@ -33,9 +33,9 @@ class t7auth {
 	public static function GetAuthLinks($continue, $adding = false) {
 		$csrf = self::GetCSRF();
 		$links = [];
-		$links['google'] = array('url' => t7authGoogle::GetAuthURL($continue, $csrf), 'img' => '/user/via/google.png');
-		$links['twitter'] = array('url' => t7authTwitter::GetAuthURL($continue), 'img' => '/user/via/twitter.png');
-		$links['facebook'] = array('url' => t7authFacebook::GetAuthUrl($continue, $csrf), 'img' => '/user/via/facebook.png');
+		$links['google'] = array('url' => t7authGoogle::GetAuthURL($continue, $csrf), 'class' => 'google', 'img' => '/user/via/google.png');
+		$links['twitter'] = array('url' => t7authTwitter::GetAuthURL($continue), 'class' => 'twitter', 'img' => '/user/via/twitter.png');
+		$links['facebook'] = array('url' => t7authFacebook::GetAuthUrl($continue, $csrf), 'class' => 'facebook', 'img' => '/user/via/facebook.png');
 		// TODO:  add links to other methods here
 		if(!$adding)
 			$links['track7'] = array('url' => t7authTrack7::GetAuthURL($continue, $csrf), 'img' => '/user/via/track7.png');
@@ -43,9 +43,7 @@ class t7auth {
 	}
 
 	public static function LoginRegister(t7authRegisterable $auth) {
-		global $db;
-		global $user;
-		global $html;
+		global $db, $html, $user;
 		if($auth->HasData)
 			if($auth->IsValid)
 				if($auth->ID)
@@ -71,24 +69,31 @@ class t7auth {
 				things are a bit complicated — you probably want to ask <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>
 				to merge things on the track7 side.  if you’re trying to sign in with
 				this <?php echo $auth::SOURCE; ?> account not as <?php echo htmlspecialchars($user->DisplayName); ?>
-				then you’ll need to log out first (from the menu in the upper right).
+				then you’ll need to sign out first (from the menu in the upper right).
 			</p>
 <?php
 								}
 							else { // logging in
-								$user->Login($auth::SOURCE, $auth->ID, $auth->Remember, $auth->Continue);
+								$user->Login($auth::SOURCE, $auth);
 								die;
 							}
 						else // account not linked to track7
 							if($auth->GetUserInfo())
-								if($user->IsLoggedIn()) // link new account to user
-									if($db->real_query('insert into login_' . $auth::SOURCE . ' (user, ' . $auth::FIELD . ', profile) values (\'' . +$user->ID . '\', \'' . $db->escape_string($auth->ID) . '\', \'' . $db->escape_string($auth->ProfileFull) . '\')')) {
-										if($auth->ProfileShort)
-											$db->real_query('update users_profiles set ' . $auth::SOURCE . '=\'' . $db->escape_string($auth->ProfileShort) . '\' where id=\'' . +$user->ID . '\' and ' . $auth::SOURCE . '=\'\'');
-										header('Location: ' . t7format::FullUrl($auth->Continue));
-										die;
-									} else { // error linking account
-										self::OpenPage($auth::SOURCE);
+								if($user->IsLoggedIn()) { // link new account to user
+									$db->autocommit(false);  // don't create external profile or login unless both get created
+									if($db->real_query('insert into external_profiles (name, url, avatar) values (\'' . $db->escape_string($auth->DisplayName) . '\', \'' . $db->escape_string($auth->ProfileFull) . '\', \'' . $db->escape_string($auth->Avatar) . '\')')) {
+										$pid = $db->insert_id;
+										if($db->real_query('insert into login_' . $auth::SOURCE . ' (user, ' . $auth::FIELD . ', profile) values (\'' . +$user->ID . '\', \'' . $db->escape_string($auth->ID) . '\', \'' . +$pid . '\')')) {
+											if($auth->ProfileShort)
+												$db->real_query('update users_profiles set ' . $auth::SOURCE . '=\'' . $db->escape_string($auth->ProfileShort) . '\' where id=\'' . +$user->ID . '\' and ' . $auth::SOURCE . '=\'\'');
+											$db->commit();
+											header('Location: ' . t7format::FullUrl($auth->Continue));
+											die;
+										}
+									}
+									$db->autocommit(true);
+									// error linking account
+									self::OpenPage($auth::SOURCE);
 ?>
 			<p>
 				oops, we couldn’t link your <?php echo $auth::SOURCE; ?> account for
@@ -96,11 +101,10 @@ class t7auth {
 				<a href="/user/misterhaan" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 			</p>
 <?php
-									}
-								else { // show registration form
+								} else { // show registration form
 									// TODO: check if e-mail is already linked (might be handled by javascript later instead)
 									$_SESSION['registering'] = $auth::SOURCE;
-									$_SESSION[$auth::SOURCE] = [$auth::FIELD => $auth->ID, 'avatar' => $auth->Avatar, 'profile' => $auth->ProfileFull, 'remember' => $auth->Remember, 'continue' => $auth->Continue];
+									$_SESSION[$auth::SOURCE] = [$auth::FIELD => $auth->ID, 'name' => $auth->DisplayName, 'avatar' => $auth->Avatar, 'profile' => $auth->ProfileFull, 'remember' => $auth->Remember, 'continue' => $auth->Continue];
 									self::OpenPage($auth::SOURCE);
 ?>
 			<p>
@@ -119,22 +123,22 @@ class t7auth {
 				<label>
 					<span class=label>username:</span>
 					<span class=field><input id=username maxlength=32 required value="<?php echo htmlspecialchars($auth->Username); ?>"></span>
-					<span class=validation title=""><img src="/images/status/checking.gif" alt=""></span>
+					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>display name:</span>
 					<span class=field><input id=displayname maxlength=32 value="<?php echo htmlspecialchars($auth->DisplayName); ?>"></span>
-					<span class=validation title=""><img src="/images/status/checking.gif" alt=""></span>
+					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>e-mail:</span>
 					<span class=field><input id=email maxlength=64 value="<?php echo htmlspecialchars($auth->Email); ?>"></span>
-					<span class=validation title=""><img src="/images/status/checking.gif" alt=""></span>
+					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>website:</span>
 					<span class=field><input id=website maxlength=64 value="<?php echo htmlspecialchars($auth->Website); ?>"></span>
-					<span class=validation title=""><img src="/images/status/checking.gif" alt=""></span>
+					<span class=validation></span>
 				</label>
 <?php
 									if($auth->ProfileShort) {
@@ -551,6 +555,7 @@ class t7authFacebook extends t7authRegisterable {
 	const VERIFY = 'https://graph.facebook.com/v2.3/oauth/access_token';
 	const ID = 'https://graph.facebook.com/me';
 	const INFO = 'https://graph.facebook.com/v2.5/me';
+	const PICURL = 'http://graph.facebook.com/v2.10/{ID}/picture';
 
 	private $access = false;
 
@@ -649,7 +654,7 @@ class t7authFacebook extends t7authRegisterable {
 		$response = json_decode($response);
 		if(isset($response->id) && $response->id == $this->ID) {
 			$this->ProfileFull = $response->link;
-			$this->Avatar = $response->picture->data->url;
+			$this->Avatar = str_replace('{ID}', $this->ID, self::PICURL);
 			$this->Username = explode('@', $response->email)[0];
 			$this->DisplayName = $response->name;
 			$this->Email = $response->email;

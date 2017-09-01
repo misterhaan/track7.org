@@ -10,7 +10,7 @@ create table contributions (
 	foreign key (author) references users(id) on delete cascade on update cascade,
 	authorname varchar(48) not null default '' comment 'name of anonymous contributor',
 	authorurl varchar(255) not null default '' comment 'contact url for anonymous contributor',
-	title varchar(128) not null default'',
+	title varchar(128) not null default '',
 	preview text not null comment 'beginning text of this contribution or the entire contribution if small enough',
 	hasmore bool not null default 0
 );

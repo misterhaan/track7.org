@@ -413,18 +413,18 @@ if(!$user->IsLoggedIn()) {
 				</form>
 
 				<form class=tabcontent id=linkedaccounts>
-					<h2>active linked accounts</h2>
+					<h2>linked accounts</h2>
 					<div class="linkedaccounts">
 <?php
 $logins = 0;
 if($transition = $db->query('select login from transition_login where id=\'' . +$user->ID . '\' limit 1'))
 	if($transition = $transition->fetch_object())
 		$logins++;
-if($googles = $db->query('select id, profile from login_google where user=\'' . +$user->ID . '\''))
+if($googles = $db->query('select l.id, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_google as l left join external_profiles as p on p.id=l.profile where l.user=\'' . +$user->ID . '\''))
 	$logins += $googles->num_rows;
-if($twitters = $db->query('select id, profile from login_twitter where user=\'' . +$user->ID . '\''))
+if($twitters = $db->query('select l.id, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_twitter as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\''))
 	$logins += $twitters->num_rows;
-if($facebooks = $db->query('select id, profile from login_facebook where user=\'' . +$user->ID . '\''))
+if($facebooks = $db->query('select l.id, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_facebook as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\''))
 	$logins += $facebooks->num_rows;
 // TODO: look up other methods
 if($transition) {
@@ -460,15 +460,16 @@ if($googles)
 	while($google = $googles->fetch_object()) {
 ?>
 						<div class="linkedaccount google">
-							<img class=accounttype src="via/google.png" alt=google>
-							<a href="<?php echo htmlspecialchars($google->profile); ?>" title="view this account's profile on google">view</a>
+							<a href="<?php echo htmlspecialchars($google->url); ?>" title="view the <?=$google->name; ?> profile on google"><img src="<?=$google->avatar; ?>"></a>
+							<div class=actions>
 <?php
 		if($logins > 2 || $logins > 1 && !$transition) {
 ?>
-							<a href="#removeaccount" data-source=google data-id=<?php echo $google->id; ?> title="unlink this account so it can no longer be used to sign in to track7">remove</a>
+								<a class=unlink href="#removeaccount" data-source=google data-id=<?php echo $google->id; ?> title="unlink this account so it can no longer be used to sign in to track7"></a>
 <?php
 		}
 ?>
+							</div>
 						</div>
 <?php
 	}
@@ -476,15 +477,16 @@ if($twitters)
 	while($twitter = $twitters->fetch_object()) {
 ?>
 						<div class="linkedaccount twitter">
-							<img class=accounttype src="via/twitter.png" alt=twitter>
-							<a href="<?php echo htmlspecialchars($twitter->profile); ?>" title="view this account's profile on twitter">view</a>
+							<a href="<?php echo htmlspecialchars($twitter->url); ?>" title="view the <?=$twitter->name; ?> profile on twitter"><img src="<?=$twitter->avatar; ?>"></a>
+							<div class=actions>
 <?php
 		if($logins > 2 || $logins > 1 && !$transition) {
 ?>
-							<a href="#removeaccount" data-source=twitter data-id=<?php echo $twitter->id; ?> title="unlink this account so it can no longer be used to sign in to track7">remove</a>
+								<a class=unlink href="#removeaccount" data-source=twitter data-id=<?php echo $twitter->id; ?> title="unlink this account so it can no longer be used to sign in to track7"></a>
 <?php
 		}
 ?>
+							</div>
 						</div>
 <?php
 	}
@@ -492,22 +494,23 @@ if($facebooks)
 	while($facebook = $facebooks->fetch_object()) {
 		?>
 						<div class="linkedaccount facebook">
-							<img class=accounttype src="via/facebook.png" alt=facebook>
-							<a href="<?php echo htmlspecialchars($facebook->profile); ?>" title="view this account's profile on facebook">view</a>
+							<a href="<?php echo htmlspecialchars($facebook->url); ?>" title="view the <?=$facebook->name; ?> profile on facebook"><img src="<?=$facebook->avatar; ?>"></a>
+							<div class=actions>
 <?php
 		if($logins > 2 || $logins > 1 && !$transition) {
 ?>
-							<a href="#removeaccount" data-source=facebook data-id=<?php echo $facebook->id; ?> title="unlink this account so it can no longer be used to sign in to track7">remove</a>
+								<a class=unlink href="#removeaccount" data-source=facebook data-id=<?php echo $facebook->id; ?> title="unlink this account so it can no longer be used to sign in to track7"></a>
 <?php
 		}
 ?>
+							</div>
 						</div>
 <?php
 	}
 ?>
 					</div>
 
-					<h2>link another account</h2>
+					<h2>authorize another account</h2>
 					<p>
 						you currently have <?php echo $logins . ' way'; if($logins != 1) echo 's'; ?>
 						to sign in to track7, but you can always add another. choose an
@@ -518,7 +521,7 @@ if($facebooks)
 $auths = t7auth::GetAuthLinks($_SERVER['PHP_SELF'] . '#linkedaccounts', true);
 foreach($auths as $name => $auth) {
 ?>
-						<a href="<?php echo htmlspecialchars($auth['url']); ?>"><img src="<?php echo htmlspecialchars($auth['img']); ?>" alt="<?php echo $name; ?>" title="link your <?php echo $name; ?> account for sign in"></a>
+						<a href="<?php echo htmlspecialchars($auth['url']); ?>" class=<?php echo $auth['class']; ?> title="link your <?php echo $name; ?> account for sign in"></a>
 <?php
 }
 ?>

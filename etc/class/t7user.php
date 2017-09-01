@@ -116,7 +116,7 @@ class t7user {
 	 * attempt to log in with the method specified.  redirects to $continue if
 	 * successful.
 	 * @param string $type who authenticated the user (transition, google)
-	 * @param string $id unique identifier for the authenticator (not the user id from the database except for transition type)
+	 * @param string|t7authRegisterable $id user id, or external authorization object
 	 * @param boolean $remember whether an autologin should be set up
 	 * @param string $continue local url to redirect to after login is completed
 	 */
@@ -129,19 +129,20 @@ class t7user {
 				$uid = $id;
 				break;
 			case 'google':
-				if($google = $db->query('select user from login_google where sub=\'' . $db->escape_string($id) . '\' limit 1'))
-					if($google = $google->fetch_object())
-						$uid = $google->user;
-				break;
 			case 'twitter':
-				if($twitter = $db->query('select user from login_twitter where user_id=\'' . $db->escape_string($id) . '\' limit 1'))
-					if($twitter = $twitter->fetch_object())
-						$uid = $twitter->user;
-				break;
 			case 'facebook':
-				if($facebook = $db->query('select user from login_facebook where extid=\'' . $db->escape_string($id) . '\' limit 1'))
-					if($facebook = $facebook->fetch_object())
-						$uid = $facebook->user;
+				$colnames = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid'];
+				if($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . $colnames[$type] . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
+					if($login = $login->fetch_object()) {
+						$uid = $login->user;
+						$remember = $id->Remember;
+						$continue = $id->Continue;
+						if($id->GetUserInfo()) {
+							$db->real_query('update external_profiles set name=\'' . $db->escape_string($id->DisplayName) . '\', url=\'' . $db->escape_string($id->ProfileFull) . '\', avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$login->profile);
+							if(+$login->useavatar && $id->Avatar)
+								$db->real_query('update users set avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$uid);
+						}
+					}
 				break;
 		}
 		if($uid) {

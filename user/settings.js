@@ -83,41 +83,8 @@ $(function() {
 		}
 	}
 
-	$("#username").change(function() {
-		var valid = $("#username").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating username...");
-		$.get("./?ajax=checkusername", {username: $("#username").val()}, function(result) {
-			valid.removeClass("checking");
-			if(result.fail) {
-				valid.addClass("invalid");
-				valid.attr("title", result.message);
-			} else {
-				valid.addClass("valid");
-				valid.attr("title", "username available.");
-			}
-		}, "json");
-	});
-
-	$("#displayname").change(function() {
-		var valid = $("#displayname").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating display name...");
-		if($.trim($("#displayname").val()) == "") {
-			valid.removeClass("checking").addClass("valid");
-			valid.attr("title", "username will be used for display");
-		} else
-			$.get("./?ajax=checkname", {name: $("#displayname").val()}, function(result) {
-				valid.removeClass("checking");
-				if(result.fail) {
-					valid.addClass("invalid");
-					valid.attr("title", result.message);
-				} else {
-					valid.addClass("valid");
-					valid.attr("title", "display name available.");
-				}
-			}, "json");
-	});
+	$("#username").change(function() { ValidateField(this, "./?ajax=checkusername", "username", "validating username...", "username available."); });
+	$("#displayname").change(function() { ValidateField(this, "./?ajax=checkname", "name", "validating display name...", "display name available.", "username will be used for display."); });
 
 	$("#profile").submit(function() {
 		$("#profile button.save").prop("disabled", true).addClass("working");
@@ -154,156 +121,33 @@ $(function() {
 		return false;
 	});
 
-	$("#email").change(function() {
-		var valid = $("#email").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating e-mail address...");
-		if($.trim($("#email").val()) == "") {
-			valid.removeClass("checking").addClass("valid");
-			valid.attr("title", "e-mail address will be left blank.");
-		} else
-			$.get("./?ajax=checkemail", {email: $("#email").val()}, function(result) {
-				valid.removeClass("checking");
-				if(result.fail) {
-					valid.addClass("invalid");
-					valid.attr("title", result.message);
-				} else {
-					valid.addClass("valid");
-					valid.attr("title", "looks like an e-mail address.");
-				}
-			}, "json");
-	});
-
-	$("#website").change(function() {
-		var valid = $("#website").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating website url...");
-		if($.trim($("#website").val()) == "") {
-			valid.removeClass("checking").addClass("valid");
-			valid.attr("title", "no website listed.");
-		} else
-			$.get("?ajax=checkurl", {url: $("#website").val()}, function(result) {
-				valid.removeClass("checking");
-				if(result.fail) {
-					valid.addClass("invalid");
-					valid.attr("title", result.message);
-				} else {
-					if(result.replace)
-						$("#website").val(result.replace);
-					valid.addClass("valid");
-					valid.attr("title", "url exists.");
-				}
-			}, "json");
-	});
-
-	$("#twitter").change(function() {
-		var valid = $("#twitter").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating twitter username...");
-		if($.trim($("#twitter").val()) == "") {
-			valid.removeClass("checking").addClass("valid");
-			valid.attr("title", "no twitter profile listed.");
-		} else
-			$.get("?ajax=checktwitter", {twitter: $("#twitter").val()}, function(result) {
-				valid.removeClass("checking");
-				if(result.fail) {
-					valid.addClass("invalid");
-					valid.attr("title", result.message);
-				} else {
-					if(result.replace)
-						$("#twitter").val(result.replace);
-					valid.addClass("valid");
-					valid.attr("title", "valid twitter handle.");
-				}
-			}, "json");
-	});
-
-	$("#google").change(function() {
-		var valid = $("#google").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating google+ profile...");
-		if($.trim($("#google").val()) == "") {
-			valid.removeClass("checking").addClass("valid");
-			valid.attr("title", "no google+ profile listed.");
-		} else
-			$.get("?ajax=checkgoogle", {google: $("#google").val()}, function(result) {
-				valid.removeClass("checking");
-				if(result.fail) {
-					valid.addClass("invalid");
-					valid.attr("title", result.message);
-				} else {
-					if(result.replace)
-						$("#google").val(result.replace);
-					valid.addClass("valid");
-					valid.attr("title", "valid google+ profile.");
-				}
-			}, "json");
-	});
-
-	$("#facebook").change(function() {
-		var valid = $("#facebook").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating facebook username...");
-		if($.trim($("#facebook").val()) == "") {
-			valid.removeClass("checking").addClass("valid");
-			valid.attr("title", "no facebook profile listed.");
-		} else
-			$.get("?ajax=checkfacebook", {facebook: $("#facebook").val()}, function(result) {
-				valid.removeClass("checking");
-				if(result.fail) {
-					valid.addClass("invalid");
-					valid.attr("title", result.message);
-				} else {
-					if(result.replace)
-						$("#facebook").val(result.replace);
-					valid.addClass("valid");
-					valid.attr("title", "valid facebook profile.");
-				}
-			}, "json");
-	});
-
-	$("#steam").change(function() {
-		var valid = $("#steam").parent().siblings(".validation");
-		valid.removeClass().addClass("validation").addClass("checking");
-		valid.attr("title", "validating steam profile...");
-		if($.trim($("#steam").val()) == "") {
-			valid.removeClass("checking").addClass("valid");
-			valid.attr("title", "no steam profile listed.");
-		} else
-			$.get("?ajax=checksteam", {steam: $("#steam").val()}, function(result) {
-				valid.removeClass("checking");
-				if(result.fail) {
-					valid.addClass("invalid");
-					valid.attr("title", result.message);
-				} else {
-					if(result.replace)
-						$("#steam").val(result.replace);
-					valid.addClass("valid");
-					valid.attr("title", "valid steam profile.");
-				}
-			}, "json");
-	});
+	$("#email").change(function() { ValidateField(this, "./?ajax=checkemail", "email", "validating e-mail address...", "looks like an e-mail address.", "e-mail address will be left blank."); });
+	$("#website").change(function() { ValidateField(this, "?ajax=checkurl", "url", "validating website url...", "url exists.", "no website listed."); });
+	$("#twitter").change(function() { ValidateField(this, "?ajax=checktwitter", "twitter", "validating twitter username...", "valid twitter handle.", "no twitter profile listed."); });
+	$("#google").change(function() { ValidateField(this, "?ajax=checkgoogle", "google", "validating google+ profile...", "valid google+ profile.", "no google+ profile listed."); });
+	$("#facebook").change(function() { ValidateField(this, "?ajax=checkfacebook", "facebook", "validating facebook username...", "valid facebook profile.", "no facebook profile listed."); });
+	$("#steam").change(function() { ValidateField(this, "?ajax=checksteam", "steam", "validating steam profile...", "valid steam profile.", "no steam profile listed."); });
 
 	$("a.visibility.droptrigger").click(function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var visdrop = $(this).siblings(".droplist");
-		if(window.visdroplist && window.visdroplist[0] == visdrop[0]) {
+		if(document.popup && document.popup[0] == visdrop[0]) {
 			visdrop.hide();
-			window.visdroplist = false;
+			document.popup = false;
 		} else {
-			if(window.visdroplist)
-				window.visdroplist.hide();
+			if(document.popup)
+				document.popup.hide();
 			visdrop.show();
-			window.visdroplist = visdrop;
+			document.popup = visdrop;
 		}
 		return false;
 	});
 
 	$("body").click(function() {
-		if(window.visdroplist) {
-			window.visdroplist.hide();
-			window.visdroplist = false;
+		if(document.popup) {
+			document.popup.hide();
+			document.popup = false;
 		}
 	});
 
@@ -312,7 +156,7 @@ $(function() {
 		e.stopPropagation();
 		$(this).parent().siblings(".visibility").attr("data-value", $(this).data("value")).attr("title", "shown to " + $(this).text());
 		$(this).parent().hide();
-		window.visdroplist = false;
+		document.popup = false;
 		return false;
 	});
 

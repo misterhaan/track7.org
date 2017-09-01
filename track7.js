@@ -11,13 +11,10 @@ $(function() {
 		}
 		return false;
 	});
+	$("#usermenu, #loginmenu").click(function(e) {
+		e.stopPropagation();
+	});
 	$(document).click(function(event) {
-		var target = event.target;
-		while(target) {
-			if(target.id == "usermenu" || target.id == "loginmenu")
-				return;
-			target = target.parentNode;
-		}
 		if(document.popup) {
 			document.popup.hide();
 			document.popup = false;
@@ -134,6 +131,36 @@ function UpdateLoginType() {
 	} else {
 		button.html("choose site to sign in through");
 	}
+}
+
+/**
+ * Validate a form field via ajax
+ * @param field form field to validate
+ * @param url ajax url to request (HTTP GET) for validation
+ * @param name parameter name for sending field value to server
+ * @param msgchk tooltip message while the field is being validated
+ * @param msgok tooltip message when the field successfully validated
+ * @param msgblank tooltip message when the field is blank (blank value will be sent to )
+ */
+function ValidateField(field, url, name, msgchk, msgok, msgblank) {
+	field = $(field);
+	var valid = field.parent().siblings(".validation");
+	valid.removeClass().addClass("validation").addClass("checking");
+	valid.attr("title", msgchk);
+	if(msgblank && $.trim(field.val()) == "") {
+		valid.removeClass("checking").addClass("valid");
+		valid.attr("title", msgblank);
+	} else
+		$.get(url, {[name]: field.val()}, function(result) {
+			valid.removeClass("checking");
+			if(result.fail) {
+				valid.addClass("invalid");
+				valid.attr("title", result.message);
+			} else {
+				valid.addClass("valid");
+				valid.attr("title", msgok);
+			}
+		}, "json");
 }
 
 /**
