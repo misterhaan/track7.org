@@ -368,11 +368,6 @@ body > header a {
 #authchoices input {
 	display: none;
 }
-#authchoices img {
-	height: 50px;
-	border-radius: 5px;
-	display: block;
-}
 #authchoices label.selected {
 	background-color: #fff;
 	border-radius: 8px;
@@ -2313,6 +2308,7 @@ main a.droptrigger {
 	margin: .75em .5em;
 }
 .linkedaccount:before,
+#authchoices label:before,
 #authchoices a:before {
 	display: inline-block;
 	font-family: fontawesome;
@@ -2324,32 +2320,36 @@ main a.droptrigger {
 	border-radius: .125em 0 0 .125em;
 	color: #fff;
 }
+#authchoices label:before {
+	border-radius: 5px;
+}
 #authchoices a:before {
 	border-radius: 50%;
 	font-weight: normal;
 }
 .linkedaccount.google:before,
-#authchoices a.google:before {
-	content: "\f0d5";
+#authchoices .google:before {
+	content: "\f1a0";
 	background-color: #dd4f43;
-	font-size: 1.75em;
-	line-height: 1.14285714em;
-	width: 1.14285714em;
-	padding: .285714286em;
-	border-radius: .142857143em 0 0 .142857143em;
-}
-#authchoices a.google:before {
-	border-radius: 50%;
 }
 .linkedaccount.twitter:before,
-#authchoices a.twitter:before {
+#authchoices .twitter:before {
 	content: "\f099";
 	background-color: #1da1f2;
 }
 .linkedaccount.facebook:before,
-#authchoices a.facebook:before {
+#authchoices .facebook:before {
 	content: "\f09a";
 	background-color: #466ca6;
+}
+#authchoices .track7:before {
+	content: " ";
+	background-image: url(/user/via/track7.png);
+	background-size: 1.5em;
+	padding: 0;
+	height: 1.5em;
+	width: 1.5em;
+	vertical-align: middle;
 }
 .linkedaccount a {
 	display: block;

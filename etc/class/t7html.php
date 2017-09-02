@@ -112,9 +112,9 @@ class t7html {
 				<div id=authchoices>
 <?php
 			$continue = isset($this->params['continue']) ? $this->params['continue'] : $_SERVER['REQUEST_URI'];
-			foreach(t7auth::GetAuthLinks($continue) as $name => $auth) {
+			foreach(t7auth::GetAuthLinks($continue) as $name => $authurl) {
 ?>
-					<label><input type=radio name=login_url value="<?php echo htmlspecialchars($auth['url']); ?>"> <img src="<?php echo htmlspecialchars($auth['img']); ?>" alt="<?php echo $name; ?>" title="sign in with your <?php echo $name; ?> account"></label>
+					<label class="<?=$name; ?>" title="sign in with your <?=$name; ?> account"><input type=radio name=login_url value="<?=htmlspecialchars($authurl); ?>"></label>
 <?php
 			}
 ?>

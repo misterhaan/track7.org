@@ -28,17 +28,17 @@ class t7auth {
 	 * get links for external authentication.
 	 * @param string $continue track7 url to continue to after visiting the external site
 	 * @param boolean $adding whether the authentication is being added to an existing account
-	 * @return array external authentication links, in a named-index array containing a url and img subkey
+	 * @return array external authentication links, in a named-index array
 	 */
 	public static function GetAuthLinks($continue, $adding = false) {
 		$csrf = self::GetCSRF();
 		$links = [];
-		$links['google'] = array('url' => t7authGoogle::GetAuthURL($continue, $csrf), 'class' => 'google', 'img' => '/user/via/google.png');
-		$links['twitter'] = array('url' => t7authTwitter::GetAuthURL($continue), 'class' => 'twitter', 'img' => '/user/via/twitter.png');
-		$links['facebook'] = array('url' => t7authFacebook::GetAuthUrl($continue, $csrf), 'class' => 'facebook', 'img' => '/user/via/facebook.png');
+		$links['google'] = t7authGoogle::GetAuthURL($continue, $csrf);
+		$links['twitter'] = t7authTwitter::GetAuthURL($continue);
+		$links['facebook'] = t7authFacebook::GetAuthUrl($continue, $csrf);
 		// TODO:  add links to other methods here
 		if(!$adding)
-			$links['track7'] = array('url' => t7authTrack7::GetAuthURL($continue, $csrf), 'img' => '/user/via/track7.png');
+			$links['track7'] = t7authTrack7::GetAuthURL($continue, $csrf);
 		return $links;
 	}
 

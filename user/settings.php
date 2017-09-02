@@ -519,9 +519,9 @@ if($facebooks)
 					<div id=authchoices>
 <?php
 $auths = t7auth::GetAuthLinks($_SERVER['PHP_SELF'] . '#linkedaccounts', true);
-foreach($auths as $name => $auth) {
+foreach($auths as $name => $authurl) {
 ?>
-						<a href="<?php echo htmlspecialchars($auth['url']); ?>" class=<?php echo $auth['class']; ?> title="link your <?php echo $name; ?> account for sign in"></a>
+						<a href="<?=htmlspecialchars($authurl); ?>" class=<?=$name; ?> title="link your <?=$name; ?> account for sign in"></a>
 <?php
 }
 ?>
