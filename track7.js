@@ -120,7 +120,7 @@ function UpdateLoginType() {
 	button.prop("disabled", sel.length == 0);
 	sel.parent().addClass("selected");
 	if(sel.length) {
-		var logintype = sel.siblings("img").attr("alt");
+		var logintype = sel.parent().attr("class").split(" ")[0];
 		if(logintype == "track7") {
 			$("#oldlogin").show();
 			button.html("sign in with track7 password");
