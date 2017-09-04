@@ -13,10 +13,10 @@ if(isset($_GET['ajax'])) {
 		case 'loadnotification': LoadNotification(); break;
 		case 'savenotification': SaveNotification(); break;
 		case 'checkurl':         CheckUrl();         break;
-		case 'checktwitter':     CheckTwitter();     break;
-		case 'checkgoogle':      CheckGoogle();      break;
-		case 'checkfacebook':    CheckFacebook();    break;
-		case 'checksteam':       CheckSteam();       break;
+		case 'checktwitter':     CheckTwitterGet();  break;
+		case 'checkgoogle':      CheckGoogleGet();   break;
+		case 'checkfacebook':    CheckFacebookGet(); break;
+		case 'checksteam':       CheckSteamGet();    break;
 		case 'removetransition': RemoveTransition(); break;
 		case 'removeaccount':    RemoveAccount();    break;
 		default:
@@ -588,11 +588,11 @@ function CheckUrl() {
 		$ajax->Fail('url missing.');
 }
 
-function CheckTwitter() {
+function CheckTwitterGet() {
 	global $ajax;
 	if(isset($_GET['twitter'])) {
-		$twitter = t7user::CollapseProfileLink(trim($_GET['twitter']), 'twitter');
-		if(preg_match('/^[A-Za-z0-9_]{1,15}$/', $twitter)) {
+		$twitter = trim($_GET['twitter']);
+		if(CheckTwitter($twitter)) {
 			if($twitter != $_GET['twitter'])
 				$ajax->Data->replace = $twitter;
 		} else
@@ -601,21 +601,34 @@ function CheckTwitter() {
 		$ajax->Fail('twitter missing.');
 }
 
-function CheckGoogle() {
+function CheckTwitter(&$value) {
+	$value = t7user::CollapseProfileLink($value, 'twitter');
+	return preg_match('/^[A-Za-z0-9_]{1,15}$/', $value);
+}
+
+function CheckGoogleGet() {
 	global $ajax;
 	if(isset($_GET['google'])) {
-		$google = t7user::CollapseProfileLink(trim($_GET['google']), 'google');
-		if($google != $_GET['google'])
-			$ajax->Data->replace = $google;
+		$google = trim($_GET['google']);
+		if(CheckGoogle($google)) {
+			if($google != $_GET['google'])
+				$ajax->Data->replace = $google;
+		} else
+			$ajax->Fail('invalid google profile.  please enter your google plus name (with the +) or the url to your google plus profile.');
 	} else
 		$ajax->Fail('google missing.');
 }
 
-function CheckFacebook() {
+function CheckGoogle(&$value) {
+	$value = t7user::CollapseProfileLink($value, 'google');
+	return true;  // TODO:  find something to check
+}
+
+function CheckFacebookGet() {
 	global $ajax;
 	if(isset($_GET['facebook'])) {
-		$facebook = t7user::CollapseProfileLink(trim($_GET['facebook']), 'facebook');
-		if(preg_match('/^[A-Za-z0-9\.]{5,}$/', $facebook)) {
+		$facebook = trim($_GET['facebook']);
+		if(CheckFacebook($facebook)) {
 			if($facebook != $_GET['facebook'])
 				$ajax->Data->replace = $facebook;
 		} else
@@ -624,14 +637,27 @@ function CheckFacebook() {
 		$ajax->Fail('facebook missing.');
 }
 
-function CheckSteam() {
+function CheckFacebook(&$value) {
+	$value = t7user::CollapseProfileLink($value, 'facebook');
+	return preg_match('/^[A-Za-z0-9\.]{5,}$/', $value);
+}
+
+function CheckSteamGet() {
 	global $ajax;
 	if(isset($_GET['steam'])) {
-		$steam = t7user::CollapseProfileLink(trim($_GET['steam']), 'steam');
-		if($steam != $_GET['steam'])
-			$ajax->Data->replace = $steam;
+		$steam = trim($_GET['steam']);
+		if(CheckSteam($steam)) {
+			if($steam != $_GET['steam'])
+				$ajax->Data->replace = $steam;
+		} else
+			$ajax->Fail('invalid steam profile.  please enter your steam custom url or the url to your steam community profile.');
 	} else
 		$ajax->Fail('steam missing.');
+}
+
+function CheckSteam(&$value) {
+	$value = t7user::CollapseProfileLink($value, 'steam');
+	return true;
 }
 
 function RemoveTransition() {
