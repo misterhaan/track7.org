@@ -85,17 +85,44 @@ $(function() {
 
 	$("#username").change(function() { ValidateField(this, "./?ajax=checkusername", "username", "validating username...", "username available."); });
 	$("#displayname").change(function() { ValidateField(this, "./?ajax=checkname", "name", "validating display name...", "display name available.", "username will be used for display."); });
+	$("#avatarupload").change(function(event) {
+		var f = event.target.files[0];
+		if(f) {
+			var fr = new FileReader();
+			fr.onloadend = function() {
+				var typechk = fr.result.split(";base64,")[0].split("data:")[1];
+				if(typechk == "image/jpeg" || typechk == "image/png" || typechk == "image/jpg") {  // jpg might not actually be used, but here just in case
+					var img = $("<img class=avatar>");
+					img.on("error", function() {
+						alert("error reading uploaded file as image.  avatars should be jpeg or png image files.");
+					});
+					img.on("load", function() {
+						var rad = $("#avatarupload").siblings("input[type='radio']");
+						rad.after(img);
+						rad.prop("disabled", false);
+						rad.prop("checked", true);
+						$("#avatarupload").hide();
+					});
+					img.attr("src", fr.result);
+				} else
+					alert("only jpeg and png image files can be used as avatars.  your file was recognized as " + typechk);
+			}
+			fr.readAsDataURL(f);
+		}
+	});
 
 	$("#profile").submit(function() {
 		$("#profile button.save").prop("disabled", true).addClass("working");
-		$.post("/user/settings.php?ajax=saveprofile", {username: $("#username").val(), displayname: $("#displayname").val()}, function(result) {
+		$.post({url: "/user/settings.php?ajax=saveprofile", data: new FormData($("#profile")[0]), cache: false, contentType: false, processData: false, success: function(result) {
 			$("#profile button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				$("a[href='" + $("#whodat").attr("href") + "']").attr("href", "/user/" + result.username + "/");
 				$("#whodat").contents().get(0).nodeValue = result.displayname;
+				$("#whodat img.avatar").attr("src", result.avatar);
+				$("input[name='avatar'][value='current']").prop("checked", true).siblings("img").attr("src", result.avatar);
 			} else
 				alert(result.message);
-		}, "json");
+		}, dataType: "json"});
 		return false;
 	});
 

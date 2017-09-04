@@ -120,7 +120,7 @@ fieldset.checkboxes legend {
 }
 label,
 label * {
-	vertical-align: middle;
+	vertical-align: baseline;
 }
 /* fix for 10-year-old ie bug where img tags inside labels don't work */
 @media (-ms-high-contrast: none), (-ms-high-contrast: active) {
@@ -974,6 +974,34 @@ pre {
 	background-color: #abc;
 	border-radius: .25em;
 }
+.tabs a:before {
+	font-family: fontawesome;
+	font-size: .8em;
+	color: #998;
+	margin-right: .25em;
+	display: inline-block;
+	width: 1.25em;
+	text-align: center;
+	font-weight: normal;
+}
+.tabs a.selected:before {
+	color: #777;
+}
+.tabs a[href="#profile"]:before {
+	content: "\f2bc";
+}
+.tabs a[href="#timezone"]:before {
+	content: "\f017";
+}
+.tabs a[href="#contact"]:before {
+	content: "\f08e";
+}
+.tabs a[href="#notification"]:before {
+	content: "\f0a2";
+}
+.tabs a[href="#linkedaccounts"]:before {
+	content: "\f0c1";
+}
 @media (min-width: 40em) {
 	.tabbed {
 		display: flex;
@@ -1200,7 +1228,7 @@ fieldset.checkboxes .field {
 	margin-top: .2em;
 	width: inherit;
 }
-main .field input:not([type="checkbox"]),
+main .field input:not([type="checkbox"]):not([type="radio"]),
 main .field select,
 main .field textarea {
 	-webkit-flex: 1 0;
@@ -2195,6 +2223,21 @@ ol.messages .outgoing header {
 	#profile button {
 		margin: .75em 1em .75em 7.5em;
 	}
+}
+fieldset.avatar input[type="radio"] {
+	display: none;
+}
+fieldset.avatar img.avatar {
+	width: 2.5em;
+	height: 2.5em;
+	margin-right: .5em;
+	object-fit: cover;
+}
+fieldset.avatar input:checked + img.avatar {
+	box-shadow: 0 0 0 .25em #357;
+}
+#avatarupload {
+	margin-left: .5em;
 }
 #currenttime {
 	width: 3.8em;
