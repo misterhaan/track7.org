@@ -6,7 +6,7 @@ $(function() {
 				if(result.cachedel && result.cachedel.length) {
 					$(".actions").after("<pre class=language-json><code class=language-json>" + result.cloudflare.text + "</code></pre>");
 					$(".actions").after("<h3>cloudflare returned " + result.cloudflare.code + "</h3>");
-					$(".actions").after("<ul><li>" . result.cachedel.join("</li><li>") . "</li></ul>");
+					$(".actions").after("<ul><li>" + result.cachedel.join("</li><li>") + "</li></ul>");
 					$(".actions").after("<p>deleted " + result.cachedel.length + " files from cloudflare cache:</p>);
 				}
 				$(".actions").after("<pre><code>" + result.output + "</code></pre>");
