@@ -109,7 +109,7 @@ if($user->IsAdmin()) {
 							<!-- /ko -->
 						</h2>
 						<div class=summary data-bind="html: preview"></div>
-						<p class=readmore data-bind="visible: hasmore"><a data-bind="attr: {href: url}">⇨ read more</a></p>
+						<p class=readmore data-bind="visible: hasmore"><a class=continue data-bind="attr: {href: url}">read more</a></p>
 					</div>
 				</article>
 				<!-- /ko -->

@@ -817,8 +817,7 @@ article > header .guidemeta {
 	content: "\f005\f005\f005\f005\f005";
 }
 
-.readmore a.page1:before {
-	content: "\f016";
+.readmore a:before {
 	margin-right: .325em;
 	font-size: .8em;
 	font-family: fontawesome;
@@ -826,15 +825,19 @@ article > header .guidemeta {
 	display: inline-block;
 	font-weight: normal;
 }
+.readmore a.page1:before {
+	content: "\f016";
+}
 .readmore a.allpages:before {
 	margin-left: 1em;
 	content: "\f0c5";
-	margin-right: .325em;
-	font-size: .8em;
-	font-family: fontawesome;
-	color: #998;
-	display: inline-block;
-	font-weight: normal;
+}
+.readmore a.continue:before {
+	content: "\f0a9";
+}
+.readmore a.comments:before {
+	content: "\f0e6";
+	margin-left: 1em;
 }
 
 p,
@@ -2286,7 +2289,7 @@ main a.droptrigger {
 	color: #666;
 }
 .visibility[data-value="none"]:before {
-	content: "\f2a8";
+	content: "\f070";
 }
 .visibility[data-value="friends"]:before {
 	content: "\f006";
