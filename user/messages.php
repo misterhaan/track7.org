@@ -161,7 +161,7 @@ if($user->IsLoggedIn()) {
 					<span class=field>
 						<input id=usermatch autocomplete=off data-bind="textInput: usermatch, visible: !chosenuser()">
 						<span data-bind="visible: chosenuser">
-							<img class=avatar data-bind="attr: {src: chosenuser().avatar}">
+							<img class="avatar inline" data-bind="attr: {src: chosenuser().avatar}">
 							<a data-bind="attr: {href: '/user/' + chosenuser().username + '/'}, text: chosenuser().displayname || chosenuser().username"></a>
 							<a class="action del" data-bind="click: Clear, attr: {title: 'remove ' + chosenuser().displayname + ' and choose someone else'}"></a>
 						</span>
