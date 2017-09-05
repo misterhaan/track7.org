@@ -34,14 +34,14 @@ if(!$art) {
 // TODO:  handle missing / same dates
 $prev = $next = false;
 if($tag) {
-	if($prev = $db->query('select a.url, a.title from art_taglinks as tl left join art as a on a.id=tl.art where tl.tag=\'' . +$tag->id . '\' and a.posted<\'' . +$art->posted . '\' order by a.posted desc limit 1'))
+	if($prev = $db->query('select a.url, a.title from art_taglinks as tl left join art as a on a.id=tl.art where tl.tag=\'' . +$tag->id . '\' and a.posted<\'' . +$art->posted . '\' or a.posted=\'' . +$art->posted . '\' and a.id<\'' . +$art->id . '\' order by a.posted desc, a.id desc limit 1'))
 		$prev = $prev->fetch_object();
-	if($next = $db->query('select a.url, a.title from art_taglinks as tl left join art as a on a.id=tl.art where tl.tag=\'' . +$tag->id . '\' and a.posted>\'' . +$art->posted . '\' order by a.posted limit 1'))
+	if($next = $db->query('select a.url, a.title from art_taglinks as tl left join art as a on a.id=tl.art where tl.tag=\'' . +$tag->id . '\' and a.posted>\'' . +$art->posted . '\' or a.posted=\'' . +$art->posted . '\' and a.id>\'' . +$art->id . '\' order by a.posted, a.id limit 1'))
 		$next = $next->fetch_object();
 } else {
-	if($prev = $db->query('select url, title from art where posted<\'' . +$art->posted . '\' order by posted desc limit 1'))
+	if($prev = $db->query('select url, title from art where posted<\'' . +$art->posted . '\' or posted=\'' . +$art->posted . '\' and id<\'' . +$art->id . '\' order by posted desc, id desc limit 1'))
 		$prev = $prev->fetch_object();
-	if($next = $db->query('select url, title from art where posted>\'' . +$art->posted . '\' order by posted limit 1'))
+	if($next = $db->query('select url, title from art where posted>\'' . +$art->posted . '\' or posted=\'' . +$art->posted . '\' and id>\'' . +$art->id . '\' order by posted, id limit 1'))
 		$next = $next->fetch_object();
 }
 

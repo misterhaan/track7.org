@@ -143,5 +143,4 @@ class t7keysCloudflare {
 	 * @var string
 	 */
 	const ID = '';
-	const OWNER = '';  // probably don't need this
 }
