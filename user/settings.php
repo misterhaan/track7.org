@@ -46,11 +46,11 @@ if(!$user->IsLoggedIn()) {
 ?>
 			<div class=tabbed>
 				<nav class=tabs>
-					<a href=#profile title="name and avatar">profile</a>
+					<a href=#profile title="name and picture">profile</a>
 					<a href=#timezone title="configure times to display for where you are">time zone</a>
 					<a href=#contact title="e-mail and profiles on other sites">contact</a>
 					<a href=#notification title="choose when track7 should notify you">notification</a>
-					<a href=#linkedaccounts title="manage which accounts you use to sign in to track7">sign-in accounts</a>
+					<a href=#linkedaccounts title="manage which accounts you use to sign in to track7">logins<?php if($user->SettingsAlerts) echo '<span class=notifycount>' . $user->SettingsAlerts . '</span>'; ?></a>
 				</nav>
 
 				<form class=tabcontent id=profile>
@@ -65,12 +65,12 @@ if(!$user->IsLoggedIn()) {
 						<span class="validation"></span>
 					</label>
 					<fieldset class=avatar>
-						<legend>avatar</legend>
+						<legend>profile picture:</legend>
 						<label>
 							<span class=field><input name=avatar value=current type=radio checked><img src="<?=$user->Avatar; ?>" class=avatar>no changes</span>
 						</label>
 						<label>
-							<span class=field><input name=avatar value=none type=radio><img src="<?=t7user::DEFAULT_AVATAR; ?>" class=avatar>default anonymous avatar</span>
+							<span class=field><input name=avatar value=none type=radio><img src="<?=t7user::DEFAULT_AVATAR; ?>" class=avatar>default anonymous picture</span>
 						</label>
 <?php
 if($email = $db->query('select email from users_email where id=' . +$user->ID))
@@ -222,40 +222,50 @@ if($user->IsKnown()) {  // only known users can upload an avatar
 				</form>
 
 				<form class=tabcontent id=linkedaccounts>
-					<h2>linked accounts</h2>
-					<div class="linkedaccounts">
 <?php
 if($transition = $db->query('select login from transition_login where id=\'' . +$user->ID . '\' limit 1'))
 	$transition = $transition->fetch_object();
 if($transition) {
 ?>
+					<h2>username + password</h2>
+					<div class=transitionlogin>
 						<div class="linkedaccount transition">
 							<img class=accounttype src="via/track7.png" alt=track7>
+							<div class=actions>
 <?php
-	if(count($extlogins) > 1) {
+	if(count($extlogins)) {
 ?>
-							<a href=#removetransition title="remove this login option and delete password information from track7">remove</a>
-							<p class=securitynote>
-								this login method is less secure because track7 isn’t encrypted.
-								once you have verified your ability to sign in with one of the
-								other accounts listed here, you should remove the username +
-								password option.
-							</p>
-<?php
-	} else {
-?>
-							<p class=securitynote>
-								this login method is less secure because track7 isn’t encrypted.
-								you should link another account for login and remove your track7
-								username + password, especially if you use the same password
-								elsewhere.
-							</p>
+							<a class=del href=#removetransition title="remove this login option and delete password information from track7"></a>
 <?php
 	}
 ?>
+							</div>
 						</div>
+						<p class=securitynote>
+							track7 passwords are less secure because track7 isn’t encrypted.
+<?php
+	if(count($extlogins)) {
+?>
+							once you have verified your ability to sign in with one of the
+							other accounts listed here, you should remove the username +
+							password login option.
+<?php
+	} else {
+?>
+							you should link an account for login and remove your track7
+							username + password, especially if you use the same password
+							elsewhere.
+<?php
+	}
+?>
+						</p>
+					</div>
 <?php
 }
+?>
+					<h2>linked accounts</h2>
+					<div class="linkedaccounts">
+<?php
 foreach($extlogins as $login) {
 ?>
 						<div class="linkedaccount <?=$login->source; ?>">
@@ -350,11 +360,11 @@ function SaveProfileAvatar() {
 					UnlinkProfileAvatars();
 					DeleteUploadedAvatars();
 				} else
-					$ajax->Fail('unable to use avatar from gravatar because you do not have an e-mail address listed.');
+					$ajax->Fail('unable to use profile picture from gravatar because you do not have an e-mail address listed.');
 			else
-				$ajax->Fail('unable to use avatar from gravatar because you do not have an e-mail address listed.');
+				$ajax->Fail('unable to use profile picture from gravatar because you do not have an e-mail address listed.');
 		else
-			$ajax->Fail('unable to use avatar from gravatar due to a database error looking up e-mail address.');
+			$ajax->Fail('unable to use profile picture from gravatar due to a database error looking up e-mail address.');
 	} elseif(substr($_POST['avatar'], 0, 7) == 'profile') {
 		if($profile = +substr($_POST['avatar'], 7))
 			if($avatar = $db->query('select avatar from external_profiles where id=\'' . $profile . '\''))
@@ -363,15 +373,15 @@ function SaveProfileAvatar() {
 					$db->real_query('update external_profiles set useavatar=if(id=\'' . $profile . '\', 1, 0) where id in (select profile from login_google where user=\'' . +$user->ID . '\' union select profile from login_twitter where user=\'' . +$user->ID . '\' union select profile from login_facebook where user=\'' . +$user->ID . '\')');
 					DeleteUploadedAvatars();
 				} else
-					$ajax->Fail('unable to set avatar because profile was not found.');
+					$ajax->Fail('unable to set profile picture because profile was not found.');
 			else
-				$ajax->Fail('error looking up external profile to set avatar.');
+				$ajax->Fail('error looking up external profile to set profile picture.');
 		else
-			$ajax->Fail('external profile for avatar not specified or specified incorrectly.');
+			$ajax->Fail('external profile for profile picture not specified or specified incorrectly.');
 	} elseif($_POST['avatar'] == 'upload')
 		SaveProfileAvatarUploaded();
 	else
-		$ajax->Fail('unrecognized avatar source.');
+		$ajax->Fail('unrecognized profile picture source.');
 }
 
 function SaveProfileAvatarUploaded() {
@@ -416,12 +426,12 @@ function SaveProfileAvatarUploaded() {
 					$ajax->Data->avatar = $path;
 					UnlinkProfileAvatars();
 			} else
-				$ajax->Fail('cannot accept avatar upload:  only jpeg and png images allowed.');
+				$ajax->Fail('cannot accept profile picture upload:  only jpeg and png images allowed.');
 				@unlink($_FILES['avatarfile']['tmp_name']);
 		} else
-			$ajax->Fail('avatar upload selected but file was not provided.');
+			$ajax->Fail('profile picture upload selected but file was not provided.');
 			else
-				$ajax->Fail('uploaded avatars are only available to known, trusted, or admin users.');
+				$ajax->Fail('uploaded profile pictures are only available to known, trusted, or admin users.');
 }
 
 function LoadTime() {
@@ -663,7 +673,7 @@ function CheckSteam(&$value) {
 function RemoveTransition() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn())
-		if(UserHasSecureLogin()) {
+		if($user->SecureLoginCount()) {
 			if(!$db->real_query('delete from transition_login where id=\'' . +$user->ID . '\''))
 				$ajax->Fail('unable to remove old login because something went wrong with the database.');
 		} else
@@ -675,7 +685,7 @@ function RemoveTransition() {
 function RemoveAccount() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn())
-		if(UserHasMultipleLogins())
+		if($user->SecureLoginCount() > 1)
 			if(isset($_POST['source']) && isset($_POST['id']) && in_array($_POST['source'], ['google', 'twitter', 'facebook'])) {
 				if(!$db->real_query('delete from login_' . $_POST['source'] . ' where id=\'' . +$_POST['id'] . '\' and user=\'' . +$user->ID . '\''))
 					$ajax->Fail('unable to remove sign-in account because something went wrong with the database.');
@@ -705,33 +715,4 @@ function CheckEmailVisibility($value) {
 
 function CheckContactVisibilty($value) {
 	return in_array($value, array('friends', 'all'));
-}
-
-function UserHasSecureLogin() {
-	global $db, $user;
-	if($google = $db->query('select id from login_google where user=\'' . +$user->ID . '\''))
-		if($google->num_rows)
-			return true;
-	if($twitter = $db->query('select id from login_twitter where user=\'' . +$user->ID . '\''))
-		if($twitter->num_rows)
-			return true;
-	if($facebook = $db->query('select id from login_facebook where user=\'' . +$user->ID . '\''))
-		if($facebook->num_rows)
-			return true;
-	return false;
-}
-
-function UserHasMultipleLogins() {
-	global $db, $user;
-	$logins = 0;
-	if($google = $db->query('select id from login_google where user=\'' . +$user->ID . '\''))
-		if(($logins += $google->num_rows) > 1)
-			return true;
-	if($twitter = $db->query('select id from login_twitter where user=\'' . +$user->ID . '\''))
-		if(($logins += $twitter->num_rows) > 1)
-			return true;
-	if($facebook = $db->query('select id from login_facebook where user=\'' . +$user->ID . '\''))
-		if(($logins += $facebook->num_rows) > 1)
-			return true;
-	return false;
 }

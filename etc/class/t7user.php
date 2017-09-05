@@ -27,6 +27,7 @@ class t7user {
 	public $tzOffset = 0;  // offset (in seconds) from server time (if $DST is true) or gmt
 	public $NotifyCount = 0;  // number of notifications to show in the user menu
 	public $UnreadMsgs = 0;  // number of conversations this user hasn't read yet
+	public $SettingsAlerts = 0;  // number of alerts for the user's settings
 
 	/**
 	 * Checks a name for uniqueness, length, and allowed characters.
@@ -193,6 +194,40 @@ class t7user {
 	}
 
 	/**
+	 * whether the user has an old track7 password.
+	 * @return bool true if user has a transition login.  0 for database error.
+	 */
+	public function HasTransitionLogin() {
+		if($this->hasTransitionLogin === 0) {
+			global $db;
+			if($login = $db->query('select id from transition_login where id=\'' . +$this->ID . '\''))
+				$this->hasTransitionLogin =  $login->num_rows > 0;
+		}
+		return $this->hasTransitionLogin;
+	}
+	/**
+	 * @var bool cached value of HasTransitionLogin()
+	 */
+	private $hasTransitionLogin = 0;
+
+	/**
+	 * whetherthe user has a secure (external) login.
+	 * @return int number of secure logins this user has, or false on database error
+	 */
+	public function SecureLoginCount() {
+		if($this->secureLoginCount === false) {
+			global $db;
+			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\''))
+				$this->secureLoginCount = $logins->num_rows;
+		}
+		return $this->secureLoginCount;
+	}
+	/**
+	 * @var int cached value of SecureLoginCount()
+	 */
+	private $secureLoginCount = false;
+
+	/**
 	 * get the name for the logged-in user's access level.
 	 * @return string name for the logged-in user's access level
 	 */
@@ -331,7 +366,8 @@ class t7user {
 				$this->DST = $s->timebase != 'gmt';
 				$this->tzOffset = $s->timeoffset;
 				$this->UnreadMsgs = $s->unreadmsgs;
-				$this->NotifyCount = $this->UnreadMsgs;  // add other types of notifications
+				$this->SettingsAlerts = +$this->HasTransitionLogin();
+				$this->NotifyCount = $this->UnreadMsgs + $this->SettingsAlerts;  // add other types of notifications
 				return true;
 			}
 		return false;

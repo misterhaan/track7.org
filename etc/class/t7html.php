@@ -98,7 +98,7 @@ class t7html {
 		<div id=usermenu>
 			<nav id=useractions>
 				<a class=profile href="/user/<?php echo $user->Username; ?>/">profile</a>
-				<a class=settings href="/user/settings.php">settings</a>
+				<a class=settings href="/user/settings.php">settings<?php if($user->SettingsAlerts) echo '<span class=notifycount>' . $user->SettingsAlerts . '</span>'; ?></a>
 				<a class=messages href="/user/messages.php">messages<?php if($user->UnreadMsgs) echo '<span class=notifycount>' . $user->UnreadMsgs . '</span>'; ?></a>
 				<a id=logoutlink href="?logout">sign out</a>
 			</nav>

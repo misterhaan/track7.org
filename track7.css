@@ -282,6 +282,7 @@ body > header a {
 .notifycount {
 	display: inline-block;
 	background-color: #d82;
+	color: #fff;
 	border-radius: .5em;
 	margin-left: .5em;
 	height: 1em;
@@ -2334,6 +2335,34 @@ main a.droptrigger {
 #emaillabel {
 	margin-right: .25em;
 }
+.transitionlogin {
+	text-align: center;
+}
+.transitionlogin .securitynote {
+	margin-top: 0;
+	text-align: left;
+}
+@media (min-width: 25em) {
+	/*.transitionlogin {
+		margin-left: .5em;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-align-items: flex-start;
+		align-items: flex-start;
+	}*/
+	.transitionlogin {
+		margin-left: .5em;
+	}
+	.transitionlogin .linkedaccount {
+		float: left;
+		margin-top: 0;
+		margin-right: 1em;
+	}
+	.transitionlogin .securitynote {
+		margin-top: .75em;
+		margin-left: .5em;
+	}
+}
 .linkedaccounts {
 	text-align: center;
 }
@@ -2369,6 +2398,10 @@ main a.droptrigger {
 #authchoices a:before {
 	border-radius: 50%;
 	font-weight: normal;
+}
+.linkedaccount.transition:before {
+	content: "\f071";
+	background-color: #d82;
 }
 .linkedaccount.google:before,
 #authchoices .google:before {
