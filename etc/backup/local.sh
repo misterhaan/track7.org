@@ -8,7 +8,7 @@
 source ~/backup/.t7mysql.sh
 
 if mysqlshow -h $MYSQL_HOST --user=$MYSQL_USER --password=$MYSQL_PASS | grep -q $MYSQL_NAME; then
-	mysqldump -h $MYSQL_HOST -u $MYSQL_USER --password="$MYSQL_PASS" --databases $MYSQL_NAME --add-drop-database | bzip2 -c > $BACKUP_DIR/track7content.sql.bz2
+	mysqldump -h $MYSQL_HOST -u $MYSQL_USER --password="$MYSQL_PASS" --databases $MYSQL_NAME | perl -pe 's/\!\d+ DEFINER/DEFINER/' | bzip2 -c > $BACKUP_DIR/track7content.sql.bz2
 fi
 
 cd $DOCUMENT_ROOT

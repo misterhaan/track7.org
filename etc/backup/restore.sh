@@ -10,12 +10,12 @@ source ~/backup/.t7mysql.sh
 bzcat $BACKUP_DIR/track7content.sql.bz2 | mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASS $MYSQL_NAME
 
 cd $DOCUMENT_ROOT
-rm album/photos/*
-rm art/img/*
-rm code/calc/files/*
-rm code/games/files/*
-rm code/vs/files/*
-rm code/web/files/*
-rm lego/data/*
-rm user/avatar/*
+rm -f album/photos/*
+rm -f art/img/*
+rm -f code/calc/files/*
+rm -f code/games/files/*
+rm -f code/vs/files/*
+rm -f code/web/files/*
+rm -f lego/data/*
+rm -f user/avatar/*
 tar xf $BACKUP_DIR/track7content.tar
