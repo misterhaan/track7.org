@@ -5,7 +5,7 @@ $(function() {
 	$("#website").change(function() { ValidateField(this, "../settings.php?ajax=checkurl", "url", "validating website url...", "url exists.", "no website listed"); });
 
 	$("#newuser").submit(function() {
-		$.post("../?ajax=register", {csrf: $("#csrf").val(), username: $("#username").val(), displayname: $("#displayname").val(), email: $("#email").val(), website: $("#website").val(), linkprofile: $("#linkprofile").val(), useavatar: $("#useavatar").val()}, function(result) {
+		$.post("../?ajax=register", {csrf: $("#csrf").val(), username: $("#username").val(), displayname: $("#displayname").val(), email: $("#email").val(), website: $("#website").val(), linkprofile: $("#linkprofile").val(), useavatar: +$("#useavatar").prop("checked")}, function(result) {
 			if(!result.fail)
 				if(result.continue)
 					location.replace(result.continue);

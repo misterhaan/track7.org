@@ -150,7 +150,7 @@ class t7auth {
 									}
 ?>
 				<label>
-					<span class=checkbox><input type=checkbox checked id=useavatar> use this avatar: <img class=avatar src="<?php echo htmlspecialchars($auth->Avatar); ?>"></span>
+					<span class=checkbox><input type=checkbox checked id=useavatar> use this profile picture: <img class=avatar src="<?php echo htmlspecialchars($auth->Avatar); ?>"></span>
 				</label>
 				<button>confirm</button>
 			</form>
@@ -641,7 +641,7 @@ class t7authFacebook extends t7authRegisterable {
 		$c = curl_init();
 		curl_setopt($c, CURLOPT_URL, self::INFO . '?' . http_build_query([
 				'access_token' => $this->access,
-				'fields' => 'id,email,link,name,website,picture'
+				'fields' => 'id,email,link,name,website'
 		]));
 		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
