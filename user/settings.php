@@ -514,7 +514,7 @@ function SaveContact() {
 																				. $db->escape_string($_POST['email']) . '\', vis_email=\''
 																				. $db->escape_string($_POST['vis_email']) . '\'';
 																		if($db->real_query($update)) {
-																			$update = 'insert into users_profiles (id, website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, steam, vis_steam) values (\''. +$user->ID . '\', \''
+																			$update = 'insert into users_profiles (id, website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, github, vis_github, steam, vis_steam) values (\''. +$user->ID . '\', \''
 																					. $db->escape_string($_POST['website']) . '\', \''
 																					. $db->escape_string($_POST['vis_website']) . '\', \''
 																					. $db->escape_string($_POST['twitter']) . '\', \''
@@ -523,6 +523,8 @@ function SaveContact() {
 																					. $db->escape_string($_POST['vis_google']) . '\', \''
 																					. $db->escape_string($_POST['facebook']) . '\', \''
 																					. $db->escape_string($_POST['vis_facebook']) . '\', \''
+																					. $db->escape_string($_POST['github']) . '\', \''
+																					. $db->escape_string($_POST['vis_github']) . '\', \''
 																					. $db->escape_string($_POST['steam']) . '\', \''
 																					. $db->escape_string($_POST['vis_steam']) . '\') on duplicate key update website=\''
 																					. $db->escape_string($_POST['website']) . '\', vis_website=\''
@@ -532,7 +534,9 @@ function SaveContact() {
 																					. $db->escape_string($_POST['google']) . '\', vis_google=\''
 																					. $db->escape_string($_POST['vis_google']) . '\', facebook=\''
 																					. $db->escape_string($_POST['facebook']) . '\', vis_facebook=\''
-																					. $db->escape_string($_POST['vis_facebook']) . '\', steam=\''
+																					. $db->escape_string($_POST['vis_facebook']) . '\', github=\''
+																					. $db->escape_string($_POST['github']) . '\', vis_github=\''
+																					. $db->escape_string($_POST['vis_github']) . '\', steam=\''
 																					. $db->escape_string($_POST['steam']) . '\', vis_steam=\''
 																					. $db->escape_string($_POST['vis_steam']) . '\'';
 																			if(!$db->real_query($update))
