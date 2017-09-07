@@ -30,7 +30,6 @@ create table login_google (
 	unique(sub),
 	profile mediumint unsigned,
 	foreign key(profile) references external_profiles(id)
---profile varchar(64) not null default '' comment 'url to this google id profile'
 );
 
 create table login_twitter (
@@ -41,7 +40,6 @@ create table login_twitter (
 	unique(user_id),
 	profile mediumint unsigned,
 	foreign key(profile) references external_profiles(id)
---profile varchar(64) not null default '' comment 'url to this twitter profile'
 );
 
 create table login_facebook (
@@ -52,5 +50,14 @@ create table login_facebook (
 	unique(extid),
 	profile mediumint unsigned,
 	foreign key(profile) references external_profiles(id)
---profile varchar(64) not null default '' comment 'url to this facebook profile'
+);
+
+create table login_steam (
+	id smallint unsigned primary key auto_increment,
+	user smallint unsigned not null,
+	foreign key(user) references users(id),
+	steamID64 bigint unsigned not null comment 'steam 64-bit(?) id',
+	unique(steamID64),
+	profile mediumint unsigned,
+	foreign key(profile) references external_profiles(id)
 );

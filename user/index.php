@@ -116,7 +116,7 @@ function Register() {
 	if(isset($_POST['csrf']))
 		if(t7auth::CheckCSRF($_POST['csrf']))
 			// TODO:  add other providers to in_array
-			if(isset($_SESSION['registering']) && in_array($_SESSION['registering'], ['google', 'twitter', 'facebook']) && isset($_SESSION[$_SESSION['registering']]))
+			if(isset($_SESSION['registering']) && in_array($_SESSION['registering'], ['google', 'twitter', 'facebook', 'steam']) && isset($_SESSION[$_SESSION['registering']]))
 				if(isset($_POST['username'])) {
 					$msg = t7user::CheckUsername($_POST['username'] = trim($_POST['username']));
 					if($msg === true) {
@@ -149,7 +149,7 @@ function Register() {
 							$uid = $db->insert_id;
 							if($db->real_query('insert into external_profiles (name, url, avatar, useavatar) values (\'' . $db->escape_string($_SESSION[$_SESSION['registering']]['name']) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']]['profile']) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']]['avatar']) . '\', ' . ($_POST['useavatar'] ? 1 : 0) . ')')) {
 								$pid = $db->insert_id;
-								$idfld = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid'];
+								$idfld = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid', 'steam' => 'steamID64'];
 								if($db->real_query('insert into `login_' . $db->escape_string($_SESSION['registering']) . '` (user, ' . $idfld[$_SESSION['registering']] . ', profile) values (\'' . $db->escape_string($uid) . '\', \'' . $db->escape_string($_SESSION[$_SESSION['registering']][$idfld[$_SESSION['registering']]]) . '\', \'' . $db->escape_string($pid) . '\')')) {
 									$db->commit();
 									$db->autocommit(true);

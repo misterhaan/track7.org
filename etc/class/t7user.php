@@ -132,7 +132,8 @@ class t7user {
 			case 'google':
 			case 'twitter':
 			case 'facebook':
-				$colnames = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid'];
+			case 'steam':
+				$colnames = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid', 'steam' => steamID64];
 				if($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . $colnames[$type] . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
 					if($login = $login->fetch_object()) {
 						$uid = $login->user;
@@ -217,7 +218,7 @@ class t7user {
 	public function SecureLoginCount() {
 		if($this->secureLoginCount === false) {
 			global $db;
-			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\''))
+			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\' union select id from login_steam where user=\'' . +$this->ID . '\''))
 				$this->secureLoginCount = $logins->num_rows;
 		}
 		return $this->secureLoginCount;

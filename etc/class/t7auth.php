@@ -36,6 +36,7 @@ class t7auth {
 		$links['google'] = t7authGoogle::GetAuthURL($continue, $csrf);
 		$links['twitter'] = t7authTwitter::GetAuthURL($continue);
 		$links['facebook'] = t7authFacebook::GetAuthUrl($continue, $csrf);
+		$links['steam'] = t7authSteam::GetAuthUrl($continue, $csrf);
 		// TODO:  add links to other methods here
 		if(!$adding)
 			$links['track7'] = t7authTrack7::GetAuthURL($continue, $csrf);
@@ -664,26 +665,122 @@ class t7authFacebook extends t7authRegisterable {
 		}
 		return false;
 	}
+}
+
+/**
+ * authorization using steam community openid
+ * @author misterhaan
+ */
+class t7authSteam extends t7authRegisterable {
+	const SOURCE = 'steam';
+	const FIELD = 'steamID64';
+	const REDIRECT = '/user/via/steam.php';
+	const REQUEST = 'https://steamcommunity.com/openid/login';
+	const OPENID_NS = 'http://specs.openid.net/auth/2.0';
+	const OPENID_IDENTITY = 'http://specs.openid.net/auth/2.0/identifier_select';
+	const PROFILE = 'http://steamcommunity.com/profiles/';  // append the steam id and a forward slash
+	const STEAM_PROFILE_URL_CUSTOM = 'http://steamcommunity.com/id/';  // append the steam custom id and a forward slash
 
 	/**
-	 * request an obfuscated url in order to find the url it ends up at.
-	 * @param string $url obfuscated url to request
-	 * @return mixed deobfuscated url
+	 * build the url for logging in with steam, with forgery protection and which
+	 * page to return to built in.
+	 * @param string $continue local url to return to after login is complete (should begin with a forward slash)
+	 * @param string $csrf random string for antiforgery (should be saved for comparison against response)
+	 * @return string url for logging in with steam
 	 */
-	private static function GetLastRedirect($url) {
+	 public static function GetAuthUrl($continue, $csrf) {
+		return self::REQUEST . '?' . http_build_query([
+			'openid.ns' => self::OPENID_NS,
+			'openid.mode' => 'checkid_setup',
+			'openid.return_to' => t7format::FullUrl(self::REDIRECT) . '?remember&' . http_build_query(['continue' => $continue, 'csrf' => $csrf]),
+			'openid.realm' => 'http://' . $_SERVER['HTTP_HOST'] . '/',
+			'openid.identity' => self::OPENID_IDENTITY,
+			'openid.claimed_id' => self::OPENID_IDENTITY
+		]);
+	}
+
+	/**
+	 * handle authentication from steam.  this class should only be instantiated
+	 * by the page specified in self::REDIRECT.  the querystring is expected to be
+	 * set by steam after a login attempt.
+	 */
+	public function t7authSteam() {
+		if($this->HasData = isset($_GET['openid_claimed_id'])) {
+			if(isset($_GET['continue']))
+				$this->Continue = $_GET['continue'];
+			if($this->IsValid = (isset($_GET['csrf']) && t7auth::CheckCSRF($_GET['csrf']) && $this->Validate())) {
+				$this->ID = explode('/', $_GET['openid_claimed_id']);
+				$this->ID = $this->ID[count($this->ID) - 1];
+				$this->Remember = isset($_GET['remember']);
+			}
+		}
+	}
+
+	/**
+	 * validate that authentication information actually came from steam.
+	 */
+	private function Validate() {
+		$data = [
+			'openid.assoc_handle' => $_GET['openid_assoc_handle'],
+			'openid.signed' => $_GET['openid_signed'],
+			'openid.sig' => $_GET['openid_sig'],
+			'openid.ns' => self::OPENID_NS,
+			'openid.mode' => 'check_authentication'
+		];
+		foreach(explode(',', $_GET['openid_signed']) as $var)
+			$data['openid.' . $var] = $_GET['openid_' . str_replace('.', '_', $var)];
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, $url);
-		curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($c, CURLOPT_URL, self::REQUEST);
+		curl_setopt($c, CURLOPT_POST, true);
 		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
+		curl_setopt($c, CURLOPT_USERAGENT, 't7auth');
 		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
 		curl_setopt($c, CURLOPT_TIMEOUT, 30);
 		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($c, CURLOPT_HEADER, false);
+		curl_setopt($c, CURLOPT_POSTFIELDS, http_build_query($data));
 		$response = curl_exec($c);
-		$redirect = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
 		curl_close($c);
-		return $redirect;
+		$resarr = [];
+		foreach(explode("\n", $response) as $line) {
+			$varval = explode(':', $line, 2);
+			if(count($varval) == 2)
+				$resarr[trim($varval[0])] = trim($varval[1]);
+		}
+		// verification result should contain the same NS we sent, plus an is_valid value which should be true
+		return isset($resarr['ns']) && $resarr['ns'] == self::OPENID_NS && isset($resarr['is_valid']) && $resarr['is_valid'] == 'true';
+	}
+
+	/**
+	 * get more user info to register this user here.
+	 * @return boolean true if able to retrieve.
+	 */
+	public function GetUserInfo() {
+		$c = curl_init();
+		curl_setopt($c, CURLOPT_URL, self::PROFILE . $this->ID . '/?xml=1');
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($c, CURLOPT_USERAGENT, 't7auth');
+		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($c, CURLOPT_TIMEOUT, 30);
+		curl_setopt($c, CURLOPT_HEADER, false);
+		curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($c, CURLOPT_MAXREDIRS, 5);
+		$response = curl_exec($c);
+		$code = curl_getinfo($c, CURLINFO_HTTP_CODE);
+		curl_close($c);
+		if($code == 200 && $xml = simplexml_load_string($response))
+			if(!isset($xml->error)) {
+				$this->DisplayName = html_entity_decode((string)$xml->steamID);  // should use UTF-8
+				if(isset($xml->customURL)) {
+					$this->Username = (string)$xml->customURL;
+					$this->ProfileShort = (string)$xml->customURL;
+				} else
+					$this->ProfileShort = (string)$xml->steamID64;
+				$this->ProfileFull = t7user::ExpandProfileLink($this->ProfileShort, self::SOURCE);
+				$this->Avatar = (string)$xml->avatarMedium;  // 64px
+				return true;
+			}
+		return false;
 	}
 }
 

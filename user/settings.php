@@ -83,7 +83,7 @@ if($email = $db->query('select email from users_email where id=' . +$user->ID))
 <?php
 }
 $extlogins = [];
-if($logins = $db->query('select \'google\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_google as l left join external_profiles as p on p.id=l.profile where l.user=\'' . +$user->ID . '\' union select \'twitter\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_twitter as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\' union select \'facebook\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_facebook as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\''))
+if($logins = $db->query('select \'google\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_google as l left join external_profiles as p on p.id=l.profile where l.user=\'' . +$user->ID . '\' union select \'twitter\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_twitter as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\' union select \'facebook\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_facebook as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\' union select \'steam\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_steam as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\''))
 	while($login = $logins->fetch_object()) {
 		$extlogins[] = $login;
 ?>
@@ -370,7 +370,7 @@ function SaveProfileAvatar() {
 			if($avatar = $db->query('select avatar from external_profiles where id=\'' . $profile . '\''))
 				if($avatar = $avatar->fetch_object()) {
 					$ajax->Data->avatar = $avatar->avatar;
-					$db->real_query('update external_profiles set useavatar=if(id=\'' . $profile . '\', 1, 0) where id in (select profile from login_google where user=\'' . +$user->ID . '\' union select profile from login_twitter where user=\'' . +$user->ID . '\' union select profile from login_facebook where user=\'' . +$user->ID . '\')');
+					$db->real_query('update external_profiles set useavatar=if(id=\'' . $profile . '\', 1, 0) where id in (select profile from login_google where user=\'' . +$user->ID . '\' union select profile from login_twitter where user=\'' . +$user->ID . '\' union select profile from login_facebook where user=\'' . +$user->ID . '\' union select profile from login_steam where user=\'' . +$user->ID . '\')');
 					DeleteUploadedAvatars();
 				} else
 					$ajax->Fail('unable to set profile picture because profile was not found.');
@@ -686,7 +686,7 @@ function RemoveAccount() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn())
 		if($user->SecureLoginCount() > 1)
-			if(isset($_POST['source']) && isset($_POST['id']) && in_array($_POST['source'], ['google', 'twitter', 'facebook'])) {
+			if(isset($_POST['source']) && isset($_POST['id']) && in_array($_POST['source'], ['google', 'twitter', 'facebook', 'steam'])) {
 				if(!$db->real_query('delete from login_' . $_POST['source'] . ' where id=\'' . +$_POST['id'] . '\' and user=\'' . +$user->ID . '\''))
 					$ajax->Fail('unable to remove sign-in account because something went wrong with the database.');
 			} else
@@ -699,7 +699,7 @@ function RemoveAccount() {
 
 function UnlinkProfileAvatars() {
 	global $db, $user;
-	$db->real_query('update external_profiles set useavatar=0 where id in (select profile from login_google where user=\'' . +$user->ID . '\' union select profile from login_twitter where user=\'' . +$user->ID . '\' union select profile from login_facebook where user=\'' . +$user->ID . '\') and useavatar=1');
+	$db->real_query('update external_profiles set useavatar=0 where id in (select profile from login_google where user=\'' . +$user->ID . '\' union select profile from login_twitter where user=\'' . +$user->ID . '\' union select profile from login_facebook where user=\'' . +$user->ID . '\' union select profile from login_steam where user=\'' . +$user->ID . '\') and useavatar=1');
 }
 
 function DeleteUploadedAvatars() {

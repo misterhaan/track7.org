@@ -25,6 +25,7 @@ function __autoload($class) {
 		case 't7authGoogle':
 		case 't7authTwitter':
 		case 't7authFacebook':
+		case 't7authSteam':
 		case 't7authTrack7':
 			require_once 't7auth.php';
 			break;

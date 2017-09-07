@@ -344,7 +344,7 @@ body > header a {
 }
 @media (min-width: 40em) {
 	#signinform {
-		width: 275px;
+		width: 13.75em;
 	}
 }
 #signinform label {
@@ -356,11 +356,15 @@ body > header a {
 	display: flex;
 	-webkit-justify-content: center;
 	justify-content: center;
+	-webkit-align-content: middle;
+	align-content: middle;
+	-webkit-flex-wrap: wrap;
+	flex-wrap: wrap;
 	width: auto;
 }
 #authchoices label,
 #authchoices a {
-	margin: .5em .125em 0;
+	margin: .5em .25em 0;
 	padding: 4px;
 }
 #authchoices a {
@@ -1004,7 +1008,7 @@ pre {
 	content: "\f0a2";
 }
 .tabs a[href="#linkedaccounts"]:before {
-	content: "\f0c1";
+	content: "\f090";
 }
 @media (min-width: 40em) {
 	.tabbed {
@@ -2420,6 +2424,11 @@ main a.droptrigger {
 #authchoices .facebook:before {
 	content: "\f09a";
 	background-color: #466ca6;
+}
+.linkedaccount.steam:before,
+#authchoices .steam:before {
+	content: "\f1b6";
+	background-color: #070609;
 }
 #authchoices .track7:before {
 	content: " ";

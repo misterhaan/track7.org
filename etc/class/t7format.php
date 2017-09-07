@@ -23,12 +23,12 @@ class t7format {
 		if(!self::$scheme) {
 			if(isset($_SERVER['REQUEST_SCHEME']))
 				self::$scheme = $_SERVER['REQUEST_SCHEME'];
-				else {
-					self::$scheme = 'http';
-					if(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
-						self::$scheme .= 's';
-				}
+			else {
+				self::$scheme = 'http';
+				if(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
+					self::$scheme .= 's';
 			}
+		}
 		return self::$scheme;
 	}
 	private static $scheme = false;
@@ -44,7 +44,7 @@ class t7format {
 			// don't include standard ports.  assumes we won't have swapped the standard ports for http and https
 			if($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
 				self::$host .= ':' . $_SERVER['SERVER_PORT'];
-			}
+		}
 		return self::$host;
 	}
 	private static $host = false;
