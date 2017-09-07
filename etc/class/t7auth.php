@@ -36,6 +36,7 @@ class t7auth {
 		$links['google'] = t7authGoogle::GetAuthURL($continue, $csrf);
 		$links['twitter'] = t7authTwitter::GetAuthURL($continue);
 		$links['facebook'] = t7authFacebook::GetAuthUrl($continue, $csrf);
+		$links['github'] = t7authGithub::GetAuthUrl($continue, $csrf);
 		$links['steam'] = t7authSteam::GetAuthUrl($continue, $csrf);
 		// TODO:  add links to other methods here
 		if(!$adding)
@@ -43,6 +44,25 @@ class t7auth {
 		return $links;
 	}
 
+	/**
+	 * get the name of the external id field for the specified login source.
+	 * @param string $source SOURCE constant value matching a t7auth class.
+	 * @return string name of the external id field of the login database for the specified source.
+	 */
+	public static function GetField($source) {
+		return [
+			t7authGoogle::SOURCE => t7authGoogle::FIELD,
+			t7authTwitter::SOURCE => t7authTwitter::FIELD,
+			t7authFacebook::SOURCE => t7authFacebook::FIELD,
+			t7authGithub::SOURCE => t7authGithub::FIELD,
+			t7authSteam::SOURCE => t7authSteam::FIELD
+		][$source];
+	}
+
+	/**
+	 * login or register to track7 based on authentication from an external site.
+	 * @param t7authRegisterable $auth account information from an external site.
+	 */
 	public static function LoginRegister(t7authRegisterable $auth) {
 		global $db, $html, $user;
 		if($auth->HasData)
@@ -180,7 +200,7 @@ class t7auth {
 					}
 				else { // didn't get a subscriber ID, so they probably changed their mind.  go back to the previous page
 					header('Location: ' . t7format::FullUrl($auth->Continue));
-					die();
+					die;
 				}
 			else { // continuity data didn't match up
 				self::OpenPage($auth::SOURCE);
@@ -217,24 +237,74 @@ class t7auth {
 	}
 }
 
+/**
+ * base class for authorizations that can be registered to track7
+ * @author misterhaan
+ */
 abstract class t7authRegisterable {
+	/**
+	 * @var boolean whether authorization data has been provided.
+	 */
 	public $HasData = false;
+	/**
+	 * @var boolean whether provided authorization data has been validated.
+	 */
 	public $IsValid = false;
-	public $ID = false; // id on the provider side
+	/**
+	 * @var mixed id on the provider side.
+	 */
+	public $ID = false;
 
-	public $Continue = false; // local url to redirect to on success
-	public $Remember = false; // whether this login should be remembered for future sessions
+	/**
+	 * @var string local url to redirect to on success (not from provider site).
+	 */
+	public $Continue = false;
+	/**
+	 * @var bool whether this login should be remembered for future sessions (originates from local login form).
+	 */
+	public $Remember = false;
 
 	// any of this group will remain false if the auth doesn't support them
-	public $ProfileFull = false; // full url to the profile of this account
-	public $ProfileShort = false; // unique portion of the profile of this account
-	public $Avatar = false; // url to the avatar of this account
-	public $Username = false; // suggested username from this account
-	public $DisplayName = false; // suggested display name from this account
-	public $Email = false; // e-mail address associated with this account
-	public $Website = false; // website associated with this account
+	/**
+	 * @var string full url to the profile of this account.
+	 */
+	public $ProfileFull = false;
+	/**
+	 * @var string unique portion of the profile of this account.
+	 */
+	public $ProfileShort = false;
+	/**
+	 * @var string url to the avatar of this account.
+	 */
+	public $Avatar = false;
+	/**
+	 * @var string suggested username from this account.
+	 */
+	public $Username = false;
+	/**
+	 * @var string suggested display name from this account.
+	 */
+	public $DisplayName = false;
+	/**
+	 * @var string e-mail address associated with this account.
+	 */
+	public $Email = false;
+	/**
+	 * @var string website associated with this account.
+	 */
+	public $Website = false;
 
+	/**
+	 * generate an authorization url for this provider.
+	 * @param string $continue local url to return to after login is complete (should begin with a forward slash).
+	 * @param string $csrf random string for antiforgery (should be saved for comparison against response).
+	 * @return string url for logging in with this provider.
+	 */
 	public static abstract function GetAuthUrl($continue, $csrf);
+	/**
+	 * get more user info to register this user here.
+	 * @return boolean true if able to retrieve.
+	 */
 	public abstract function GetUserInfo();
 }
 
@@ -322,7 +392,7 @@ class t7authGoogle extends t7authRegisterable {
 
 	/**
 	 * get more user info to register this user here.
-	 * @return mixed|boolean user info object, or false if unable to retrieve.
+	 * @return boolean true if able to retrieve.
 	 */
 	public function GetUserInfo() {
 		if($this->access) {
@@ -346,7 +416,7 @@ class t7authGoogle extends t7authRegisterable {
 				$this->DisplayName = $response->name;
 				$this->Email = $response->email;
 				// unused:  gender
-				return $response;
+				return true;
 			}
 		}
 		return false;
@@ -490,7 +560,7 @@ class t7authTwitter extends t7authRegisterable {
 
 	/**
 	 * get more user info to register this user here.
-	 * @return mixed|boolean user info object, or false if unable to retrieve.
+	 * @return boolean true if able to retrieve.
 	 */
 	public function GetUserInfo() {
 		if($this->access) {
@@ -536,7 +606,7 @@ class t7authTwitter extends t7authRegisterable {
 					$this->Website = $response->entities->url->urls[0]->expanded_url;
 				else
 					$this->Website = '';
-				return $response;
+				return true;
 			}
 		}
 		return false;
@@ -589,7 +659,7 @@ class t7authFacebook extends t7authRegisterable {
 
 	/**
 	 * pass the code from facebook login back to facebook over a trusted
-	 * connection to retrieve the access and id tokens.
+	 * connection to retrieve the access token.
 	 * @param string $code value returned by facebook login
 	 */
 	private function GetToken($code) {
@@ -636,7 +706,7 @@ class t7authFacebook extends t7authRegisterable {
 
 	/**
 	 * get more user info to register this user here.
-	 * @return mixed|boolean user info object, or false if unable to retrieve.
+	 * @return boolean true if able to retrieve.
 	 */
 	public function GetUserInfo() {
 		$c = curl_init();
@@ -661,7 +731,129 @@ class t7authFacebook extends t7authRegisterable {
 			$this->Email = $response->email;
 			if(isset($response->website))
 				$this->Website = $response->website;
-			return $response;
+			return true;
+		}
+		return false;
+	}
+}
+
+/**
+ * authorization using github oauth
+ * @author misterhaan
+ */
+class t7authGithub extends t7authRegisterable {
+	const SOURCE = 'github';
+	const FIELD = 'extid';
+	const REDIRECT = '/user/via/githup.php';
+	const REQUEST = 'http://github.com/login/oauth/authorize';
+	const SCOPE = 'user:email';
+	const VERIFY = 'https://github.com/login/oauth/access_token';
+	const USER = 'https://api.github.com/user';
+
+	private $access = false;
+	private $gotinfo = false;  // avoid looking up user info twice
+
+	/**
+	 * build the url for logging in with github, with forgery protection and which
+	 * page to return to built in.
+	 * @param string $continue local url to return to after login is complete (should begin with a forward slash)
+	 * @param string $csrf random string for antiforgery (should be saved for comparison against response)
+	 * @return string url for logging in with github
+	 */
+	public static function GetAuthUrl($continue, $csrf) {
+		return self::REQUEST . '?' . http_build_query([
+			'client_id' => t7keysGithub::CLIENT_ID,
+			// redirect_uri causes mismatch error, so need to rely on the one in the application defined in github
+			//'redirect_uri' => t7format::FullUrl(self::REDIRECT),
+			'scope' => self::SCOPE,
+			'state' => 'remember&' . http_build_query(array('continue' => $continue, 'csrf' => $csrf))
+		]);
+	}
+
+	/**
+	 * handle authentication from github.  this class should only be instantiated
+	 * by the page specified in self::REDIRECT.  the querystring is expected to be
+	 * set by github after a login attempt.
+	 */
+	public function t7authGithub() {
+		if($this->HasData = isset($_GET['state'])) {
+			parse_str($_GET['state'], $state);
+			if(isset($state['continue']))
+				$this->Continue = $state['continue'];
+			if($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
+				$this->Remember = isset($state['remember']);
+				$this->GetToken($_GET['code'], $_GET['state']);
+			}
+		}
+	}
+
+	/**
+	 * pass the code from github login back to github over a trusted connection to
+	 * retrieve the access token.
+	 * @param string $code value returned by github login.
+	 * @param string $state value sent to and returned by github login.
+	 */
+	private function GetToken($code, $state) {
+		$c = curl_init();
+		curl_setopt($c, CURLOPT_URL, self::VERIFY . '?' . http_build_query([
+			'code' => $code,
+			'client_id' => t7keysGithub::CLIENT_ID,
+			'client_secret' => t7keysGithub::CLIENT_SECRET,
+			// redirect_uri causes mismatch error, so need to rely on the one in the application defined in github
+			//'redirect_uri' => t7format::FullUrl(self::REDIRECT),
+			'state' => $state
+		]));
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
+		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($c, CURLOPT_TIMEOUT, 30);
+		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($c, CURLOPT_HEADER, false);
+		$response = curl_exec($c);
+		curl_close($c);
+		parse_str($response, $tokens);
+		if(isset($tokens['access_token'])) {
+			$this->access = $tokens['access_token'];
+			$this->GetUserInfo();  // need to get all the info now because that's the only way to find the id
+		}
+	}
+
+	/**
+	 * get the user id the access token is for
+	 */
+	public function GetUserInfo() {
+		if($this->gotinfo)
+			return true;
+		$c = curl_init();
+		curl_setopt($c, CURLOPT_URL, self::USER);
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($c, CURLOPT_USERAGENT, 't7auth');
+		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($c, CURLOPT_TIMEOUT, 30);
+		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($c, CURLOPT_HEADER, false);
+		curl_setopt($c, CURLOPT_HTTPHEADER, array('Authorization: token ' . $this->access));
+		$response = curl_exec($c);
+		curl_close($c);
+		$response = json_decode($response);
+		if(isset($response->id)) {
+				$this->ID = $response->id;
+			if(isset($response->login)) {
+				$this->Username = $response->login;
+				$this->ProfileShort = $response->login;
+			}
+			if(isset($response->name))
+				$this->DisplayName = $response->name;
+			if(isset($response->avatar_url))
+				$this->Avatar = $response->avatar_url;
+			if(isset($response->html_url))
+				$this->ProfileFull = $response->html_url;
+			if(isset($response->email))
+				$this->Email = $response->email;
+			if(isset($response->blog))
+				$this->Website = $response->blog;
+			$this->gotinfo = true;
+			return true;
 		}
 		return false;
 	}

@@ -49,6 +49,10 @@ $(function() {
 					vis = $("#vis_facebook");
 					vis.attr("data-value", result.vis_facebook);
 					vis.attr("title", "shown to " + vis.siblings(".droplist").find("a[data-value='" + result.vis_facebook + "']").text());
+					$("#github").val(result.github).change();
+					vis = $("#vis_github");
+					vis.attr("data-value", result.vis_github);
+					vis.attr("title", "shown to " + vis.siblings(".droplist").find("a[data-value='" + result.vis_github + "']").text());
 					$("#steam").val(result.steam).change();
 					vis = $("#vis_steam");
 					vis.attr("data-value", result.vis_steam);
@@ -153,6 +157,7 @@ $(function() {
 	$("#twitter").change(function() { ValidateField(this, "?ajax=checktwitter", "twitter", "validating twitter username...", "valid twitter handle.", "no twitter profile listed."); });
 	$("#google").change(function() { ValidateField(this, "?ajax=checkgoogle", "google", "validating google+ profile...", "valid google+ profile.", "no google+ profile listed."); });
 	$("#facebook").change(function() { ValidateField(this, "?ajax=checkfacebook", "facebook", "validating facebook username...", "valid facebook profile.", "no facebook profile listed."); });
+	$("#github").change(function() { ValidateField(this, "?ajax=checkgithub", "github", "validating github username...", "valid github profile.", "no github profile listed."); });
 	$("#steam").change(function() { ValidateField(this, "?ajax=checksteam", "steam", "validating steam profile...", "valid steam profile.", "no steam profile listed."); });
 
 	$("a.visibility.droptrigger").click(function(e) {
@@ -189,7 +194,7 @@ $(function() {
 
 	$("#contact").submit(function() {
 		$("#contact button.save").prop("disabled", true).addClass("working");
-		$.post("/user/settings.php?ajax=savecontact", {email: $("#email").val(), vis_email: $("#vis_email").data("value"), website: $("#website").val(), vis_website: $("#vis_website").data("value"), twitter: $("#twitter").val(), vis_twitter: $("#vis_twitter").data("value"), google: $("#google").val(), vis_google: $("#vis_google").data("value"), facebook: $("#facebook").val(), vis_facebook: $("#vis_facebook").data("value"), steam: $("#steam").val(), vis_steam: $("#vis_steam").data("value")}, function(result) {
+		$.post("/user/settings.php?ajax=savecontact", {email: $("#email").val(), vis_email: $("#vis_email").data("value"), website: $("#website").val(), vis_website: $("#vis_website").data("value"), twitter: $("#twitter").val(), vis_twitter: $("#vis_twitter").data("value"), google: $("#google").val(), vis_google: $("#vis_google").data("value"), facebook: $("#facebook").val(), vis_facebook: $("#vis_facebook").data("value"), github: $("#github").val(), vis_github: $("#vis_github").data("value"), steam: $("#steam").val(), vis_steam: $("#vis_steam").data("value")}, function(result) {
 			$("#contact button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				// TODO:  indicate success; update form?

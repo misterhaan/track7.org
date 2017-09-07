@@ -132,9 +132,9 @@ class t7user {
 			case 'google':
 			case 'twitter':
 			case 'facebook':
+			case 'github':
 			case 'steam':
-				$colnames = ['google' => 'sub', 'twitter' => 'user_id', 'facebook' => 'extid', 'steam' => steamID64];
-				if($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . $colnames[$type] . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
+				if($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . t7auth::GetField($type) . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
 					if($login = $login->fetch_object()) {
 						$uid = $login->user;
 						$remember = $id->Remember;
@@ -218,7 +218,7 @@ class t7user {
 	public function SecureLoginCount() {
 		if($this->secureLoginCount === false) {
 			global $db;
-			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\' union select id from login_steam where user=\'' . +$this->ID . '\''))
+			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\' union select id from login_github where user=\'' . +$this->ID . '\' union select id from login_steam where user=\'' . +$this->ID . '\''))
 				$this->secureLoginCount = $logins->num_rows;
 		}
 		return $this->secureLoginCount;
@@ -272,23 +272,22 @@ class t7user {
 			case 'facebook':
 				if(preg_match('/^https?:\/\/www\.facebook\.com\/([A-Za-z0-9\.]{5,})(\?.*)?$/', $url, $match))
 					return $match[1];
-				break;
+			case 'github':
+				if(preg_match('/^http-?:\/\/github\.com\/([A-Za-z0-9\-]{1,39})\/?$/', $url,$match))
+					return $match[1];
 			case 'google':
 				if(substr($url, 0, 25) == 'https://plus.google.com/+')
 					return substr($url, 24);
 				if(substr($url, 0, 28) == 'https://profiles.google.com/')
 					return substr($url, 28);
-				break;
 			case 'steam':
 				if(substr($url, 0, 35) == 'http://steamcommunity.com/profiles/')
 					return substr($url, 35);
 				if(substr($url, 0, 29) == 'http://steamcommunity.com/id/')
 					return substr($url, 29);
-				break;
 			case 'twitter':
 				if(preg_match('/^(https?:\/\/twitter\.com\/|@)([A-Za-z0-9_]{1,15})$/', $url, $match))
 					return $match[2];
-				break;
 		}
 		return $url;
 	}
@@ -305,6 +304,9 @@ class t7user {
 		switch($source) {
 			case 'facebook':
 				$url = 'https://www.facebook.com/' . $url;
+				break;
+			case 'github':
+				$url = 'https://github.com/' . $url;
 				break;
 			case 'google':
 				if($url[0] == '+')
@@ -419,7 +421,7 @@ class t7user {
 			if($c = $c->fetch_object())
 				if($c->email && ($c->vis_email == 'all' || $c->vis_email == 'friends' && $friend || $c->vis_email == 'users' && $user->IsLoggedIn() || $c->vis_email == 'none' && $user->IsAdmin()))
 					$links[] = ['type' => 'email', 'url' => 'mailto:' . $c->email, 'title' => 'send ' . $this->DisplayName . ' an e-mail'];
-		if($c = $db->query('select website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, steam, vis_steam from users_profiles where id=\'' . +$this->ID . '\' limit 1'))
+		if($c = $db->query('select website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, github, vis_github, steam, vis_steam from users_profiles where id=\'' . +$this->ID . '\' limit 1'))
 			if($c = $c->fetch_object()) {
 				if($c->website && ($c->vis_website == 'all' || $friend))
 					$links[] = ['type' => 'www', 'url' => $c->website, 'title' => 'visit ' . $this->DisplayName . '’s website'];
@@ -429,6 +431,8 @@ class t7user {
 					$links[] = ['type' => 'google', 'url' => self::ExpandProfileLink($c->google, 'google'), 'title' => 'view ' . $this->DisplayName . '’s google+ profile'];
 				if($c->facebook && ($c->vis_facebook == 'all' || $friend))
 					$links[] = ['type' => 'facebook', 'url' => self::ExpandProfileLink($c->facebook, 'facebook'), 'title' => 'view ' . $this->DisplayName . '’s facebook profile'];
+				if($c->github && ($c->vis_github == 'all' || $friend))
+					$links[] = ['type' => 'github', 'url' => self::ExpandProfileLink($c->github, 'github'), 'title' => 'view ' . $this->DisplayName . '’s github profile'];
 				if($c->steam && ($c->vis_steam == 'all' || $friend))
 					$links[] = ['type' => 'steam', 'url' => self::ExpandProfileLink($c->steam, 'steam'), 'title' => 'view ' . $this->DisplayName . '’s steam community profile'];
 			}

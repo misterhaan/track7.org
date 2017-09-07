@@ -2425,6 +2425,11 @@ main a.droptrigger {
 	content: "\f09a";
 	background-color: #466ca6;
 }
+.linkedaccount.github:before,
+#authchoices .github:before {
+	content: "\f09b";
+	background-color: #24292e;
+}
 .linkedaccount.steam:before,
 #authchoices .steam:before {
 	content: "\f1b6";
@@ -2506,6 +2511,16 @@ header.profile div {
 	-webkit-flex: 1 0;
 	flex: 1 0;
 }
+header.profile h1.friend:after {
+	font-family: fontawesome;
+	content: "\f006";
+	margin-left: .5em;
+	font-size: .8em;
+	font-weight: normal;
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: -.25em;
+}
 @media (min-width: 40em) {
 	header.profile h1 {
 		margin-top: 0;
@@ -2538,6 +2553,36 @@ section#contact a {
 }
 section#contact a:hover {
 	background-color: #abc;
+}
+section#contact a:before {
+	font-family: fontawesome;
+	display: inline-block;
+	font-size: 1.5em;
+	line-height: 1em;
+	width: 1em;
+	text-align: center;
+	font-weight: normal;
+}
+section#contact a.email:before {
+	content: "\f2b6";
+}
+section#contact a.www:before {
+	content: "\f0ac";
+}
+section#contact a.twitter:before {
+	content: "\f099";
+}
+section#contact a.google:before {
+	content: "\f2b3";
+}
+section#contact a.facebook:before {
+	content: "\f230";
+}
+section#contact a.github:before {
+	content: "\f09b";
+}
+section#contact a.steam:before {
+	content: "\f1b7";
 }
 section#contact a img {
 	display: block;

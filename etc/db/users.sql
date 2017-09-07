@@ -34,6 +34,8 @@ create table users_profiles (
 	vis_google enum('friends', 'all') not null default 'friends',
 	facebook varchar(32) not null default '',
 	vis_facebook enum('friends', 'all') not null default 'friends',
+	github varchar(40) not null default '',
+	vis_github enum('friends', 'all') not null default 'friends',
 	steam varchar(32) not null default '',
 	vis_steam enum('friends', 'all') not null default 'friends',
 	foreign key(id) references users(id) on delete cascade on update cascade

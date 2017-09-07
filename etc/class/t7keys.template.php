@@ -85,6 +85,20 @@ class t7keysFacebook {
 	const SECRET = '';
 }
 
+class t7keysGithub {
+	/**
+	 * client id from https://github.com/settings/developers after selecting your app
+	 * @var string
+	 */
+	const CLIENT_ID = '';
+
+	/**
+	 * client secret from https://github.com/settings/developers after selecting your app
+	 * @var string
+	 */
+	const CLIENT_SECRET = '';
+}
+
 class t7keysTweet {
 	/**
 	 * consumer key (api key) from apps.twitter.com after selecting your app

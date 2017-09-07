@@ -40,17 +40,8 @@ if(isset($_GET['login'])) {
 			<header class=profile>
 				<img class=avatar src="<?php echo htmlspecialchars($u->Avatar); ?>" alt="">
 				<div>
-					<h1>
-						<?php echo $u->DisplayName; ?>
-<?php
-		if($u->Fan) {
-?>
-						<img class=friend src="/images/friend.png" alt="☆" title="<?php echo $u->DisplayName; ?> is your friend">
-<?php
-		}
-?>
-					</h1>
-					<p><?php echo $u->GetLevelName(); ?>, joined <time datetime="<?php echo gmdate('c', $stats->registered); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $stats->registered); ?>"><?php echo t7format::HowLongAgo($stats->registered); ?> ago</time></p>
+					<h1<?php if($u->Fan) echo ' class=friend title="' . $u->DisplayName . ' is your friend"'; ?>><?=$u->DisplayName; ?></h1>
+					<p><?=$u->GetLevelName(); ?>, joined <time datetime="<?=gmdate('c', $stats->registered); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $stats->registered); ?>"><?php echo t7format::HowLongAgo($stats->registered); ?> ago</time></p>
 				</div>
 			</header>
 <?php
@@ -87,7 +78,7 @@ if(isset($_GET['login'])) {
 <?php
 			foreach($links as $link) {
 ?>
-				<a href="<?php echo htmlspecialchars($link['url']); ?>" title="<?php echo $link['title']; ?>"><img src="/images/contact/<?php echo $link['type']; ?>.png" alt="<?php echo $link['type']; ?>"></a>
+				<a class=<?=$link['type']; ?> href="<?=htmlspecialchars($link['url']); ?>" title="<?=$link['title']; ?>"></a>
 <?php
 			}
 ?>
