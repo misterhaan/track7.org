@@ -464,7 +464,7 @@ function SaveTime() {
 function LoadContact() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn()) {
-		$contact = 'select e.email, e.vis_email, p.website, p.vis_website, p.twitter, p.vis_twitter, p.google, p.vis_google, p.facebook, p.vis_facebook, p.steam, p.vis_steam';
+		$contact = 'select e.email, ifnull(e.vis_email, \'none\'), p.website, p.vis_website, p.twitter, p.vis_twitter, p.google, p.vis_google, p.facebook, p.vis_facebook, p.steam, p.vis_steam';
 		if($contact = $db->query($contact . ' from users_email as e left join users_profiles as p on p.id=e.id where e.id=\'' . +$user->ID . '\' union all ' . $contact . ' from users_email as e right join users_profiles as p on p.id=e.id where e.id is null and p.id=\'' . +$user->ID . '\'')) {
 			if($contact = $contact->fetch_object())
 				$ajax->Data = $contact;
