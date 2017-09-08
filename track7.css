@@ -763,11 +763,15 @@ article > header .guidemeta {
 .photometa .taken:before {
 	content: "\f083";
 }
+.meta .rating:before,
 .photometa .rating:before,
 .guidemeta .rating:before {
 	font-size: .9em;
 	color: #444;
 	margin-right: 0;
+}
+.meta .deviantart:before {
+	content: "\f1bd";
 }
 .guidemeta .scripttype:before {
 	content: "\f121";
@@ -1573,7 +1577,7 @@ iframe.photo {
 	display: block;
 	margin: 0 auto;
 }
-p.photometa {
+.photometa {
 	text-align: center;
 }
 nav.tagprevnext {
@@ -1623,6 +1627,9 @@ img.art {
 	border-radius: .25em;
 	display: block;
 	margin: 0 auto;
+}
+.meta.art {
+	text-align: center;
 }
 
 
@@ -2430,6 +2437,11 @@ main a.droptrigger {
 	content: "\f09b";
 	background-color: #24292e;
 }
+.linkedaccount.deviantart:before,
+#authchoices .deviantart:before {
+	content: "\f1bd";
+	background-color: #11c05d;
+}
 .linkedaccount.steam:before,
 #authchoices .steam:before {
 	content: "\f1b6";
@@ -2565,7 +2577,7 @@ section#contact a:before {
 	font-weight: normal;
 }
 section#contact a.email:before {
-	content: "\f2b6";
+	content: "\f2b7";
 }
 section#contact a.www:before {
 	content: "\f0ac";
@@ -2585,6 +2597,10 @@ section#contact a.facebook:before {
 section#contact a.github:before {
 	content: "\f09b";
 	color: #24292e;
+}
+section#contact a.deviantart:before {
+	content: "\f1bd";
+	color: #11c05d;
 }
 section#contact a.steam:before {
 	content: "\f1b7";

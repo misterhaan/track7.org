@@ -12,6 +12,7 @@ create table art (
 	title varchar(32) not null default '',
 	deschtml text not null default '' comment 'html description of this art, generated from descmd',
 	descmd text not null default '' comment 'description of this art in markdown (for editing)',
+	deviation varchar(64) not null default '' comment 'portion of deviantart url after deviantart.com/art/',
 	rating float unsigned not null default 3, key(rating),
 	votes smallint unsigned not null default 0, key(votes)
 );

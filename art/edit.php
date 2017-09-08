@@ -30,7 +30,7 @@ if(isset($_GET['ajax'])) {
 	switch($_GET['ajax']) {
 		case 'get':
 			if(isset($_GET['id']) && $_GET['id'])
-				if($art = $db->query('select a.id, a.title, a.url, i.ext, coalesce(nullif(descmd,\'\'),deschtml) as descmd from art as a left join image_formats as i on i.id=a.format where a.id=\'' . +$_GET['id'] . '\''))
+				if($art = $db->query('select a.id, a.title, a.url, i.ext, coalesce(nullif(descmd,\'\'),deschtml) as descmd, a.deviation from art as a left join image_formats as i on i.id=a.format where a.id=\'' . +$_GET['id'] . '\''))
 					if($art = $art->fetch_object()) {
 						$art->tags = [];
 						if($tags = $db->query('select t.name from art_taglinks as tl left join art_tags as t on t.id=tl.tag where tl.art=\'' . +$art->id . '\''))
@@ -131,7 +131,7 @@ if(isset($_GET['ajax'])) {
 								imagedestroy($image);
 								unlink($_FILES['art']['tmp_name']);
 							}
-							$q = 'art set title=\'' . $db->escape_string($_POST['title']) . '\', url=\'' . $db->escape_string(trim($_POST['url'])) . '\', ' . ($_FILES['art']['size'] ? 'format=(select id from image_formats where ext=\'' . $ext . '\'), ' : '') . 'descmd=\'' . $db->escape_string(trim($_POST['descmd'])) . '\', deschtml=\'' . $db->escape_string(t7format::Markdown(trim($_POST['descmd']))) . '\'';
+							$q = 'art set title=\'' . $db->escape_string($_POST['title']) . '\', url=\'' . $db->escape_string(trim($_POST['url'])) . '\', ' . ($_FILES['art']['size'] ? 'format=(select id from image_formats where ext=\'' . $ext . '\'), ' : '') . 'descmd=\'' . $db->escape_string(trim($_POST['descmd'])) . '\', deschtml=\'' . $db->escape_string(t7format::Markdown(trim($_POST['descmd']))) . '\', deviation=\'' . $db->escape_string(trim($_POST['deviation'])) . '\'';
 							$q = $id ? 'update ' . $q . ' where id=\'' . +$id . '\' limit 1' : 'insert into ' . $q . ', posted=\'' . +time() . '\'';
 							if($db->real_query($q)) {
 								if(!$id) {
@@ -188,7 +188,7 @@ $html->Open(($id ? 'edit' : 'add') . ' art');
 <?php
 if($id) {
 ?>
-				<input type=hidden id=artid name=id value="<?php echo $id ?>">
+				<input type=hidden id=artid name=id value="<?=$id ?>">
 <?php
 }
 ?>
@@ -215,6 +215,10 @@ if($id) {
 				<label class=multiline>
 					<span class=label>description:</span>
 					<span class=field><textarea name=descmd data-bind="value: descmd"></textarea></span>
+				</label>
+				<label>
+					<span class=label>deviantart:</span>
+					<span class=field>https://deviantart.com/art/<input name=deviation maxlength=64 data-bind="value: deviation"></span>
 				</label>
 				<label>
 					<span class=label>tags:</span>
