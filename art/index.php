@@ -5,18 +5,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 if(isset($_GET['ajax'])) {
 	$ajax = new t7ajax();
 	switch($_GET['ajax']) {
-		case 'art':  // TODO:  there's more art than the max, so support loading more
-			if(isset($_GET['tagid']) && +$_GET['tagid']) {
-				$artq = 'select a.url, i.ext, a.posted from art_taglinks as t left join art as a on a.id=t.art left join image_formats as i on i.id=a.format where t.tag=\'' . +$_GET['tagid'] . '\'';
-				if(isset($_GET['before']) && +$_GET['before'])
-					$artq .= ' and a.posted<\'' . +$_GET['before'] . '\'';
-					$artq .= ' order by a.posted desc, a.id desc limit ' . MAX_ART;
-			} else {
-				$artq = 'select a.url, i.ext, a.posted from art as a left join image_formats as i on i.id=a.format';
-				if(isset($_GET['before']) && +$_GET['before'])
-					$artq .= ' where a.posted<\'' . +$_GET['before'] . '\'';
-					$artq .= ' order by a.posted desc, a.id desc limit ' . MAX_ART;
-			}
+		case 'art':
+			if(isset($_GET['tagid']) && +$_GET['tagid'])
+				$artq = 'select a.id, a.url, i.ext, a.posted from art_taglinks as t left join art as a on a.id=t.art left join image_formats as i on i.id=a.format where t.tag=\'' . +$_GET['tagid'] . '\'';
+			else
+				$artq = 'select a.id, a.url, i.ext, a.posted from art as a left join image_formats as i on i.id=a.format';
+			if(isset($_GET['beforetime']) && $_GET['beforetime'] !== '' && isset($_GET['beforeid']) && $_GET['beforeid'] !== '')
+				$artq .= ' where a.posted<\'' . +$_GET['beforetime'] . '\' or a.posted=\'' . +$_GET['beforetime'] . '\' and a.id<\'' . +$_GET['beforeid'] . '\'';
+			$artq .= ' order by a.posted desc, a.id desc limit ' . MAX_ART;
 			$ajax->Data->art = [];
 			if($art = $db->query($artq))
 				while($a = $art->fetch_object()) {
@@ -25,6 +21,9 @@ if(isset($_GET['ajax'])) {
 					$a->posted = $posted;
 					$ajax->Data->art[] = $a;
 				}
+			$ajax->Data->hasMore = false;
+			if($more = $db->query($artq . ', 1'))
+				$ajax->Data->hasMore = $more->num_rows > 0;
 			break;
 	}
 	$ajax->Send();
