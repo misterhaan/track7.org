@@ -2552,6 +2552,7 @@ section#contact a {
 	border-radius: .25em;
 }
 section#contact a:hover {
+	color: #000;
 	background-color: #abc;
 }
 section#contact a:before {
@@ -2571,18 +2572,23 @@ section#contact a.www:before {
 }
 section#contact a.twitter:before {
 	content: "\f099";
+	color: #1da1f2;
 }
 section#contact a.google:before {
 	content: "\f2b3";
+	color: #dd4f43;
 }
 section#contact a.facebook:before {
 	content: "\f230";
+	color: #466ca6;
 }
 section#contact a.github:before {
 	content: "\f09b";
+	color: #24292e;
 }
 section#contact a.steam:before {
 	content: "\f1b7";
+	color: #070609;
 }
 section#contact a img {
 	display: block;
