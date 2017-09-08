@@ -1,7 +1,8 @@
 $(function() {
 	$("a[href$='#pull']").click(function() {
-		$.post("?ajax=pull", {}, function(data, status, xhr) {
-			var result = $.parseJSON(xhr.responseText);
+		$("a[href$='#pull']").addClass("working");
+		$.post("?ajax=pull", {}, function(result) {
+			$("a[href$='#pull']").removeClass("working");
 			if(!result.fail) {
 				if(result.cachedel && result.cachedel.length) {
 					$(".actions").after("<pre class=language-json><code class=language-json>" + result.cloudflare.text + "</code></pre>");
@@ -18,7 +19,7 @@ $(function() {
 					+ (hour >= 12 ? " pm" : " am") + "</h2>");
 			} else
 				alert(result.message);
-		});
+		}, "json");
 		return false;
 	});
 });
