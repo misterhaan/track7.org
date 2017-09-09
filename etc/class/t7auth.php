@@ -25,6 +25,30 @@ class t7auth {
 	}
 
 	/**
+	 * Get the list of supported external authenticators.
+	 * @return string[] array of authenticator source names.
+	 */
+	public static function GetAuthList() {
+		return [
+			t7authGoogle::SOURCE,
+			t7authTwitter::SOURCE,
+			t7authFacebook::SOURCE,
+			t7authGithub::SOURCE,
+			t7authDeviantart::SOURCE,
+			t7authSteam::SOURCE
+		];
+	}
+
+	/**
+	 * Check if the specified authentication source is supported.
+	 * @param string $source authenticator source name (must match SOURCE constant of a t7authRegisterable.
+	 * @return boolean true if source is supported.
+	 */
+	public static function IsKnown($source) {
+		return in_array($source, self::GetAuthList());
+	}
+
+	/**
 	 * get links for external authentication.
 	 * @param string $continue track7 url to continue to after visiting the external site
 	 * @param boolean $adding whether the authentication is being added to an existing account
@@ -58,6 +82,22 @@ class t7auth {
 			t7authDeviantart::SOURCE => t7authDeviantart::FIELD,
 			t7authSteam::SOURCE => t7authSteam::FIELD
 		][$source];
+	}
+
+	/**
+	 * create the authorization object for the specified source.
+	 * @param string $source SOURCE constant value matching a t7auth class.
+	 */
+	public static function MakeExternalAuth($source) {
+		switch($source) {
+			case t7authGoogle::SOURCE: return new t7authGoogle();
+			case t7authTwitter::SOURCE: return new t7authTwitter();
+			case t7authFacebook::SOURCE: return new t7authFacebook();
+			case t7authGithub::SOURCE: return new t7authGithub();
+			case t7authDeviantart::SOURCE: return new t7authDeviantart();
+			case t7authSteam::SOURCE: return new t7authSteam();
+		}
+		return false;
 	}
 
 	/**

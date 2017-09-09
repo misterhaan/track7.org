@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteOptions inherit
+RewriteBase /user/via/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-z]+)\.php$ external.php?source=$1 [QSA]

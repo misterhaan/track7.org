@@ -85,7 +85,10 @@ if($email = $db->query('select email from users_email where id=' . +$user->ID))
 <?php
 }
 $extlogins = [];
-if($logins = $db->query('select \'google\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_google as l left join external_profiles as p on p.id=l.profile where l.user=\'' . +$user->ID . '\' union select \'twitter\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_twitter as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\' union select \'facebook\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_facebook as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\' union select \'github\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_github as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\' union select \'deviantart\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_deviantart as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\' union select \'steam\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_steam as l left join external_profiles as p on p.id=l.profile where user=\'' . +$user->ID . '\''))
+$logins = [];
+foreach(t7auth::GetAuthList() as $source)
+	$logins[] = 'select \'' . $source . '\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_' . $source . ' as l left join external_profiles as p on p.id=l.profile where l.user=\'' . +$user->ID . '\'';
+if($logins = $db->query(implode(' union ', $logins)))
 	while($login = $logins->fetch_object()) {
 		$extlogins[] = $login;
 ?>
@@ -151,16 +154,9 @@ if($user->IsKnown()) {  // only known users can upload an avatar
 						<span class=validation></span>
 					</label>
 <?php
-foreach([
-	'twitter' => 'your twitter username or twitter profile url',
-	'google' => 'google+ profile url',
-	'facebook' => 'facebook profile url',
-	'github' => 'github profile url',
-	'deviantart' => 'deviantart profile url',
-	'steam' => 'steam profile url'
-] as $site => $tooltip) {
+foreach(t7auth::GetAuthList() as $site) {
 ?>
-					<label title="<?=$tooltip; ?>">
+					<label title="your <?=$site; ?> profile url">
 						<span class=label><?=$site; ?>:</span>
 						<span class=field>
 							<input id=<?=$site; ?>>
@@ -349,7 +345,10 @@ function SaveProfileAvatar() {
 			if($avatar = $db->query('select avatar from external_profiles where id=\'' . $profile . '\''))
 				if($avatar = $avatar->fetch_object()) {
 					$ajax->Data->avatar = $avatar->avatar;
-					$db->real_query('update external_profiles set useavatar=if(id=\'' . $profile . '\', 1, 0) where id in (select profile from login_google where user=\'' . +$user->ID . '\' union select profile from login_twitter where user=\'' . +$user->ID . '\' union select profile from login_facebook where user=\'' . +$user->ID . '\' union select profile from login_github where user=\'' . +$user->ID . '\' union select profile from login_deviantart where user=\'' . +$user->ID . '\' union select profile from login_steam where user=\'' . +$user->ID . '\')');
+					$q = [];
+					foreach(t7auth::GetAuthList() as $source)
+						$q[] = 'select profile from login_' . $source . ' where user=\'' . +$user->ID . '\'';
+					$db->real_query('update external_profiles set useavatar=if(id=\'' . $profile . '\', 1, 0) where id in (' . implode(' union ', $q) . ')');
 					DeleteUploadedAvatars();
 				} else
 					$ajax->Fail('unable to set profile picture because profile was not found.');
@@ -443,12 +442,21 @@ function SaveTime() {
 function LoadContact() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn()) {
-		$contact = 'select e.email, ifnull(e.vis_email, \'none\'), p.website, p.vis_website, p.twitter, p.vis_twitter, p.google, p.vis_google, p.facebook, p.vis_facebook, p.github, p.vis_github, p.deviantart, p.vis_deviantart, p.steam, p.vis_steam';
+		$contact = [];
+		foreach(t7user::GetProfileTypes() as $source)
+			$contact[] = 'p.' . $source . ', p.vis_' . $source;
+		$contact = 'select e.email, ifnull(e.vis_email, \'none\'), p.website, p.vis_website, ' . implode(', ', $contact);
 		if($contact = $db->query($contact . ' from users_email as e left join users_profiles as p on p.id=e.id where e.id=\'' . +$user->ID . '\' union all ' . $contact . ' from users_email as e right join users_profiles as p on p.id=e.id where e.id is null and p.id=\'' . +$user->ID . '\'')) {
 			if($contact = $contact->fetch_object())
 				$ajax->Data = $contact;
-			else
-				$ajax->Data = (object)['email' => '', 'vis_email' => 'none', 'website' => '', 'vis_website' => 'all', 'twitter' => '', 'vis_twitter' => 'friends', 'google' => '', 'vis_google' => 'friends', 'facebook' => '', 'vis_facebook' => 'friends', 'github' => '', 'vis_github' => 'friends', 'deviantart' => '', 'vis_deviantart' => 'friends', 'steam' => '', 'vis_steam' => 'friends'];
+			else {
+				$ajax->Data = (object)['email' => '', 'vis_email' => 'none', 'website' => '', 'vis_website' => 'all'];
+				foreach(t7user::GetProfileTypes() as $source) {
+					$vis = 'vis_' . $source;
+					$ajax->Data->$source = '';
+					$ajax->Data->$vis = 'friends';
+				}
+			}
 		} else
 			$ajax->Fail('error looking up contact information.');
 	} else
@@ -458,88 +466,33 @@ function LoadContact() {
 function SaveContact() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn())
-		if(isset($_POST['email'], $_POST['vis_email'], $_POST['website'], $_POST['vis_website'], $_POST['twitter'], $_POST['vis_twitter'], $_POST['google'], $_POST['vis_google'], $_POST['facebook'], $_POST['vis_facebook'], $_POST['github'], $_POST['vis_github'], $_POST['deviantart'], $_POST['vis_deviantart'], $_POST['steam'], $_POST['vis_steam']))
+		if(isset($_POST['email'], $_POST['vis_email'], $_POST['website'], $_POST['vis_website']) && AreAllProfileFieldsSet())
 			if(strtolower(substr($_POST['email'] = trim($_POST['email']), -12)) != '@example.com')
 				if($_POST['email'] == '' || t7user::CheckEmail($_POST['email']))
 					if(CheckEmailVisibility($_POST['vis_email']))
 						if('' == ($_POST['website'] = trim($_POST['website'])) || t7format::CheckUrl($_POST['website']))
-							if(CheckContactVisibilty($_POST['vis_website']))
-								if('' == ($_POST['twitter'] = trim($_POST['twitter'])) || CheckTwitter($_POST['twitter']))
-									if(CheckContactVisibilty($_POST['vis_twitter']))
-										if('' == ($_POST['google'] = trim($_POST['google'])) || CheckGoogle($_POST['google']))
-											if(CheckContactVisibilty($_POST['vis_google']))
-												if('' == ($_POST['facebook'] = trim($_POST['facebook'])) || CheckFacebook($_POST['facebook']))
-													if(CheckContactVisibilty($_POST['vis_facebook']))
-														if('' == ($_POST['github'] = trim($_POST['github'])) || CheckGithub($_POST['github']))
-															if(CheckContactVisibilty($_POST['vis_github']))
-																if('' == ($_POST['deviantart'] = trim($_POST['deviantart'])) || CheckDeviantart($_POST['deviantart']))
-																	if(CheckContactVisibilty($_POST['vis_deviantart']))
-																		if('' == ($_POST['steam'] = trim($_POST['steam'])) || CheckSteam($_POST['steam']))
-																			if(CheckContactVisibilty($_POST['vis_steam'])) {
-																				$update = 'insert into users_email (id, email, vis_email) values (\''. +$user->ID . '\', \''
-																						. $db->escape_string($_POST['email']) . '\', \''
-																						. $db->escape_string($_POST['vis_email']) . '\') on duplicate key update email=\''
-																						. $db->escape_string($_POST['email']) . '\', vis_email=\''
-																						. $db->escape_string($_POST['vis_email']) . '\'';
-																				if($db->real_query($update)) {
-																					$update = 'insert into users_profiles (id, website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, github, vis_github, deviantart, vis_deviantart, steam, vis_steam) values (\''. +$user->ID . '\', \''
-																							. $db->escape_string($_POST['website']) . '\', \''
-																							. $db->escape_string($_POST['vis_website']) . '\', \''
-																							. $db->escape_string($_POST['twitter']) . '\', \''
-																							. $db->escape_string($_POST['vis_twitter']) . '\', \''
-																							. $db->escape_string($_POST['google']) . '\', \''
-																							. $db->escape_string($_POST['vis_google']) . '\', \''
-																							. $db->escape_string($_POST['facebook']) . '\', \''
-																							. $db->escape_string($_POST['vis_facebook']) . '\', \''
-																							. $db->escape_string($_POST['github']) . '\', \''
-																							. $db->escape_string($_POST['vis_github']) . '\', \''
-																							. $db->escape_string($_POST['deviantart']) . '\', \''
-																							. $db->escape_string($_POST['vis_deviantart']) . '\', \''
-																							. $db->escape_string($_POST['steam']) . '\', \''
-																							. $db->escape_string($_POST['vis_steam']) . '\') on duplicate key update website=\''
-																							. $db->escape_string($_POST['website']) . '\', vis_website=\''
-																							. $db->escape_string($_POST['vis_website']) . '\', twitter=\''
-																							. $db->escape_string($_POST['twitter']) . '\', vis_twitter=\''
-																							. $db->escape_string($_POST['vis_twitter']) . '\', google=\''
-																							. $db->escape_string($_POST['google']) . '\', vis_google=\''
-																							. $db->escape_string($_POST['vis_google']) . '\', facebook=\''
-																							. $db->escape_string($_POST['facebook']) . '\', vis_facebook=\''
-																							. $db->escape_string($_POST['vis_facebook']) . '\', github=\''
-																							. $db->escape_string($_POST['github']) . '\', vis_github=\''
-																							. $db->escape_string($_POST['vis_github']) . '\', deviantart=\''
-																							. $db->escape_string($_POST['deviantart']) . '\', vis_deviantart=\''
-																							. $db->escape_string($_POST['vis_deviantart']) . '\', steam=\''
-																							. $db->escape_string($_POST['steam']) . '\', vis_steam=\''
-																							. $db->escape_string($_POST['vis_steam']) . '\'';
-																					if(!$db->real_query($update))
-																						$ajax->Fail('error saving external profile links.');
-																				} else
-																					$ajax->Fail('error saving email address.');
-																			} else
-																				$ajax->Fail('invalid steam visibility.  trust no one.');
-																		else
-																			$ajax->Fail('unable to figure out what you meant for steam.  please enter the url to your profile.');
-																	else
-																		$ajax->Fail('invalid deviantart visibility.  trust no one.');
-																else
-																	$ajax->Fail('unable to figure out what you meant for deviantart.  please enter the url to your profile.');
-															else
-																$ajax->Fail('invalid github visibility.  trust no one.');
-														else
-															$ajax->Fail('unable to figure out what you meant for github.  please enter the url to your profile.');
-													else
-														$ajax->Fail('invalid facebook visibility.  trust no one.');
-												else
-													$ajax->Fail('unable to figure out what you meant for facebook.  please enter your username or the url to your profile.');
-											else
-												$ajax->Fail('invalid google visibility.  trust no one.');
-										else
-											$ajax->Fail('unable to figure out what you meant for google.  please enter your google plus name or numeric google id.');
-									else
-										$ajax->Fail('invalid twitter visibility.  trust no one.');
-								else
-									$ajax->Fail('unable to figure out what you meant for twitter.  please enter your twitter username or leave it blank.');
-							else
+							if(CheckContactVisibilty($_POST['vis_website'])) {
+								if(AreAllProfileFieldsValid()) {
+									$replace = 'replace into users_email (id, email, vis_email) values (\'' . +$user->ID . '\', \''
+										. $db->escape_string($_POST['email']) . '\', \''
+										. $db->escape_string($_POST['vis_email']) . '\')';
+									if($db->real_query($replace)) {
+										$fields = [];
+										$values = [];
+										foreach(t7user::GetProfileTypes() as $type) {
+											$fields[] = $type . ', vis_' . $type;
+											$values[] = '\'' . $db->escape_string($_POST[$type]) . '\', \'' . $db->escape_string($_POST['vis_' . $type]) . '\'';
+										}
+										$replace = 'replace into users_profiles (id, website, vis_website, ' . implode(', ', $fields) . ') values (\''. +$user->ID . '\', \''
+											. $db->escape_string($_POST['website']) . '\', \''
+											. $db->escape_string($_POST['vis_website']) . '\', '
+											. implode(', ', $values) . ')';
+										if(!$db->real_query($replace))
+											$ajax->Fail('error saving external profile links.');
+									} else
+										$ajax->Fail('error saving email address.');
+								}
+							} else
 								$ajax->Fail('invalid website visibility.  trust no one.');
 						else
 							$ajax->Fail('cannot validate website.  please enter a valid url to a working website.');
@@ -705,6 +658,41 @@ function CheckSteam(&$value) {
 	return true;
 }
 
+function AreAllProfileFieldsSet() {
+	foreach(t7user::GetProfileTypes() as $type)
+		if(!isset($_POST[$type], $_POST['vis_' . $type]))
+			return false;
+	return true;
+}
+
+function AreAllProfileFieldsValid() {
+	global $ajax;
+	foreach(t7user::GetProfileTypes() as $type)
+		if('' == ($_POST[$type] = trim($_POST[$type])) || CheckProfileField($type))
+			if(CheckContactVisibilty($_POST['vis_' . $type]))
+				;  // keep going
+			else {
+				$ajax->Fail('invalid ' . $type . ' visibility.  trust no one.');
+				return false;
+			}
+		else {
+			$ajax->Fail('unable to figure out what you meant for ' . $type . '.  please enter the url to your profile.');
+			return false;
+		}
+}
+
+function CheckProfileField($type) {
+	switch($type) {
+		case 'deviantart': return CheckDeviantart($_POST[$type]);
+		case 'facebook':   return CheckFacebook($_POST[$type]);
+		case 'github':     return CheckGithub($_POST[$type]);
+		case 'google':     return CheckGoogle($_POST[$type]);
+		case 'steam':      return CheckSteam($_POST[$type]);
+		case 'twitter':    return CheckTwitter($_POST[$type]);
+	}
+	return false;
+}
+
 function RemoveTransition() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn())
@@ -721,7 +709,7 @@ function RemoveAccount() {
 	global $ajax, $db, $user;
 	if($user->IsLoggedIn())
 		if($user->SecureLoginCount() > 1)
-			if(isset($_POST['source']) && isset($_POST['id']) && in_array($_POST['source'], ['google', 'twitter', 'facebook', 'github', 'deviantart', 'steam'])) {
+			if(isset($_POST['source']) && isset($_POST['id']) && t7auth::IsKnown($_POST['source'])) {
 				$db->autocommit(false);
 				if($profile = $db->query('select profile from login_' . $_POST['source'] . ' where id=\'' . +$_POST['id'] . '\' and user=\'' . +$user->ID . '\'')) {
 					$profile = $profile->fetch_object();
@@ -748,7 +736,10 @@ function RemoveAccount() {
 
 function UnlinkProfileAvatars() {
 	global $db, $user;
-	$db->real_query('update external_profiles set useavatar=0 where id in (select profile from login_google where user=\'' . +$user->ID . '\' union select profile from login_twitter where user=\'' . +$user->ID . '\' union select profile from login_facebook where user=\'' . +$user->ID . '\' union select profile from login_github where user=\'' . +$user->ID . '\' union select profile from login_deviantart where user=\'' . +$user->ID . '\' union select profile from login_steam where user=\'' . +$user->ID . '\') and useavatar=1');
+	$q = [];
+	foreach(t7auth::GetAuthList() as $source)
+		$q[] = 'select profile from login_' . $source . ' where user=\'' . +$user->ID . '\'';
+	$db->real_query('update external_profiles set useavatar=0 where id in (' . implode(' union ', $q) . ') and useavatar=1');
 }
 
 function DeleteUploadedAvatars() {

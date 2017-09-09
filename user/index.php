@@ -115,8 +115,7 @@ function Register() {
 	global $ajax, $db, $user;
 	if(isset($_POST['csrf']))
 		if(t7auth::CheckCSRF($_POST['csrf']))
-			// TODO:  add other providers to in_array
-			if(isset($_SESSION['registering']) && in_array($_SESSION['registering'], ['google', 'twitter', 'facebook', 'github', 'deviantart', 'steam']) && isset($_SESSION[$_SESSION['registering']]))
+			if(isset($_SESSION['registering']) && t7auth::IsKnown($_SESSION['registering']) && isset($_SESSION[$_SESSION['registering']]))
 				if(isset($_POST['username'])) {
 					$msg = t7user::CheckUsername($_POST['username'] = trim($_POST['username']));
 					if($msg === true) {

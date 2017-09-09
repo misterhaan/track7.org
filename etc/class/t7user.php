@@ -124,29 +124,20 @@ class t7user {
 	public function Login($type, $id, $remember = false, $continue = false) {
 		global $db;
 		$uid = false;
-		switch($type) {
-			case 'transition':
-			case 'register':
-				$uid = $id;
-				break;
-			case 'google':
-			case 'twitter':
-			case 'facebook':
-			case 'github':
-			case 'deviantart':
-			case 'steam':
-				if($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . t7auth::GetField($type) . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
-					if($login = $login->fetch_object()) {
-						$uid = $login->user;
-						$remember = $id->Remember;
-						$continue = $id->Continue;
-						if($id->GetUserInfo()) {
-							$db->real_query('update external_profiles set name=\'' . $db->escape_string($id->DisplayName) . '\', url=\'' . $db->escape_string($id->ProfileFull) . '\', avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$login->profile);
-							if(+$login->useavatar && $id->Avatar)
-								$db->real_query('update users set avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$uid);
-						}
+		if($type == 'transition' || $type == 'register')
+			$uid = $id;
+		elseif(t7auth::IsKnown($type)) {
+			if($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . t7auth::GetField($type) . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
+				if($login = $login->fetch_object()) {
+					$uid = $login->user;
+					$remember = $id->Remember;
+					$continue = $id->Continue;
+					if($id->GetUserInfo()) {
+						$db->real_query('update external_profiles set name=\'' . $db->escape_string($id->DisplayName) . '\', url=\'' . $db->escape_string($id->ProfileFull) . '\', avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$login->profile);
+						if(+$login->useavatar && $id->Avatar)
+							$db->real_query('update users set avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$uid);
 					}
-				break;
+				}
 		}
 		if($uid) {
 			$_SESSION['user'] = $uid;
@@ -219,7 +210,10 @@ class t7user {
 	public function SecureLoginCount() {
 		if($this->secureLoginCount === false) {
 			global $db;
-			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\' union select id from login_github where user=\'' . +$this->ID . '\' union select id from login_deviantart where user=\'' . +$this->ID . '\' union select id from login_steam where user=\'' . +$this->ID . '\''))
+			$logins = [];
+			foreach(t7auth::GetAuthList() as $source)
+				$logins[] = 'select id from login_' . $source . ' where user=\'' . +$this->ID . '\'';
+			if($logins = $db->query(implode(' union ', $logins)))
 				$this->secureLoginCount = $logins->num_rows;
 		}
 		return $this->secureLoginCount;
@@ -260,6 +254,15 @@ class t7user {
 			default:
 				return 'unknown';
 		}
+	}
+
+	/**
+	 * list of external profile types supported by CollapseProfileLink() and ExpandProfileLink().
+	 * @return string[] array of source names for external profiles.
+	 */
+	public static function GetProfileTypes() {
+		// order determines which order they will display on user profiles
+		return ['twitter', 'google', 'facebook', 'github', 'deviantart', 'steam'];
 	}
 
 	/**
@@ -428,22 +431,18 @@ class t7user {
 			if($c = $c->fetch_object())
 				if($c->email && ($c->vis_email == 'all' || $c->vis_email == 'friends' && $friend || $c->vis_email == 'users' && $user->IsLoggedIn() || $c->vis_email == 'none' && $user->IsAdmin()))
 					$links[] = ['type' => 'email', 'url' => 'mailto:' . $c->email, 'title' => 'send ' . $this->DisplayName . ' an e-mail'];
-		if($c = $db->query('select website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, github, vis_github, deviantart, vis_deviantart, steam, vis_steam from users_profiles where id=\'' . +$this->ID . '\' limit 1'))
+		$c = [];
+		foreach(self::GetProfileTypes() as $source)
+			$c[] = $source . ', vis_' . $source;
+		if($c = $db->query('select website, vis_website, ' . implode(', ', $c) . ' from users_profiles where id=\'' . +$this->ID . '\' limit 1'))
 			if($c = $c->fetch_object()) {
 				if($c->website && ($c->vis_website == 'all' || $friend))
 					$links[] = ['type' => 'www', 'url' => $c->website, 'title' => 'visit ' . $this->DisplayName . '’s website'];
-				if($c->twitter && ($c->vis_twitter == 'all' || $friend))
-					$links[] = ['type' => 'twitter', 'url' => self::ExpandProfileLink($c->twitter, 'twitter'), 'title' => 'view ' . $this->DisplayName . '’s twitter profile'];
-				if($c->google && ($c->vis_google == 'all' || $friend))
-					$links[] = ['type' => 'google', 'url' => self::ExpandProfileLink($c->google, 'google'), 'title' => 'view ' . $this->DisplayName . '’s google+ profile'];
-				if($c->facebook && ($c->vis_facebook == 'all' || $friend))
-					$links[] = ['type' => 'facebook', 'url' => self::ExpandProfileLink($c->facebook, 'facebook'), 'title' => 'view ' . $this->DisplayName . '’s facebook profile'];
-				if($c->github && ($c->vis_github == 'all' || $friend))
-					$links[] = ['type' => 'github', 'url' => self::ExpandProfileLink($c->github, 'github'), 'title' => 'view ' . $this->DisplayName . '’s github profile'];
-				if($c->deviantart && ($c->vis_deviantart == 'all' || $friend))
-					$links[] = ['type' => 'deviantart', 'url' => self::ExpandProfileLink($c->deviantart, 'deviantart'), 'title' => 'view ' . $this->DisplayName . '’s deviantart profile'];
-				if($c->steam && ($c->vis_steam == 'all' || $friend))
-					$links[] = ['type' => 'steam', 'url' => self::ExpandProfileLink($c->steam, 'steam'), 'title' => 'view ' . $this->DisplayName . '’s steam community profile'];
+				foreach(self::GetProfileTypes() as $source) {
+					$vis = 'vis_' . $source;
+					if($c->$source && ($c->$vis == 'all' || $friend))
+						$links[] = ['type' => $source, 'url' => self::ExpandProfileLink($c->$source, $source), 'title' => 'view ' . $this->DisplayName . '’s ' . $source . ' profile'];
+				}
 			}
 		return $links;
 	}
