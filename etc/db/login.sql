@@ -62,6 +62,16 @@ create table login_github (
 	foreign key(profile) references external_profiles(id) on delete cascade on update cascade
 );
 
+create table login_deviantart (
+	id smallint unsigned primary key auto_increment,
+	user smallint unsigned not null,
+	foreign key(user) references users(id) on delete cascade on update cascade,
+	uuid char(36) not null comment 'deviantart user id',
+	unique(uuid),
+	profile mediumint unsigned,
+	foreign key(profile) references external_profiles(id) on delete cascade on update cascade
+);
+
 create table login_steam (
 	id smallint unsigned primary key auto_increment,
 	user smallint unsigned not null,

@@ -344,7 +344,7 @@ body > header a {
 }
 @media (min-width: 40em) {
 	#signinform {
-		width: 13.75em;
+		width: 16.5em;
 	}
 }
 #signinform label {
@@ -2270,11 +2270,11 @@ main #detecttime {
 }
 @media (min-width: 40em) {
 	#contact span.label {
-		-webkit-flex: 0 0 4.75em;
-		flex: 0 0 4.75em;
+		-webkit-flex: 0 0 5.25em;
+		flex: 0 0 5.25em;
 	}
 	#contact button {
-		margin: .75em 1em .75em 5.75em;
+		margin: .75em 1em .75em 6.25em;
 	}
 }
 .droptrigger {

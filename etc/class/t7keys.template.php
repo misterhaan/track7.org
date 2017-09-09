@@ -99,6 +99,20 @@ class t7keysGithub {
 	const CLIENT_SECRET = '';
 }
 
+class t7keysDeviantart {
+	/**
+	 * client_id for your application, found at https://www.deviantart.com/developers/apps
+	 * @var string
+	 */
+	const CLIENT_ID = '';
+
+	/**
+	 * client_secret for your application, found at https://www.deviantart.com/developers/apps
+	 * @var string
+	 */
+	const CLIENT_SECRET = '';
+}
+
 class t7keysTweet {
 	/**
 	 * consumer key (api key) from apps.twitter.com after selecting your app

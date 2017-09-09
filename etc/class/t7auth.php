@@ -37,8 +37,8 @@ class t7auth {
 		$links['twitter'] = t7authTwitter::GetAuthURL($continue);
 		$links['facebook'] = t7authFacebook::GetAuthUrl($continue, $csrf);
 		$links['github'] = t7authGithub::GetAuthUrl($continue, $csrf);
+		$links['deviantart'] = t7authDeviantart::GetAuthUrl($continue, $csrf);
 		$links['steam'] = t7authSteam::GetAuthUrl($continue, $csrf);
-		// TODO:  add links to other methods here
 		if(!$adding)
 			$links['track7'] = t7authTrack7::GetAuthURL($continue, $csrf);
 		return $links;
@@ -55,6 +55,7 @@ class t7auth {
 			t7authTwitter::SOURCE => t7authTwitter::FIELD,
 			t7authFacebook::SOURCE => t7authFacebook::FIELD,
 			t7authGithub::SOURCE => t7authGithub::FIELD,
+			t7authDeviantart::SOURCE => t7authDeviantart::FIELD,
 			t7authSteam::SOURCE => t7authSteam::FIELD
 		][$source];
 	}
@@ -744,7 +745,7 @@ class t7authFacebook extends t7authRegisterable {
 class t7authGithub extends t7authRegisterable {
 	const SOURCE = 'github';
 	const FIELD = 'extid';
-	const REDIRECT = '/user/via/githup.php';
+	const REDIRECT = '/user/via/github.php';
 	const REQUEST = 'http://github.com/login/oauth/authorize';
 	const SCOPE = 'user:email';
 	const VERIFY = 'https://github.com/login/oauth/access_token';
@@ -763,10 +764,10 @@ class t7authGithub extends t7authRegisterable {
 	public static function GetAuthUrl($continue, $csrf) {
 		return self::REQUEST . '?' . http_build_query([
 			'client_id' => t7keysGithub::CLIENT_ID,
-			// redirect_uri causes mismatch error, so need to rely on the one in the application defined in github
+			// without this it uses the one in the application defined in github
 			//'redirect_uri' => t7format::FullUrl(self::REDIRECT),
 			'scope' => self::SCOPE,
-			'state' => 'remember&' . http_build_query(array('continue' => $continue, 'csrf' => $csrf))
+			'state' => 'remember&' . http_build_query(['continue' => $continue, 'csrf' => $csrf])
 		]);
 	}
 
@@ -799,7 +800,7 @@ class t7authGithub extends t7authRegisterable {
 			'code' => $code,
 			'client_id' => t7keysGithub::CLIENT_ID,
 			'client_secret' => t7keysGithub::CLIENT_SECRET,
-			// redirect_uri causes mismatch error, so need to rely on the one in the application defined in github
+			// without this it uses the one in the application defined in github
 			//'redirect_uri' => t7format::FullUrl(self::REDIRECT),
 			'state' => $state
 		]));
@@ -856,6 +857,102 @@ class t7authGithub extends t7authRegisterable {
 			return true;
 		}
 		return false;
+	}
+}
+
+/**
+ * authorization using deviantart oauth
+ * @author misterhaan
+ */
+class t7authDeviantart extends t7authRegisterable {
+	const SOURCE = 'deviantart';
+	const FIELD = 'uuid';
+	const REDIRECT = '/user/via/deviantart.php';
+	const REQUEST = 'https://www.deviantart.com/oauth2/authorize';
+	const SCOPE = 'user';
+	const VERIFY = 'https://www.deviantart.com/oauth2/token';
+	const USER = 'https://www.deviantart.com/api/v1/oauth2/user/whoami?expand=user.profile';
+
+	/**
+	 * build the url for logging in with deviantart, with forgery protection and
+	 * which page to return to built in.
+	 * @param string $continue local url to return to after login is complete (should begin with a forward slash)
+	 * @param string $csrf random string for antiforgery (should be saved for comparison against response)
+	 * @return string url for logging in with deviantart
+	 */
+	public static function GetAuthUrl($continue, $csrf) {
+		return self::REQUEST . '?' . http_build_query([
+			'response_type' => 'code',
+			'client_id' => t7keysDeviantart::CLIENT_ID,
+			'redirect_uri' => t7format::FullUrl(self::REDIRECT),
+			'scope' => self::SCOPE,
+			'state' => 'remember&' . http_build_query(['continue' => $continue, 'csrf' => $csrf])
+		]);
+	}
+
+	public function t7authDeviantart() {
+		if($this->HasData = isset($_GET['code'])) {
+			parse_str($_GET['state'], $state);
+			if(isset($state['continue']))
+				$this->Continue = $state['continue'];
+			if($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
+				$this->Remember = isset($state['remember']);
+				$this->GetToken($_GET['code']);
+			}
+		}
+	}
+
+	private function GetToken($code) {
+		$c = curl_init();
+		curl_setopt($c, CURLOPT_URL, self::VERIFY . '?' . http_build_query([
+			'code' => $code,
+			'client_id' => t7keysDeviantart::CLIENT_ID,
+			'client_secret' => t7keysDeviantart::CLIENT_SECRET,
+			'grant_type' => 'authorization_code',
+			'redirect_uri' => t7format::FullUrl(self::REDIRECT)
+		]));
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
+		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($c, CURLOPT_TIMEOUT, 30);
+		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($c, CURLOPT_HEADER, false);
+		$response = curl_exec($c);
+		curl_close($c);
+		$response = json_decode($response);
+		if(isset($response->access_token))
+			$this->GetUserInfoFromToken($response->access_token);
+	}
+
+	private function GetUserInfoFromToken($access) {
+		$c = curl_init();
+		curl_setopt($c, CURLOPT_URL, self::USER . '&access_token=' . $access);
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($c, CURLOPT_USERAGENT, 't7auth');
+		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($c, CURLOPT_TIMEOUT, 30);
+		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($c, CURLOPT_HEADER, false);
+		$response = curl_exec($c);
+		curl_close($c);
+		$response = json_decode($response);
+		if(isset($response->userid)) {
+			$this->ID = $response->userid;
+			$this->Username = $response->username;
+			$this->ProfileShort = $response->username;
+			$this->ProfileFull = t7user::ExpandProfileLink($response->username, self::SOURCE);
+			$this->Avatar = $response->usericon;  // 50px
+			if(isset($response->profile)) {
+				$this->DisplayName = $response->profile->real_name;
+				$this->Website = $response->profile->website;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public function GetUserInfo() {
+		return true;
 	}
 }
 

@@ -133,6 +133,7 @@ class t7user {
 			case 'twitter':
 			case 'facebook':
 			case 'github':
+			case 'deviantart':
 			case 'steam':
 				if($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . t7auth::GetField($type) . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
 					if($login = $login->fetch_object()) {
@@ -218,7 +219,7 @@ class t7user {
 	public function SecureLoginCount() {
 		if($this->secureLoginCount === false) {
 			global $db;
-			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\' union select id from login_github where user=\'' . +$this->ID . '\' union select id from login_steam where user=\'' . +$this->ID . '\''))
+			if($logins = $db->query('select id from login_google where user=\'' . +$this->ID . '\' union select id from login_twitter where user=\'' . +$this->ID . '\' union select id from login_facebook where user=\'' . +$this->ID . '\' union select id from login_github where user=\'' . +$this->ID . '\' union select id from login_deviantart where user=\'' . +$this->ID . '\' union select id from login_steam where user=\'' . +$this->ID . '\''))
 				$this->secureLoginCount = $logins->num_rows;
 		}
 		return $this->secureLoginCount;
@@ -269,6 +270,9 @@ class t7user {
 	 */
 	public static function CollapseProfileLink($url, $source) {
 		switch($source) {
+			case 'deviantart':
+				if(preg_match('/^https?:\/\/([A-Za-z\-]{3,20})\.deviantart\.com/', $url, $match))
+					return $match[1];
 			case 'facebook':
 				if(preg_match('/^https?:\/\/www\.facebook\.com\/([A-Za-z0-9\.]{5,})(\?.*)?$/', $url, $match))
 					return $match[1];
@@ -302,6 +306,9 @@ class t7user {
 	 */
 	public static function ExpandProfileLink($url, $source, $html = false) {
 		switch($source) {
+			case 'deviantart':
+				$url = 'https://' . $url . '.deviantart.com/';
+				break;
 			case 'facebook':
 				$url = 'https://www.facebook.com/' . $url;
 				break;
@@ -421,7 +428,7 @@ class t7user {
 			if($c = $c->fetch_object())
 				if($c->email && ($c->vis_email == 'all' || $c->vis_email == 'friends' && $friend || $c->vis_email == 'users' && $user->IsLoggedIn() || $c->vis_email == 'none' && $user->IsAdmin()))
 					$links[] = ['type' => 'email', 'url' => 'mailto:' . $c->email, 'title' => 'send ' . $this->DisplayName . ' an e-mail'];
-		if($c = $db->query('select website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, github, vis_github, steam, vis_steam from users_profiles where id=\'' . +$this->ID . '\' limit 1'))
+		if($c = $db->query('select website, vis_website, twitter, vis_twitter, google, vis_google, facebook, vis_facebook, github, vis_github, deviantart, vis_deviantart, steam, vis_steam from users_profiles where id=\'' . +$this->ID . '\' limit 1'))
 			if($c = $c->fetch_object()) {
 				if($c->website && ($c->vis_website == 'all' || $friend))
 					$links[] = ['type' => 'www', 'url' => $c->website, 'title' => 'visit ' . $this->DisplayName . '’s website'];
@@ -433,6 +440,8 @@ class t7user {
 					$links[] = ['type' => 'facebook', 'url' => self::ExpandProfileLink($c->facebook, 'facebook'), 'title' => 'view ' . $this->DisplayName . '’s facebook profile'];
 				if($c->github && ($c->vis_github == 'all' || $friend))
 					$links[] = ['type' => 'github', 'url' => self::ExpandProfileLink($c->github, 'github'), 'title' => 'view ' . $this->DisplayName . '’s github profile'];
+				if($c->deviantart && ($c->vis_deviantart == 'all' || $friend))
+					$links[] = ['type' => 'deviantart', 'url' => self::ExpandProfileLink($c->deviantart, 'deviantart'), 'title' => 'view ' . $this->DisplayName . '’s deviantart profile'];
 				if($c->steam && ($c->vis_steam == 'all' || $friend))
 					$links[] = ['type' => 'steam', 'url' => self::ExpandProfileLink($c->steam, 'steam'), 'title' => 'view ' . $this->DisplayName . '’s steam community profile'];
 			}
