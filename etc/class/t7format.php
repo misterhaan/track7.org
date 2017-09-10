@@ -211,5 +211,5 @@ class t7format {
  */
 class HeaderlessParsedown extends Parsedown {
 	protected function blockHeader($Line) { return; }
-	protected function blockSetextHeader($Line) { return; }
+	protected function blockSetextHeader($Line, array $Block = NULL) { return; }
 }
