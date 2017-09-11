@@ -74,6 +74,10 @@ if($mods = $db->query('select id, name from code_calc_model order by name'))
 					<span class=field><input id=upload type=file></span>
 				</label>
 				<label>
+					<span class=label>ticalc:</span>
+					<span class=field><input data-bind="value: ticalc"></span>
+				</label>
+				<label>
 					<span class=label>date:</span>
 					<span class=field><input data-bind="value: released"></span>
 				</label>
@@ -85,16 +89,17 @@ $html->Close();
 function LoadProg() {
 	global $ajax, $db;
 	if(isset($_GET['id']) && +$_GET['id'])
-		if($sel = $db->prepare('select name, url, subject, model, descmd, released from code_calc_progs where id=?'))
+		if($sel = $db->prepare('select name, url, subject, model, descmd, ticalc, released from code_calc_progs where id=?'))
 			if($sel->bind_param('i', $id = +$_GET['id']))
 				if($sel->execute())
-					if($sel->bind_result($name, $url, $subject, $model, $desc, $released))
+					if($sel->bind_result($name, $url, $subject, $model, $desc, $ticalc, $released))
 						if($sel->fetch()) {
 							$ajax->Data->name = $name;
 							$ajax->Data->url = $url;
 							$ajax->Data->subject = $subject;
 							$ajax->Data->model = $model;
 							$ajax->Data->desc = $desc;
+							$ajax->Data->ticalc = $ticalc;
 							$ajax->Data->released = t7format::LocalDate('Y-m-d g:i:s a', $released);
 						} else
 							$ajax->Fail('error fetching program information:  ' . $sel->error);
@@ -137,7 +142,9 @@ function SaveProg() {
 		$deschtml = t7format::Markdown($desc);
 	$released = trim($_POST['released']);
 	$released = $released ? t7format::LocalStrtotime($released) : time();
-
+	$ticalc = +trim($_POST['ticalc']);
+	if(!$ticalc)
+		$ticalc = null;
 	if(count($ajax->Data->fieldIssues)) {
 		$ajax->Fail('at least one field is invalid.');
 		if(isset($_FILES['upload']) && $_FILES['upload']['size'])
@@ -145,16 +152,16 @@ function SaveProg() {
 	} else {
 		if($uploaded = isset($_FILES['upload']) && $_FILES['upload']['size'])
 			move_uploaded_file($_FILES['upload']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['PHP_SELF']) . '/files/' . $url . '.zip');
-		$sql = 'code_calc_progs set url=?, name=?, released=?, subject=?, model=?, descmd=?, deschtml=?';
+		$sql = 'code_calc_progs set url=?, name=?, released=?, subject=?, model=?, descmd=?, deschtml=?, ticalc=?';
 		$sql = $id ? 'update ' . $sql . ' where id=? limit 1' : 'insert into ' . $sql . ', id=?';
 		if($save = $db->prepare($sql)) {
-			if($save->bind_param('ssiiissi', $url, $name, $released, $subject, $model, $desc, $deschtml, $id))
+			if($save->bind_param('ssiiissii', $url, $name, $released, $subject, $model, $desc, $deschtml, $ticalc, $id))
 				if($save->execute())
 					$save->close();
 				else
 					$ajax->Fail('error saving program:  ' . $save->error);
 			else
-				$ajax->Fail('error binding parameters to save program:  ' . $save->error);
+				$ajax->Fail('error binding parameters to save program:  ' . $save->error . $db->error);
 			$ajax->Data->url = $url;
 		} else
 			$ajax->Fail('error preparing to save program:  ' . $db->error);

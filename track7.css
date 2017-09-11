@@ -588,6 +588,9 @@ a.action.zip:before {
 a.action.github:before {
 	content: "\f09b";
 }
+a.action.ticalc:before {
+	content: "\f1ec";
+}
 .actions a.documentation:before,
 a.action.documentation:before {
 	content: "\f02d";

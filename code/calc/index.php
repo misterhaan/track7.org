@@ -21,7 +21,7 @@ if($user->IsAdmin()) {
 				in 1998.
 			</p>
 <?php
-if($progs = $db->query('select p.id, p.url, p.name, p.released, s.name as subject, m.name as model, p.deschtml from code_calc_progs as p left join code_calc_subject as s on s.id=p.subject left join code_calc_model as m on m.id=p.model order by p.released desc')) {
+if($progs = $db->query('select p.id, p.url, p.name, p.released, s.name as subject, m.name as model, p.deschtml, p.ticalc from code_calc_progs as p left join code_calc_subject as s on s.id=p.subject left join code_calc_model as m on m.id=p.model order by p.released desc')) {
 ?>
 			<nav id=calcprogs>
 <?php
@@ -47,7 +47,16 @@ if($progs = $db->query('select p.id, p.url, p.name, p.released, s.name as subjec
 						</p>
 					</header>
 					<?php echo $prog->deschtml; ?>
-					<p class=calltoaction><a class="zip action" href="files/<?php echo $prog->url; ?>.zip"><?php echo $prog->url; ?>.zip</a></p>
+					<p class=calltoaction>
+						<a class="zip action" href="files/<?php echo $prog->url; ?>.zip"><?php echo $prog->url; ?>.zip</a>
+<?php
+		if($prog->ticalc) {
+?>
+						<a class="ticalc action" href="http://www.ticalc.org/archives/files/fileinfo/<?=floor($prog->ticalc / 100); ?>/<?=$prog->ticalc; ?>.html"><?=htmlspecialchars($prog->name); ?> on ticalc.org</a>
+<?php
+		}
+?>
+					</p>
 				</article>
 <?php
 	}

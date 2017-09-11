@@ -26,6 +26,7 @@ create table code_calc_progs (
 	foreign key(subject) references code_calc_subject(id) on update cascade on delete cascade,
 	model tinyint unsigned not null,
 	foreign key(model) references code_calc_model(id) on update cascade on delete cascade,
+	ticalc int unsigned comment 'id of this program on ticalc.org (optional)',
 	descmd text comment 'markdown version of the program description, for editing',
 	deschtml text comment 'html version of the program description, generated from descmd, for display'
 );

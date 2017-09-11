@@ -9,6 +9,7 @@ function ProgViewModel() {
 	this.subject = ko.observable("");
 	this.model = ko.observable("");
 	this.desc = ko.observable("");
+	this.ticalc = ko.observable("");
 	this.released = ko.observable("");
 
 	this.defaultUrl = ko.pureComputed(function() {
@@ -24,6 +25,7 @@ function ProgViewModel() {
 				self.model(result.model);
 				self.desc(result.desc);
 				autosize.update($("#desc"));
+				self.ticalc(result.ticalc || "");
 				self.released(result.released);
 			} else
 				alert(result.message);
@@ -42,6 +44,7 @@ function ProgViewModel() {
 		data.set("subject", self.subject());
 		data.set("model", self.model());
 		data.set("desc", self.desc());
+		data.set("ticalc", self.ticalc());
 		data.set("released", self.released());
 		data.set("upload", $("#upload")[0].files[0]);
 		$.post({url: "?ajax=save", data: data, cache: false, contentType: false, processData: false, success: function(result) {
