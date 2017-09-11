@@ -64,6 +64,10 @@ if($engs = $db->query('select id, name from code_game_engines order by name'))
 					<span class=field><input id=screenshot type=file></span>
 				</label>
 				<label>
+					<span class=label>dmzx id:</span>
+					<span class=field><input data-bind="value: dmzx"></span>
+				</label>
+				<label>
 					<span class=label>date:</span>
 					<span class=field><input data-bind="value: released"></span>
 				</label>
@@ -75,15 +79,16 @@ $html->Close();
 function LoadWorld() {
 	global $ajax, $db;
 	if(isset($_GET['id']) && +$_GET['id'])
-		if($sel = $db->prepare('select name, url, engine, descmd, released from code_game_worlds where id=?'))
+		if($sel = $db->prepare('select name, url, engine, descmd, dmzx, released from code_game_worlds where id=?'))
 			if($sel->bind_param('i', $id = +$_GET['id']))
 				if($sel->execute())
-					if($sel->bind_result($name, $url, $engine, $desc, $released))
+					if($sel->bind_result($name, $url, $engine, $desc, $dmzx, $released))
 						if($sel->fetch()) {
 							$ajax->Data->name = $name;
 							$ajax->Data->url = $url;
 							$ajax->Data->engine = $engine;
 							$ajax->Data->desc = $desc;
+							$ajax->Data->dmzx = $dmzx;
 							$ajax->Data->released = t7format::LocalDate('Y-m-d g:i:s a', $released);
 						} else
 							$ajax->Fail('error fetching game world information:  ' . $sel->error);
@@ -121,6 +126,9 @@ function SaveWorld() {
 		$ajax->Data->fieldIssues[] = ['field' => 'desc', 'issue' => 'description is required.'];
 	else
 		$deschtml = t7format::Markdown($desc);
+	$dmzx = +trim($_POST['dmzx']);
+	if(!$dmzx)
+		$dmzx = null;
 	$released = trim($_POST['released']);
 	$released = $released ? t7format::LocalStrtotime($released) : time();
 
@@ -135,10 +143,10 @@ function SaveWorld() {
 			move_uploaded_file($_FILES['zip']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['PHP_SELF']) . '/files/' . $url . '.zip');
 		if(isset($_FILES['screenshot']) && $_FILES['screenshot']['size'])
 			move_uploaded_file($_FILES['screenshot']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['PHP_SELF']) . '/files/' . $url . '.png');
-		$sql = 'code_game_worlds set url=?, name=?, released=?, engine=?, descmd=?, deschtml=?';
+		$sql = 'code_game_worlds set url=?, name=?, released=?, engine=?, descmd=?, deschtml=?, dmzx=?';
 		$sql = $id ? 'update ' . $sql . ' where id=? limit 1' : 'insert into ' . $sql . ', id=?';
 		if($save = $db->prepare($sql)) {
-			if($save->bind_param('ssiissi', $url, $name, $released, $engine, $desc, $deschtml, $id))
+			if($save->bind_param('ssiissii', $url, $name, $released, $engine, $desc, $deschtml, $dmzx, $id))
 				if($save->execute())
 					$save->close();
 				else

@@ -8,6 +8,7 @@ function WorldViewModel() {
 	this.url = ko.observable("");
 	this.engine = ko.observable("");
 	this.desc = ko.observable("");
+	this.dmzx = ko.observable("");
 	this.released = ko.observable("");
 
 	this.defaultUrl = ko.pureComputed(function() {
@@ -22,6 +23,7 @@ function WorldViewModel() {
 				self.engine(result.engine);
 				self.desc(result.desc);
 				autosize.update($("#desc"));
+				self.dmzx(result.dmzx || "");
 				self.released(result.released);
 			} else
 				alert(result.message);
@@ -40,6 +42,7 @@ function WorldViewModel() {
 		data.set("engine", self.engine());
 		data.set("desc", self.desc());
 		data.set("released", self.released());
+		data.set("dmzx", self.dmzx());
 		data.set("zip", $("#zip")[0].files[0]);
 		data.set("screenshot", $("#screenshot")[0].files[0]);
 		$.post({url: "?ajax=save", data: data, cache: false, contentType: false, processData: false, success: function(result) {

@@ -20,7 +20,7 @@ if($user->IsAdmin()) {
 				which back when i had them were available free as shareware.
 			</p>
 <?php
-if($wlds = $db->query('select w.id, w.url, w.name, w.released, e.name as engine, w.deschtml from code_game_worlds as w left join code_game_engines as e on e.id=w.engine order by w.released asc')) {
+if($wlds = $db->query('select w.id, w.url, w.name, w.released, e.name as engine, w.deschtml, w.dmzx from code_game_worlds as w left join code_game_engines as e on e.id=w.engine order by w.released asc')) {
 ?>
 			<nav id=gamewlds>
 <?php
@@ -46,7 +46,16 @@ if($wlds = $db->query('select w.id, w.url, w.name, w.released, e.name as engine,
 					</header>
 					<img class=screenshot alt="" src="files/<?php echo $wld->url; ?>.png">
 					<?php echo $wld->deschtml; ?>
-					<p class=calltoaction><a class="zip action" href="files/<?php echo $wld->url; ?>.zip"><?php echo $wld->url; ?>.zip</a></p>
+					<p class=calltoaction>
+						<a class="zip action" href="files/<?php echo $wld->url; ?>.zip"><?php echo $wld->url; ?>.zip</a>
+<?php
+		if($wld->dmzx) {
+?>
+						<a class="dmzx action" href="http://vault.digitalmzx.net/show.php?id=<?=$wld->dmzx; ?>"><?=htmlspecialchars($wld->name); ?> in the dmzx vault</a>
+<?php
+		}
+?>
+					</p>
 				</article>
 <?php
 	}

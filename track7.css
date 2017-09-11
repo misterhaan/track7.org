@@ -591,6 +591,9 @@ a.action.github:before {
 a.action.ticalc:before {
 	content: "\f1ec";
 }
+a.action.dmzx:before {
+	content: "\f118";
+}
 .actions a.documentation:before,
 a.action.documentation:before {
 	content: "\f02d";

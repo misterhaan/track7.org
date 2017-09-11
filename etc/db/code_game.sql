@@ -16,5 +16,6 @@ create table code_game_worlds (
 	engine tinyint unsigned not null,
 	foreign key(engine) references code_game_engines(id) on update cascade on delete cascade,
 	descmd text comment 'markdown version of the game world description, for editing',
-	deschtml text comment 'html version of the game world description, generated from descmd, for display'
+	deschtml text comment 'html version of the game world description, generated from descmd, for display',
+	dmzx int unsigned comment 'id of this gameworld in the digitalmzx.com vault'
 );
