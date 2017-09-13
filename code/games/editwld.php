@@ -79,8 +79,9 @@ $html->Close();
 function LoadWorld() {
 	global $ajax, $db;
 	if(isset($_GET['id']) && +$_GET['id'])
-		if($sel = $db->prepare('select name, url, engine, descmd, dmzx, released from code_game_worlds where id=?'))
-			if($sel->bind_param('i', $id = +$_GET['id']))
+		if($sel = $db->prepare('select name, url, engine, descmd, dmzx, released from code_game_worlds where id=?')) {
+			$id = +$_GET['id'];
+			if($sel->bind_param('i', $id))
 				if($sel->execute())
 					if($sel->bind_result($name, $url, $engine, $desc, $dmzx, $released))
 						if($sel->fetch()) {
@@ -98,7 +99,7 @@ function LoadWorld() {
 					$ajax->Fail('error executing game world information request:  ' . $sel->error);
 			else
 				$ajax->Fail('error binding game world id to request:  ' . $sel->error);
-		else
+		} else
 			$ajax->Fail('error preparing to get game world information:  ' . $db->error);
 	else
 		$ajax->Fail('id is required.');

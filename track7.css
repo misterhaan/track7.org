@@ -1126,6 +1126,14 @@ ol.messages li .userinfo {
 		text-align: center;
 	}
 }
+.username.friend:after {
+	font-family: fontawesome;
+	font-size: .9em;
+	content: "\f006";
+}
+.suggesteduser .username.friend:after {
+	margin-left: .25em;
+}
 section.comment .userinfo img.avatar,
 ol.messages li .userinfo img.avatar {
 	display: none;

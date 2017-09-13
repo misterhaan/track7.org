@@ -1,4 +1,4 @@
-<?
+<?php
 define('MAX_COMMENT_GET', 24);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
@@ -124,9 +124,8 @@ if($u) {
 				<section class=comment>
 					<div class=userinfo>
 						<!-- ko if: username -->
-						<div class=username>
+						<div class=username data-bind="css: {friend: friend}, attr: {title: friend ? (displayname || username) + ' is your friend' : null}">
 							<a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}"></a>
-							<img data-bind="visible: friend, attr: {title: (displayname || username) + ' is your friend'}" alt="*" src="/images/friend.png">
 						</div>
 						<a data-bind="visible: avatar, attr: {href: '/user/' + username + '/'}"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
 						<div class=userlevel data-bind="visible: level, text: level"></div>
@@ -159,7 +158,6 @@ if($u) {
 			</div>
 <?php
 $html->Close();
-die;
 
 /**
  * Find the user whose comments are being displayed (if not all users).  Will

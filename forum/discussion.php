@@ -54,9 +54,8 @@ foreach($discussion->tags as $tag)
 			<section class=comment data-bind="attr: {id: 'r' + id}">
 				<div class=userinfo>
 					<!-- ko if: username -->
-					<div class=username>
+					<div class=username data-bind="css: {friend: friend}, attr: {title: friend ? (displayname || username) + ' is your friend' : null}">
 						<a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}"></a>
-						<img data-bind="visible: friend, attr: {title: (displayname || username) + ' is your friend'}" alt="*" src="/images/friend.png">
 					</div>
 					<a data-bind="visible: avatar, attr: {href: '/user/' + username + '/'}"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
 					<div class=userlevel data-bind="visible: level, text: level"></div>

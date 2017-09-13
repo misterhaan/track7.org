@@ -42,7 +42,7 @@ $html->Open('user list');
 				</tr></thead>
 				<tbody data-bind="foreach: users">
 					<tr>
-						<td><a data-bind="attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}">
+						<td class=username data-bind="css: {friend: friend}, attr: {title: friend ? displayname . ' is your friend') : null}"><a data-bind="attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}">
 							<img class="inline avatar" data-bind="attr: {src: avatar}" alt="">
 							<span data-bind="text: displayname"></span>
 						</a></td>
@@ -62,8 +62,8 @@ $html->Open('user list');
 $html->Close();
 
 function ListUsers() {
-	global $ajax, $db;
-	if($us = $db->query('select u.username, u.displayname, u.avatar, u.level, s.lastlogin, s.registered, s.fans, s.comments, s.replies from users as u left join users_stats as s on s.id=u.id order by s.lastlogin desc')) {
+	global $ajax, $db, $user;
+	if($us = $db->query('select u.username, u.displayname, u.avatar, u.level, s.lastlogin, s.registered, s.fans, s.comments, s.replies, f.fan as friend from users as u left join users_stats as s on s.id=u.id left join users_friends as f on f.friend=u.id and f.fan=\'' . +$user->ID . '\' order by s.lastlogin desc')) {
 		$ajax->Data->hasMore = false;
 		$ajax->Data->users = [];
 		while($u = $us->fetch_object()) {

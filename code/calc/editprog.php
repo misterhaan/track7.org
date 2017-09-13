@@ -89,8 +89,9 @@ $html->Close();
 function LoadProg() {
 	global $ajax, $db;
 	if(isset($_GET['id']) && +$_GET['id'])
-		if($sel = $db->prepare('select name, url, subject, model, descmd, ticalc, released from code_calc_progs where id=?'))
-			if($sel->bind_param('i', $id = +$_GET['id']))
+		if($sel = $db->prepare('select name, url, subject, model, descmd, ticalc, released from code_calc_progs where id=?')) {
+			$id = +$_GET['id'];
+			if($sel->bind_param('i', $id))
 				if($sel->execute())
 					if($sel->bind_result($name, $url, $subject, $model, $desc, $ticalc, $released))
 						if($sel->fetch()) {
@@ -109,7 +110,7 @@ function LoadProg() {
 					$ajax->Fail('error executing program information request:  ' . $sel->error);
 			else
 				$ajax->Fail('error binding program id to request:  ' . $sel->error);
-		else
+		} else
 			$ajax->Fail('error preparing to get program information:  ' . $db->error);
 	else
 		$ajax->Fail('id is required.');

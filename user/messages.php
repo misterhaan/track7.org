@@ -127,8 +127,7 @@ if($user->IsLoggedIn()) {
 						<!-- ko foreach: matchingusers -->
 						<li class=suggesteduser data-bind="click: $parent.GetConversation, css: {highlight: id == $parent.cursor().id}">
 							<img class=avatar alt="" data-bind="attr: {src: avatar}">
-							<span data-bind="text: displayname || username"></span>
-							<img src="/images/friend.png" alt="*" data-bind="visible: isfriend == 1, attr: {title: (displayname || username) + ' is your friend'}">
+							<span class=username data-bind="text: displayname || username, css: {friend: isfriend == 1}, attr: {title: isfriend == 1 ? (displayname || username) + ' is your friend': null}"></span>
 						</li>
 						<!-- /ko -->
 						<li class=message data-bind="visible: !findingusers() && matchingusers().length < 1">nobody here by that name</li>
