@@ -42,7 +42,7 @@ $html->Open('user list');
 				</tr></thead>
 				<tbody data-bind="foreach: users">
 					<tr>
-						<td class=username data-bind="css: {friend: friend}, attr: {title: friend ? displayname . ' is your friend') : null}"><a data-bind="attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}">
+						<td class=username data-bind="css: {friend: friend}, attr: {title: friend ? displayname + ' is your friend' : null}"><a data-bind="attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}">
 							<img class="inline avatar" data-bind="attr: {src: avatar}" alt="">
 							<span data-bind="text: displayname"></span>
 						</a></td>
