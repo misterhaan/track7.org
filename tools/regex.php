@@ -26,8 +26,8 @@ $html->Open('regular expression testing');
 					<h2>match</h2>
 					<p class=meta>
 						using php function
-						<a href="http://php.net/preg_match" data-bind="visible: !match.all()">preg_match</a>
-						<a href="http://php.net/preg_match_all" data-bind="visible: match.all">preg_match_all</a>
+						<a href="https://php.net/preg_match" data-bind="visible: !match.all()">preg_match</a>
+						<a href="https://php.net/preg_match_all" data-bind="visible: match.all">preg_match_all</a>
 					</p>
 					<form class=regextest data-bind="submit: Match">
 						<label>

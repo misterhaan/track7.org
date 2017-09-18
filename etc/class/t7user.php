@@ -280,7 +280,7 @@ class t7user {
 				if(preg_match('/^https?:\/\/www\.facebook\.com\/([A-Za-z0-9\.]{5,})(\?.*)?$/', $url, $match))
 					return $match[1];
 			case 'github':
-				if(preg_match('/^http-?:\/\/github\.com\/([A-Za-z0-9\-]{1,39})\/?$/', $url,$match))
+				if(preg_match('/^https?:\/\/github\.com\/([A-Za-z0-9\-]{1,39})\/?$/', $url,$match))
 					return $match[1];
 			case 'google':
 				if(substr($url, 0, 25) == 'https://plus.google.com/+')
@@ -288,11 +288,15 @@ class t7user {
 				if(substr($url, 0, 28) == 'https://profiles.google.com/')
 					return substr($url, 28);
 			case 'steam':
+				if(substr($url, 0, 36) == 'https://steamcommunity.com/profiles/')
+					return substr($url, 36);
+				if(substr($url, 0, 30) == 'https://steamcommunity.com/id/')
+					return substr($url, 30);
 				if(substr($url, 0, 35) == 'http://steamcommunity.com/profiles/')
 					return substr($url, 35);
 				if(substr($url, 0, 29) == 'http://steamcommunity.com/id/')
 					return substr($url, 29);
-			case 'twitter':
+					case 'twitter':
 				if(preg_match('/^(https?:\/\/twitter\.com\/|@)([A-Za-z0-9_]{1,15})$/', $url, $match))
 					return $match[2];
 		}
@@ -326,9 +330,9 @@ class t7user {
 				break;
 			case 'steam':
 				if(preg_match('/^[0-9]+$/', $url))
-					$url = 'http://steamcommunity.com/profiles/' . $url;
+					$url = 'https://steamcommunity.com/profiles/' . $url;
 				else
-					$url = 'http://steamcommunity.com/id/' . $url;
+					$url = 'https://steamcommunity.com/id/' . $url;
 				break;
 			case 'twitter':
 				$url = 'https://twitter.com/' . $url;

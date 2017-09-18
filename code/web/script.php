@@ -72,7 +72,7 @@ if(isset($_GET['url']))
 							echo $inst;
 							if($wiki) {
 ?>
-			<p class=calltoaction><a class="action wiki" href="http://wiki.track7.org/<?php echo $wiki; ?>">read more on the track7 wiki</a></p>
+			<p class=calltoaction><a class="action wiki" href="https://wiki.track7.org/<?php echo $wiki; ?>">read more on the track7 wiki</a></p>
 <?php
 							}
 						}

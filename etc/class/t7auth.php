@@ -640,7 +640,7 @@ class t7authTwitter extends t7authRegisterable {
 			if(isset($response->id) && $response->id == $this->ID) {
 				$this->ProfileFull = t7user::ExpandProfileLink($response->screen_name, self::SOURCE);
 				$this->ProfileShort = $response->screen_name;
-				$this->Avatar = $response->profile_image_url;
+				$this->Avatar = $response->profile_image_url_https;
 				$this->Username = $response->screen_name;
 				$this->DisplayName = $response->name;
 				if(isset($response->entities) && isset($response->entities->url) && isset($response->entities->url->urls) && isset($response->entities->url->urls[0]) && isset($response->entities->url->urls[0]->expanded_url))
@@ -667,7 +667,7 @@ class t7authFacebook extends t7authRegisterable {
 	const VERIFY = 'https://graph.facebook.com/v2.3/oauth/access_token';
 	const ID = 'https://graph.facebook.com/me';
 	const INFO = 'https://graph.facebook.com/v2.5/me';
-	const PICURL = 'http://graph.facebook.com/v2.10/{ID}/picture';
+	const PICURL = 'https://graph.facebook.com/v2.10/{ID}/picture';
 
 	private $access = false;
 
@@ -786,7 +786,7 @@ class t7authGithub extends t7authRegisterable {
 	const SOURCE = 'github';
 	const FIELD = 'extid';
 	const REDIRECT = '/user/via/github.php';
-	const REQUEST = 'http://github.com/login/oauth/authorize';
+	const REQUEST = 'https://github.com/login/oauth/authorize';
 	const SCOPE = 'user:email';
 	const VERIFY = 'https://github.com/login/oauth/access_token';
 	const USER = 'https://api.github.com/user';
@@ -1007,8 +1007,9 @@ class t7authSteam extends t7authRegisterable {
 	const REQUEST = 'https://steamcommunity.com/openid/login';
 	const OPENID_NS = 'http://specs.openid.net/auth/2.0';
 	const OPENID_IDENTITY = 'http://specs.openid.net/auth/2.0/identifier_select';
-	const PROFILE = 'http://steamcommunity.com/profiles/';  // append the steam id and a forward slash
-	const STEAM_PROFILE_URL_CUSTOM = 'http://steamcommunity.com/id/';  // append the steam custom id and a forward slash
+	const PROFILE = 'https://steamcommunity.com/profiles/';  // append the steam id and a forward slash
+	const STEAM_PROFILE_URL_CUSTOM = 'https://steamcommunity.com/id/';  // append the steam custom id and a forward slash
+	const AVATAR_PREFIX_HTTPS = 'https://steamcdn-a.akamaihd.net/';
 
 	/**
 	 * build the url for logging in with steam, with forgery protection and which
@@ -1022,7 +1023,7 @@ class t7authSteam extends t7authRegisterable {
 			'openid.ns' => self::OPENID_NS,
 			'openid.mode' => 'checkid_setup',
 			'openid.return_to' => t7format::FullUrl(self::REDIRECT) . '?remember&' . http_build_query(['continue' => $continue, 'csrf' => $csrf]),
-			'openid.realm' => 'http://' . $_SERVER['HTTP_HOST'] . '/',
+			'openid.realm' => t7format::FullUrl('/'),
 			'openid.identity' => self::OPENID_IDENTITY,
 			'openid.claimed_id' => self::OPENID_IDENTITY
 		]);
@@ -1106,7 +1107,7 @@ class t7authSteam extends t7authRegisterable {
 				} else
 					$this->ProfileShort = (string)$xml->steamID64;
 				$this->ProfileFull = t7user::ExpandProfileLink($this->ProfileShort, self::SOURCE);
-				$this->Avatar = (string)$xml->avatarMedium;  // 64px
+				$this->Avatar = preg_replace('/^http:\/\/[^\/]+\/(.+)$/', self::AVATAR_PREFIX_HTTPS . '$1', (string)$xml->avatarMedium);  // 64px
 				return true;
 			}
 		return false;

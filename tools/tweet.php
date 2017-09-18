@@ -12,7 +12,7 @@
 ?>
       <h1>tweet test</h1>
       <p>
-        anything entered into this form gets sent to <a href="http://twitter.com/track7feed">twitter</a>,
+        anything entered into this form gets sent to <a href="https://twitter.com/track7feed">twitter</a>,
         so remember to delete test tweets.
       </p>
       <form method=post>

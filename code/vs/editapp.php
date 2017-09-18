@@ -123,7 +123,7 @@
         </label>
         <label>
           <span class=label>auwiki:</span>
-          <span class=field>http://wiki.track7.org/<input id=wiki name=wiki maxlength=32></span>
+          <span class=field>https://wiki.track7.org/<input id=wiki name=wiki maxlength=32></span>
         </label>
         <button id=save>save</button>
       </form>

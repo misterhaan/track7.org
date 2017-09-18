@@ -20,7 +20,7 @@ if(isset($_GET['ajax'])) {
 				if(count($parts) == 2) {
 					$file = trim($parts[0]);
 					if(substr($file, -3) == '.js' || in_array(substr($file, -4), ['.css', '.png', '.gif', '.jpg', '.xml', '.txt']) || substr($file, -5) == '.woff')
-						$ajax->Data->cachedel[] = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $file;
+						$ajax->Data->cachedel[] = t7format::FullUrl('/' . $file);
 				}
 			}
 			if(count($ajax->Data->cachedel)) {

@@ -9,7 +9,7 @@ $html->Open('feeds');
 				notified of new content on track7 without having to visit track7.
 			</p>
 
-			<ul class="twitter"><li><a href="http://twitter.com/track7feed">@track7feed</a> (same content as unifeed)</li></ul>
+			<ul class="twitter"><li><a href="https://twitter.com/track7feed">@track7feed</a> (same content as unifeed)</li></ul>
 
 			<ul class="feeds">
 				<li><a href="/feed.rss">unifeed</a> (contains everything listed below)</li>

@@ -15,11 +15,11 @@ create table code_web_reqinfo (
 	url varchar(64) not null default '' comment 'where to find more information on meeting this requirement'
 );
 insert into code_web_reqinfo (name, url) values
-	('apache httpd', 'http://httpd.apache.org/'),
+	('apache httpd', 'https://httpd.apache.org/'),
 	('layout classes', '/code/web/layout'),
 	('mysql', 'https://www.mysql.com/'),
-	('pear::db', 'http://pear.php.net/package/DB/'),
-	('php', 'http://php.net/'),
+	('pear::db', 'https://pear.php.net/package/DB/'),
+	('php', 'https://php.net/'),
 	('userscript', 'https://greasyfork.org/');
 
 create table code_web_scripts (

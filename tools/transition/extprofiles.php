@@ -53,7 +53,7 @@ if(isset($_GET['dostep']))
 		case 'copyprofiles':
 			if($db->real_query('insert into external_profiles (url) select profileurl from login_google'))
 				if($db->real_query('insert into external_profiles (url) select profileurl from login_twitter'))
-					if($db->real_query('insert into external_profiles (url, avatar) select profileurl, concat(\'http://graph.facebook.com/v2.10/\', extid, \'/picture\') from login_facebook'))
+					if($db->real_query('insert into external_profiles (url, avatar) select profileurl, concat(\'https://graph.facebook.com/v2.10/\', extid, \'/picture\') from login_facebook'))
 						$db->real_query('update transition_status set stepnum=' . STEP_COPY_PROFILES . ', status=\'profile urls copied\' where id=' . TR_EXT_PROFILES . ' and stepnum<' . STEP_COPY_PROFILES);
 					else
 						echo '<pre><code>error copying facebook profile urls:' . "\n" . $db->error . '</code></pre>';

@@ -80,7 +80,7 @@ if($email = $db->query('select email from users_email where id=' . +$user->ID))
 		if($email->email) {
 ?>
 						<label>
-							<span class=field><input name=avatar value=gravatar type=radio><img src="http://www.gravatar.com/avatar/<?=md5(strtolower(trim($email->email))); ?>?s=128&d=retro" class=avatar><span><a href="https://gravatar.com/">gravatar</a> for <?=$email->email; ?></span></span>
+							<span class=field><input name=avatar value=gravatar type=radio><img src="https://www.gravatar.com/avatar/<?=md5(strtolower(trim($email->email))); ?>?s=128&d=retro" class=avatar><span><a href="https://gravatar.com/">gravatar</a> for <?=$email->email; ?></span></span>
 						</label>
 <?php
 }
@@ -331,7 +331,7 @@ function SaveProfileAvatar() {
 		if($email = $db->query('select email from users_email where id=' . +$user->ID))
 			if($email = $email->fetch_object())
 				if($email->email) {
-					$ajax->Data->avatar = 'http://www.gravatar.com/avatar/' . md5(strtolower(trim($email->email))) . '?s=128&d=retro';
+					$ajax->Data->avatar = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email->email))) . '?s=128&d=retro';
 					UnlinkProfileAvatars();
 					DeleteUploadedAvatars();
 				} else

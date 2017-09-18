@@ -9,7 +9,7 @@ class t7format {
 	private static $parsedown = false;  // markdown parsing object
 
 	/**
-	 * Get the beginning of a URL for this website, such as http://www.track7.org
+	 * Get the beginning of a URL for this website, such as https://www.track7.org
 	 * @return string URL scheme and host
 	 */
 	private static function UrlStart() {

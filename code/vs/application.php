@@ -44,7 +44,7 @@ if($app->github) {
 }
 if($app->wiki) {
 ?>
-			<p class=calltoaction><a class="action documentation" href="http://wiki.track7.org/<?php echo $app->wiki; ?>"><?php echo htmlspecialchars($app->name); ?> documentation</a></p>
+			<p class=calltoaction><a class="action documentation" href="https://wiki.track7.org/<?php echo $app->wiki; ?>"><?php echo htmlspecialchars($app->name); ?> documentation</a></p>
 <?php
 }
 if($rels = $db->query('select r.released, concat(r.major, \'.\', r.minor, \'.\', r.revision) as version, r.binurl, r.bin32url, r.srcurl, r.changelog, r.lang, r.dotnet, r.studio from (select r.application, r.released, r.major, r.minor, r.revision, r.binurl, r.bin32url, r.srcurl, r.changelog, l.abbr as lang, if(n.version is not null, concat(\'.net \', n.version), \'\') as dotnet, s.name as studio from code_vs_releases as r left join code_vs_lang as l on l.id=r.lang left join code_vs_dotnet as n on n.id=r.dotnet left join code_vs_studio as s on s.version=r.studio where r.application=\'' . +$app->id . '\' order by major desc, minor desc, revision desc) as r group by major, minor order by r.released desc'))

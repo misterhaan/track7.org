@@ -140,7 +140,7 @@ function Register() {
 						if($_POST['useavatar'] && $_SESSION[$_SESSION['registering']]['avatar'])
 							$avatar = $_SESSION[$_SESSION['registering']]['avatar'];
 						elseif(isset($_POST['email']) && t7user::CheckEmail(trim($_POST['email']))) {
-							$avatar =	'http://www.gravatar.com/avatar/' . md5(strtolower(trim($_POST['email']))) . '?s=128&d=retro';
+							$avatar =	'https://www.gravatar.com/avatar/' . md5(strtolower(trim($_POST['email']))) . '?s=128&d=retro';
 							$_POST['useavatar'] = false;
 						}
 						$db->autocommit(false);  // users row should only actually be created if login row is too

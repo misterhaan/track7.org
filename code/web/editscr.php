@@ -101,7 +101,7 @@ if($reqs = $db->query('select id, name from code_web_reqinfo order by name'))
 				</label>
 				<label>
 					<span class=label>auwiki:</span>
-					<span class=field>http://wiki.track7.org/<input maxlength=32 data-bind="value: wiki"></span>
+					<span class=field>https://wiki.track7.org/<input maxlength=32 data-bind="value: wiki"></span>
 				</label>
 				<label>
 					<span class=label>date:</span>
