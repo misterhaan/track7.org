@@ -192,6 +192,23 @@ class t7format {
 	}
 
 	/**
+	 * Translate a name into a URL segment based on the name.
+	 * @param string $name Name to translate.
+	 */
+	public static function NameToUrl($name) {
+		return preg_replace('/[^a-z0-9\.\-_]*/', '', str_replace(' ', '-', strtolower(trim($name))));
+	}
+
+	/**
+	 * Check whether a URL segment uses any characters that are not allowed.
+	 * @param string $url URL segment to check.
+	 * @return boolean Whether the URL segment is valid.
+	 */
+	public static function ValidUrlPiece($url) {
+		return preg_match('/^[a-z0-9\.\-_]{3,}$/', $url);
+	}
+
+	/**
 	 * Parse markdown into HTML, ignoring headers and encoding HTML characters.
 	 * @param string $md Markdown to parse
 	 * @return string HTML parsing results

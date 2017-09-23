@@ -134,7 +134,7 @@ function UpdateLoginType() {
 }
 
 /**
- * Validate a form field via ajax
+ * Validate a form field via ajax.  Usually called when the field changes.
  * @param field form field to validate
  * @param url ajax url to request (HTTP GET) for validation
  * @param name parameter name for sending field value to server
@@ -147,11 +147,12 @@ function ValidateField(field, url, name, msgchk, msgok, msgblank) {
 	var valid = field.parent().siblings(".validation");
 	valid.removeClass().addClass("validation").addClass("checking");
 	valid.attr("title", msgchk);
-	if(msgblank && $.trim(field.val()) == "") {
+	var value = $.trim(field.val()) || $.trim(field.attr("placeholder"));
+	if(msgblank && value == "") {
 		valid.removeClass("checking").addClass("valid");
 		valid.attr("title", msgblank);
 	} else
-		$.get(url, {[name]: field.val()}, function(result) {
+		$.get(url, {[name]: value}, function(result) {
 			valid.removeClass("checking");
 			if(result.fail) {
 				valid.addClass("invalid");
