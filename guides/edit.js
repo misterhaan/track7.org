@@ -8,8 +8,10 @@ $(function() {
 	$("#url").change(function() { ValidateField($("#url"), "/guides/edit.php?ajax=checkurl&id=" + window.GuideViewModel.id(), "url", "validating url...", "url available."); });
 	if($("#editguide").data("url"))
 		window.GuideViewModel.Load();
-	else
+	else {
 		window.GuideViewModel.AddPage();
+		$("#title").change();
+	}
 });
 
 function GuideViewModel() {
