@@ -715,6 +715,7 @@ h3 {
 	padding: 0 .625em;
 	font-size: .8em;
 }
+
 article > header .meta,
 article > header .postmeta,
 article > header .guidemeta {
@@ -734,6 +735,12 @@ article > header .guidemeta {
 .guidemeta > *,
 .photometa > * {
 	margin-right: .75em;
+	white-space: nowrap;
+}
+.meta > .tags,
+.guidemeta > .tags,
+.photometa > .tags {
+	white-space: normal;
 }
 .meta > *:before,
 .guidemeta > *:before,
@@ -1256,11 +1263,36 @@ fieldset.checkboxes .field {
 }
 main .field input:not([type="checkbox"]):not([type="radio"]),
 main .field select,
-main .field textarea {
+main .field textarea,
+main .field .suggestinput {
 	-webkit-flex: 1 0;
 	flex: 1 0;
 	margin: 0;
 	width: 100%;
+}
+main .field .suggestinput {
+	display: -webkit-flex;
+	display: flex;
+	position: relative;
+}
+
+.suggestions {
+	position: absolute;
+	top: 1.4em;
+	left: .125em;
+	background-color: #ace;
+	padding: 0 3px 3px;
+	border-radius: 0 0 3px 3px;
+}
+.suggestions > * {
+	display: block;
+	cursor: pointer;
+	background-color: #fff;
+	padding: .125em .25em;
+}
+.suggestions > *:hover,
+.suggestions > *.selected {
+	background-color: #ace;
 }
 .validation {
 	margin-top: -.5em;
@@ -2086,7 +2118,7 @@ ol.usersuggest {
 ol.usersuggest li {
 	background-color: #fff;
 	margin: 0;
-	padding: .25em .25em;
+	padding: .25em;
 	border-radius: 0;
 	cursor: pointer;
 	display: -webkit-flex;

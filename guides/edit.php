@@ -23,13 +23,14 @@ if(isset($_GET['ajax'])) {
 	$ajax = new t7ajax();
 	switch($_GET['ajax']) {
 		case 'get':        Get();           break;
+		case 'tags':       GetTags();       break;
 		case 'save':       Save();          break;
 		case 'publish':    Publish();       break;
 		case 'delete':     Delete();        break;
 		case 'checktitle': CheckTitleGet(); break;
 		case 'checkurl':   CheckUrlGet();   break;
 		default:
-			$ajax->Fail('unknown function name.  supported function names are: get, save, publish, delete, checktitle, checkurl.');
+			$ajax->Fail('unknown function name.  supported function names are: get, tags, save, publish, delete, checktitle, checkurl.');
 			break;
 	}
 	$ajax->Send();
@@ -62,7 +63,17 @@ $html->Open(($url ? 'edit' : 'add') . ' guide');
 				</label>
 				<label title="comma-separated list of tag names">
 					<span class=label>tags:</span>
-					<span class=field><input pattern="([a-z0-9\.]+(,[a-z0-9\.]+)*)?" data-bind="value: tags"></span>
+					<span class=field>
+						<span class=chosentags data-bind="foreach: taglist">
+							<span data-bind="text: $data"></span><a class="action del" href="#deltag" data-bind="click: $root.DelTag"></a>
+						</span>
+						<span class=suggestinput>
+							<input id=tagSearch pattern="^[a-z0-9\.]*$" data-bind="textInput: tagSearch">
+							<span class=suggestions data-bind="visible: showTagSuggestions, foreach: tagChoices">
+								<span data-bind="text: $data, click: $root.AddTag, css: {selected: $data == $root.tagCursor()}"></span>
+							</span>
+						</span>
+					</span>
 				</label>
 				<!--ko foreach: pages -->
 				<fieldset>
@@ -88,7 +99,7 @@ $html->Open(($url ? 'edit' : 'add') . ' guide');
 					<span class=label></span>
 					<span class=field><span><input type=checkbox data-bind="checked: correctionsOnly"> this edit is formatting / spelling / grammar only</span></span>
 				</label>
-				<button data-bind="click: Save">save</button>
+				<button class=save data-bind="click: Save">save</button>
 			</form>
 <?php
 $html->Close();
@@ -118,12 +129,21 @@ function Get() {
 						$page->number = +$page->number;
 						$ajax->Data->pages[] = $page;
 					}
+				GetTags();
 			} else
 				$ajax->Fail('guide not found');
 		else
 			$ajax->Fail('database error looking up guide for editing.');
 	else
 		$ajax->Fail('get requires a url.');
+}
+
+function GetTags() {
+	global $ajax, $db;
+	$ajax->Data->definedTags = [];
+	if($tags = $db->query('select name from guide_tags order by name'))
+		while($tag = $tags->fetch_object())
+			$ajax->Data->definedTags[] = $tag->name;
 }
 
 /**
@@ -173,7 +193,7 @@ function Save() {
 				$deltags = array_diff($guide->originalTaglist, $guide->taglist);
 				if(count($deltags))
 					$db->real_query('delete from guide_taglinks where guide=\'' . +$guide->id . '\' and tag in (select id from guide_tags where name in (\'' . implode('\', \'', $deltags) . '\'))');
-				if($guide->status = 'published') {
+				if($guide->status == 'published') {
 					$tags = array_merge($addtags, $deltags);
 					if(count($tags))
 						if(!$db->real_query('update guide_tags set count=(select count(1) as count from guide_taglinks as tl left join guides as g on g.id=tl.guide where g.status=\'published\' and tl.tag=guide_tags.id group by tl.tag), lastused=(select max(g.updated) as lastused from guide_taglinks as tl left join guides as g on g.id=tl.guide where g.status=\'published\' and tl.tag=guide_tags.id group by tl.tag) where name in (\'' . implode('\', \'', $tags) . '\')'))
