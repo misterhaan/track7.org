@@ -57,18 +57,14 @@ function GuideViewModel() {
 	self.definedTags = ko.observableArray([]);
 	self.tagChoices = ko.pureComputed(function() {
 		var choices = [];
-		if(self.tagSearch() && self.definedTags().indexOf(self.tagSearch()) < 0)
-			choices.push(self.tagSearch());
+		if(self.tagSearch() && self.definedTags().map(function(t) {return t.name;}).indexOf(self.tagSearch()) < 0)
+			choices.push({name: self.tagSearch(), description: "this tag hasn’t been used yet."});
 		for(var t = 0; t < self.definedTags().length; t++)
-			if((!self.tagSearch() || self.definedTags()[t].indexOf(self.tagSearch()) >= 0) && self.taglist().indexOf(self.definedTags()[t]) < 0)
+			if((!self.tagSearch() || self.definedTags()[t].name.indexOf(self.tagSearch()) >= 0) && self.taglist().indexOf(self.definedTags()[t]) < 0)
 				choices.push(self.definedTags()[t]);
 		return choices;
 	});
 	self.taglist = ko.observableArray([]);
-	self.tags = ko.pureComputed({
-		read: function() { return self.taglist().join(","); },
-		write: function(value) { self.taglist(value.split(",")); }
-	});
 	self.originalTaglist = [];
 
 	self.pages = ko.observableArray([]);
@@ -103,7 +99,7 @@ function GuideViewModel() {
 				for(var p = 0; p < result.pages.length; p++)
 					self.pages.push(new Page(result.pages[p]));
 				autosize($("textarea[data-bind*='markdown']"));
-				self.originalTaglist = result.tags.slice();
+				self.originalTaglist = result.tags.map(function(t) {return t.name;});
 				self.definedTags(result.definedTags);
 			} else
 				alert(result.message);
@@ -170,7 +166,20 @@ function GuideViewModel() {
 
 	self.Save = function() {
 		$("button.save").addClass("working").prop("disabled", true);
-		$.post("/guides/edit.php?ajax=save", {guidejson: ko.toJSON(self)}, function(result) {
+		var data = {
+			id: self.id(),
+			url: self.url(),
+			title: self.title(),
+			summary: self.summary(),
+			level: self.level(),
+			status: self.status(),
+			correctiinsOnly: self.correctionsOnly(),
+			pages: self.pages(),
+			deletedPageIDs: self.deletedPageIDs,
+			taglist: self.taglist().map(function(t) {return t.name;}),
+			originalTaglist: self.originalTaglist
+		};
+		$.post("/guides/edit.php?ajax=save", {guidejson: ko.toJSON(data)}, function(result) {
 			$("button.save").removeClass("working").prop("disabled", false);
 			if(!result.fail)
 				if($("#editguide").data("url"))

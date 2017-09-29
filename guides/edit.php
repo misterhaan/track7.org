@@ -61,16 +61,16 @@ $html->Open(($url ? 'edit' : 'add') . ' guide');
 					<span class=label>level:</span>
 					<span class=field><select data-bind="value: level"><option>beginner</option><option>intermediate</option><option>advanced</option></select></span>
 				</label>
-				<label title="comma-separated list of tag names">
+				<label title="select or create tags for this guide">
 					<span class=label>tags:</span>
 					<span class=field>
 						<span class=chosentags data-bind="foreach: taglist">
-							<span data-bind="text: $data"></span><a class="action del" href="#deltag" data-bind="click: $root.DelTag"></a>
+							<span data-bind="text: name, attr: {title: description}"></span><a class="action del" href="#deltag" data-bind="click: $root.DelTag, attr: {title: 'remove the ' + name + ' tag from this guide'}"></a>
 						</span>
 						<span class=suggestinput>
 							<input id=tagSearch pattern="^[a-z0-9\.]*$" data-bind="textInput: tagSearch">
 							<span class=suggestions data-bind="visible: showTagSuggestions, foreach: tagChoices">
-								<span data-bind="text: $data, click: $root.AddTag, css: {selected: $data == $root.tagCursor()}"></span>
+								<span data-bind="text: name, attr: {title: description}, click: $root.AddTag, css: {selected: $data == $root.tagCursor()}"></span>
 							</span>
 						</span>
 					</span>
@@ -120,9 +120,11 @@ function Get() {
 				$ajax->Data->summary = $guide->summary;
 				$ajax->Data->level = $guide->level;
 				$ajax->Data->tags = [];
-				if($tags = $db->query('select t.name from guide_taglinks as tl left join guide_tags as t on t.id=tl.tag where tl.guide=\'' . +$guide->id . '\''))
-					while($tag = $tags->fetch_object())
-						$ajax->Data->tags[] = $tag->name;
+				if($tags = $db->query('select t.name, t.description from guide_taglinks as tl left join guide_tags as t on t.id=tl.tag where tl.guide=\'' . +$guide->id . '\''))
+					while($tag = $tags->fetch_object()) {
+						$tag->description = strip_tags($tag->description);
+						$ajax->Data->tags[] = $tag;
+					}
 				$ajax->Data->pages = [];
 				if($pages = $db->query('select id, number, heading, if(length(markdown) > 0, markdown, html) as markdown from guide_pages where guide=\'' . +$guide->id . '\' order by number'))
 					while($page = $pages->fetch_object()) {
@@ -141,9 +143,11 @@ function Get() {
 function GetTags() {
 	global $ajax, $db;
 	$ajax->Data->definedTags = [];
-	if($tags = $db->query('select name from guide_tags order by name'))
-		while($tag = $tags->fetch_object())
-			$ajax->Data->definedTags[] = $tag->name;
+	if($tags = $db->query('select name, description from guide_tags where count>0 order by name'))
+		while($tag = $tags->fetch_object()) {
+			$tag->description = strip_tags($tag->description);
+			$ajax->Data->definedTags[] = $tag;
+		}
 }
 
 /**
@@ -158,10 +162,15 @@ function Save() {
 		if(CheckTitle($guide->title, $guide->id))
 			if(CheckUrl($guide->url, $guide->id)) {
 				$ajax->Data->url = $guide->url;
-				$q = 'guides set url=\'' . $db->escape_string($guide->url) . '\', title=\'' . $db->escape_string(trim($guide->title)) . '\', summary_markdown=\'' . $db->escape_string(trim($guide->summary)) . '\', summary=\'' . $db->escape_string(t7format::Markdown(trim($guide->summary))) . '\', level=\'' . $db->escape_string($guide->level) . '\'';
+				$q = 'guides set url=\'' . $db->escape_string($guide->url)
+					. '\', title=\'' . $db->escape_string(trim($guide->title))
+					. '\', summary_markdown=\'' . $db->escape_string(trim($guide->summary))
+					. '\', summary=\'' . $db->escape_string(t7format::Markdown(trim($guide->summary)))
+					. '\', level=\'' . $db->escape_string($guide->level) . '\'';
 				if($guide->status != 'published' || !$guide->correctionsOnly)
 					$q .= ', updated=\'' . +time() . '\'';
-				$q = $guide->id ? 'update ' . $q . ' where id=\'' . +$guide->id . '\' limit 1' : 'insert into ' . $q . ', author=1';
+				$q = $guide->id ? 'update ' . $q . ' where id=\'' . +$guide->id . '\' limit 1'
+					: 'insert into ' . $q . ', author=1';
 				if($db->real_query($q)) {
 					if(!$guide->id)
 						$guide->id = $db->insert_id;
