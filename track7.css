@@ -1245,6 +1245,12 @@ fieldset.selectafield label.field {
 	-webkit-align-items: center;
 	align-items: center;
 }
+main .field.list {
+	-webkit-flex-wrap: wrap;
+	flex-wrap: wrap;
+	background-color: #eed;
+	border-radius: .25em;
+}
 fieldset.checkboxes .field {
 	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
@@ -1270,10 +1276,31 @@ main .field .suggestinput {
 	margin: 0;
 	width: 100%;
 }
+main .field.list .chosen {
+	white-space: nowrap;
+	margin-left: .25em;
+}
+main .field.list .chosen a {
+	margin-right: 0;
+}
+main .field.list input:focus {
+	outline: none;
+}
+/* draw the active input outline for chrome on desktop */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	main .field.list.focused {
+		box-shadow: 0 0 1px 2px #9dbfee;
+		border-radius: .0625em;
+	}
+}
 main .field .suggestinput {
 	display: -webkit-flex;
 	display: flex;
 	position: relative;
+}
+main .field .suggestinput input:not([type="checkbox"]):not([type="radio"]) {
+	-webkit-flex: 1 0 2em;
+	flex: 1 0 2em;
 }
 
 .suggestions {

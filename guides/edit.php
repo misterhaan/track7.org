@@ -63,10 +63,10 @@ $html->Open(($url ? 'edit' : 'add') . ' guide');
 				</label>
 				<label title="select or create tags for this guide">
 					<span class=label>tags:</span>
-					<span class=field>
-						<span class=chosentags data-bind="foreach: taglist">
-							<span data-bind="text: name, attr: {title: description}"></span><a class="action del" href="#deltag" data-bind="click: $root.DelTag, attr: {title: 'remove the ' + name + ' tag from this guide'}"></a>
-						</span>
+					<span class="field list">
+						<!-- ko foreach: taglist -->
+							<span class=chosen><span data-bind="text: name, attr: {title: description}"></span><a class="action del" href="#deltag" data-bind="click: $root.DelTag, attr: {title: 'remove the ' + name + ' tag from this guide'}"></a></span>
+						<!-- /ko -->
 						<span class=suggestinput>
 							<input id=tagSearch pattern="^[a-z0-9\.]*$" data-bind="textInput: tagSearch">
 							<span class=suggestions data-bind="visible: showTagSuggestions, foreach: tagChoices">

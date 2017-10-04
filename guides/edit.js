@@ -38,6 +38,11 @@ $(function() {
 			window.GuideViewModel.HideTagSuggestions();
 		}, 250);
 	});
+	$(".field.list input").focus(function() {
+		$(this).parent().parent().addClass("focused");
+	}).blur(function() {
+		$(this).parent().parent().removeClass("focused");
+	});
 });
 
 function GuideViewModel() {
@@ -114,6 +119,7 @@ function GuideViewModel() {
 	self.AddTag = function(tag) {
 		self.taglist.push(tag);
 		self.tagSearch("");
+		$("#tagSearch").focus();
 		self.HideTagSuggestions();
 	};
 
