@@ -5,61 +5,7 @@
 	if(isset($_GET['ajax'])) {
 		$ajax = new t7ajax();
 		switch($_GET['ajax']) {
-			case 'guides':
-				if(isset($_GET['tagid']) && +$_GET['tagid']) {
-					$guides = 'select g.id, g.url, g.posted, g.updated, g.title, g.summary, g.level, g.rating, g.votes, g.views, count(c.guide) as comments from guide_taglinks as tl left join guides as g on g.id=tl.guide left join guide_comments as c on c.guide=g.id where tl.tag=\'' . +$_GET['tagid'] . '\' and g.status=\'published\'';
-					if(isset($_GET['before']) && +$_GET['before'])
-						$guides .= ' and g.posted<\'' . +$_GET['before'] . '\'';
-						$guides .= ' group by g.id order by g.updated desc limit ' . NUM_GUIDES;
-				} else {
-					$guides = 'select g.id, g.url, g.posted, g.updated, g.title, g.summary, g.level, g.rating, g.votes, g.views, count(c.guide) as comments from guides as g left join guide_comments as c on c.guide=g.id where status=\'published\'';
-					if(isset($_GET['before']) && +$_GET['before'])
-						$guides .= ' and g.posted<\'' . +$_GET['before'] . '\'';
-						$guides .= ' group by g.id order by g.updated desc limit ' . NUM_GUIDES;
-				}
-				$ajax->Data->query = $guides;
-				if($guides = $db->query($guides)) {
-					$idmap = [];
-					$ids = [];
-					$ajax->Data->guides = [];
-					$lastdate = 0;
-					while($guide = $guides->fetch_object()) {
-						$ids[] = $guide->id;
-						$idmap[$guide->id] = count($ajax->Data->guides);
-						if($guide->views > 9999)
-							$guide->views = number_format($guide->views);
-						$posted = new stdClass();
-						$posted->timestamp = $guide->posted;
-						//$posted->datetime = gmdate('c', $guide->posted);
-						//$posted->display = t7format::SmartDate($guide->posted);
-						$posted->title = strtolower(date('g:i a \o\n l F jS Y', $guide->posted));
-						$guide->posted = $posted;
-						$lastdate = $guide->updated;
-						$updated = new stdClass();
-						$updated->timestamp = $guide->updated;
-						$updated->datetime = gmdate('c', $guide->updated);
-						$updated->display = t7format::SmartDate($guide->updated);
-						$updated->title = strtolower(date('g:i a \o\n l F jS Y', $guide->updated));
-						$guide->updated = $updated;
-						$guide->tags = [];
-						unset($guide->id);
-						$ajax->Data->guides[] = $guide;
-					}
-					if(isset($_GET['tagid']) && +$_GET['tagid']) {
-						if($more = $db->query('select 1 from guide_taglinks as tl left join guides as g on g.id=tl.guide where tl.tag=\'' . +$_GET['tagid'] . '\' and g.status=\'published\' and g.updated<\'' . +$lastdate . '\''))
-							$ajax->Data->hasMore = $more->num_rows > 0;
-					} else {
-						if($more = $db->query('select 1 from guides where status=\'published\' and updated<\'' . +$lastdate . '\''))
-							$ajax->Data->hasMore = $more->num_rows > 0;
-					}
-					if(count($ids))
-						if($tags = $db->query('select tl.guide, t.name from guide_taglinks as tl left join guide_tags as t on tl.tag=t.id where tl.guide in (' . implode(', ', $ids) . ')'))
-							while($tag = $tags->fetch_object())
-								if(isset($idmap[$tag->guide]))
-									$ajax->Data->guides[$idmap[$tag->guide]]->tags[] = $tag->name;
-				} else
-					$ajax->Fail('error looking up latest guides');
-				break;
+			case 'guides': ListGuides(); break;
 			default:
 				$ajax->Fail('unknown function name.  supported function names are:  guides.');
 		}
@@ -196,3 +142,55 @@ function ShowActions($tagid = false) {
 <?php
 	}
 }
+
+/**
+ * Get the list of guides, up to NUM_GUIDES.  Optionally limits to a tag with
+ * tagid in the querystring.  Optionally looks up older guides with a timestamp
+ * to skip past as before in the querystring.
+ */
+function ListGuides() {
+	global $ajax, $db;
+	$guides = 'select g.id, g.url, g.posted, g.updated, g.title, group_concat(t.name order by t.name separator \',\') as tags, g.summary, g.level, g.rating, g.votes, g.views, count(c.guide) as comments from';
+	if(isset($_GET['tagid']) && +$_GET['tagid'])
+		$guides .= ' guide_taglinks as gtl left join guides as g on g.id=gtl.guide';
+	else
+		$guides .= ' guides as g';
+	$guides .= ' left join guide_comments as c on c.guide=g.id left join guide_taglinks as tl on tl.guide=g.id left join guide_tags as t on t.id=tl.tag where';
+	if(isset($_GET['tagid']) && +$_GET['tagid'])
+		$guides .= ' gtl.tag=\'' . +$_GET['tagid'] . '\' and';
+	$guides .= ' g.status=\'published\'';
+	if(isset($_GET['before']) && +$_GET['before'])
+		$guides .= ' and g.posted<\'' . +$_GET['before'] . '\'';
+	$guides .= ' group by g.id order by g.updated desc limit ' . NUM_GUIDES;
+	$ajax->Data->query = $guides;
+	if($guides = $db->query($guides)) {
+		$ajax->Data->guides = [];
+		$lastdate = 0;
+		while($guide = $guides->fetch_object()) {
+			if($guide->views > 9999)
+				$guide->views = number_format($guide->views);
+			$posted = new stdClass();
+			$posted->timestamp = $guide->posted;
+			$posted->title = strtolower(date('g:i a \o\n l F jS Y', $guide->posted));
+			$guide->posted = $posted;
+			$lastdate = $guide->updated;
+			$updated = new stdClass();
+			$updated->timestamp = $guide->updated;
+			$updated->datetime = gmdate('c', $guide->updated);
+			$updated->display = t7format::SmartDate($guide->updated);
+			$updated->title = strtolower(date('g:i a \o\n l F jS Y', $guide->updated));
+			$guide->updated = $updated;
+			$guide->tags = explode(',', $guide->tags);
+			$ajax->Data->guides[] = $guide;
+		}
+		if(isset($_GET['tagid']) && +$_GET['tagid']) {
+			if($more = $db->query('select 1 from guide_taglinks as tl left join guides as g on g.id=tl.guide where tl.tag=\'' . +$_GET['tagid'] . '\' and g.status=\'published\' and g.updated<\'' . +$lastdate . '\''))
+				$ajax->Data->hasMore = $more->num_rows > 0;
+		} else {
+			if($more = $db->query('select 1 from guides where status=\'published\' and updated<\'' . +$lastdate . '\''))
+				$ajax->Data->hasMore = $more->num_rows > 0;
+		}
+	} else
+		$ajax->Fail('error looking up latest guides');
+}
+

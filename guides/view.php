@@ -6,10 +6,10 @@ if(isset($_GET['tag']))
 	if($tag = $db->query('select name from guide_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))
 		if($tag = $tag->fetch_object())
 			$tag = $tag->name;
-	else {  // tag not found, so try getting to the guide without the tag
-		header('Location: ' . t7format::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['url'] . '/' . $_GET['page']));
-		die;
-	}
+		else {  // tag not found, so try getting to the guide without the tag
+			header('Location: ' . t7format::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['url'] . '/' . $_GET['page']));
+			die;
+		}
 
 $guide = false;
 
@@ -47,7 +47,7 @@ $html->Open(htmlspecialchars($guide->title) . ($tag ? ' - ' . $tag . ' - guides'
 if($guide->status == 'published')
 	$db->real_query('update guides set views=views+1 where id=' . +$guide->id);
 $tags = [];
-if($ts = $db->query('select t.name from guide_taglinks as l left join guide_tags as t on t.id=l.tag where l.guide=' . +$guide->id))
+if($ts = $db->query('select t.name from guide_taglinks as l left join guide_tags as t on t.id=l.tag where l.guide=' . +$guide->id . ' order by t.name'))
 	while($t = $ts->fetch_object())
 		$tags[] = '<a href="' . ($tag ? '../../' : '../') . $t->name . '/" title="guides tagged ' . $t->name . '">' . $t->name . '</a>';
 ?>

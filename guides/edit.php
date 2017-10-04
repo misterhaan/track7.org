@@ -120,7 +120,7 @@ function Get() {
 				$ajax->Data->summary = $guide->summary;
 				$ajax->Data->level = $guide->level;
 				$ajax->Data->tags = [];
-				if($tags = $db->query('select t.name, t.description from guide_taglinks as tl left join guide_tags as t on t.id=tl.tag where tl.guide=\'' . +$guide->id . '\''))
+				if($tags = $db->query('select t.name, t.description from guide_taglinks as tl left join guide_tags as t on t.id=tl.tag where tl.guide=\'' . +$guide->id . '\' order by t.name'))
 					while($tag = $tags->fetch_object()) {
 						$tag->description = strip_tags($tag->description);
 						$ajax->Data->tags[] = $tag;
