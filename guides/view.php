@@ -24,23 +24,16 @@ if(!$guide || $guide->status != 'published' && !$user->IsAdmin()) {
 
 			<p>
 				sorry, we don’t seem to have a guide by that name.  try the list of
-				<a href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">all guides</a>.
+				<a href="<?=dirname($_SERVER['SCRIPT_NAME']); ?>/">all guides</a>.
 			</p>
 <?php
 	$html->Close();
 	die;
 }
 $pages = [];
-if($pageinfo = $db->query('select id, number, heading, html from guide_pages where guide=\'' . +$guide->id . '\' order by number')) {
+if($pageinfo = $db->query('select id, number, heading, html from guide_pages where guide=\'' . +$guide->id . '\' order by number'))
 	while($p = $pageinfo->fetch_object())
 		$pages[$p->number] = $p;
-	if($_GET['page'] != 'all' && !isset($pages[$_GET['page']]))
-		if($_GET['page'] != 1) {
-			// invalid page, so go to page 1 (if page 1 is invalid it will get handled later)
-			header('Location: ' . t7format::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . ($tag ? $tag . '/' : '') . $_GET['url'] . '/1'));
-			die;
-		}
-}
 
 $html = new t7html(['ko' => true]);
 $html->Open(htmlspecialchars($guide->title) . ($tag ? ' - ' . $tag . ' - guides' : ' - guides'));
@@ -49,58 +42,59 @@ if($guide->status == 'published')
 $tags = [];
 if($ts = $db->query('select t.name from guide_taglinks as l left join guide_tags as t on t.id=l.tag where l.guide=' . +$guide->id . ' order by t.name'))
 	while($t = $ts->fetch_object())
-		$tags[] = '<a href="' . ($tag ? '../../' : '../') . $t->name . '/" title="guides tagged ' . $t->name . '">' . $t->name . '</a>';
+		$tags[] = '<a href="' . dirname($_SERVER['SCRIPT_NAME']) . '/' . $t->name . '/" title="guides tagged ' . $t->name . '">' . $t->name . '</a>';
 ?>
-			<h1><?php echo htmlspecialchars($guide->title); ?></h1>
+			<h1><?=htmlspecialchars($guide->title); ?></h1>
 			<p class=guidemeta>
-				<span class=guidelevel title="<?php echo $guide->level; ?> level"><?php echo $guide->level; ?></span>
-				<span class=tags><?php echo implode(', ', $tags); ?></span>
-				<span class=views title="viewed <?php echo $guide->views; ?> times"><?php echo $guide->views; ?></span>
-				<span class=rating data-stars=<?php echo round($guide->rating*2)/2; ?> title="rated <?php echo $guide->rating; ?> stars by <?php echo $guide->votes == 0 ? 'nobody' : ($guide->votes == 1 ? '1 person' : $guide->votes . ' people'); ?>"></span>
-				<time class=posted datetime="<?php echo gmdate('c', $guide->updated); ?>" title="posted <?php echo $guide->updated == $guide->posted ? strtolower(date('g:i a \o\n l F jS Y', $guide->updated)) : strtolower(date('g:i a \o\n l F jS Y', $guide->updated)) . ' (originally ' . strtolower(date('g:i a \o\n l F jS Y', $guide->posted)) . ')'; ?>"><?php echo t7format::SmartDate($guide->updated) ; ?></time>
+				<span class=guidelevel title="<?=$guide->level; ?> level"><?=$guide->level; ?></span>
+				<span class=tags><?=implode(', ', $tags); ?></span>
+				<span class=views title="viewed <?=$guide->views; ?> times"><?=$guide->views; ?></span>
+				<span class=rating data-stars=<?=round($guide->rating*2)/2; ?> title="rated <?=$guide->rating; ?> stars by <?=$guide->votes == 0 ? 'nobody' : ($guide->votes == 1 ? '1 person' : $guide->votes . ' people'); ?>"></span>
+				<time class=posted datetime="<?=gmdate('c', $guide->updated); ?>" title="posted <?=$guide->updated == $guide->posted ? strtolower(date('g:i a \o\n l F jS Y', $guide->updated)) : strtolower(date('g:i a \o\n l F jS Y', $guide->updated)) . ' (originally ' . strtolower(date('g:i a \o\n l F jS Y', $guide->posted)) . ')'; ?>"><?=t7format::SmartDate($guide->updated) ; ?></time>
 				<span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
 			</p>
 <?php
 if($user->IsAdmin() || $guide->author == $user->ID) {
 ?>
-			<nav class=actions data-id=<?php echo $guide->id; ?>>
-				<a class=edit href=edit>edit this guide</a>
+			<nav class=actions data-id=<?=$guide->id; ?>>
+				<a class=edit href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php?url=<?=$guide->url; ?>">edit this guide</a>
 <?php
 	if($user->IsAdmin() && $guide->status == 'draft') {
 ?>
-				<a class=publish href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this guide</a>
-				<a class=del href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=delete">delete this guide</a>
+				<a class=publish href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this guide</a>
+				<a class=del href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=delete">delete this guide</a>
 <?php
 	}
 ?>
 			</nav>
 <?php
 }
-echo $guide->summary;
-echo $guide->toc = MakeTOC($pages);
-if($_GET['page'] == 'all')
-	foreach($pages as $page) {
 ?>
-			<h2><?php echo $page->heading; ?></h2>
+			<nav class=toc>
+				<header>chapters</header>
+				<ol>
 <?php
-		echo $page->html;
-	}
-elseif(isset($pages[$_GET['page']])) {
+foreach($pages as $page) {
 ?>
-			<h2><?php echo $pages[$_GET['page']]->heading; ?></h2>
-<?php
-	echo $pages[$_GET['page']]->html;
-} else {
-?>
-			<p class=error>oops, this guide doesn’t have a first page.</p>
+					<li><a href="#ch<?=$page->number; ?>" title="jump to chapter:  <?=$page->heading; ?>"><?=$page->heading; ?></a></li>
 <?php
 }
-echo $guide->toc;
+?>
+				</ol>
+			</nav>
+<?php
+echo $guide->summary;
+foreach($pages as $page) {
+?>
+			<h2 id=ch<?=$page->number; ?>><?=$page->heading; ?></h2>
+<?php
+	echo $page->html;
+}
 
 if($guide->status == 'published') {
 ?>
 			<p>
-				how was it?  <?php $html->ShowVote('guide', $guide->id, $guide->vote); ?>
+				how was it?  <?=$html->ShowVote('guide', $guide->id, $guide->vote); ?>
 			</p>
 <?php
 	$html->ShowComments('guide', 'guide', $guide->id);
@@ -108,15 +102,8 @@ if($guide->status == 'published') {
 $html->Close();
 
 function MakeTOC($pages) {
-	$ret = '<ol class=toc>';
+	$ret = '<nav class=toc><header>chapters</header><ol>';
 	foreach($pages as $page)
-		if(+$page->number == +$_GET['page'])
-			$ret .= '<li class=selected>' . $page->heading . '</li>';
-		else
-			$ret .= '<li><a href="' . $page->number . '">' . $page->heading . '</a></li>';
-	if($_GET['page'] == 'all')
-		$ret .= '<li class="selected allpages">all ' . count($pages) . ' pages</li>';
-	else
-		$ret .= '<li class=allpages><a href=all>all ' . count($pages) . ' pages</a></li>';
-	return $ret . '</ol>';
+		$ret .= '<li><a href="#ch' . $page->number . '" title="jump to chapter:  ' . $page->heading . '">' . $page->heading . '</a></li>';
+	return $ret . '</ol></nav>';
 }

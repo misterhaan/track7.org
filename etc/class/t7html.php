@@ -251,7 +251,7 @@ class t7html {
 		<footer>
 			<a href="/feed.rss" title="add track7 activity to your feed reader">rss</a>
 			<a href="https://twitter.com/track7feed" title="follow track7 on twitter">twitter</a>
-			<a href="https://github.com/misterhaan/track7.org/blob/master<?php echo $_SERVER['SCRIPT_NAME']; ?>" title="view the php source for this page on github">php source</a>
+			<a href="https://github.com/misterhaan/track7.org/blob/master<?php echo $_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
 			<div id=copyright>© 1996 - 2017 track7 — <a href="/fewrights.php">few rights reserved</a></div>
 		</footer>
 	</body>

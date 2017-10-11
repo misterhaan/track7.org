@@ -2,7 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
 if(!$user->IsAdmin()) {
-	// this page is only for admin, so give an ajax error or try to go to page 1
+	// this page is only for admin, so give an ajax error or try to view the guide
 	if(isset($_GET['ajax'])) {
 		$ajax = new t7ajax();
 		$ajax->Fail('you don’t have the rights to do that.  you might need to log in again.');
@@ -11,9 +11,9 @@ if(!$user->IsAdmin()) {
 	}
 	if(isset($_GET['url']))
 		if(isset($_GET['tag']))
-			header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $_GET['tag'] . '/' . $_GET['url'] . '/1'));
+			header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $_GET['tag'] . '/' . $_GET['url']));
 		else
-			header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $_GET['url'] . '/1'));
+			header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $_GET['url']));
 	else
 		header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/'));
 	die;
@@ -77,15 +77,15 @@ $html->Open(($url ? 'edit' : 'add') . ' guide');
 				</label>
 				<!--ko foreach: pages -->
 				<fieldset>
-					<legend data-bind="text: 'page ' + number()"></legend>
-					<a class="action up" href="#moveup" title="move this page earlier" data-bind="visible: $index() > 0, click: MoveUp"></a>
-					<a class="action down" href="#movedown" title="move this page later" data-bind="visible: $index() < $parent.pages().length - 1, click: MoveDown"></a>
-					<a class="action del" href="#del" title="remove this page" data-bind="click: Remove"></a>
-					<label data-bind="attr: {title: 'heading for page ' + number()}">
+					<legend data-bind="text: 'chapter ' + number()"></legend>
+					<a class="action up" href="#moveup" title="move this chapter earlier" data-bind="visible: $index() > 0, click: MoveUp"></a>
+					<a class="action down" href="#movedown" title="move this chapter later" data-bind="visible: $index() < $parent.pages().length - 1, click: MoveDown"></a>
+					<a class="action del" href="#del" title="remove this chapter" data-bind="click: Remove"></a>
+					<label data-bind="attr: {title: 'heading for chapter ' + number()}">
 						<span class=label>heading:</span>
 						<span class=field><input maxlength=128 required data-bind="value: heading"></span>
 					</label>
-					<label class=multiline data-bind="attr: {title: 'content for page ' + number() + ' (use markdown)'}">
+					<label class=multiline data-bind="attr: {title: 'content for chapter ' + number() + ' (use markdown)'}">
 						<span class=label>content:</span>
 						<span class=field><textarea required rows="" cols="" data-bind="value: markdown"></textarea></span>
 					</label>
@@ -93,7 +93,7 @@ $html->Open(($url ? 'edit' : 'add') . ' guide');
 				<!--/ko-->
 				<label>
 					<span class=label></span>
-					<span class=field><a class="action new" href="#addpage" title="add a new blank page to the end" data-bind="click: AddPage">add page</a></span>
+					<span class=field><a class="action new" href="#addpage" title="add a new blank chapter to the end" data-bind="click: AddPage">add chapter</a></span>
 				</label>
 				<label data-bind="visible: status() != 'draft'">
 					<span class=label></span>
@@ -225,7 +225,7 @@ function Publish() {
 				$db->real_query('update guide_tags inner join guide_taglinks as tl on tl.tag=guide_tags.id and tl.guide=\'' . +$_POST['id'] .'\' set count=(select count(1) as count from guide_taglinks as tl left join guides as g on g.id=tl.guide where g.status=\'published\' and tl.tag=guide_tags.id group by tl.tag), lastused=(select max(g.updated) as lastused from guide_taglinks as tl left join guides as g on g.id=tl.guide where g.status=\'published\' and tl.tag=guide_tags.id group by tl.tag)');
 				if($guide = $db->query('select url, title from guides where id=\'' . +$_POST['id'] . '\' limit 1'))
 					if($guide = $guide->fetch_object())
-						t7send::Tweet('new guide: ' . $guide->title, t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $guide->url . '/1'));
+						t7send::Tweet('new guide: ' . $guide->title, t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $guide->url));
 			} else
 				$ajax->Fail('guide not updated.  this should only happen if the id doesn’t exist or the guide is already published.');
 		else

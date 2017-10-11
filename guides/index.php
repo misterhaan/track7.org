@@ -76,7 +76,7 @@
 <?php
 				while($draft = $drafts->fetch_object()) {
 ?>
-				<li><a href="<?php echo $draft->url; ?>/1"><?php echo $draft->title; ?></a></li>
+				<li><a href="<?php echo $draft->url; ?>"><?php echo $draft->title; ?></a></li>
 <?php
 				}
 ?>
@@ -96,7 +96,7 @@
 			<!-- ko foreach: guides -->
 			<article>
 				<header class=floatbgstop>
-					<h2><a data-bind="text: title, attr: {href: url + '/1'}" title="read this guide"></a></h2>
+					<h2><a data-bind="text: title, attr: {href: url}" title="read this guide"></a></h2>
 					<p class=guidemeta>
 						<span class=guidelevel data-bind="text: level, attr: {title: level + ' level'}"></span>
 						<span class=tags data-bind="visible: tags.length, attr: {title: tags.length == 1 ? '1 tag' : tags.length + ' tags'}, foreach: tags"><!-- ko if: $index() > 0 -->, <!-- /ko --><a class=tag data-bind="text: $data, attr: {href: ($root.tagid ? '../' : '') + $data + '/', title: 'guides tagged ' + $data}"></a></span>
@@ -109,8 +109,7 @@
 				<div class=summary data-bind="html: summary">
 				</div>
 				<footer><p class=readmore>
-					<a class=page1 data-bind="attr: {href: url + '/1'}">start with page 1</a>
-					<a class=allpages data-bind="attr: {href: url + '/all'}">read all pages together</a>
+					<a class=continue data-bind="attr: {href: url}">read this guide</a>
 				</p></footer>
 			</article>
 
@@ -129,7 +128,7 @@ function ShowActions($tagid = false) {
 	if($user->IsAdmin()) {
 ?>
 			<div class=floatbgstop><nav class=actions>
-				<a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/new" class=new>start a new guide</a>
+				<a href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>start a new guide</a>
 <?php
 		if($tagid) {
 ?>

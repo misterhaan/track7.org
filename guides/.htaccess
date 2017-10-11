@@ -1,9 +1,11 @@
 RewriteEngine on
 RewriteOptions inherit
+RewriteBase /guides
+RewriteRule ^([^/]+)/([^/]+)/([1-9][0-9]*|all)$ $1/$2#ch$3 [NE,R]
+RewriteRule ^([^/]+)/([1-9][0-9]*|all)$ $1#ch$2 [NE,R]
 RewriteRule ^([^/]+)/$ ?tag=$1
-RewriteRule ^([^/]+)/([^/]+)/([1-9][0-9]*|all)$ view.php?url=$2&page=$3&tag=$1
-RewriteRule ^([^/]+)/([1-9][0-9]*|all)$ view.php?url=$1&page=$2
-RewriteRule ^([^/]+)/([^/]+)/edit$ edit.php?url=$2&tag=$1
-RewriteRule ^([^/]+)/edit$ edit.php?url=$1
-RewriteRule ^([^/]+)/new$ edit.php?tag=$1
-RewriteRule ^new$ edit.php
+RewriteRule ^([^/]+)/([^/]+)$ view.php?url=$2&tag=$1
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^/]+)$ view.php?url=$1
+#RewriteRule ^([^/]+)/([^/]+)/edit$ edit.php?url=$2&tag=$1
+#RewriteRule ^([^/]+)/edit$ edit.php?url=$1
