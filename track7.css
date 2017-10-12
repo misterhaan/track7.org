@@ -487,7 +487,6 @@ h1 {
 }
 
 .actions {
-	background-color: #ccc;
 	margin: .5em 0;
 	line-height: 1.5em;
 	padding: 0 .125em .1em;
@@ -716,6 +715,10 @@ h3 {
 	font-size: .8em;
 }
 
+.meta.image {
+	text-align: center;
+}
+
 article > header .meta,
 article > header .postmeta,
 article > header .guidemeta {
@@ -776,6 +779,9 @@ article > header .guidemeta {
 .photometa .taken:before {
 	content: "\f083";
 }
+.meta .pieces:before {
+	content: "\f12e";
+}
 .meta .rating:before,
 .photometa .rating:before,
 .guidemeta .rating:before {
@@ -786,16 +792,16 @@ article > header .guidemeta {
 .meta .deviantart:before {
 	content: "\f1bd";
 }
-.guidemeta .scripttype:before {
+.meta .scripttype:before {
 	content: "\f121";
 }
-.guidemeta .schoolsubject:before {
+.meta .schoolsubject:before {
 	content: "\f02d";
 }
-.guidemeta .calculator:before {
+.meta .calculator:before {
 	content: "\f1ec";
 }
-.guidemeta .gameengine:before {
+.meta .gameengine:before {
 	content: "\f118";
 }
 .meta .firstpost:before {

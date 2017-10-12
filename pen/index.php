@@ -15,7 +15,7 @@
             $ajax->Data->stories[] = $story;
           }
         } else
-          $ajax->Fail('database error looking up stories.');
+          $ajax->Fail('database error looking up stories:  ' . $db->error);
         break;
     }
     $ajax->Send();

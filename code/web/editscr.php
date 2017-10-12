@@ -115,9 +115,9 @@ $html->Close();
 
 function LoadScript() {
 	global $ajax, $db;
-	if(isset($_GET['id']) && +$_GET['id'])
+	if(isset($_GET['id']) && $id = +$_GET['id'])
 		if($sel = $db->prepare('select s.name, s.url, s.usetype, s.descmd, s.instmd, s.download, group_concat(r.req separator \',\') as reqslist, s.github, s.wiki, s.released from code_web_scripts as s left join code_web_requirements as r on r.script=s.id where s.id=? group by s.id'))
-			if($sel->bind_param('i', $id = +$_GET['id']))
+			if($sel->bind_param('i', $id))
 				if($sel->execute())
 					if($sel->bind_result($name, $url, $usetype, $desc, $instr, $link, $reqslist, $github, $wiki, $released))
 						if($sel->fetch()) {

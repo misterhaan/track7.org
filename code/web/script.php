@@ -31,7 +31,7 @@ if(isset($_GET['url']))
 						echo $desc;
 ?>
 			<h2>files</h2>
-			<p class="calltoaction downloads">
+			<p class="downloads">
 				<a class="action zip" href="<?php echo $download; ?>">download</a>
 <?php
 						if($github) {

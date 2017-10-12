@@ -40,14 +40,14 @@ if($progs = $db->query('select p.id, p.url, p.name, p.released, s.name as subjec
 		}
 ?>
 						</h2>
-						<p class=guidemeta>
+						<p class=meta>
 							<time class=posted title="released <?php echo $prog->released->title; ?>" datetime="<?php echo $prog->released->datetime; ?>"><?php echo $prog->released->display; ?></time>
 							<span class=schoolsubject><?php echo $prog->subject; ?></span>
 							<span class=calculator><?php echo $prog->model; ?></span>
 						</p>
 					</header>
 					<?php echo $prog->deschtml; ?>
-					<p class=calltoaction>
+					<p class=downloads>
 						<a class="zip action" href="files/<?php echo $prog->url; ?>.zip"><?php echo $prog->url; ?>.zip</a>
 <?php
 		if($prog->ticalc) {

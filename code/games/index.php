@@ -39,14 +39,14 @@ if($wlds = $db->query('select w.id, w.url, w.name, w.released, e.name as engine,
 		}
 ?>
 						</h2>
-						<p class=guidemeta>
+						<p class=meta>
 							<time class=posted title="released <?php echo $wld->released->title; ?>" datetime="<?php echo $wld->released->datetime; ?>"><?php echo $wld->released->display; ?></time>
 							<span class=gameengine><?php echo $wld->engine; ?></span>
 						</p>
 					</header>
 					<img class=screenshot alt="" src="files/<?php echo $wld->url; ?>.png">
 					<?php echo $wld->deschtml; ?>
-					<p class=calltoaction>
+					<p class=downloads>
 						<a class="zip action" href="files/<?php echo $wld->url; ?>.zip"><?php echo $wld->url; ?>.zip</a>
 <?php
 		if($wld->dmzx) {

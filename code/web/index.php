@@ -31,7 +31,7 @@ if($scrs = $db->query('select s.url, s.name, s.deschtml, s.released, u.name as t
 				<article>
 					<header>
 						<h2><a href="<?php echo $scr->url; ?>"><?php echo htmlspecialchars($scr->name); ?></a></h2>
-						<p class=guidemeta>
+						<p class=meta>
 							<span class=scripttype><?php echo $scr->typename; ?></span>
 							<time class=posted title="released <?php echo $scr->released->title; ?>" datetime="<?php echo $scr->released->datetime; ?>"><?php echo $scr->released->display; ?></time>
 						</p>

@@ -44,14 +44,14 @@ if($apps = $db->query('select * from (select a.id, a.url, a.name, a.deschtml, r.
 							<img class=icon src="files/<?php echo $app->url; ?>.png" alt="">
 							<?php echo htmlspecialchars($app->name); ?>
 						</a></h2>
-						<p class=guidemeta>
+						<p class=meta>
 							<span class=version title="latest version <?php echo $app->version; ?>">v<?php echo $app->version; ?></span>
 							<time class=posted title="latest release <?php echo $app->released->title; ?>" datetime="<?php echo $app->released->datetime; ?>"><?php echo $app->released->display; ?></time>
 						</p>
 					</header>
 					<?php echo $app->deschtml; ?>
-					<p class="calltoaction downloads"><a class="action download" href="<?php echo $is64 || !$app->bin32url ? $app->binurl : $app->binurl; ?>">download latest release<?php if($app->bin32url) echo ' (' . ($is64 ? '64' : '32') . '-bit)'; ?></a></p>
-					<p class="calltoaction downloads"><a class="action list" href="<?php echo $app->url; ?>">other versions and source code</a></p>
+					<p class="downloads"><a class="action download" href="<?php echo $is64 || !$app->bin32url ? $app->binurl : $app->binurl; ?>">download latest release<?php if($app->bin32url) echo ' (' . ($is64 ? '64' : '32') . '-bit)'; ?></a></p>
+					<p class="downloads"><a class="action list" href="<?php echo $app->url; ?>">other versions and source code</a></p>
 				</article>
 <?php
 	}
