@@ -452,7 +452,7 @@ class t7authGoogle extends t7authRegisterable {
 			if(isset($response->sub) && $response->sub == $this->ID) {
 				$this->ProfileFull = $response->profile;
 				$this->ProfileShort = t7user::CollapseProfileLink($response->profile, self::SOURCE);
-				$this->Avatar = $response->picture;
+				$this->Avatar = str_replace('?sz=50', '?sz=64', $response->picture);
 				$this->Username = explode('@', $response->email)[0];
 				$this->DisplayName = $response->name;
 				$this->Email = $response->email;

@@ -23,41 +23,30 @@ if(isset($_GET['ajax'])) {
 
 $html = new t7html(['ko' => true]);
 $html->Open('user list');
-// TODO:  show whether they are a friend
 ?>
-			<h1>user list</h1>
+			<h1>users</h1>
 
 			<p class=info data-bind="visible: loadingUsers">loading user list...</p>
 			<p class=info data-bind="visible: !loadingUsers() && users().length == 0">no users found</p>
 
-			<table data-bind="visible: users().length">
-				<thead><tr>
-					<th>user</th>
-					<th>level</th>
-					<th>last login</th>
-					<th>registered</th>
-					<th class=number title="number of users who consider this user a friend">fans</th>
-					<th class=number title="total comments posted to track7">comments</th>
-					<th class=number title="total discussions and replies posted in the track7 forums">forum</th>
-				</tr></thead>
-				<tbody data-bind="foreach: users">
-					<tr>
-						<td class=username data-bind="css: {friend: friend}, attr: {title: friend ? displayname + ' is your friend' : null}"><a data-bind="attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}">
-							<img class="inline avatar" data-bind="attr: {src: avatar}" alt="">
-							<span data-bind="text: displayname"></span>
-						</a></td>
-						<td data-bind="text: level"></td>
-						<td><time data-bind="text: lastlogin.display + ' ago', attr: {datetime: lastlogin.datetime, title: lastlogin.title}"></time></td>
-						<td><time data-bind="text: registered.display + ' ago', attr: {datetime: registered.datetime, title: registered.title}"></time></td>
-						<td class=number data-bind="text: fans"></td>
-						<td class=number data-bind="text: comments"></td>
-						<td class=number data-bind="text: replies"></td>
-					</tr>
-				</tbody>
-				<tfoot data-bind="visible: hasMoreUsers"><tr>
-					<td colspan=7>show more users</td>
-				</tr></tfoot>
-			</table>
+			<ol id=userlist data-bind="visible: users().length, foreach: users">
+				<li>
+					<div class=userinfo>
+						<div class=username data-bind="css: {friend: friend}, attr: {title: friend ? displayname + ' is your friend' : null}">
+							<a data-bind="text: displayname || username, attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}"></a>
+						</div>
+						<a data-bind="attr: {href: username + '/'}"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
+						<div class="userlevel" data-bind="text: level"></div>
+					</div>
+					<div class=userstats>
+						<time class=joined data-bind="text: 'joined ' + registered.display + ' ago', attr: {datetime: registered.datetime, title: registered.title}"></time>
+						<time class=lastlogin data-bind="text: 'signed in ' + lastlogin.display + ' ago', attr: {datetime: lastlogin.datetime, title: lastlogin.title}"></time>
+						<div class=fans data-bind="visible: +fans, text: fans + (fans > 1 ? ' fans' : ' fan')"></div>
+						<div class=comments data-bind="visible: +comments, text: comments + (comments > 1 ? ' comments' : ' comment')"></div>
+						<div class=forum data-bind="visible: +replies, text: replies + (replies > 1 ? ' forum replies' : ' forum reply')"></div>
+					</div>
+				</li>
+			</ol>
 <?php
 $html->Close();
 
