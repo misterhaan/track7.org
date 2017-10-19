@@ -39,8 +39,8 @@ $html->Open('user list');
 						<div class="userlevel" data-bind="text: level"></div>
 					</div>
 					<div class=userstats>
+						<time class=lastlogin data-bind="text: 'here ' + lastlogin.display + ' ago', attr: {datetime: lastlogin.datetime, title: lastlogin.title}"></time>
 						<time class=joined data-bind="text: 'joined ' + registered.display + ' ago', attr: {datetime: registered.datetime, title: registered.title}"></time>
-						<time class=lastlogin data-bind="text: 'signed in ' + lastlogin.display + ' ago', attr: {datetime: lastlogin.datetime, title: lastlogin.title}"></time>
 						<div class=fans data-bind="visible: +fans, text: fans + (fans > 1 ? ' fans' : ' fan')"></div>
 						<div class=comments data-bind="visible: +comments, text: comments + (comments > 1 ? ' comments' : ' comment')"></div>
 						<div class=forum data-bind="visible: +replies, text: replies + (replies > 1 ? ' forum replies' : ' forum reply')"></div>

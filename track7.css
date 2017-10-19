@@ -2146,6 +2146,7 @@ ol.matches li:before {
 		display: -webkit-inline-flex;
 		display: inline-flex;
 		margin: .5em;
+		width: 18em;
 	}
 }
 #userlist .userinfo {
