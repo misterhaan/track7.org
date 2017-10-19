@@ -618,22 +618,23 @@ a.action.unlink:before {
 }
 
 .tagcloud {
-	background-color: #ccc;
+	background-color: #ddc;
 	font-size: .8em;
-	padding: .125em .625em;
+	padding: .125em .625em .25em;
 	vertical-align: middle;
 }
 @media (min-width: 25em) {
 	.tagcloud {
 		margin: 0 .625em;
-		padding: .25em .5em;
-		border-radius: .5em;
+		padding: .25em .5em .325em;
+		border-radius: .25em;
 	}
 }
 @media (min-width: 40em) {
 	.tagcloud {
 		float: right;
-		margin-top: -2em;
+		margin: -1.75em -.625em .625em .625em;
+		border-radius: .25em 0 0 .25em;
 	}
 }
 .tagcloud header {
@@ -654,7 +655,7 @@ a.action.unlink:before {
 		color: #333;
 		margin: -.25em -.5em 0;
 		padding: .25em .5em;
-		border-radius: .5em .5em 0 0;
+		border-radius: .5em 0 0 0;
 	}
 	.tagcloud header:before {
 		color: #888;
@@ -722,7 +723,7 @@ h3 {
 article > header .meta,
 article > header .postmeta,
 article > header .guidemeta {
-	background-color: #ccc;
+	background-color: #ddc;
 	color: #333;
 	padding: 0 .625em .15em;
 }
@@ -1177,7 +1178,7 @@ section.comment .userinfo .userlevel {
 }
 section.comment .comment header,
 ol.messages li .message header {
-	background-color: #ccc;
+	background-color: #ddc;
 	font-size: .8em;
 	padding: .15625em .625em;
 }
@@ -1558,7 +1559,7 @@ ul#taginfo {
 	}
 }
 #taginfo .tagdata {
-	background-color: #ccc;
+	background-color: #ddc;
 	padding: .25em .5em;
 	border-radius: .25em 0 0 .25em;
 	-webkit-flex: 0 0 auto;
@@ -1738,7 +1739,7 @@ img.art.preview {
 /*-------------------------------------------------------[ /code/index.php ]--*/
 #codetypes section {
 	margin-top: 1em;
-	background-color: #ccc;
+	background-color: #ddc;
 	padding-bottom: .0125em;
 }
 #codetypes h2 {
@@ -2289,7 +2290,7 @@ ol.conversations > li {
 	margin-left: .25em;
 	font-family: fontawesome;
 	display: inline-block;
-	background-color: #ccc;
+	background-color: #ddc;
 	color: #fff;
 	text-align: center;
 	content: "\f1d8";
@@ -2746,7 +2747,7 @@ section#contact a.steam:before {
 }
 
 #rank {
-	background-color: #ccc;
+	background-color: #ddc;
 	padding: .125em .625em;
 	vertical-align: middle;
 	margin: .5em 0;
