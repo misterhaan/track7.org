@@ -6,6 +6,7 @@
  *
  */
 class t7format {
+	const DATE_LONG = 'g:i a \o\n l F jS Y';
 	private static $parsedown = false;  // markdown parsing object
 
 	/**

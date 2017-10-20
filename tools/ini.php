@@ -1,4 +1,4 @@
-<?
+<?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
 $access = [0, 'user', 'directory', 3, 'system', 5, 'directory or system', 'all'];
@@ -16,6 +16,6 @@ foreach($ini as $key => $values) {
 				<strong>access:</strong>&nbsp; <?=$access[$values['access']]; ?>
 			</p>
 
-<?
+<?php
 }
 $html->Close();

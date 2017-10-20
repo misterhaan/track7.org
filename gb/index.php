@@ -1,20 +1,32 @@
-<?
-  require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/track7.php';
-  $page->Start('hosted guestbooks', 'list of hosted guestbooks');
-  $books = 'select name from gbbooks';
-  if($books = $db->Get($books, 'error reading list of guestbooks from database', 'no hosted guestbooks found')) {
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+$html = new t7html([]);
+$html->Open('hosted guestbooks');
 ?>
-      <ul>
-<?
-    while($b = $books->NextRecord()) {
+			<h1>hosted guestbooks</h1>
+<?php
+$books = 'select name from track7_t7data.gbbooks';
+if($books = $db->query('select name from track7_t7data.gbbooks'))
+	if($books->num_rows) {
 ?>
-        <li><a href="view.php?book=<?=$b->name; ?>"><?=$b->name; ?></a></li>
-<?
-    }
+			<ul>
+<?php
+		while($book = $books->fetch_object()) {
 ?>
-      </ul>
-
-<?
-  }
-  $page->End();
+				<li><a href="view.php?book=<?=$book->name; ?>"><?=$book->name; ?></a></li>
+<?php
+		}
 ?>
+			</ul>
+<?php
+	} else {
+?>
+			<p>no hosted guestbooks found.</p>
+<?php
+	}
+else {
+?>
+			<p class=error>error reading list of guestbooks from database.</p>
+<?php
+}
+$html->Close();

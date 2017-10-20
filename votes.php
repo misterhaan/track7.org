@@ -1,4 +1,4 @@
-<?
+<?php
 define('MAX_VOTE_GET', 24);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 

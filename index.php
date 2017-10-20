@@ -1,6 +1,5 @@
 <?php
 define('MAXITEMS', 9);
-define('LONGDATEFMT', 'g:i a \o\n l F jS Y');
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
 if(isset($_GET['ajax'])) {
@@ -13,7 +12,7 @@ if(isset($_GET['ajax'])) {
 				$ajax->Data->latest = false;
 				while($act = $acts->fetch_object()) {
 					$ajax->Data->latest = $act->posted;
-					$act->posted = t7format::TimeTag('smart', $act->posted, LONGDATEFMT);
+					$act->posted = t7format::TimeTag('smart', $act->posted, t7format::DATE_LONG);
 					$act->prefix = t7contrib::Prefix($act->conttype);
 					$act->postfix = t7contrib::Postfix($act->conttype);
 					$act->hasmore += 0;  // convert to numeric

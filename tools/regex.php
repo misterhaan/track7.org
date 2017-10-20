@@ -45,7 +45,7 @@ $html->Open('regular expression testing');
 						<button>match</button>
 					</form>
 					<div data-bind="if: match.checked">
-						<p data-bind="visible: match.matches().length < 1">no matches found</p>
+						<p data-bind="visible: match.found && match.matches().length < 1">no matches found</p>
 						<ol class=matches data-bind="foreach: match.matches">
 							<li><pre><code data-bind="text: $data"></code></pre></li>
 						</ol>
