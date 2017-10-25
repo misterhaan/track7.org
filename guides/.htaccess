@@ -6,6 +6,7 @@ RewriteRule ^([^/]+)/([1-9][0-9]*|all)$ $1#ch$2 [NE,R]
 RewriteRule ^([^/]+)/$ ?tag=$1
 RewriteRule ^([^/]+)/([^/]+)$ view.php?url=$2&tag=$1
 RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php !-f
 RewriteRule ^([^/]+)$ view.php?url=$1
 #RewriteRule ^([^/]+)/([^/]+)/edit$ edit.php?url=$2&tag=$1
 #RewriteRule ^([^/]+)/edit$ edit.php?url=$1

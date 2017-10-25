@@ -24,7 +24,7 @@
 ?>
 			<h1>
 				latest guides — <?php echo $tag->name; ?>
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> guides"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> guides"></a>
 			</h1>
 
 <?php
@@ -55,7 +55,7 @@
 ?>
 			<h1>
 				latest guides
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of all guides"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of all guides"></a>
 			</h1>
 
 			<nav class=tagcloud data-bind="visible: tags().length">

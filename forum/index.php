@@ -23,7 +23,7 @@ if($tag) {
 ?>
 			<h1>
 				<?php echo $tag->name; ?> forum
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of the <?php echo $tag->name; ?> forum"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of the <?php echo $tag->name; ?> forum"></a>
 			</h1>
 			<div class=editable id=taginfo data-tagid=<?php echo $tag->id; ?>><?php echo $tag->description; ?></div>
 <?php
@@ -44,7 +44,7 @@ if($tag) {
 ?>
 			<h1>
 				forum
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of the forum"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of the forum"></a>
 			</h1>
 
 			<nav class=tagcloud data-bind="visible: tags().length">

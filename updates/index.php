@@ -16,7 +16,7 @@ $html->Open('track7 updates');
 ?>
 			<h1>
 				track7 updates
-				<a class="feed" href="feed.rss" title="rss feed of track7 updates"><img alt=feed src="/images/feed.png"></a>
+				<a class="feed" href="feed.rss" title="rss feed of track7 updates"></a>
 			</h1>
 <?php
 if($user->IsAdmin()) {

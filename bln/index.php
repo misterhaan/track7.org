@@ -72,7 +72,7 @@ if(isset($_GET['ajax'])) {
 ?>
 			<h1>
 				latest blog entries — <?php echo $tag->name; ?>
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> entries"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> entries"></a>
 			</h1>
 
 <?php
@@ -103,7 +103,7 @@ if(isset($_GET['ajax'])) {
 ?>
 			<h1>
 				latest blog entries
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of all entries"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of all entries"></a>
 			</h1>
 
 			<nav class=tagcloud data-bind="visible: tags().length">

@@ -40,7 +40,7 @@ if($tag) {
 ?>
 			<h1>
 				visual art — <?php echo $tag->name; ?>
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> art"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> art"></a>
 			</h1>
 <?php
 	ShowActions($tag->id);
@@ -69,7 +69,7 @@ if($tag) {
 ?>
 			<h1>
 				visual art
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of art"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of art"></a>
 			</h1>
 
 			<nav class=tagcloud data-bind="visible: tags().length">

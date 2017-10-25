@@ -31,7 +31,7 @@ if($u) {
 ?>
 			<h1>
 				latest replies
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of the forum"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of the forum"></a>
 			</h1>
 <?php
 }

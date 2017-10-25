@@ -1,4 +1,4 @@
-<?
+<?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 $html = new t7html([]);
 $html->Open('feeds');
@@ -25,5 +25,5 @@ $html->Open('feeds');
 				<li><a href="/code/web/feed.rss">web scripts</a></li>
 				<li><a href="/forum/feed.rss">forum posts</a></li>
 			</ul>
-<?
+<?php
 $html->Close();

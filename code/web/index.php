@@ -5,7 +5,7 @@ $html->Open('web scripts');
 ?>
 			<h1>
 				web scripts
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of web scripts"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of web scripts"></a>
 			</h1>
 <?php
 if($user->IsAdmin()) {

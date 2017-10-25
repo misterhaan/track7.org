@@ -112,7 +112,7 @@ if($u) {
 ?>
 			<h1 data-user=all>
 				comments
-				<a class=feed href="<?php echo str_replace('.php', '.rss', $_SERVER['PHP_SELF']); ?>" title="rss feed of comments"><img alt=feed src="/images/feed.png"></a>
+				<a class=feed href="<?php echo str_replace('.php', '.rss', $_SERVER['PHP_SELF']); ?>" title="rss feed of comments"></a>
 			</h1>
 <?php
 }
