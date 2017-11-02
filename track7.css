@@ -1987,7 +1987,7 @@ ul.feeds a:before {
 .toc ol {
 	background-color: #ddc;
 	margin: 0;
-	padding: .125em .75em .25em 1.5em;
+	padding: .125em .75em .25em 2em;
 }
 @media (min-width: 25em) {
 	.toc {

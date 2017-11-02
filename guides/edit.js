@@ -188,10 +188,7 @@ function GuideViewModel() {
 		$.post("/guides/edit.php?ajax=save", {guidejson: ko.toJSON(data)}, function(result) {
 			$("button.save").removeClass("working").prop("disabled", false);
 			if(!result.fail)
-				if($("#editguide").data("url"))
-					window.location.href = "../" + result.url + "/1";
-				else
-					window.location.href = result.url + "/1";
+				window.location.href = result.url;
 			else
 				alert(result.message);
 		}, "json");
