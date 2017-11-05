@@ -619,10 +619,6 @@ a.action.unlink:before {
 }
 
 @media (min-width: 25em) {
-	.actions {
-		border-radius: .25em;
-		margin: .5em;
-	}
 	.actions a {
 		margin: 0 .5em;
 	}
