@@ -86,7 +86,7 @@ class t7html {
 <?php
 		} else {
 ?>
-				<a id=signin href="/user/login.php">sign in</a>
+				<a id=signin href="#signin">sign in</a>
 <?php
 		}
 ?>
