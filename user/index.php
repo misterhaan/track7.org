@@ -31,19 +31,21 @@ $html->Open('user list');
 
 			<ol id=userlist data-bind="visible: users().length, foreach: users">
 				<li>
-					<div class=userinfo>
-						<div class=username data-bind="css: {friend: friend}, attr: {title: friend ? displayname + ' is your friend' : null}">
-							<a data-bind="text: displayname || username, attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}"></a>
+					<header>
+						<div class=username data-bind="css: {friend: friend}, attr: {title: friend ? displayname + ' is your friend' : null}"><a data-bind="text: displayname || username, attr: {href: username + '/', title: 'view ' + displayname + '’s profile'}"></a></div>
+						<div class=userlevel data-bind="text: level"></div>
+					</header>
+					<div>
+						<a class=avatar data-bind="attr: {href: username + '/'}"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
+						<div class=userstats>
+							<time class=lastlogin data-bind="text: lastlogin.display + ' ago', attr: {datetime: lastlogin.datetime, title: 'last signed in ' + lastlogin.title}"></time>
+							<time class=joined data-bind="text: registered.display + ' ago', attr: {datetime: registered.datetime, title: 'joined ' + registered.title}"></time>
+							<div class=counts>
+								<div class=fans data-bind="visible: +fans, text: fans, attr: {title: fans + (fans > 1 ? ' people call ' : ' person calls ') + displayname + ' a friend'}"></div>
+								<div class=comments data-bind="visible: +comments, text: comments, attr: {title: displayname + ' has posted ' + comments + (comments > 1 ? ' comments' : ' comment')}"></div>
+								<div class=forum data-bind="visible: +replies, text: replies, attr: {title: displayname + ' has posted ' + replies + (replies > 1 ? ' forum replies' : ' forum reply')}"></div>
+							</div>
 						</div>
-						<a data-bind="attr: {href: username + '/'}"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
-						<div class="userlevel" data-bind="text: level"></div>
-					</div>
-					<div class=userstats>
-						<time class=lastlogin data-bind="text: 'here ' + lastlogin.display + ' ago', attr: {datetime: lastlogin.datetime, title: lastlogin.title}"></time>
-						<time class=joined data-bind="text: 'joined ' + registered.display + ' ago', attr: {datetime: registered.datetime, title: registered.title}"></time>
-						<div class=fans data-bind="visible: +fans, text: fans + (fans > 1 ? ' fans' : ' fan')"></div>
-						<div class=comments data-bind="visible: +comments, text: comments + (comments > 1 ? ' comments' : ' comment')"></div>
-						<div class=forum data-bind="visible: +replies, text: replies + (replies > 1 ? ' forum replies' : ' forum reply')"></div>
 					</div>
 				</li>
 			</ol>
