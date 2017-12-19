@@ -181,13 +181,6 @@ $(function() {
 		return false;
 	});
 
-	$("body").click(function() {
-		if(document.popup) {
-			document.popup.hide();
-			document.popup = false;
-		}
-	});
-
 	$(".droplist a.visibility").click(function(e) {
 		e.preventDefault();
 		e.stopPropagation();

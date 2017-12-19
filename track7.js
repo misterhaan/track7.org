@@ -2,11 +2,14 @@ $(function() {
 	// user menu
 	document.popup = false;
 	$("#signin, #whodat").click(function() {
-		if(document.popup) {
-			document.popup.hide();
+		var menu = $("#usermenu, #loginmenu");
+		if(document.popup && document.popup[0] == menu[0]) {
+			menu.hide();
 			document.popup = false;
 		} else {
-			document.popup = $("#usermenu, #loginmenu");
+			if(document.popup)
+				document.popup.hide();
+			document.popup = menu;
 			document.popup.show();
 		}
 		return false;

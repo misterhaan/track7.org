@@ -24,7 +24,25 @@ if(isset($_GET['ajax'])) {
 $html = new t7html(['ko' => true]);
 $html->Open('user list');
 ?>
-			<h1>users</h1>
+			<h1>
+				users by
+				<span class=sortoption>
+					<a class=droptrigger href="#lastlogin">latest sign-in</a>
+					<span class=droplist>
+						<a href="#lastlogin">latest sign-in</a>
+						<a href="#joined">join date</a>
+						<a href="#userlevel">level</a>
+						<a href="#username">name</a>
+<?php
+if($user->IsLoggedIn()) {
+?>
+						<a href="#friends">friendship</a>
+<?php
+}
+?>
+					</span>
+				</span>
+			</h1>
 
 			<p class=info data-bind="visible: loadingUsers">loading user list...</p>
 			<p class=info data-bind="visible: !loadingUsers() && users().length == 0">no users found</p>

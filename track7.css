@@ -2132,6 +2132,26 @@ ol.matches li:before {
 }
 
 /*-------------------------------------------------------[ /user/index.php ]--*/
+h1 .sortoption {
+	position: relative;
+}
+h1 .sortoption .droptrigger {
+	margin-left: 0;
+	background-color: transparent;
+}
+h1 .sortoption .droptrigger:after {
+	margin-left: .25em;
+}
+h1 .sortoption .droplist a {
+	font-size: .666666666666667em;
+	font-family: rosario;
+	font-weight: normal;
+	line-height: 1.25em;
+	padding: 0 .5em;
+	color: #000;
+	white-space: nowrap;
+	text-align: right;
+}
 #userlist {
 	list-style-type: none;
 	margin: .25em .5em;
