@@ -68,7 +68,7 @@ function vm() {
 				break;
 			case "username":
 				sortFunction = function(left, right) {
-					return left.username < right.username ? -1 : 1;
+					return left.username.toLowerCase() < right.username.toLowerCase() ? -1 : 1;
 				};
 				break;
 			case "joined":
