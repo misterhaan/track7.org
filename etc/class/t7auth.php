@@ -666,7 +666,7 @@ class t7authFacebook extends t7authRegisterable {
 	const SCOPE = 'public_profile,email';
 	const VERIFY = 'https://graph.facebook.com/v2.3/oauth/access_token';
 	const ID = 'https://graph.facebook.com/me';
-	const INFO = 'https://graph.facebook.com/v2.5/me';
+	const INFO = 'https://graph.facebook.com/v2.6/me';
 	const PICURL = 'https://graph.facebook.com/v2.10/{ID}/picture';
 
 	private $access = false;

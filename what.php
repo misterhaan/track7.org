@@ -74,7 +74,7 @@ $html->Open('about track7');
 				the hardware and software sides of a computer pretty well, which is why
 				track7 uses mostly code i personally wrote and i have been building my
 				own computers for as long as i’ve had a website.  you can download some
-				of my software in <a href="/analogu/">the analag underground</a> section.
+				of my software in <a href="/code/">the analag underground</a> section.
 				you’ll also see i sometimes post in <a href="/bln/">my blog</a> about
 				web and desktop development.  i also sometimes write up more formal
 				<a href="/guides/">guides</a> (some sites call them tutorials) to help
@@ -108,5 +108,5 @@ $html->Open('about track7');
 				now that you know a little bit about me, why not sign in and tell me a
 				little about yourself?
 			</p>
-<?
+<?php
 $html->Close();

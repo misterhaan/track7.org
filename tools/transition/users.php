@@ -8,7 +8,6 @@ if(isset($_GET['markcomplete']))
 	}
 
 require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/.dbinfo.track7.php';
-require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/lib/auText.php';
 
 $olddb = new mysqli(_DB_HOST, _DB_USER, _DB_PASS, _DB_NAME);
 $olddb->real_query('set names \'utf8\'');
@@ -100,8 +99,8 @@ if($oldusers = $olddb->query($oldusers)) {
 						<td><a href="/user/<?php echo $u->login; ?>/" title="view <?php echo $u->login; ?>’s profile"><?php echo $u->login; ?></a></td>
 						<td class=number><?php echo $u->uid; ?></td>
 						<td><?php echo $u->rank; ?></td>
-						<td><?php echo $u->lastlogin == null ? '' : auText::HowLongAgo($u->lastlogin) . ' ago'; ?></td>
-						<td><?php echo $u->since == null ? '' : auText::SmartTime($u->since, $user); ?></td>
+						<td><?php echo $u->lastlogin == null ? '' : t7format::HowLongAgo($u->lastlogin) . ' ago'; ?></td>
+						<td><?php echo $u->since == null ? '' : t7format::SmartDate($u->since, $user); ?></td>
 						<td class=number><?php echo $u->fans; ?></td>
 						<td class=number><?php echo $u->posts; ?></td>
 						<td class=number><?php echo $u->comments; ?></td>

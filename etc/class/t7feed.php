@@ -16,7 +16,6 @@ class t7feed {
 	 * @param string $description a description of the feed.
 	 * @param string $copyright the copyright of the contents of the feed.
 	 * @param string $lang the language of the feed.  default is 'en-us'.
-	 * @return auFeed
 	 */
 	public function t7feed($title, $url = '', $description = '', $copyright = '', $lang = 'en-us') {
 		header('Content-Type: application/rss+xml; charset=utf-8');

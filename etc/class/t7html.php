@@ -131,7 +131,7 @@ class t7html {
 <?php
 		}
 ?>
-		<main role=main>
+		<main>
 <?php
 
 	}
@@ -139,7 +139,7 @@ class t7html {
 	/**
 	 * show a 5-star voting apparatus for this thing.
 	 * @param string $type prefix of the _votes table to use
-	 * @param unknown $key typically the id of the thing being voted on
+	 * @param string $key typically the id of the thing being voted on
 	 * @param integer $vote current vote in number of stars (1 through 5)
 	 */
 	public function ShowVote($type, $key, $vote) {
@@ -165,7 +165,7 @@ class t7html {
 	 * show comments and form for adding comments.
 	 * @param string $name display name of the type of thing the comments apply to
 	 * @param string $type prefix of the _comments table to use
-	 * @param unknown $key typically the id of the thing the comments apply to
+	 * @param string $key typically the id of the thing the comments apply to
 	 */
 	public function ShowComments($name, $type, $key) {
 		global $user;
