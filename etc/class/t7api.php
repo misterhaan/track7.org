@@ -11,17 +11,17 @@ abstract class t7api {
 	 * respond to an api request or show api documentation.
 	 */
 	public static function Respond() {
-		if(isset($_SERVER['PATH_INFO']) && substr($_SERVER['PATH_INFO'], 0, 1) == '/') {
+		if(isset($_GET['method'])) {
 			$ajax = new t7ajax();
-			$method = substr($_SERVER['PATH_INFO'], 1);
-			if(false === strpos($method, '/')) {
+			$method = $_GET['method'];
+			if(preg_match('/^[a-zA-Z0-9_]+$/', $method)) {
 				$method .= 'Action';
 				if(method_exists(static::class, $method))
 					static::$method($ajax);
 				else
-					$ajax->Fail('Requested method does not exist.');
+					$ajax->Fail('requested method does not exist.');
 			} else
-				$ajax->Fail('Invalid request.');
+				$ajax->Fail('invalid request.');
 			$ajax->Send();
 		} else {
 			$html = new t7html();
