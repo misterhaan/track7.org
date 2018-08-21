@@ -21,6 +21,9 @@ function __autoload($class) {
 		case 't7ajax':
 			require_once 't7ajax.php';
 			break;
+		case 't7api':
+			require_once 't7api.php';
+			break;
 		case 't7auth':
 		case 't7authGoogle':
 		case 't7authTwitter':
