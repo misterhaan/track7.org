@@ -8,7 +8,7 @@ $html->Open('track7');
 
 			<section id=features>
 				<nav>
-					<a v-for="feat in features" :href="'/' + feat.id + '/'" :title=desc>
+					<a v-for="feat in features" :href="'/' + feat.id + '/'" :title=feat.desc>
 						<img :src="'/' + feat.id + '/favicon.png'" alt="">
 						{{feat.name}}
 					</a>
