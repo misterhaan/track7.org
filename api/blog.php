@@ -15,6 +15,18 @@ class blogApi extends t7api {
 	 */
 	protected static function ShowDocumentation() {
 ?>
+			<h2 id=getcheckurl>get checkurl</h2>
+			<p>check if a url is available for a blog entry.</p>
+			<dl class=parameters>
+				<dt>url</dt>
+				<dd>url to check.</dd>
+				<dt>id</dt>
+				<dd>
+					id of blog entry that wants to use the url.  optional; assumes new
+					entry.
+				</dd>
+			</dl>
+
 			<h2 id=postdelete>post delete</h2>
 			<p>delete a draft blog entry.  only available to admin.</p>
 			<dl class=parameters>
@@ -71,6 +83,18 @@ class blogApi extends t7api {
 			</dl>
 
 <?php
+	}
+
+	/**
+	 * check availability of a url for a blog entry.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function checkurlAction($ajax) {
+		if(isset($_GET['url']) && trim($_GET['url'])) {
+			$id = isset($_GET['id']) ? +$_GET['id'] : 0;
+			self::CheckUrl(trim($_GET['url']), $id, $ajax);
+		} else
+			$ajax->Fail('url is required.');
 	}
 
 	/**
@@ -197,39 +221,35 @@ class blogApi extends t7api {
 				if(!$url)
 					$url = t7format::NameToUrl($title);
 				$id = isset($_POST['id']) ? +$_POST['id'] : false;
-				if(preg_match('/^[a-z0-9\-_]{1,32}$/', $url))
-					if(self::UrlIsAvailable($url, $id, $ajax)) {
-						$save = $id
-							? 'update blog_entries set title=\'' . $db->escape_string($title) . '\', url=\'' . $db->escape_string($url) . '\', markdown=\'' . $db->escape_string($_POST['content']) . '\', content=\'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\' where id=\'' . +$id . '\' limit 1'
-							: 'insert into blog_entries (title, url, markdown, content, posted) values (\'' . $db->escape_string($title) . '\', \'' . $db->escape_string($url) . '\', \'' . $db->escape_string($_POST['content']) . '\', \'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\', \'' . +time() . '\')';
-						if($db->real_query($save)) {
-							if(!$id)
-								$id = $db->insert_id;
-								$del = isset($_POST['deltags']) ? explode(',', trim($_POST['deltags'])) : [];
-								if(count($del))
-									$db->real_query('delete from blog_entrytags where entry=\'' . +$id . '\' and tag in (select id from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $del) . '\')))');
-								$new = isset($_POST['newtags']) ? explode(',', trim($_POST['newtags'])) : [];
-								if(count($new)) {
-									$db->query('insert into blog_tags (name) values (trim(\'' . implode('\')), (trim(\'', $new) . '\')) on duplicate key update name=name');
-									$db->query('insert into blog_entrytags (entry, tag) select \'' . +$id . '\' as entry, id as tag from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $new) . '\'))');
-								}
-								if($entry = $db->query('select url, status from blog_entries where id=\'' . +$id . '\' limit 1'))
-									if($entry = $entry->fetch_object()) {
-										if($entry->status == 'published' && (count($del) || count($new))) {
-											$tags = array_keys(array_flip($del) + array_flip($new));
-											$db->real_query('update blog_tags as t inner join (select et.tag as tag, count(1) as count, max(e.posted) as lastused from blog_entrytags as et left join blog_entries as e on e.id=et.entry left join blog_tags as tn on tn.id=et.tag where tn.name in (trim(\'' . implode('\'), trim(\'', $tags) . '\')) and e.status=\'published\' group by et.tag) as s on s.tag=t.id set t.count=s.count, t.lastused=s.lastused');
-										}
-										$ajax->Data->url = $entry->url;
-									} else
-										$ajax->Fail('saved entry but then couldn’t find it.');
-								else
-									$ajax->Fail('saved entry but got a database error looking it up', $db->errno . ' ' . $db->error);
-						} else
-							$ajax->Fail('database error saving blog entry', $db->errno . ' ' . $db->error);
+				if(self::CheckUrl($url, $id, $ajax)) {
+					$save = $id
+						? 'update blog_entries set title=\'' . $db->escape_string($title) . '\', url=\'' . $db->escape_string($url) . '\', markdown=\'' . $db->escape_string($_POST['content']) . '\', content=\'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\' where id=\'' . +$id . '\' limit 1'
+						: 'insert into blog_entries (title, url, markdown, content, posted) values (\'' . $db->escape_string($title) . '\', \'' . $db->escape_string($url) . '\', \'' . $db->escape_string($_POST['content']) . '\', \'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\', \'' . +time() . '\')';
+					if($db->real_query($save)) {
+						if(!$id)
+							$id = $db->insert_id;
+							$del = isset($_POST['deltags']) ? explode(',', trim($_POST['deltags'])) : [];
+							if(count($del))
+								$db->real_query('delete from blog_entrytags where entry=\'' . +$id . '\' and tag in (select id from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $del) . '\')))');
+							$new = isset($_POST['newtags']) ? explode(',', trim($_POST['newtags'])) : [];
+							if(count($new)) {
+								$db->query('insert into blog_tags (name) values (trim(\'' . implode('\')), (trim(\'', $new) . '\')) on duplicate key update name=name');
+								$db->query('insert into blog_entrytags (entry, tag) select \'' . +$id . '\' as entry, id as tag from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $new) . '\'))');
+							}
+							if($entry = $db->query('select url, status from blog_entries where id=\'' . +$id . '\' limit 1'))
+								if($entry = $entry->fetch_object()) {
+									if($entry->status == 'published' && (count($del) || count($new))) {
+										$tags = array_keys(array_flip($del) + array_flip($new));
+										$db->real_query('update blog_tags as t inner join (select et.tag as tag, count(1) as count, max(e.posted) as lastused from blog_entrytags as et left join blog_entries as e on e.id=et.entry left join blog_tags as tn on tn.id=et.tag where tn.name in (trim(\'' . implode('\'), trim(\'', $tags) . '\')) and e.status=\'published\' group by et.tag) as s on s.tag=t.id set t.count=s.count, t.lastused=s.lastused');
+									}
+									$ajax->Data->url = $entry->url;
+								} else
+									$ajax->Fail('saved entry but then couldn’t find it.');
+							else
+								$ajax->Fail('saved entry but got a database error looking it up', $db->errno . ' ' . $db->error);
 					} else
-						$ajax->Fail('url \'' . $url . '\'has already been used by a different blog entry.');
-				else
-					$ajax->Fail('url must be 1 - 32 lowercase letters, numbers, and dashes.');
+						$ajax->Fail('database error saving blog entry', $db->errno . ' ' . $db->error);
+				}
 			} else
 				$ajax->Fail('title, url, and content are required.');
 		else
@@ -237,18 +257,25 @@ class blogApi extends t7api {
 	}
 
 	/**
-	 * make sure the url isn't already used, unless it's already used by this entry.
+	 * make sure the url is valid and isn't already used, unless it's already used
+	 * by this entry.
 	 * @param string $url url segment to check
 	 * @param int $id id of blog entry we're checking for, because it's okay if this entry is already using the url.
 	 * @param t7ajax $ajax ajax object or reporting an error.  optional.
-	 * @return boolean whether the url is available.
+	 * @return boolean whether the url is valid and available.
 	 */
-	private static function UrlIsAvailable($url, $id, $ajax = null) {
+	private static function CheckUrl($url, $id, $ajax) {
 		global $db;
-		if($chk = $db->query('select 1 from blog_entries where url=\'' . $db->escape_string($url) . '\' and not id=\'' . +$id . '\' limit 1'))
-			return $chk->num_rows == 0;
-		if($ajax)
-			$ajax->Fail('error checking if blog entry url is unique', $db->errno . ' ' . $db->error);
+		if(t7format::ValidUrlPiece($url))
+			if($chk = $db->query('select title from blog_entries where url=\'' . $db->escape_string($url) . '\' and not id=\'' . +$id . '\' limit 1'))
+				if($chk = $chk->fetch_object())
+					$ajax->Fail('url already in use by “' . $chk->title . '.”');
+				else
+					return true;
+			else
+				$ajax->Fail('error checking if blog entry url is available', $db->errno . ' ' . $db->error);
+		else
+			$ajax->Fail('url must be at least three characters and can only contain letters, digits, periods, dashes, and underscores.');
 		return false;
 	}
 }

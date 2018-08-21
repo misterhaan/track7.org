@@ -1,24 +1,32 @@
 $(function() {
 	document.originalTags = [];
 	LoadEntry();
-	$("#title").keyup(function() {
-		$("#url").prop("placeholder", $(this).val().replace(/ /g, "-").replace(/[^a-z0-9\.\-_]*/, ""));
+	$("#title").change(function() {
+		$("#url").attr("placeholder", $(this).val().toLowerCase().replace(/ /g, "-").replace(/[^a-z0-9\.\-_]*/, ""));
+		if(!$("#url").val())
+			ValidateUrl();
 	});
-	// TODO:  set url field to only accept allowed characters
-	// TODO:  set url field to verify uniqueness (guides do this)
+	$("#url").keyup(function(e) {
+		var field = $(this);
+		field.val(field.val().toLowerCase().replace(/ /g, "-").replace(/[^a-z0-9\.\-_]/, ""));
+	});
+	$("#url").change(ValidateUrl);
 	// TODO:  set tags field to only accept allowed characters
 	// TODO:  set up tags field to suggest existing tags (guides do this)
 	$("#editentry").submit(SaveEntry);
 });
+
+function ValidateUrl() {
+	ValidateField($("#url"), "/api/blog/checkurl&id=" + $("#editentry").data("entryid"), "url", "validating url...", "url available", "url required");
+}
 
 function LoadEntry() {
 	if($("#editentry").data("entryid")) {
 		$.get("/api/blog/edit", {id: $("#editentry").data("entryid")}, function(data, status, xhr) {
 			var result = $.parseJSON(xhr.responseText);
 			if(!result.fail) {
-				$("#title").val(result.title);
-				$("#url").val(result.url);
-				$("#url").prop("placeholder", result.title.replace(/ /g, "-").replace(/[^a-z0-9\.\-_]*/, ""));
+				$("#url").val(result.url).change();  // load url before title so we don't validate the default url
+				$("#title").val(result.title).change();
 				$("#content").val(result.content);
 				autosize.update($("#content"));
 				$("#tags").val(result.tags);
