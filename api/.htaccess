@@ -1,6 +1,7 @@
 AcceptPathInfo Default
 RewriteEngine On
 RewriteOptions inherit
+RewriteBase /api/
 
-RewriteRule ^([^\/\.]+)\/([^\/\.]+)$ $1.php/$2 [QSA]
+RewriteRule ^([^\/\.]+)\/([^\/\.]+)$ $1.php/$2 [R,QSA]
 RewriteRule ^([^\/\.]+)$ $1.php
