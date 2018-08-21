@@ -1,5 +1,6 @@
 /.buildpath
 /.project
+/.settings/*
 /album/photos/*
 /art/img/*
 /code/calc/files/*
@@ -7,3 +8,4 @@
 /code/vs/files/*
 /code/web/files/*
 /lego/data/*
+/vue.js

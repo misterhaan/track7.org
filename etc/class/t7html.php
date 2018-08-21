@@ -34,6 +34,16 @@ class t7html {
 		<script src="/knockout-3.4.2.js" type="text/javascript"></script>
 <?php
 		}
+		if(isset($this->params['vue']) && $this->params['vue'])
+			if(file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.js')) {
+				?>
+		<script src="/vue.js" type="text/javascript"></script>
+<?php
+			} else {
+?>
+		<script src="/vue.min.js" type="text/javascript"></script>
+<?php
+			}
 ?>
 		<script src="/prism.js" type="text/javascript"></script>
 		<script src="/track7.js" type="text/javascript"></script>
@@ -137,6 +147,20 @@ class t7html {
 	}
 
 	/**
+	 * show a list of tags
+	 * @param string $tagType type of tags to look up from tags api
+	 * @param string $pluralName what to call multiple of the item that can be tagged
+	 */
+	public function ShowTags($tagType, $pluralName) {
+?>
+			<nav class="tagcloud hidden" data-tagtype=<?php echo $tagType; ?> v-if=tags.length>
+				<header>tags</header>
+				<a v-for="tag in tags" :href="tag.name + '/'" :title="'<?php echo $pluralName; ?> tagged ' + tag.name" :data-count=tag.count>{{tag.name}}</a>
+			</nav>
+<?php
+	}
+
+	/**
 	 * show a 5-star voting apparatus for this thing.
 	 * @param string $type prefix of the _votes table to use
 	 * @param string $key typically the id of the thing being voted on
@@ -172,38 +196,40 @@ class t7html {
 ?>
 			<section id=comments>
 				<h2>comments</h2>
-				<p data-bind="visible: error(), text: error"></p>
-				<p data-bind="visible: !loadingComments() && comments().length == 0">
+				<p v-if=error data-bind="visible: error(), text: error">{{error}}</p>
+				<p v-if="!loading && !comments.length" data-bind="visible: !loadingComments() && comments().length == 0">
 					there are no comments on this <?php echo $name; ?> so far.  you could be the first!
 				</p>
 				<!-- ko foreach: comments -->
-				<section class=comment>
+				<section class=comment v-for="(comment, index) in comments">
 					<div class=userinfo>
 						<!-- ko if: username -->
-						<div class=username data-bind="css: {friend: friend}, attr: {title: friend ? (displayname || username) + ' is your friend' : null}">
-							<a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}"></a>
+						<template v-if=comment.username>
+						<div class=username :class="{friend: comment.friend}" :title="comment.friend ? (comment.displayname || comment.username) + ' is your friend' : null" data-bind="css: {friend: friend}, attr: {title: friend ? (displayname || username) + ' is your friend' : null}">
+							<a :href="'/user/' + comment.username + '/'" data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}">{{comment.displayname || comment.username}}</a>
 						</div>
-						<a data-bind="visible: avatar, attr: {href: '/user/' + username + '/'}"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
-						<div class=userlevel data-bind="visible: level, text: level"></div>
+						<a :href="'/user/' + comment.username + '/'" data-bind="visible: avatar, attr: {href: '/user/' + username + '/'}"><img class=avatar alt="" :src=comment.avatar data-bind="attr: {src: avatar}"></a>
+						<div class=userlevel data-bind="visible: level, text: level">{{comment.level}}</div>
+						</template>
 						<!-- /ko -->
 						<!-- ko if: !username && contacturl -->
-						<div class=username><a data-bind="text: name, attr: {href: contacturl}"></a></div>
+						<div class=username v-if="!comment.username && comment.contacturl"><a :href=comment.contacturl data-bind="text: name, attr: {href: contacturl}">{{comment.name}}</a></div>
 						<!-- /ko -->
 						<!-- ko if: !username && !contacturl -->
-						<div class=username data-bind="text: name"></div>
+						<div v-if="!comment.username && !comment.contacturl" class=username data-bind="text: name"></div>
 						<!-- /ko -->
 					</div>
 					<div class=comment>
-						<header>posted <time data-bind="text: posted.display, attr: {datetime: posted.datetime}"></time></header>
-						<div class=content data-bind="visible: !editing(), html: html"></div>
-						<div class="content edit" data-bind="visible: editing">
-							<textarea data-bind="value: markdown"></textarea>
+						<header>posted <time :datetime=comment.posted.datetime data-bind="text: posted.display, attr: {datetime: posted.datetime}">{{comment.posted.display}}</time></header>
+						<div v-if=!comment.editing class=content v-html=comment.html data-bind="visible: !editing(), html: html"></div>
+						<div v-if=comment.editing class="content edit" data-bind="visible: editing">
+							<textarea v-model=comment.markdown data-bind="value: markdown"></textarea>
 						</div>
-						<footer data-bind="visible: canchange">
-							<a class="okay action" data-bind="visible: editing(), click: $parent.SaveComment" href="/comments.php?ajax=save">save</a>
-							<a class="cancel action" data-bind="visible: editing(), click: $parent.UneditComment" href="#">cancel</a>
-							<a class="edit action" data-bind="visible: !editing(), click: $parent.EditComment" href="/comments.php?ajax=edit">edit</a>
-							<a class="del action" data-bind="visible: !editing(), click: $parent.DeleteComment" href="/comments.php?ajax=delete">delete</a>
+						<footer v-if=comment.canchange data-bind="visible: canchange">
+							<a class="okay action" v-if=comment.editing v-on:click.prevent=Save(comment) data-bind="visible: editing(), click: $parent.SaveComment" href="/comments.php?ajax=save">save</a>
+							<a class="cancel action" v-if=comment.editing v-on:click.prevent=Unedit(comment) data-bind="visible: editing(), click: $parent.UneditComment" href="#">cancel</a>
+							<a class="edit action" v-if=!comment.editing v-on:click.prevent=Edit(comment) data-bind="visible: !editing(), click: $parent.EditComment" href="/comments.php?ajax=edit">edit</a>
+							<a class="del action" v-if=!comment.editing v-on:click.prevent="Delete(comment, index)" data-bind="visible: !editing(), click: $parent.DeleteComment" href="/comments.php?ajax=delete">delete</a>
 						</footer>
 					</div>
 				</section>

@@ -55,6 +55,11 @@ body.text {
 		position: relative;
 	}
 }
+
+.hidden {
+	display: none;
+}
+
 h1, h2, h3 {
 	font-family: monda;
 	line-height: 1.125em;
