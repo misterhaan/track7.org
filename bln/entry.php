@@ -37,7 +37,7 @@ if(!$entry || $entry->status != 'published' && !$user->IsAdmin()) {
 	die;
 }
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open(htmlspecialchars($entry->title) . ($tag ? ' - ' . $tag . ' - blog' : ' - blog'));
 ?>
 			<h1><?php echo htmlspecialchars($entry->title); ?></h1>
@@ -71,8 +71,8 @@ if($user->IsAdmin()) {
 <?php
 	if($entry->status == 'draft') {
 ?>
-				<a id=publishentry class=publish href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this entry</a>
-				<a id=delentry class=del href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=delete">delete this entry</a>
+				<a id=publishentry class=publish href="/api/blog/publish">publish this entry</a>
+				<a id=delentry class=del href="/api/blog/delete">delete this entry</a>
 <?php
 	}
 ?>
