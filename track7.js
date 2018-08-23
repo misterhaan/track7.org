@@ -125,10 +125,10 @@ function InitTags() {
 		$("#editdesc").hide();
 		e.preventDefault();
 	});
-	$("#editdesc a[href$='#tagedit']").click(function(e) {
-		$("#editdesc textarea").val($("#taginfo .editable").html());
-		$("#editdesc").show().focus();
+	$("a[href$='#tagedit']").click(function(e) {
 		$("a[href$='#tagedit']").hide();
+		$("#editdesc").show();
+		$("#editdesc textarea").val($("#taginfo .editable").html()).focus();
 		e.preventDefault();
 	});
 	$("#editdesc a[href$='#save']").click(function(e) {
