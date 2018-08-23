@@ -216,7 +216,7 @@ class t7html {
 						<div class=username v-if="!comment.username && comment.contacturl"><a :href=comment.contacturl data-bind="text: name, attr: {href: contacturl}">{{comment.name}}</a></div>
 						<!-- /ko -->
 						<!-- ko if: !username && !contacturl -->
-						<div v-if="!comment.username && !comment.contacturl" class=username data-bind="text: name"></div>
+						<div v-if="!comment.username && !comment.contacturl" class=username data-bind="text: name">{{comment.name}}</div>
 						<!-- /ko -->
 					</div>
 					<div class=comment>
