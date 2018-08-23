@@ -213,7 +213,7 @@ function VerifyCommonFields($ajax, $req, $field2 = 'key') {
 	}
 	else
 		$ajax->Fail('comment type is required');
-		return false;
+	return false;
 }
 
 function KeyName($type) {

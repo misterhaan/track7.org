@@ -47,7 +47,7 @@ class blogApi extends t7api {
 				<dt>tagid</dt>
 				<dd>specify a tag id to only retrieve entries with that tag.</dd>
 				<dt>before</dt>
-				<dd>specify a timestamp to only return activity before then.</dd>
+				<dd>specify a timestamp to only return entries before then.</dd>
 			</dl>
 
 			<h2 id=postpublish>post publish</h2>

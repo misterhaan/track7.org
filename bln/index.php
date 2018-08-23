@@ -45,8 +45,8 @@ if($tag) {
 			</p>
 <?php
 } elseif($user->IsAdmin() && $drafts = $db->query('select url, title from blog_entries where status=\'draft\' order by posted desc'))
-if($drafts->num_rows) {
-	?>
+	if($drafts->num_rows) {
+?>
 			<h2>draft entries</h2>
 			<ul>
 <?php
