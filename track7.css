@@ -452,7 +452,6 @@ main {
 	color: #444;
 	padding: .5em 0;
 	position: relative;
-	overflow: auto;
 }
 @media (min-width: 25em) {
 	main {
