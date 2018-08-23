@@ -389,6 +389,15 @@ function InitTabLayout() {
 }
 
 /**
+ * Translate a name into a URL segment based on the name.
+ * @param name display name or title
+ * @returns URL segment
+ */
+function NameToUrl(name) {
+	return name.toLowerCase().replace(/ /g, "-").replace(/[^a-z0-9\.\-_]*/g, "");
+}
+
+/**
  * Validate a form field via ajax.  Usually called when the field changes.
  * @param field form field to validate
  * @param url ajax url to request (HTTP GET) for validation

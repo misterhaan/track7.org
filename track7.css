@@ -1337,6 +1337,10 @@ main .field .suggestinput input:not([type="checkbox"]):not([type="radio"]) {
 .suggestions > *.selected {
 	background-color: #ace;
 }
+.suggestions > * em {
+	font-style: normal;
+	font-weight: bold;
+}
 .validation {
 	margin-top: -.5em;
 }

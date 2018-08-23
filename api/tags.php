@@ -32,6 +32,13 @@ class tagsApi extends t7api {
 				<dd>type of tags to list.  required.</dd>
 			</dl>
 
+			<h2 id=getnames>get names</h2>
+			<p>retrieves a list of tag names for a type.</p>
+			<dl class=parameters>
+				<dt>type</dt>
+				<dd>type of tags to list.  required.</dd>
+			</dl>
+
 			<h2 id=postsetdesc>post setdesc</h2>
 			<p>sets the description for a tag.  only available to admin.</p>
 			<dl class=parameters>
@@ -60,6 +67,23 @@ class tagsApi extends t7api {
 				$ajax->Fail('error getting list of ' . $_GET['type'] . ' tags', $db->errno . ' ' . $db->error);
 		else
 			$ajax->Fail('unknown tag type for list.  supported tag types are:  ' . implode(', ', self::$AllowedTypes));
+	}
+
+	/**
+	 * get names of tags in use.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function namesAction($ajax) {
+		global $db;
+		if(self::IsTypeSupported($_GET['type']))
+			if($tags = $db->query('select name from ' . $_GET['type'] . '_tags where count>0 order by name')) {
+				$ajax->Data->names = [];
+				while($tag = $tags->fetch_object())
+					$ajax->Data->names[] = $tag->name;
+			} else
+				$ajax->Fail('error getting list of ' . $_GET['type'] . ' tag names', $db->errno . ' ' . $db->error);
+				else
+					$ajax->Fail('unknown tag type for names.  supported tag types are:  ' . implode(', ', self::$AllowedTypes));
 	}
 
 	/**
