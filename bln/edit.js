@@ -19,20 +19,20 @@ $(function() {
 				get: function() {
 					return this.tags.join(",");
 				}, set: function(val) {
-					this.tags = val.split(",");
+					this.tags = val ? val.split(",") : [];
 				}
 			},
 			tagChoices: function() {
 				if(this.tagSearch) {
 					var choices = [];
-					if(this.allTags.indexOf(this.tagSearch) < 0)
+					if(this.allTags.indexOf(this.tagSearch) < 0 && this.tags.indexOf(this.tagSearch) < 0)
 						choices.push("“" + this.tagSearch + "”");
 					for(var t = 0; t < this.allTags.length; t++)
-						if(this.allTags[t].indexOf(this.tagSearch) >= 0)
+						if(this.allTags[t].indexOf(this.tagSearch) >= 0 && this.tags.indexOf(this.allTags[t]) < 0)
 							choices.push(this.allTags[t].replace(new RegExp(this.tagSearch.replace(/\./, "\\."), "gi"), "<em>$&</em>"));
 					return choices;
 				}
-				return this.allTags;
+				return this.allTags.filter(function(tag) { return entry.tags.indexOf(tag) < 0; });
 			}
 		},
 		watch: {
@@ -63,7 +63,7 @@ $(function() {
 						entry.ValidateUrl();
 						entry.content = result.content;
 						entry.tagList = result.tags;
-						entry.originalTags = result.tags.split(",");
+						entry.originalTags = result.tags ? result.tags.split(",") : [];
 						setTimeout(function() { autosize($("#content")); }, 25);
 					} else
 						alert(result.message);
