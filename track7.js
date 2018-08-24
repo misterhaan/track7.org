@@ -427,3 +427,7 @@ function ValidateField(field, url, name, msgchk, msgok, msgblank) {
 			}
 		}, "json");
 }
+
+if(typeof Vue == "function") {
+	Vue.config.keyCodes.comma = 188;
+}

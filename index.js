@@ -7,24 +7,26 @@ $(function() {
 			more: false,
 			loading: false
 		},
+		created: function() {
+			this.Load();
+		},
 		methods: {
 			Load: function() {
 				this.loading = true;
 				var self = this;
-				$.get("/api/activity/latest", {before: this.latest}, function(result) {
+				$.get("/api/activity/latest", {before: this.latest}, result => {
 					if(result.fail)
 						alert(result.message);
 					else {
-						self.activity = self.activity.concat(result.acts);
-						self.latest = result.latest;
-						self.more = result.more;
+						this.activity = this.activity.concat(result.acts);
+						this.latest = result.latest;
+						this.more = result.more;
 					}
-					self.loading = false;
+					this.loading = false;
 				}, "json");
 			}
 		}
 	});
-	latestactivity.Load();
 
 	var features = new Vue({
 		el: "#features",

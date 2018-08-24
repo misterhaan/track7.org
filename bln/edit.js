@@ -11,6 +11,15 @@ $(function() {
 			tagSearch: "",
 			tagCursor: false
 		},
+		created: function() {
+			this.id = $("#editentry").data("entryid");
+			this.allTags = [];
+			this.originalTags = [];
+
+			this.LoadTagNames();
+			if(this.id)
+				this.Load();
+		},
 		computed: {
 			defaultUrl: function() {
 				return NameToUrl(this.title);
@@ -48,22 +57,22 @@ $(function() {
 		},
 		methods: {
 			LoadTagNames: function() {
-				$.get("/api/tags/names", {type: "blog"}, function(result) {
+				$.get("/api/tags/names", {type: "blog"}, result => {
 					if(!result.fail)
-						entry.allTags = result.names;
+						this.allTags = result.names;
 					else
 						alert(result.message);
 				}, "json");
 			},
 			Load: function() {
-				$.get("/api/blog/edit", {id: this.id}, function(result) {
+				$.get("/api/blog/edit", {id: this.id}, result => {
 					if(!result.fail) {
-						entry.url = result.url;
-						entry.title = result.title;
-						entry.ValidateUrl();
-						entry.content = result.content;
-						entry.tagList = result.tags;
-						entry.originalTags = result.tags ? result.tags.split(",") : [];
+						this.url = result.url;
+						this.title = result.title;
+						this.ValidateUrl();
+						this.content = result.content;
+						this.tagList = result.tags;
+						this.originalTags = result.tags ? result.tags.split(",") : [];
 						setTimeout(function() { autosize($("#content")); }, 25);
 					} else
 						alert(result.message);
@@ -72,15 +81,15 @@ $(function() {
 			Save: function() {
 				this.saving = true;
 				var data = {id: this.id, title: this.title, url: this.url, content: this.content,
-					newtags: $.grep(this.tags, function(e) { return $.inArray(e, entry.originalTags) == -1; }).join(","),
-					deltags: $.grep(this.originalTags, function(e) { return $.inArray(e, entry.tags) == -1; }).join(",")
+					newtags: $.grep(this.tags, tag => { return $.inArray(tag, this.originalTags) == -1; }).join(","),
+					deltags: $.grep(this.originalTags, tag => { return $.inArray(tag, this.tags) == -1; }).join(",")
 				};
-				$.post("/api/blog/save", data, function(result) {
+				$.post("/api/blog/save", data, result => {
 					if(!result.fail)
 						window.location.href = result.url;
 					else
 						alert(result.message);
-					entry.saving = false;
+					this.saving = false;
 				});
 			},
 			ValidateDefaultUrl: function() {
@@ -94,9 +103,9 @@ $(function() {
 				this.showTagSuggestions = true;
 			},
 			HideTagSuggestions: function(delay) {
-				setTimeout(function() {
-					entry.showTagSuggestions = false;
-					entry.tagCursor = "";
+				setTimeout(() => {
+					this.showTagSuggestions = false;
+					this.tagCursor = "";
 				}, +delay);
 			},
 			TagSearchKeyPress: function(e) {
@@ -140,11 +149,16 @@ $(function() {
 				if(this.tagCursor && $(".suggestions .selected").length)
 					this.AddTag(this.tagCursor);
 			},
+			AddTypedTag: function() {
+				if(this.tagSearch && this.tagChoices[0] == "“" + this.tagSearch + "”") {
+					this.AddTag(this.tagSearch);
+				}
+			},
 			AddTag: function(name) {
 				if(name) {
-					this.tags.push(name.replace(/<[^>]*>|“|”/gi, ""));
 					this.tagSearch = "";
 					this.HideTagSuggestions();
+					this.tags.push(name.replace(/<[^>]*>|“|”/gi, ""));
 				}
 			},
 			DelTag: function(index) {
@@ -156,11 +170,4 @@ $(function() {
 			}
 		}
 	});
-	entry.id = $("#editentry").data("entryid");
-	entry.allTags = [];
-	entry.originalTags = [];
-
-	entry.LoadTagNames();
-	if(entry.id)
-		entry.Load();
 });
