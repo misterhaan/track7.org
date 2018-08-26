@@ -155,7 +155,10 @@ class t7html {
 ?>
 			<nav class="tagcloud hidden" data-tagtype=<?php echo $tagType; ?> v-if=tags.length>
 				<header>tags</header>
-				<a v-for="tag in tags" :href="tag.name + '/'" :title="'<?php echo $pluralName; ?> tagged ' + tag.name" :data-count=tag.count>{{tag.name}}</a>
+				<template v-for="tag in tags">
+				{{ }}
+				<a :href="tag.name + '/'" :title="'<?php echo $pluralName; ?> tagged ' + tag.name" :data-count=tag.count>{{tag.name}}</a>
+				</template>
 			</nav>
 <?php
 	}
