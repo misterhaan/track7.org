@@ -1,76 +1,86 @@
 $(function() {
-  ko.applyBindings(window.PhotoViewModel = new PhotoViewModel(), $("#editphoto")[0]);
-  if($("#photoid").length)
-    window.PhotoViewModel.Load();
+	var editphoto = new Vue({
+		el: "#editphoto",
+		mixins: [vueMixins.tagSuggest],
+		data: {
+			id: $("#photoid").val(),
+			caption: "",
+			url: "",
+			youtube: "",
+			photo: false,
+			storymd: "",
+			taken: "",
+			year: "",
+			loading: true,
+			saving: false
+		},
+		computed: {
+			defaultUrl: function() {
+				return NameToUrl(this.caption);
+			}
+		},
+		watch: {
+			url: function(value) {
+				this.url = NameToUrl(value);
+			}
+		},
+		created: function() {
+			if(this.id)
+				$.get("/api/photos/edit", {id: this.id}, result => {
+					if(!result.fail) {
+						this.caption = result.caption;
+						this.originalUrl = result.url;
+						this.url = result.url;
+						this.ValidateUrl();
+						this.youtube = result.youtube;
+						this.storymd = result.storymd;
+						setTimeout(function() { autosize.update($("textarea[name='storymd']")); }, 25);
+						this.taken = result.taken;
+						if(result.year > 0)
+							this.year = result.year;
+						this.taglist = result.tags;
+						this.originalTags = result.tags ? result.tags.split(",") : [];
+					} else
+						alert(result.message);
+				}, "json");
+			else {
+				this.originalUrl = "";
+				this.originalTags = [];
+				this.ValidateUrl();
+			}
+		},
+		methods: {
+			ValidateDefaultUrl: function() {
+				if(!this.url)
+					this.ValidateUrl();
+			},
+			ValidateUrl: function() {
+				ValidateField("input[name='url']", "/api/photos/checkurl&id=" + this.id, "url", "validating url...", "url available", "url required");
+			},
+			CachePhoto: function(e) {
+				var f = e.target.files[0];
+				if(f) {
+					var fr = new FileReader();
+					fr.onloadend = function() {
+						editphoto.photo = fr.result;
+					};
+					fr.readAsDataURL(f);
+				}
+			},
+			Save: function() {
+				this.saving = true;
+				var fdata = new FormData($("#editphoto")[0]);
+				fdata.append("originalurl", this.originalUrl);
+				fdata.append("deltags", this.deltags);
+				fdata.append("addtags", this.addtags);
+				$.post({url: "/api/photos/save", data: fdata, cache: false, contentType: false, processData: false, success: result => {
+					if(!result.fail)
+						window.location.href = result.url;
+					else
+						alert(result.message);
+					this.saving = false;
+				}, dataType: "json"});
+			}
+		}
+	});
 });
-
-function PhotoViewModel() {
-  var self = this;
-
-  self.id = ko.observable(false);
-  self.caption = ko.observable("");
-  self.url = ko.observable("");
-  self.youtube = ko.observable("");
-  self.photo = ko.observable(false);
-  self.storymd = ko.observable("");
-  self.taken = ko.observable("");
-  self.year = ko.observable("");
-  self.taglist = ko.observableArray([]);
-  self.tags = ko.pureComputed({
-    read: function() { return self.taglist().join(","); },
-    write: function(value) { self.taglist(value.split(",")); }
-  });
-  self.originalTaglist = [];
-
-  self.loading = ko.observable(false);
-
-  self.Load = function() {
-    self.loading(true);
-    $.get("/album/edit.php", {ajax: "get", id: $("#photoid").val()}, function(result) {
-      if(!result.fail) {
-        self.id(result.id);
-        self.caption(result.caption);
-        self.url(result.url);
-        self.youtube(result.youtube);
-        self.storymd(result.storymd);
-        autosize.update($("textarea[name='storymd']"));
-        self.taken(result.taken);
-        if(result.year > 0)
-          self.year(result.year);
-        self.taglist(result.tags);
-        self.originalTaglist = result.tags;
-      } else
-        alert(result.message);
-      self.loading(false);
-    }, "json");
-  };
-
-  self.caption.subscribe(function() {
-    $("#url").attr("placeholder", self.caption().split(" ").join("-"));
-  });
-
-  self.Save = function() {
-    $("#save").prop("disabled", true).addClass("working");
-    var fdata = new FormData($("#editphoto")[0]);
-    fdata.append("originalTaglist", self.originalTaglist.join(","));
-    $.post({url: "/album/edit.php?ajax=save", data: fdata, cache: false, contentType: false, processData: false, success: function(result) {
-      if(!result.fail)
-        window.location.href = result.url;
-      else {
-        $("#save").prop("disabled", false).removeClass("working");
-        alert(result.message);
-      }
-    }, dataType: "json"});
-  };
-
-  self.CachePhoto = function(data, e) {
-    var f = e.target.files[0];
-    if(f) {
-      var fr = new FileReader();
-      fr.onloadend = function() {
-        self.photo(fr.result);
-      };
-      fr.readAsDataURL(f);
-    }
-  };
-}

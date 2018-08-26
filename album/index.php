@@ -1,57 +1,29 @@
 <?php
-define('NUM_PHOTOS', 24);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-
-if(isset($_GET['ajax'])) {
-	$ajax = new t7ajax();
-	switch($_GET['ajax']) {
-		case 'photos':
-			if(isset($_GET['tagid']) && +$_GET['tagid']) {
-				$photosq = 'select p.url, p.posted, p.caption, count(c.photo) as comments from photos_taglinks as t left join photos as p on p.id=t.photo left join photos_comments as c on c.photo=p.id where t.tag=\'' . +$_GET['tagid'] . '\'';
-				if(isset($_GET['before']) && +$_GET['before'])
-					$photosq .= ' and p.posted<\'' . +$_GET['before'] . '\'';
-				$photosq .= ' group by p.id order by p.posted desc limit ' . NUM_PHOTOS;
-			} else {
-				$photosq = 'select p.url, p.posted, p.caption, count(c.photo) as comments from photos as p left join photos_comments as c on c.photo=p.id';
-				if(isset($_GET['before']) && +$_GET['before'])
-					$photosq .= ' where p.posted<\'' . +$_GET['before'] . '\'';
-					$photosq .= ' group by p.id order by p.posted desc limit ' . NUM_PHOTOS;
-			}
-			$ajax->Data->photos = [];
-			if($photos = $db->query($photosq))
-				while($photo = $photos->fetch_object()) {
-					$posted = t7format::TimeTag('M j, Y', $photo->posted, 'g:i a \o\n l F jS Y');
-					$posted->timestamp = $photo->posted;
-					$photo->posted = $posted;
-					$ajax->Data->photos[] = $photo;
-				}
-			$ajax->Data->hasMore = false;
-			if($more = $db->query($photosq . ', 1'))
-				$ajax->Data->hasMore = $more->num_rows > 0;
-			break;
-		default:
-			$ajax->Fail('unknown function name.  supported function names are: photos.');
-			break;
-	}
-	$ajax->Send();
-	die;
-}
-
-$html = false;
 
 $tag = false;
 if(isset($_GET['tag']) && $tag = $db->query('select id, name, description from photos_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))
 	$tag = $tag->fetch_object();
-if($tag) {
-	$html = new t7html(['ko' => true, 'bodytype' => 'gallery', 'rss' => ['title' => $tag->name . ' photos', 'url' => dirname($_SERVER['PHP_SELF']) . '/feed.rss?tags=' . $tag->name]]);
-	$html->Open($tag->name . ' - photo album');
+
+$html = OpenPage($tag);
+if(!$tag)
+	$html->ShowTags('photos', 'photos');
+if($user->IsAdmin()) {
 ?>
-			<h1>
-				photo album — <?php echo $tag->name; ?>
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss?tags=<?php echo $tag->name; ?>" title="rss feed of <?php echo $tag->name; ?> photos"></a>
-			</h1>
+			<div class=floatbgstop><nav class=actions>
+				<a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>add a photo or video</a>
 <?php
-	ShowActions($tag->id);
+	if($tag) {
+?>
+				<a href="#tagedit" class=edit>edit tag description</a>
+<?php
+	}
+?>
+			</nav></div>
+
+<?php
+}
+if($tag) {
 ?>
 			<div id=taginfo data-tagid=<?php echo $tag->id; ?>>
 <?php
@@ -70,68 +42,48 @@ if($tag) {
 				<div class=editable><?php echo $tag->description; ?></div>
 			</div>
 			<p>go back to <a href="/album/">all photos</a>.</p>
-<?php
-} else {
-	$html = new t7html(['ko' => true, 'bodytype' => 'gallery', 'rss' => ['title' => 'photo album', 'url' => dirname($_SERVER['PHP_SELF']) . '/feed.rss']]);
-	$html->Open('photo album');
-?>
-			<h1>
-				photo album
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of all photos"></a>
-			</h1>
-
-			<nav class=tagcloud data-bind="visible: tags().length">
-				<header>tags</header>
-				<!-- ko foreach: tags -->
-				<a data-bind="text: name, attr: { href: name + '/', title: 'photos tagged ' + name, 'data-count': count }"></a>
-				<!-- /ko -->
-			</nav>
 
 <?php
-	ShowActions();
 }
 ?>
-			<ul class=errors data-bind="visible: errors().length, foreach: errors">
-				<li data-bind="text: $data"></li>
-			</ul>
+			<section id=albumphotos>
+				<ol id=photogallery class=gallery v-if=photos.length>
+					<li v-for="photo in photos">
+						<a class="photo thumb" :href=photo.url>
+							<img :src="'/album/photos/' + photo.url + '.jpg'">
+							<span class=caption>{{photo.caption}}</span>
+						</a>
+					</li>
+				</ol>
 
-			<p data-bind="visible: !photos().length && !loadingPhotos()">
-				this album is empty!
-			</p>
-
-			<ol id=photogallery class=gallery data-bind="foreach: photos">
-				<li>
-					<a class="photo thumb" data-bind="attr: {href: url}">
-						<img data-bind="attr: {src: '/album/photos/' + url + '.jpg'}">
-						<span class=caption data-bind="text: caption"></span>
-					</a>
-				</li>
-			</ol>
-
-			<p class=loading data-bind="visible: loadingPhotos">loading more photos . . .</p>
-			<p class="more calltoaction" data-bind="visible: hasMorePhotos"><a class="action get" href=#nextpage data-bind="click: LoadPhotos">load more photos</a></p>
+				<p class=loading v-if=loading>loading more photos . . .</p>
+				<p class="more calltoaction" v-if="hasMore && !loading"><a class="action get" href=#nextpage v-on:click=Load>load more photos</a></p>
+				<p v-if="!photos.length && !loading">this album is empty!</p>
+				<p class=error v-if=error>{{error}}</p>
+			</section>
 <?php
 $html->Close();
 
 /**
- * create the menu of actions.
- * @param integer $tagid id of the tag to edit from this page, if any
+ * creates an opens the page.
+ * @param object $tag tag object with name property, or false if not limited by tag
+ * @return t7html
  */
-function ShowActions($tagid = false) {
-	global $user;
-	if($user->IsAdmin()) {
-?>
-			<div class=floatbgstop><nav class=actions>
-				<a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>add a photo or video</a>
-<?php
-		if($tagid) {
-?>
-				<a href="#tagedit" class=edit>edit tag description</a>
-<?php
-		}
-?>
-			</nav></div>
+function OpenPage($tag) {
+	$feedtitle = $tag ? $tag->name . ' photos' : 'photos';
+	$feedurl = dirname($_SERVER['PHP_SELF']) . '/feed.rss' . ($tag ? '?tags=' . $tag->name : '');
+	$pagetitle = $tag ? $tag->name . ' - photo album' : 'photo album';
+	$headingtext = 'photo album' . ($tag ? ' — ' . $tag->name : '');
+
+	$html = new t7html(['vue' => true, 'bodytype' => 'gallery', 'rss' => ['title' => $feedtitle, 'url' => $feedurl]]);
+	$html->Open($pagetitle);
+	?>
+			<h1>
+				<?php echo $headingtext; ?>
+
+				<a class=feed href="<?php echo $feedurl ?>" title="rss feed of <?php echo $tag ? $tag->name : 'all'; ?> photos"></a>
+			</h1>
 
 <?php
-	}
+	return $html;
 }

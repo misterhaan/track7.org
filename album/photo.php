@@ -45,7 +45,7 @@ if($tag) {
 }
 $photo->posted = t7format::TimeTag('smart', $photo->posted, 'g:i a \o\n l F jS Y');
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open(htmlspecialchars($photo->caption) . ($tag ? ' - ' . $tag->name . ' - photos' : ' - photos'));
 ?>
 			<h1><?php echo htmlspecialchars($photo->caption); ?></h1>
