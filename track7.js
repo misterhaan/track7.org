@@ -430,4 +430,131 @@ function ValidateField(field, url, name, msgchk, msgok, msgblank) {
 
 if(typeof Vue == "function") {
 	Vue.config.keyCodes.comma = 188;
+
+	vueMixins = {
+		tagSuggest: {
+			data: {
+				tags: [],
+				showTagSuggestions: false,
+				tagSearch: "",
+				tagCursor: false
+			},
+			computed: {
+				taglist: {
+					get: function() {
+						return this.tags.join(",");
+					},
+					set: function(value) {
+						this.tags = value ? value.split(",") : [];
+					}
+				},
+				tagChoices: function() {
+					if(this.tagSearch) {
+						var choices = [];
+						if(this.allTags.indexOf(this.tagSearch) < 0 && this.tags.indexOf(this.tagSearch) < 0)
+							choices.push("“" + this.tagSearch + "”");
+						for(var t = 0; t < this.allTags.length; t++)
+							if(this.allTags[t].indexOf(this.tagSearch) >= 0 && this.tags.indexOf(this.allTags[t]) < 0)
+								choices.push(this.allTags[t].replace(new RegExp(this.tagSearch.replace(/\./, "\\."), "gi"), "<em>$&</em>"));
+						return choices;
+					}
+					return this.allTags.filter(tag => { return this.tags.indexOf(tag) < 0; });
+				},
+				addtags: function() {
+					return $.grep(this.tags, tag => { return $.inArray(tag, this.originalTags) == -1; }).join(",");
+				},
+				deltags: function() {
+					return $.grep(this.originalTags, tag => { return $.inArray(tag, this.tags) == -1; }).join(",");
+				}
+			},
+			created: function() {
+				this.allTags = [];
+				$.get("/api/tags/names", {type: $("[data-tagtype]").data("tagtype")}, result => {
+					if(!result.fail)
+						this.allTags = result.names;
+					else
+						alert(result.message);
+				}, "json");
+			},
+			watch: {
+				tagSearch: function(value) {
+					this.tagSearch = value.toLowerCase().replace(/[^a-z0-9\.]/, "");
+				},
+				tagCursor: function(value) {
+					this.tagCursor = value.replace(/<[^>]>/g, "");
+				}
+			},
+			methods: {
+				ShowTagSuggestions: function() {
+					this.showTagSuggestions = true;
+				},
+				HideTagSuggestions: function(delay) {
+					setTimeout(() => {
+						this.showTagSuggestions = false;
+						this.tagCursor = "";
+					}, +delay);
+				},
+				TagSearchKeyPress: function(e) {
+					if(e.which == 8 && this.tagSearch || e.which == 46  // backspace or period
+							|| e.which >= 48 && e.which <= 57  // digit
+							|| e.which >= 65 && e.which <= 90  // capital letter
+							|| e.which >= 97 && e.which <= 122)  // lowercase letter
+						this.showTagSuggestions = true;
+				},
+				FirstTag: function() {
+					this.tagCursor = this.tagChoices[0];
+					this.showTagSuggestions = true;
+				},
+				NextTag: function() {
+					if(this.tagCursor) {
+						for(var t = 0; t < this.tagChoices.length - 1; t++)
+							if(this.tagChoices[t].replace(/<[^>]>/g, "") == this.tagCursor) {
+								this.tagCursor = this.tagChoices[t + 1];
+								this.showTagSuggestions = true;
+								return;
+							}
+					}
+					this.FirstTag();
+				},
+				PrevTag: function() {
+					if(this.tagCursor) {
+						for(var t = 1; t < this.tagChoices.length; t++)
+							if(this.tagChoices[t].replace(/<[^>]>/g, "") == this.tagCursor) {
+								this.tagCursor = this.tagChoices[t - 1];
+								this.showTagSuggestions = true;
+								return;
+							}
+					}
+					this.LastTag();
+				},
+				LastTag: function() {
+					this.tagCursor = this.tagChoices[this.tagChoices.length - 1];
+					this.showTagSuggestions = true;
+				},
+				AddCursorTag: function() {
+					if(this.tagCursor && $(".suggestions .selected").length)
+						this.AddTag(this.tagCursor);
+				},
+				AddTypedTag: function() {
+					if(this.tagSearch && (this.tagChoices[0] == "“" + this.tagSearch + "”" || this.tagChoices[0] == "<em>" + this.tagSearch + "</em>")) {
+						this.AddTag(this.tagSearch);
+					}
+				},
+				AddTag: function(name) {
+					if(name) {
+						this.tagSearch = "";
+						this.HideTagSuggestions();
+						this.tags.push(name.replace(/<[^>]*>|“|”/gi, ""));
+					}
+				},
+				DelTag: function(index) {
+					this.tags.splice(index, 1);
+				},
+				DelLastTag: function() {
+					if(!this.tagSearch)
+						this.tags.splice(-1);
+				}
+			}
+		}
+	}
 }

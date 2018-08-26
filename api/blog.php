@@ -70,7 +70,7 @@ class blogApi extends t7api {
 				<dd>url portion specific to this blog entry.  required.</dd>
 				<dt>content</dt>
 				<dd>blog entry content in markdown format.  required.</dd>
-				<dt>newtags</dt>
+				<dt>addtags</dt>
 				<dd>
 					list of tag names to add to the entry.  comma-separated.  optional;
 					will not add any tags if empty or missing.
@@ -231,15 +231,15 @@ class blogApi extends t7api {
 							$del = isset($_POST['deltags']) && $_POST['deltags'] ? explode(',', trim($_POST['deltags'])) : [];
 							if(count($del))
 								$db->real_query('delete from blog_entrytags where entry=\'' . +$id . '\' and tag in (select id from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $del) . '\')))');
-							$new = isset($_POST['newtags']) && $_POST['newtags'] ? explode(',', trim($_POST['newtags'])) : [];
-							if(count($new)) {
-								$db->query('insert into blog_tags (name) values (trim(\'' . implode('\')), (trim(\'', $new) . '\')) on duplicate key update name=name');
-								$db->query('insert into blog_entrytags (entry, tag) select \'' . +$id . '\' as entry, id as tag from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $new) . '\'))');
+							$add = isset($_POST['addtags']) && $_POST['addtags'] ? explode(',', trim($_POST['addtags'])) : [];
+							if(count($add)) {
+								$db->query('insert into blog_tags (name) values (trim(\'' . implode('\')), (trim(\'', $add) . '\')) on duplicate key update name=name');
+								$db->query('insert into blog_entrytags (entry, tag) select \'' . +$id . '\' as entry, id as tag from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $add) . '\'))');
 							}
 							if($entry = $db->query('select url, status from blog_entries where id=\'' . +$id . '\' limit 1'))
 								if($entry = $entry->fetch_object()) {
-									if($entry->status == 'published' && (count($del) || count($new))) {
-										$tags = array_keys(array_flip($del) + array_flip($new));
+									if($entry->status == 'published' && (count($del) || count($add))) {
+										$tags = array_keys(array_flip($del) + array_flip($add));
 										$db->real_query('update blog_tags as t inner join (select et.tag as tag, count(1) as count, max(e.posted) as lastused from blog_entrytags as et left join blog_entries as e on e.id=et.entry left join blog_tags as tn on tn.id=et.tag where tn.name in (trim(\'' . implode('\'), trim(\'', $tags) . '\')) and e.status=\'published\' group by et.tag) as s on s.tag=t.id set t.count=s.count, t.lastused=s.lastused');
 									}
 									$ajax->Data->url = $entry->url;
