@@ -35,6 +35,7 @@ $(function() {
 						this.storymd = result.storymd;
 						setTimeout(function() { autosize.update($("textarea[name='storymd']")); }, 25);
 						this.taken = result.taken;
+						this.ValidateTaken();
 						if(result.year > 0)
 							this.year = result.year;
 						this.taglist = result.tags;
@@ -46,6 +47,7 @@ $(function() {
 				this.originalUrl = "";
 				this.originalTags = [];
 				this.ValidateUrl();
+				this.ValidateTaken();
 			}
 		},
 		methods: {
@@ -54,7 +56,10 @@ $(function() {
 					this.ValidateUrl();
 			},
 			ValidateUrl: function() {
-				ValidateInput("input[name='url']", "/api/validate/photourl", this.id, this.url || this.defaultUrl, "validating url...", "url available", {valid: false, message: "url required"});
+				ValidateInput("input[name='url']", "/api/validate/photourl", this.id, this.url || this.defaultUrl, "validating url...", "url available", "url required");
+			},
+			ValidateTaken: function() {
+				ValidateInput("input[name='taken']", "/api/validate/pastdatetime", this.id, this.taken, "validating date / time...", "valid date / time", {valid: true, message: "will attempt to look up from photo exif data"}, newtaken => { this.taken = newtaken; });
 			},
 			CachePhoto: function(e) {
 				var f = e.target.files[0];

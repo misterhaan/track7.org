@@ -437,12 +437,13 @@ function ValidateField(field, url, name, msgchk, msgok, msgblank) {
  * @param msgchk message to display while waiting for validation.
  * @param msgok message to display when validation is successful.
  * @param msgblank message to display when value is blank.  pass an object with .valid=true and message in .message otherwise blank is considered invalid.
+ * @param changevalue function for changing the value if validation says it should change.
  */
-function ValidateInput(input, ajaxurl, id, value, msgchk, msgok, msgblank) {
+function ValidateInput(input, ajaxurl, id, value, msgchk, msgok, msgblank, changevalue) {
 	input = $(input);
 	var valid = input.parent().siblings(".validation");
 	if(!valid.length)
-		valid = $("<span class=validation></span>").appendTo(input.parent());
+		valid = $("<span class=validation></span>").appendTo(input.parent().parent());
 	valid.removeClass().addClass("validation").addClass("checking");
 	valid.attr("title", msgchk);
 	if(msgblank && value == "") {
@@ -453,7 +454,9 @@ function ValidateInput(input, ajaxurl, id, value, msgchk, msgok, msgblank) {
 			valid.removeClass("checking");
 			if(!result.fail) {
 				valid.addClass("valid");
-				valid.attr("title", msgok);
+				valid.attr("title", result.message || msgok);
+				if(result.newvalue && changevalue)
+					changevalue(result.newvalue);
 			} else {
 				valid.addClass("invalid");
 				valid.attr("title", result.message);

@@ -25,9 +25,10 @@ class validateApi extends t7api {
 				</dd>
 			</dl>
 
-			<h2 id=getdatetime>get datetime</h2>
+			<h2 id=getpastdatetime>get pastdatetime</h2>
 			<p>
-				make sure a datetime entry can be understood and format it to show so.
+				make sure a datetime entry is in the past and can be understood.  also
+				standardize its format.
 			</p>
 			<dl class=parameters>
 				<dt>value</dt>
@@ -54,6 +55,25 @@ class validateApi extends t7api {
 	 */
 	protected static function blogurlAction($ajax) {
 		self::ValidateUrl('blog_entries', 'title', $ajax);
+	}
+
+	/**
+	 * check a datetime entry.  can return a formatted datetime or just a message.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function pastdatetimeAction($ajax) {
+		global $user;
+		if(isset($_GET['value']) && trim($_GET['value'])) {
+			if(false !== $timestamp = t7format::LocalStrtotime($_GET['value']))
+				if($timestamp <= time())
+					$ajax->Data->newvalue = t7format::LocalDate('Y-m-d g:i:s a', $timestamp);
+				else
+					$ajax->Fail('future values are not allowed');
+			else
+				$ajax->Fail('can’t make sense of that as a date / time');
+		}
+		else
+			$ajax->Data->message = 'current date and time will be used';
 	}
 
 	/**

@@ -57,7 +57,7 @@ if($id) {
 				</label>
 				<label>
 					<span class=label>taken:</span>
-					<span class=field><input name=taken v-model=taken></span>
+					<span class=field><input name=taken v-model=taken v-on:change=ValidateTaken></span>
 				</label>
 				<label>
 					<span class=label>year:</span>
