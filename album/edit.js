@@ -11,7 +11,6 @@ $(function() {
 			storymd: "",
 			taken: "",
 			year: "",
-			loading: true,
 			saving: false
 		},
 		computed: {
@@ -55,7 +54,7 @@ $(function() {
 					this.ValidateUrl();
 			},
 			ValidateUrl: function() {
-				ValidateField("input[name='url']", "/api/photos/checkurl&id=" + this.id, "url", "validating url...", "url available", "url required");
+				ValidateInput("input[name='url']", "/api/validate/photourl", this.id, this.url || this.defaultUrl, "validating url...", "url available", {valid: false, message: "url required"});
 			},
 			CachePhoto: function(e) {
 				var f = e.target.files[0];

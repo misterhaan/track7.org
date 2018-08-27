@@ -30,7 +30,6 @@ $html->Open(($id ? 'edit' : 'add') . ' entry - blog');
 				<label>
 					<span class=label>url:</span>
 					<span class=field><input id=url maxlength=32 pattern="[a-z0-9\.\-_]+" v-model=url :placeholder=defaultUrl v-on:change=ValidateUrl></span>
-					<span class=validation></span>
 				</label>
 				<label class=multiline>
 					<span class=label>entry:</span>

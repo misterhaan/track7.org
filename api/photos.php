@@ -17,17 +17,6 @@ class photosApi extends t7api {
 	 */
 	protected static function ShowDocumentation() {
 ?>
-			<h2 id=getcheckurl>get checkurl</h2>
-			<p>check if a url is available for a photo.</p>
-			<dl class=parameters>
-				<dt>url</dt>
-				<dd>url to check.</dd>
-				<dt>id</dt>
-				<dd>
-					id of photo that wants to use the url.  optional; assumes new photo.
-				</dd>
-			</dl>
-
 			<h2 id=getedit>get edit</h2>
 			<p>get photo information for editing.  only available to admin.</p>
 			<dl class=parameters>
@@ -87,18 +76,6 @@ class photosApi extends t7api {
 			</dl>
 
 <?php
-	}
-
-	/**
-	 * check availability of a url for a photo.
-	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
-	 */
-	protected static function checkurlAction($ajax) {
-		if(isset($_GET['url']) && trim($_GET['url'])) {
-			$id = isset($_GET['id']) ? +$_GET['id'] : 0;
-			self::CheckUrl(trim($_GET['url']), $id, $ajax);
-		} else
-			$ajax->Fail('url is required.');
 	}
 
 	/**
@@ -176,7 +153,7 @@ class photosApi extends t7api {
 				if($id || isset($_FILES['photo']) && $_FILES['photo']['size']) {
 					$caption = trim($_POST['caption']);
 					$url = isset($_POST['url']) && trim($_POST['url']) ? trim($_POST['url']) : t7format::NameToUrl($caption);
-					if(self::CheckUrl($url, $id, $ajax)) {
+					if(self::CheckUrl('photos', 'caption', $url, $id, $ajax)) {
 						$youtube = isset($_POST['youtube']) && trim($_POST['youtube']) ? trim($_POST['youtube']) : '';
 						if(isset($_FILES['photo']) && $_FILES['photo']['size']) {
 							$exif = exif_read_data($_FILES['photo']['tmp_name'], 'EXIF', true);
@@ -221,29 +198,6 @@ class photosApi extends t7api {
 				$ajax->Fail('caption and storymd are required.');
 		else
 			$ajax->Fail('only the administrator can edit photos.  you might need to log in again.');
-	}
-	
-	/**
-	 * make sure the url is valid and isn't already used, unless it's already used
-	 * by this entry.
-	 * @param string $url url segment to check
-	 * @param int $id id of blog entry we're checking for, because it's okay if this entry is already using the url.
-	 * @param t7ajax $ajax ajax object or reporting an error.  optional.
-	 * @return boolean whether the url is valid and available.
-	 */
-	private static function CheckUrl($url, $id, $ajax) {
-		global $db;
-		if(t7format::ValidUrlPiece($url))
-			if($chk = $db->query('select caption from photos where url=\'' . $db->escape_string($url) . '\' and not id=\'' . +$id . '\' limit 1'))
-				if($chk = $chk->fetch_object())
-					$ajax->Fail('url already in use by “' . $chk->title . '.”');
-				else
-					return true;
-			else
-				$ajax->Fail('error checking if photo url is available', $db->errno . ' ' . $db->error);
-		else
-			$ajax->Fail('url must be at least three characters and can only contain letters, digits, periods, dashes, and underscores.');
-		return false;
 	}
 
 	/**

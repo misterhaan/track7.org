@@ -86,18 +86,6 @@ class blogApi extends t7api {
 	}
 
 	/**
-	 * check availability of a url for a blog entry.
-	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
-	 */
-	protected static function checkurlAction($ajax) {
-		if(isset($_GET['url']) && trim($_GET['url'])) {
-			$id = isset($_GET['id']) ? +$_GET['id'] : 0;
-			self::CheckUrl(trim($_GET['url']), $id, $ajax);
-		} else
-			$ajax->Fail('url is required.');
-	}
-
-	/**
 	 * delete a draft blog entry.
 	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
 	 */
@@ -221,7 +209,7 @@ class blogApi extends t7api {
 				if(!$url)
 					$url = t7format::NameToUrl($title);
 				$id = isset($_POST['id']) ? +$_POST['id'] : false;
-				if(self::CheckUrl($url, $id, $ajax)) {
+				if(self::CheckUrl('blog_entries', 'title', $url, $id, $ajax)) {
 					$save = $id
 						? 'update blog_entries set title=\'' . $db->escape_string($title) . '\', url=\'' . $db->escape_string($url) . '\', markdown=\'' . $db->escape_string($_POST['content']) . '\', content=\'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\' where id=\'' . +$id . '\' limit 1'
 						: 'insert into blog_entries (title, url, markdown, content, posted) values (\'' . $db->escape_string($title) . '\', \'' . $db->escape_string($url) . '\', \'' . $db->escape_string($_POST['content']) . '\', \'' . $db->escape_string(t7format::Markdown($_POST['content'])) . '\', \'' . +time() . '\')';
@@ -254,29 +242,6 @@ class blogApi extends t7api {
 				$ajax->Fail('title, url, and content are required.');
 		else
 			$ajax->Fail('only the administrator can save blog entries.  you might need to log in again.');
-	}
-
-	/**
-	 * make sure the url is valid and isn't already used, unless it's already used
-	 * by this entry.
-	 * @param string $url url segment to check
-	 * @param int $id id of blog entry we're checking for, because it's okay if this entry is already using the url.
-	 * @param t7ajax $ajax ajax object or reporting an error.  optional.
-	 * @return boolean whether the url is valid and available.
-	 */
-	private static function CheckUrl($url, $id, $ajax) {
-		global $db;
-		if(t7format::ValidUrlPiece($url))
-			if($chk = $db->query('select title from blog_entries where url=\'' . $db->escape_string($url) . '\' and not id=\'' . +$id . '\' limit 1'))
-				if($chk = $chk->fetch_object())
-					$ajax->Fail('url already in use by “' . $chk->title . '.”');
-				else
-					return true;
-			else
-				$ajax->Fail('error checking if blog entry url is available', $db->errno . ' ' . $db->error);
-		else
-			$ajax->Fail('url must be at least three characters and can only contain letters, digits, periods, dashes, and underscores.');
-		return false;
 	}
 }
 blogApi::Respond();

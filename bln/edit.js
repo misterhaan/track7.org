@@ -52,7 +52,7 @@ $(function() {
 					this.ValidateUrl();
 			},
 			ValidateUrl: function() {
-				ValidateField("#url", "/api/blog/checkurl&id=" + this.id, "url", "validating url...", "url available", "url required");
+				ValidateInput("#url", "/api/validate/blogurl", this.id, this.url || this.defaultUrl, "validating url...", "url available", {valid: false, message: "url required"});
 			},
 		}
 	});

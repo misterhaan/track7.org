@@ -39,7 +39,6 @@ if($id) {
 				<label>
 					<span class=label>url:</span>
 					<span class=field><input name=url maxlength=32 pattern="[a-z0-9\-_]+" v-model=url :placeholder=defaultUrl v-on:change=ValidateUrl></span>
-					<span class=validation></span>
 				</label>
 				<label title="youtube video id if this photo is a video (unique part of the video url)">
 					<span class=label>youtube:</span>

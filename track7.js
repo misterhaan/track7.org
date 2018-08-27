@@ -428,6 +428,39 @@ function ValidateField(field, url, name, msgchk, msgok, msgblank) {
 		}, "json");
 }
 
+/**
+ * validate an input via ajax.  usually called when the field changes.
+ * @param input form field to validate.  used as a jquery selector.
+ * @param ajaxurl url for the validation ajax request.
+ * @param id id of the item the input belongs to.  only used for uniqueness validations.
+ * @param value value to validate.
+ * @param msgchk message to display while waiting for validation.
+ * @param msgok message to display when validation is successful.
+ * @param msgblank message to display when value is blank.  pass an object with .valid=true and message in .message otherwise blank is considered invalid.
+ */
+function ValidateInput(input, ajaxurl, id, value, msgchk, msgok, msgblank) {
+	input = $(input);
+	var valid = input.parent().siblings(".validation");
+	if(!valid.length)
+		valid = $("<span class=validation></span>").appendTo(input.parent());
+	valid.removeClass().addClass("validation").addClass("checking");
+	valid.attr("title", msgchk);
+	if(msgblank && value == "") {
+		valid.removeClass("checking").addClass(msgblank.message ? (msgblank.valid ? "valid" : "invalid") : "invalid");
+		valid.attr("title", msgblank.message || msgblank);
+	} else
+		$.get(ajaxurl, {id: id, value: value}, result => {
+			valid.removeClass("checking");
+			if(!result.fail) {
+				valid.addClass("valid");
+				valid.attr("title", msgok);
+			} else {
+				valid.addClass("invalid");
+				valid.attr("title", result.message);
+			}
+		}, "json");
+}
+
 if(typeof Vue == "function") {
 	Vue.config.keyCodes.comma = 188;
 
