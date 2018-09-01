@@ -1,6 +1,6 @@
 <?php
 require_once dirname(__DIR__) . '/etc/class/t7.php';
-$html = new t7html();
+$html = new t7html([]);
 $html->Open('api');
 ?>
 			<h1>track7 api</h1>
@@ -13,6 +13,9 @@ $html->Open('api');
 
 			<h2 class=api><a href=comments>comments</a></h2>
 			<p>the comments api manages comments.</p>
+
+			<h2 class=api><a href=guides>guides</a></h2>
+			<p>the guides api manages guides.</p>
 
 			<h2 class=api><a href=photos>photos</a></h2>
 			<p>the photos api manages the photo album.</p>

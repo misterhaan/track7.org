@@ -25,6 +25,17 @@ class validateApi extends t7api {
 				</dd>
 			</dl>
 
+			<h2 id=getguideurl>get guideurl</h2>
+			<p>check if a url is available for a guide.</p>
+			<dl class=parameters>
+				<dt>value</dt>
+				<dd>url to check.</dd>
+				<dt>id</dt>
+				<dd>
+					id of guide that wants to use the url.  optional; assumes new guide.
+				</dd>
+			</dl>
+
 			<h2 id=getpastdatetime>get pastdatetime</h2>
 			<p>
 				make sure a datetime entry is in the past and can be understood.  also
@@ -57,6 +68,14 @@ class validateApi extends t7api {
 		self::ValidateUrl('blog_entries', 'title', $ajax);
 	}
 
+	/**
+	 * check availability of a url for a guide.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function guideurlAction($ajax) {
+		self::ValidateUrl('guides', 'title', $ajax);
+	}
+	
 	/**
 	 * check a datetime entry.  can return a formatted datetime or just a message.
 	 * @param t7ajax $ajax ajax object for returning data or reporting an error.

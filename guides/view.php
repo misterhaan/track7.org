@@ -57,12 +57,12 @@ if($ts = $db->query('select t.name from guide_taglinks as l left join guide_tags
 if($user->IsAdmin() || $guide->author == $user->ID) {
 ?>
 			<nav class=actions data-id=<?=$guide->id; ?>>
-				<a class=edit href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php?url=<?=$guide->url; ?>">edit this guide</a>
+				<a class=edit href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php?id=<?=$guide->id; ?>">edit this guide</a>
 <?php
 	if($user->IsAdmin() && $guide->status == 'draft') {
 ?>
-				<a class=publish href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=publish">publish this guide</a>
-				<a class=del href="<?=dirname($_SERVER['PHP_SELF']); ?>/edit.php?ajax=delete">delete this guide</a>
+				<a class=publish href="/api/guides/publish">publish this guide</a>
+				<a class=del href="/api/guides/delete">delete this guide</a>
 <?php
 	}
 ?>

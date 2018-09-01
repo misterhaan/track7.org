@@ -1,32 +1,31 @@
 $(function() {
-  ko.applyBindings(window.ViewModel = new vm());
-  if($("nav.tagcloud").length)
-    window.ViewModel.LoadTags();
-  window.ViewModel.LoadGuides();
-  $("#editdesc").hide();
-  $("a[href$='#tagedit']").click(function(e) {
-    $("#editdesc textarea").val($("#taginfo .editable").html());
-    $("#editdesc").show().focus();
-    $("a[href$='#tagedit']").hide();
-    e.preventDefault();
-  });
-  $("a[href$='#save']").click(function(e) {
-    $.post("/tags.php?ajax=setdesc&type=guide", {id: $("#taginfo").data("tagid"), description: $("#editdesc textarea").val()}, function(data, status, xhr) {
-      var result = $.parseJSON(xhr.responseText);
-      if(!result.fail) {
-        $("#taginfo .editable").html($("#editdesc textarea").val());
-        $("a[href$='#tagedit']").show();
-        $("#editdesc").hide();
-      } else
-        alert(result.message);
-    });
-    e.preventDefault();
-  });
-  $("a[href$='#cancel']").click(function(e) {
-    $("a[href$='#tagedit']").show();
-    $("#editdesc").hide();
-    e.preventDefault();
-  });
+	var guides = new Vue({
+		el: "#guides",
+		data: {
+			hasTag: $("#taginfo").length > 0,
+			guides: [],
+			hasMore: false,
+			loading: true,
+			error: ""
+		},
+		created: function() {
+			this.Load();
+		},
+		methods: {
+			Load: function() {
+				this.loading = true;
+				$.get("/api/guides/list", {tagid: $("p#taginfo").data("tagid"), before: this.oldest}, result => {
+					if(!result.fail) {
+						this.guides = this.guides.concat(result.guides);
+						this.hasMore = result.hasMore;
+						this.oldest = result.oldest;
+					} else
+						this.error = result.message;
+					this.loading = false;
+				});
+			}
+		}
+	});
 });
 
 function vm() {
