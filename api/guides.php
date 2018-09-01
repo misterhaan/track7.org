@@ -161,7 +161,7 @@ class guidesApi extends t7api {
 		global $db, $user;
 		if($user->IsAdmin())
 			if(isset($_POST['id']) && $_POST['id'] == +$_POST['id'])
-				if($db->real_query('update guides set status=\'published\', posted=\'' . +time() . '\' where id=\'' . +$_POST['id'] . '\' and status=\'draft\' limit 1'))
+				if($db->real_query('update guides set status=\'published\', posted=\'' . +time() . '\', updated=\'' . +time() . '\' where id=\'' . +$_POST['id'] . '\' and status=\'draft\' limit 1'))
 					if($db->affected_rows) {
 						$db->real_query('update guide_tags as t inner join (select gt.tag as tag, count(1) as count, max(g.updated) as lastused from guide_taglinks as gt inner join guide_taglinks as ft on ft.tag=gt.tag and ft.guide=\'' . +$_POST['id'] . '\' left join guides as g on g.id=gt.guide where g.status=\'published\' group by gt.tag) as s on s.tag=t.id set t.count=s.count, t.lastused=s.lastused');
 						if($guide = $db->query('select url, title from guides where id=\'' . +$_POST['id'] . '\' limit 1'))
