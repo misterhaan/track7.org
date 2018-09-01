@@ -33,9 +33,16 @@ $(function() {
 		watch: {
 			url: function(value) {
 				this.url = NameToUrl(value);
-			},
+			}
 		},
 		methods: {
+			ValidateDefaultUrl: function() {
+				if(!this.url)
+					this.ValidateUrl();
+			},
+			ValidateUrl: function() {
+				ValidateInput("#url", "/api/validate/blogurl", this.id, this.url || this.defaultUrl, "validating url...", "url available", {valid: false, message: "url required"});
+			},
 			Save: function() {
 				this.saving = true;
 				var data = {id: this.id, title: this.title, url: this.url, content: this.content, addtags: this.addtags, deltags: this.deltags};
@@ -46,14 +53,7 @@ $(function() {
 						alert(result.message);
 					this.saving = false;
 				});
-			},
-			ValidateDefaultUrl: function() {
-				if(!this.url)
-					this.ValidateUrl();
-			},
-			ValidateUrl: function() {
-				ValidateInput("#url", "/api/validate/blogurl", this.id, this.url || this.defaultUrl, "validating url...", "url available", {valid: false, message: "url required"});
-			},
+			}
 		}
 	});
 });

@@ -15,18 +15,6 @@ class blogApi extends t7api {
 	 */
 	protected static function ShowDocumentation() {
 ?>
-			<h2 id=getcheckurl>get checkurl</h2>
-			<p>check if a url is available for a blog entry.</p>
-			<dl class=parameters>
-				<dt>url</dt>
-				<dd>url to check.</dd>
-				<dt>id</dt>
-				<dd>
-					id of blog entry that wants to use the url.  optional; assumes new
-					entry.
-				</dd>
-			</dl>
-
 			<h2 id=postdelete>post delete</h2>
 			<p>delete a draft blog entry.  only available to admin.</p>
 			<dl class=parameters>
@@ -94,8 +82,8 @@ class blogApi extends t7api {
 		if($user->IsAdmin())
 			if(isset($_POST['id']) && $_POST['id'] == +$_POST['id'])
 				if($db->real_query('delete from blog_entries where id=\'' . +$_POST['id'] . '\' and status=\'draft\' limit 1'))
-					if($db->affected_rows) {}
-					else
+					if($db->affected_rows) {
+					} else
 						$ajax->Fail('unable to delete entry.  it may be published or already deleted.');
 				else
 					$ajax->Fail('error deleting entry from database', $db->errno . ' ' . $db->error);
@@ -181,7 +169,7 @@ class blogApi extends t7api {
 			if(isset($_POST['id']) && $_POST['id'] == +$_POST['id'])
 				if($db->real_query('update blog_entries set status=\'published\', posted=\'' . +time() . '\' where id=\'' . +$_POST['id'] . '\' and status=\'draft\' limit 1'))
 					if($db->affected_rows) {
-						$db->real_query('update blog_tags as t inner join (select et.tag as tag, count(1) as count, max(e.posted) as lastused from blog_entrytags as et inner join blog_entrytags as ft on ft.tag=et.tag and ft.entry=\'' . $_POST['id'] . '\' left join blog_entries as e on e.id=et.entry where e.status=\'published\' group by et.tag) as s on s.tag=t.id set t.count=s.count, t.lastused=s.lastused');
+						$db->real_query('update blog_tags as t inner join (select et.tag as tag, count(1) as count, max(e.posted) as lastused from blog_entrytags as et inner join blog_entrytags as ft on ft.tag=et.tag and ft.entry=\'' . +$_POST['id'] . '\' left join blog_entries as e on e.id=et.entry where e.status=\'published\' group by et.tag) as s on s.tag=t.id set t.count=s.count, t.lastused=s.lastused');
 						if($entry = $db->query('select url, title from blog_entries where id=\'' . +$_POST['id'] . '\' limit 1'))
 							if($entry = $entry->fetch_object())
 								t7send::Tweet('new blog: ' . $entry->title, t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $entry->url));
