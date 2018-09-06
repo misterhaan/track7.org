@@ -48,6 +48,7 @@ $(function() {
 				this.originalTags = [];
 				this.ValidateUrl();
 				this.ValidateTaken();
+				setTimeout(function() { autosize.update($("textarea[name='storymd']")); }, 25);
 			}
 		},
 		methods: {

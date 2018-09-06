@@ -36,6 +36,18 @@ class validateApi extends t7api {
 				</dd>
 			</dl>
 
+			<h2 id=getlegourl>get legourl</h2>
+			<p>check if a url is available for a lego model.</p>
+			<dl class=parameters>
+				<dt>value</dt>
+				<dd>url to check.</dd>
+				<dt>id</dt>
+				<dd>
+					id of lego model that wants to use the url.  optional; assumes new
+					lego model.
+				</dd>
+			</dl>
+
 			<h2 id=getpastdatetime>get pastdatetime</h2>
 			<p>
 				make sure a datetime entry is in the past and can be understood.  also
@@ -46,7 +58,7 @@ class validateApi extends t7api {
 				<dd>datetime to check.</dd>
 			</dl>
 
-			<h2 id=getblogurl>get photourl</h2>
+			<h2 id=getphotourl>get photourl</h2>
 			<p>check if a url is available for a photo.</p>
 			<dl class=parameters>
 				<dt>value</dt>
@@ -75,7 +87,15 @@ class validateApi extends t7api {
 	protected static function guideurlAction($ajax) {
 		self::ValidateUrl('guides', 'title', $ajax);
 	}
-	
+
+	/**
+	 * check availability of a url for a lego model.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function legourlAction($ajax) {
+		self::ValidateUrl('lego_models', 'title', $ajax);
+	}
+
 	/**
 	 * check a datetime entry.  can return a formatted datetime or just a message.
 	 * @param t7ajax $ajax ajax object for returning data or reporting an error.

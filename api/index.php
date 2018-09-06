@@ -17,6 +17,9 @@ $html->Open('api');
 			<h2 class=api><a href=guides>guides</a></h2>
 			<p>the guides api manages guides.</p>
 
+			<h2 class=api><a href=legos>legos</a></h2>
+			<p>the photos api manages lego models.</p>
+
 			<h2 class=api><a href=photos>photos</a></h2>
 			<p>the photos api manages the photo album.</p>
 
