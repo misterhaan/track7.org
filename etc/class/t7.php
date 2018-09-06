@@ -39,6 +39,9 @@ function __autoload($class) {
 		case 't7feed':
 			require_once 't7feed.php';
 			break;
+		case 't7file':
+			require_once 't7file.php';
+			break;
 		case 't7format':
 			require_once 't7format.php';
 			break;

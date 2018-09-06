@@ -73,6 +73,11 @@ class photosApi extends t7api {
 					list of tag names to remove from the photo.  comma-separated.
 					optional; will not remove any tags if empty or missing.
 				</dd>
+				<dt>originalUrl</dt>
+				<dd>
+					when editing an existing photo, this value is compared againsturl.  if
+					they’re different, the files get renamed.
+				</dd>
 			</dl>
 
 <?php
@@ -208,61 +213,11 @@ class photosApi extends t7api {
 	 * @param bool $thumbonly whether only a thumbnail should be saved.
 	 */
 	private static function SaveUploadedPhoto($photo, $name, $exif, $thumbonly) {
-		$size = getimagesize($photo['tmp_name']);
-		$image = imagecreatefromjpeg($photo['tmp_name']);
 		$name = $_SERVER['DOCUMENT_ROOT'] . '/album/photos/' . $name;
-		if(isset($exif['IFD0']['Orientation']))
-			switch($exif['IFD0']['Orientation']) {
-				case 3:
-					$image = imagerotate($image, 180, 0);
-					break;
-				case 6:
-					$image = imagerotate($image, -90, 0);
-					$tmp = $size[0];
-					$size[0] = $size[1];
-					$size[1] = $tmp;
-					break;
-				case 8:
-					$image = imagerotate($image, 90, 0);
-					$tmp = $size[0];
-					$size[0] = $size[1];
-					$size[1] = $tmp;
-					break;
-		}
-		$aspect = $size[0] / $size[1];
-		if($thumbonly)
-			unlink($photo['tmp_name']);
-		else
-			if($size[0] > self::MAXPHOTOSIZE || $size[1] > self::MAXPHOTOSIZE) {
-				self::SaveResizedImage($image, $size[0], $size[1], $aspect, self::MAXPHOTOSIZE, $name . '.jpeg');
-				unlink($photo['tmp_name']);
-			} else
-				move_uploaded_file($photo['tmp_name'], $name . '.jpeg');
-		self::SaveResizedImage($image, $size[0], $size[1], $aspect, self::THUMBSIZE, $name . '.jpg');
-		imagedestroy($image);
-	}
-
-	/**
-	 * resizes and image and saves it.
-	 * @param resource $image the original image to resize and save.
-	 * @param int $width original image width.
-	 * @param int $height original image height.
-	 * @param float $aspect image aspect ratio.
-	 * @param int $max maximum height / width of the resized image.
-	 * @param string $filename full path and filename to save the image.
-	 */
-	private static function SaveResizedImage($image, $width, $height, $aspect, $max, $filename) {
-		if($aspect > 1) {
-			$w = $max;
-			$h = round($max / $aspect);
-		} else {
-			$h = $max;
-			$w = round($max * $aspect);
-		}
-		$resized = imagecreatetruecolor($w, $h);
-		imagecopyresampled($resized, $image, 0, 0, 0, 0, $w, $h, $width, $height);
-		imagejpeg($resized, $filename);
-		imagedestroy($resized);
+		$dests = [$name . '.jpg' => self::THUMBSIZE];
+		if(!$thumbonly)
+			$dests[$name . '.jpeg'] = self::MAXPHOTOSIZE;
+		t7file::SaveUploadedImage($photo, 'jpeg', $dests, $exif);
 	}
 }
 photosApi::Respond();
