@@ -65,7 +65,7 @@ if($tag) {
 $html->Close();
 
 /**
- * creates an opens the page.
+ * creates and opens the page.
  * @param object $tag tag object with name property, or false if not limited by tag
  * @return t7html
  */

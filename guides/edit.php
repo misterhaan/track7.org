@@ -2,13 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
 if(!$user->IsAdmin()) {
-	// this page is only for admin, so give an ajax error or try to view the guide
-	if(isset($_GET['ajax'])) {
-		$ajax = new t7ajax();
-		$ajax->Fail('you don’t have the rights to do that.  you might need to log in again.');
-		$ajax->Send();
-		die;
-	}
+	// this page is only for admin, so try to view the guide
 	if(isset($_GET['url']))
 		if(isset($_GET['tag']))
 			header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $_GET['tag'] . '/' . $_GET['url']));

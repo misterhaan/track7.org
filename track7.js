@@ -572,9 +572,8 @@ if(typeof Vue == "function") {
 						this.AddTag(this.tagCursor);
 				},
 				AddTypedTag: function() {
-					if(this.tagSearch && (this.tagChoices[0] == "“" + this.tagSearch + "”" || this.tagChoices[0] == "<em>" + this.tagSearch + "</em>")) {
+					if(this.tagSearch && (this.tagChoices[0] == "“" + this.tagSearch + "”" || this.tagChoices[0] == "<em>" + this.tagSearch + "</em>"))
 						this.AddTag(this.tagSearch);
-					}
 				},
 				AddTag: function(name) {
 					if(name) {

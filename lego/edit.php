@@ -2,12 +2,6 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
 if(!$user->IsAdmin()) {
-	if(isset($_GET['ajax'])) {
-		$ajax = new t7ajax();
-		$ajax->Fail('you don’t have the rights to do that.  you might need to log in again.');
-		$ajax->Send();
-		die;
-	}
 	header('HTTP/1.0 404 Not Found');
 	$html = new t7html([]);
 	$html->Open('lego model not found');
