@@ -149,10 +149,21 @@ class legosApi extends t7api {
 								if(!$id)
 									t7send::Tweet('new lego: ' . $title, t7format::FullUrl('/lego/' . $url));
 								elseif($url != $_POST['originalurl'] && $_POST['originalurl'] == t7format::NameToUrl($_POST['originalurl'])) {
-									rename($path . $_POST['originalurl'] . '.png', $path . $url . '.png');
-									rename($path . $_POST['originalurl'] . '-thumb.png', $path . $url . 'thumb.png');
-									rename($path . $_POST['originalurl'] . '-ldr.zip', $path . $url . '-ldr.zip');
-									rename($path . $_POST['originalurl'] . '-img.zip', $path . $url . '-img.zip');
+									if(isset($_FILES['image']) && $_FILES['image']['size']) {
+										unlink($path . $_POST['originalurl'] . '.png');
+										unlink($path . $_POST['originalurl'] . '-thumb.png');
+									} else {
+										rename($path . $_POST['originalurl'] . '.png', $path . $url . '.png');
+										rename($path . $_POST['originalurl'] . '-thumb.png', $path . $url . 'thumb.png');
+									}
+									if(isset($_FILES['ldraw']) && $_FILES['ldraw']['size'])
+										unlink($path . $_POST['originalurl'] . '-ldr.zip');
+									else
+										rename($path . $_POST['originalurl'] . '-ldr.zip', $path . $url . '-ldr.zip');
+									if(isset($_FILES['instructions']) && $_FILES['instructions']['size'])
+										unlink($path . $_POST['originalurl'] . '-img.zip');
+									else
+										rename($path . $_POST['originalurl'] . '-img.zip', $path . $url . '-img.zip');
 								}
 							} else
 								$ajax->Fail('database error saving lego model', $db->errno . ' ' . $db->error);

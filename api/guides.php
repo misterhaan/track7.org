@@ -222,10 +222,10 @@ class guidesApi extends t7api {
 								$db->commit();
 								$db->autocommit(true);
 								$ajax->Data->url = $guide->url;
-								$del = $guide->deltags ? array_map(function($tag) { global $db; return $db->escape_string($tag); }, explode(',', $guide->deltags)) : [];
+								$del = $guide->deltags ? explode(',', $db->escape_string($guide->deltags)) : [];
 								if(count($del))
 									$db->real_query('delete from guide_taglinks where guide=\'' . +$id . '\' and tag in (select id from guide_tags where name in (\'' . implode('\', \'', $del) . '\'))');
-								$add = $guide->addtags ? array_map(function($tag) { global $db; return $db->escape_string($tag); }, explode(',', $guide->addtags)) : [];
+								$add = $guide->addtags ? explode(',', $db->escape_string($guide->addtags)) : [];
 								if(count($add)) {
 									$db->query('insert into guide_tags (name) values (trim(\'' . implode('\')), (trim(\'', $add) . '\')) on duplicate key update name=name');
 									$db->query('insert into guide_taglinks (guide, tag) select \'' . +$id . '\' as guide, id as tag from guide_tags where name in (trim(\'' . implode('\'), trim(\'', $add) . '\'))');

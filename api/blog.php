@@ -204,10 +204,10 @@ class blogApi extends t7api {
 					if($db->real_query($save)) {
 						if(!$id)
 							$id = $db->insert_id;
-							$del = isset($_POST['deltags']) && $_POST['deltags'] ? explode(',', trim($_POST['deltags'])) : [];
+							$del = isset($_POST['deltags']) && $_POST['deltags'] ? explode(',', $db->escape_string($_POST['deltags'])) : [];
 							if(count($del))
 								$db->real_query('delete from blog_entrytags where entry=\'' . +$id . '\' and tag in (select id from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $del) . '\')))');
-							$add = isset($_POST['addtags']) && $_POST['addtags'] ? explode(',', trim($_POST['addtags'])) : [];
+							$add = isset($_POST['addtags']) && $_POST['addtags'] ? explode(',', $db->escape_string($_POST['addtags'])) : [];
 							if(count($add)) {
 								$db->query('insert into blog_tags (name) values (trim(\'' . implode('\')), (trim(\'', $add) . '\')) on duplicate key update name=name');
 								$db->query('insert into blog_entrytags (entry, tag) select \'' . +$id . '\' as entry, id as tag from blog_tags where name in (trim(\'' . implode('\'), trim(\'', $add) . '\'))');

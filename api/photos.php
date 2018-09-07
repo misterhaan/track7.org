@@ -75,8 +75,8 @@ class photosApi extends t7api {
 				</dd>
 				<dt>originalUrl</dt>
 				<dd>
-					when editing an existing photo, this value is compared againsturl.  if
-					they’re different, the files get renamed.
+					when editing an existing photo, this value is compared against url.
+					if they’re different, the files get renamed.
 				</dd>
 			</dl>
 
@@ -178,13 +178,18 @@ class photosApi extends t7api {
 								t7send::Tweet(($youtube ? 'new video: ' : 'new photo: ') . $caption, t7format::FullUrl('/album/' . $url));
 							} elseif($url != $_POST['originalurl'] && $_POST['originalurl'] == t7format::NameToUrl($_POST['originalurl'])) {
 								$path = $_SERVER['DOCUMENT_ROOT'] . '/album/photos/';
-								rename($path . $_POST['originalurl'] . '.jpeg', $path . $url . '.jpeg');
-								rename($path . $_POST['originalurl'] . '.jpg', $path . $url . '.jpg');
+								if(isset($_FILES['photo']) && $_FILES['photo']['size']) {
+									unlink($path . $_POST['originalurl'] . '.jpeg');
+									unlink($path . $_POST['originalurl'] . '.jpg');
+								} else {
+									rename($path . $_POST['originalurl'] . '.jpeg', $path . $url . '.jpeg');
+									rename($path . $_POST['originalurl'] . '.jpg', $path . $url . '.jpg');
+								}
 							}
-							$del = isset($_POST['deltags']) && $_POST['deltags'] ? explode(',', trim($_POST['deltags'])) : [];
+							$del = isset($_POST['deltags']) && $_POST['deltags'] ? explode(',', $db->escape_string($_POST['deltags'])) : [];
 							if(count($del))
 								$db->real_query('delete from photos_taglinks where photo=\'' . +$id . '\' and tag in (select id from photos_tags where name in (trim(\'' . implode('\'), trim(\'', $del) . '\')))');
-							$add = isset($_POST['addtags']) && $_POST['addtags'] ? explode(',', trim($_POST['addtags'])) : [];
+							$add = isset($_POST['addtags']) && $_POST['addtags'] ? explode(',', $db->escape_string($_POST['addtags'])) : [];
 							if(count($add)) {
 								$db->query('insert into photos_tags (name) values (trim(\'' . implode('\')), (trim(\'', $add) . '\')) on duplicate key update name=name');
 								$db->query('insert into photos_taglinks (photo, tag) select \'' . +$id . '\' as photo, id as tag from photos_tags where name in (trim(\'' . implode('\'), trim(\'', $add) . '\'))');
