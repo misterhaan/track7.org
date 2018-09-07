@@ -1,32 +1,60 @@
 $(function() {
-	ko.applyBindings(window.ViewModel = new vm());
-	if($("nav.tagcloud").length)
-		window.ViewModel.LoadTags();
-	window.ViewModel.LoadArt();
-	$("#editdesc").hide();
-	$("a[href$='#tagedit']").click(function(e) {
-		$("#editdesc textarea").val($("#taginfo .editable").html());
-		$("#editdesc").show().focus();
-		$("a[href$='#tagedit']").hide();
-		e.preventDefault();
+	var visualart = new Vue({
+		el: "#visualart",
+		data: {
+			arts: [],
+			loading: false,
+			hasMore: false,
+			error: ""
+		},
+		created: function() {
+			this.tagid = $("#taginfo").data("tagid");
+			this.Load();
+		},
+		methods: {
+			Load: function() {
+				this.loading = true;
+				$.get("/api/art/list", {tagid: this.tagid, beforetime: this.oldest, beforeid: this.lastid}, result => {
+					if(!result.fail) {
+						this.arts = this.arts.concat(result.arts);
+						this.oldest = result.oldest;
+						this.lastid = result.lastid;
+						this.hasMore = result.hasMore;
+					} else
+						this.error = result.message;
+					this.loading = false;
+				}, "json");
+			}
+		}
 	});
-	$("a[href$='#save']").click(function(e) {
-		$.post("/tags.php?ajax=setdesc&type=art", {id: $("#taginfo").data("tagid"), description: $("#editdesc textarea").val()}, function(data, status, xhr) {
-			var result = $.parseJSON(xhr.responseText);
-			if(!result.fail) {
-				$("#taginfo .editable").html($("#editdesc textarea").val());
-				$("a[href$='#tagedit']").show();
-				$("#editdesc").hide();
-			} else
-				alert(result.message);
-		});
-		e.preventDefault();
-	});
-	$("a[href$='#cancel']").click(function(e) {
-		$("a[href$='#tagedit']").show();
-		$("#editdesc").hide();
-		e.preventDefault();
-	});
+//	ko.applyBindings(window.ViewModel = new vm());
+//	if($("nav.tagcloud").length)
+//		window.ViewModel.LoadTags();
+//	window.ViewModel.LoadArt();
+//	$("#editdesc").hide();
+//	$("a[href$='#tagedit']").click(function(e) {
+//		$("#editdesc textarea").val($("#taginfo .editable").html());
+//		$("#editdesc").show().focus();
+//		$("a[href$='#tagedit']").hide();
+//		e.preventDefault();
+//	});
+//	$("a[href$='#save']").click(function(e) {
+//		$.post("/tags.php?ajax=setdesc&type=art", {id: $("#taginfo").data("tagid"), description: $("#editdesc textarea").val()}, function(data, status, xhr) {
+//			var result = $.parseJSON(xhr.responseText);
+//			if(!result.fail) {
+//				$("#taginfo .editable").html($("#editdesc textarea").val());
+//				$("a[href$='#tagedit']").show();
+//				$("#editdesc").hide();
+//			} else
+//				alert(result.message);
+//		});
+//		e.preventDefault();
+//	});
+//	$("a[href$='#cancel']").click(function(e) {
+//		$("a[href$='#tagedit']").show();
+//		$("#editdesc").hide();
+//		e.preventDefault();
+//	});
 });
 
 function vm() {

@@ -8,6 +8,9 @@ $html->Open('api');
 			<h2 class=api><a href=activity>activity</a></h2>
 			<p>the activity api retrieves latest activity.</p>
 
+			<h2 class=api><a href=art>art</a></h2>
+			<p>the art api manages art.</p>
+
 			<h2 class=api><a href=blog>blog</a></h2>
 			<p>the blog api manages blog entries.</p>
 
