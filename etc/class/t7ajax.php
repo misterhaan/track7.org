@@ -20,6 +20,14 @@ class t7ajax {
 	}
 
 	/**
+	 * Merge an entire object of data into the ajax response data.
+	 * @param object $newObject data object to merge.
+	 */
+	public function MergeData($newObject) {
+		$this->Data = (object)array_merge((array)$this->Data, (array)$newObject);
+	}
+
+	/**
 	 * mark the request failed and add a reason.
 	 * @param string $message failure reason
 	 */
