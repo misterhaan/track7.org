@@ -26,7 +26,7 @@ class t7html {
 		<meta name=viewport content="width=device-width, initial-scale=1">
 		<title><?php echo $title; ?></title>
 		<link rel=stylesheet href="/track7.css">
-		<script src="/jquery-3.2.1.min.js" type="text/javascript"></script>
+		<script src="/jquery-3.3.1.min.js" type="text/javascript"></script>
 		<script src="/autosize.min.js" type="text/javascript"></script>
 <?php
 		if(isset($this->params['ko']) && $this->params['ko']) {
