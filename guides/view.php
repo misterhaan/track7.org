@@ -35,7 +35,7 @@ if($pageinfo = $db->query('select id, number, heading, html from guide_pages whe
 	while($p = $pageinfo->fetch_object())
 		$pages[$p->number] = $p;
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open(htmlspecialchars($guide->title) . ($tag ? ' - ' . $tag . ' - guides' : ' - guides'));
 if($guide->status == 'published')
 	$db->real_query('update guides set views=views+1 where id=' . +$guide->id);

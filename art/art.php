@@ -44,7 +44,7 @@ if($tag) {
 		$next = $next->fetch_object();
 }
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open(htmlspecialchars($art->title) . ($tag ? ' - ' . $tag->name . ' - art' : ' - art'));
 ?>
 			<h1><?=htmlspecialchars($art->title); ?></h1>

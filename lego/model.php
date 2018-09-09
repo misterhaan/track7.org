@@ -27,7 +27,7 @@ if($prev = $db->query('select url, title from lego_models where posted<\'' . +$l
 if($next = $db->query('select url, title from lego_models where posted>\'' . +$lego->posted . '\' order by posted limit 1'))
 	$next = $next->fetch_object();
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open(htmlspecialchars($lego->title) . ' - lego models');
 ?>
 			<h1><?php echo htmlspecialchars($lego->title); ?></h1>
