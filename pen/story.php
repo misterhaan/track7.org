@@ -1,6 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-if($story = $db->query('select s.id, s.published, s.url, ss.url as seriesurl, ss.title as seriestitle, ss.numstories, s.number, s.title, s.storyhtml from stories as s left join stories_series as ss on ss.id=s.series where s.url=\'' . $db->escape_string($_GET['story']) . '\''))
+if($story = $db->query('select s.id, s.published, s.url, ss.url as seriesurl, ss.title as seriestitle, ss.numstories, s.number, s.posted, s.title, s.storyhtml from stories as s left join stories_series as ss on ss.id=s.series where s.url=\'' . $db->escape_string($_GET['story']) . '\''))
 	if($story = $story->fetch_object())
 		if($story->published || $user->IsAdmin()) {
 			if($story->seriesurl && (!isset($_GET['series']) || $_GET['series'] != $story->seriesurl)) {
@@ -11,20 +11,32 @@ if($story = $db->query('select s.id, s.published, s.url, ss.url as seriesurl, ss
 				header('Location: ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/' . $story->url));
 				die;
 			}
-			$html = new t7html(['ko' => true]);
-			if($story->seriesurl) {
+			$html = new t7html(['vue' => true]);
+			if($story->seriesurl)
 				$html->Open(htmlspecialchars($story->title) . ' - ' . htmlspecialchars($story->seriestitle) . ' - stories');
-?>
-			<h1><?php echo htmlspecialchars($story->title); ?></h1>
-			<p class=postmeta>
-				story <?php echo +$story->number; ?> of <?php echo +$story->numstories; ?>
-				in <a href="."><?php echo $story->seriestitle; ?></a>
-			</p>
-<?php
-			} else {
+			else
 				$html->Open(htmlspecialchars($story->title) . ' - stories');
 ?>
-			<h1><?php echo htmlspecialchars($story->title); ?></h1>
+			<h1><?=htmlspecialchars($story->title); ?></h1>
+<?php
+			if($story->seriesurl || $story->posted > 100) {
+?>
+			<p class=postmeta>
+<?php
+				if($story->seriesurl) {
+?>
+				story <?=+$story->number; ?> of <?=+$story->numstories; ?> in
+				<a href="."><?=$story->seriestitle; ?></a>
+<?php
+				}
+				if($story->posted > 100) {
+					$pub = t7format::TimeTag('smart', $story->posted, t7format::DATE_LONG);
+?>
+				published <time datetime="<?=$pub->datetime; ?>" title="<?=$pub->title; ?>"><?=$pub->display; ?></time>
+<?php
+				}
+?>
+			</p>
 <?php
 			}
 			echo $story->storyhtml;

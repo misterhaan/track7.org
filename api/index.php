@@ -26,6 +26,9 @@ $html->Open('api');
 			<h2 class=api><a href=photos>photos</a></h2>
 			<p>the photos api manages the photo album.</p>
 
+			<h2 class=api><a href=stories>stories</a></h2>
+			<p>the stories api manages stories and other writings.</p>
+
 			<h2 class=api><a href=tags>tags</a></h2>
 			<p>the tags api manages tags for everything that uses tags.</p>
 

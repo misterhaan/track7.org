@@ -1,52 +1,42 @@
 <?php
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-  if(isset($_GET['ajax'])) {
-    $ajax = new t7ajax();
-    switch($_GET['ajax']) {
-      case 'stories':
-        if(isset($_GET['series']) && $_GET['series'] == +$_GET['series'])
-          if($stories = $db->query('select posted, url, title, deschtml from stories where published=1 and series=\'' . +$_GET['series'] . '\' order by posted')) {
-            $ajax->Data->stories = [];
-            while($story = $stories->fetch_object()) {
-              if($story->posted > 100)
-                $story->posted = t7format::TimeTag('M j, Y', $story->posted, 'g:i a \o\n l F jS Y');
-              else
-                $story->posted = false;
-              $ajax->Data->stories[] = $story;
-            }
-          } else
-            $ajax->Fail('database error looking up stories.');
-        else
-          $ajax->Fail('series must be provided as a numeric id.');
-        break;
-    }
-    $ajax->Send();
-    die;
-  }
+if($series = $db->query('select id, url, title, deschtml from stories_series where url=\'' . $db->escape_string($_GET['series']) . '\''))
+	if($series = $series->fetch_object()) {
+		$html = new t7html(['vue' => true]);
+		$html->Open(htmlspecialchars($series->title) . ' - stories');
+?>
+			<h1 data-series-id=<?=+$series->id; ?>><?=htmlspecialchars($series->title); ?></h1>
+<?=$series->deschtml; ?>
 
-  if($series = $db->query('select id, url, title, deschtml from stories_series where url=\'' . $db->escape_string($_GET['series']) . '\''))
-    if($series = $series->fetch_object()) {
-      $html = new t7html(['ko' => true]);
-      $html->Open(htmlspecialchars($series->title) . ' - stories');
-?>
-      <h1 data-series-id=<?php echo +$series->id; ?>><?php echo htmlspecialchars($series->title); ?></h1>
+			<section id=serieslist>
+				<article v-for="story in stories">
+					<h2><a :href=story.url>{{story.title}}</a></h2>
+					<p class=postmeta v-if=story.posted>
+						<span>posted <time :datetime=story.posted.datetime :title=story.posted.title>{{story.posted.display}}</time></span>
+					</p>
+					<div class=description v-html=story.deschtml></div>
+				</article>
+			</section>
 <?php
-      echo $series->deschtml;
+	} else {
+		header('HTTP/1.0 404 Not Found');
+		$html = new t7html([]);
+		$html->Open('series not found');
 ?>
-      <!-- ko foreach: stories -->
-      <article>
-        <h2><a data-bind="text: title, attr: {href: url}"></a></h2>
-        <p class=postmeta data-bind="visible: posted">
-          <span data-bind="visible: posted">posted <time data-bind="text: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time></span>
-        </p>
-        <div class=description data-bind="html: deschtml"></div>
-      </article>
-      <!-- /ko -->
+			<h1>404 series not found</h1>
+			<p>
+				sorry, we don’t seem to have a series by that name.  try the list of
+				<a href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">all stories</a>.
+			</p>
 <?php
-      $html->Close();
-    } else
-      ;  // TODO:  series not found
-  else
-    ; // TODO:  error looking up series
+	}
+else {
+	$html = new t7html([]);
+	$html->Open('error - stories');
 ?>
+			<h1>database error</h1>
+			<p class=error>database error looking up series information<?=$user->IsAdmin() ? ':  ' . $db->errno . ' ' . $db->error : '.'; ?></p>
+<?php
+}
+$html->Close();

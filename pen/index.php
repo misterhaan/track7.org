@@ -1,33 +1,12 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-if(isset($_GET['ajax'])) {
-	$ajax = new t7ajax();
-	switch($_GET['ajax']) {
-		case 'stories':
-			if($stories = $db->query('select ifnull(ss.lastposted,s.posted) as posted, if(ss.url is null,s.url,concat(ss.url,\'/\')) as url, ifnull(ss.title,s.title) as title, ifnull(ss.deschtml,s.deschtml) as deschtml, ss.numstories from stories as s left join stories_series as ss on ss.id=s.series where s.published=1 group by ifnull(s.series,-s.id) order by posted desc')) {
-				$ajax->Data->stories = [];
-				while($story = $stories->fetch_object()) {
-					if($story->posted > 100)
-						$story->posted = t7format::TimeTag('M j, Y', $story->posted, 'g:i a \o\n l F jS Y');
-					else
-						$story->posted = false;
-					$ajax->Data->stories[] = $story;
-				}
-			} else
-				$ajax->Fail('database error looking up stories:  ' . $db->error);
-			break;
-	}
-	$ajax->Send();
-	die;
-}
-
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open('stories');
 ?>
 			<h1>
 				stories
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of stories"></a>
+				<a class=feed href="<?=dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of stories"></a>
 			</h1>
 
 			<p>
@@ -41,15 +20,16 @@ $html->Open('stories');
 				try to get out as stories.
 			</p>
 
-			<!-- ko foreach: stories -->
-			<article data-bind="css: {series: numstories}">
-				<h2><a data-bind="text: title, attr: {href: url}"></a></h2>
-				<p class=postmeta data-bind="visible: posted || numstories">
-					<span data-bind="visible: numstories, text: 'a series of ' + numstories + ' stories'"></span>
-					<span data-bind="visible: posted">posted <time data-bind="text: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time></span>
-				</p>
-				<div class=description data-bind="html: deschtml"></div>
-			</article>
-			<!-- /ko -->
+			<section id=storylist>
+				<article v-for="story in stories" :class="{series: story.numstories}">
+					<h2><a :href=story.url>{{story.title}}</a></h2>
+					<p class=postmeta v-if="story.posted || story.numstories">
+						<span v-if=story.numstories>a series of {{story.numstories}} stories</span>
+						<span v-if=story.posted>posted <time :datetime=story.posted.datetime :title=story.posted.title>{{story.posted.display}}</time></span>
+					</p>
+					<div class=description v-html=story.deschtml></div>
+				</article>
+			</section>
+
 <?php
 $html->Close();

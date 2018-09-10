@@ -1,26 +1,20 @@
 $(function() {
-  ko.applyBindings(window.ViewModel = new vm());
-  window.ViewModel.LoadStories();
+	var storylist = new Vue({
+		el: "#storylist",
+		data: {
+			stories: [],
+			error: false,
+			loading: false
+		},
+		created: function() {
+			this.loading = true;
+			$.get("/api/stories/list", {}, result => {
+				if(!result.fail)
+					this.stories = result.stories;
+				else
+					this.error = result.message;
+				this.loading = false;
+			}, "json");
+		}
+	});
 });
-
-function vm() {
-  var self = this;
-  self.errors = ko.observableArray([]);
-
-  self.stories = ko.observableArray([]);
-
-  self.loadingStories = ko.observable(false);
-
-  self.LoadStories = function() {
-    self.loadingStories(true);
-    $.get("/pen/", {ajax: "stories"}, function(data, status, xhr) {
-      var result = $.parseJSON(xhr.responseText);
-      if(!result.fail)
-        for(var s = 0; s < result.stories.length; s++)
-          self.stories.push(result.stories[s]);
-      else
-        self.errors.push(result.message);
-      self.loadingStories(false);
-    });
-  };
-}
