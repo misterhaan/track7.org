@@ -207,8 +207,8 @@ class guidesApi extends t7api {
 						if($db->real_query($q)) {
 							if(!$id)
 								$id = $db->insert_id;
-							if(count($guide->deletedPageIDs))
-								if(!$db->real_query('delete from guide_pages where id in (' . implode(',', $guide->deletedPageIDs) . ')'))
+							if(count($guide->deletedPageIds))
+								if(!$db->real_query('delete from guide_pages where id in (' . implode(',', $guide->deletedPageIds) . ')'))
 									$ajax->Fail('database error removing deleted pages', $db->errno . ' ' . $db->error);
 							foreach($guide->pages as $index => $page) {
 								$q = 'guide_pages set number=\'' . ($index + 1) . '\', heading=\'' . $db->escape_string(trim($page->heading)) . '\', markdown=\'' . $db->escape_string(trim($page->markdown)) . '\', html=\'' . $db->escape_string(t7format::Markdown(trim($page->markdown))) . '\'';
