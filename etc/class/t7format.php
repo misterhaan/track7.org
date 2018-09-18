@@ -187,9 +187,8 @@ class t7format {
 	 */
 	public static function LocalStrtotime($timestring) {
 		global $user;
-		if($user->DST)
-			return strtotime($timestring) - $user->tzOffset;
-		return strtotime(strtotime($timestring) . ' seconds GMT') - $user->tzOffset;
+		$nonlocal = $user->DST ? strtotime($timestring) : strtotime(strtotime($timestring) . ' seconds GMT');
+		return $nonlocal === false ? false : $nonlocal - $user->tzOffset;
 	}
 
 	/**
