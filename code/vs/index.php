@@ -5,7 +5,7 @@ $html->Open('applications');
 ?>
 			<h1>
 				applications
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of application releases"></a>
+				<a class=feed href="<?=dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of application releases"></a>
 			</h1>
 <?php
 if($user->IsAdmin()) {
@@ -32,7 +32,7 @@ if($apps = $db->query('select * from (select a.id, a.url, a.name, a.deschtml, r.
 			<nav id=vsapps>
 <?php
 	while($app = $apps->fetch_object()) {
-		$app->released = t7format::TimeTag('smart', $app->released, 'M j, Y \a\t g:i a');
+		$app->released = t7format::TimeTag('smart', $app->released, t7format::DATE_LONG);
 		if(strpos($app->binurl, '/') === false)
 			$app->binurl = 'files/' . $app->binurl;
 		if($app->bin32url && strpos($app->bin32url, '/') === false)
@@ -40,18 +40,18 @@ if($apps = $db->query('select * from (select a.id, a.url, a.name, a.deschtml, r.
 ?>
 				<article>
 					<header>
-						<h2><a href="<?php echo $app->url; ?>">
-							<img class=icon src="files/<?php echo $app->url; ?>.png" alt="">
-							<?php echo htmlspecialchars($app->name); ?>
+						<h2><a href="<?=$app->url; ?>">
+							<img class=icon src="files/<?=$app->url; ?>.png" alt="">
+							<?=htmlspecialchars($app->name); ?>
 						</a></h2>
 						<p class=meta>
-							<span class=version title="latest version <?php echo $app->version; ?>">v<?php echo $app->version; ?></span>
-							<time class=posted title="latest release <?php echo $app->released->title; ?>" datetime="<?php echo $app->released->datetime; ?>"><?php echo $app->released->display; ?></time>
+							<span class=version title="latest version <?=$app->version; ?>">v<?=$app->version; ?></span>
+							<time class=posted title="latest release <?=$app->released->title; ?>" datetime="<?=$app->released->datetime; ?>"><?=$app->released->display; ?></time>
 						</p>
 					</header>
-					<?php echo $app->deschtml; ?>
-					<p class="downloads"><a class="action download" href="<?php echo $is64 || !$app->bin32url ? $app->binurl : $app->binurl; ?>">download latest release<?php if($app->bin32url) echo ' (' . ($is64 ? '64' : '32') . '-bit)'; ?></a></p>
-					<p class="downloads"><a class="action list" href="<?php echo $app->url; ?>">other versions and source code</a></p>
+					<?=$app->deschtml; ?>
+					<p class="downloads"><a class="action download" href="<?=$is64 || !$app->bin32url ? $app->binurl : $app->binurl; ?>">download latest release<?php if($app->bin32url) echo ' (' . ($is64 ? '64' : '32') . '-bit)'; ?></a></p>
+					<p class="downloads"><a class="action list" href="<?=$app->url; ?>">other versions and source code</a></p>
 				</article>
 <?php
 	}

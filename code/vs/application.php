@@ -20,7 +20,7 @@ if(!$app) { // TODO:  make sure there’s at least one release   || $entry->stat
 	die;
 }
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open(htmlspecialchars($app->name));
 ?>
 			<h1>

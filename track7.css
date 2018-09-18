@@ -1896,6 +1896,10 @@ img.icon {
 		margin: .75em 1em .75em 6.5em;
 	}
 }
+img.icon.preview {
+	width: 32px;
+	height: 32px;
+}
 
 /*-------------------------------------------------[ /code/web/editscr.php ]--*/
 @media (min-width: 40em) {

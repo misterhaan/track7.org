@@ -13,6 +13,18 @@ class validateApi extends t7api {
 	 */
 	protected static function ShowDocumentation() {
 ?>
+			<h2 id=getapplicationurl>get applicationurl</h2>
+			<p>check if a url is available for an application.</p>
+			<dl class=parameters>
+				<dt>value</dt>
+				<dd>url to check.</dd>
+				<dt>id</dt>
+				<dd>
+					id of application that wants to use the url.  optional; assumes new
+					application.
+				</dd>
+			</dl>
+
 			<h2 id=getarturl>get arturl</h2>
 			<p>check if a url is available for art.</p>
 			<dl class=parameters>
@@ -79,6 +91,14 @@ class validateApi extends t7api {
 			</dl>
 
 <?php
+	}
+	
+	/**
+	 * check availability of a url for an application.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function applicationurlAction($ajax) {
+		self::ValidateUrl('code_vs_applications', 'name', $ajax);
 	}
 
 	/**
