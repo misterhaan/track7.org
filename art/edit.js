@@ -22,6 +22,8 @@ $(function() {
 					if(!result.fail) {
 						this.title = result.title;
 						this.url = result.url;
+						this.ValidateUrl();
+						this.originalUrl = result.url;
 						this.ext = result.ext;
 						this.descmd = result.descmd;
 						setTimeout(function() { autosize($("textarea[name='descmd']")); }, 25);
@@ -34,7 +36,6 @@ $(function() {
 			else {
 				this.originalUrl = "";
 				this.originalTags = [];
-				this.ValidateUrl();
 				setTimeout(function() { autosize($("textarea[name='descmd']")); }, 25);
 			}
 		},

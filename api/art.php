@@ -11,7 +11,7 @@ class artApi extends t7api {
 	const THUMBSIZE = 150;
 
 	/**
-	 * write out the documentation for the photos api controller.  the page is
+	 * write out the documentation for the art api controller.  the page is
 	 * already opened with an h1 header, and will be closed after the call
 	 * completes.
 	 */
@@ -69,7 +69,7 @@ class artApi extends t7api {
 					list of tag names to remove from the art.  comma-separated.
 					optional; will not remove any tags if empty or missing.
 				</dd>
-				<dt>originalUrl</dt>
+				<dt>originalurl</dt>
 				<dd>
 					when editing existing art, this value is compared against url.  if
 					they’re different, the files get renamed.
@@ -165,7 +165,6 @@ class artApi extends t7api {
 							if(!$id)
 								t7send::Tweet('new art: ' . $title, t7format::FullUrl('/art/' . $url));
 							elseif($url != $_POST['originalurl'] && $_POST['originalurl'] == t7format::NameToUrl($_POST['originalurl'])) {
-								// TODO:  move old files maybe
 								$path = $_SERVER['DOCUMENT_ROOT'] . '/art/img/';
 								if($ext) {
 									unlink($path . $_POST['originalurl'] . '.jpg');
