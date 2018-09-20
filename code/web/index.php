@@ -5,7 +5,7 @@ $html->Open('web scripts');
 ?>
 			<h1>
 				web scripts
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of web scripts"></a>
+				<a class=feed href="<?=dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of web scripts"></a>
 			</h1>
 <?php
 if($user->IsAdmin()) {
@@ -26,17 +26,17 @@ if($scrs = $db->query('select s.url, s.name, s.deschtml, s.released, u.name as t
 			<nav id=webscripts>
 <?php
 	while($scr = $scrs->fetch_object()) {
-		$scr->released = t7format::TimeTag('smart', $scr->released, 'M j, Y \a\t g:i a');
+		$scr->released = t7format::TimeTag('smart', $scr->released, t7format::DATE_LONG);
 ?>
 				<article>
 					<header>
-						<h2><a href="<?php echo $scr->url; ?>"><?php echo htmlspecialchars($scr->name); ?></a></h2>
+						<h2><a href="<?=$scr->url; ?>"><?=htmlspecialchars($scr->name); ?></a></h2>
 						<p class=meta>
-							<span class=scripttype><?php echo $scr->typename; ?></span>
-							<time class=posted title="released <?php echo $scr->released->title; ?>" datetime="<?php echo $scr->released->datetime; ?>"><?php echo $scr->released->display; ?></time>
+							<span class=scripttype><?=$scr->typename; ?></span>
+							<time class=posted title="released <?=$scr->released->title; ?>" datetime="<?=$scr->released->datetime; ?>"><?=$scr->released->display; ?></time>
 						</p>
 					</header>
-					<?php echo $scr->deschtml; ?>
+					<?=$scr->deschtml; ?>
 				</article>
 <?php
 	}

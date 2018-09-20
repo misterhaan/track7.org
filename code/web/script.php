@@ -12,19 +12,19 @@ if(isset($_GET['url']))
 						$released = t7format::TimeTag('smart', $released, 'Y-m-d g:i:s a');
 						if(!$download)
 							$download = 'files/' . $_GET['url'] . '.zip';
-						$html = new t7html(['ko' => true]);
+						$html = new t7html(['vue' => true]);
 						$html->Open(htmlspecialchars($name) . ' - scripts - software');
 ?>
-			<h1><?php echo htmlspecialchars($name); ?></h1>
+			<h1><?=htmlspecialchars($name); ?></h1>
 			<p class=guidemeta>
-				<span class=scripttype><?php echo $typename; ?></span>
-				<time class=posted title="released <?php echo $released->title; ?>" datetime="<?php echo $released->datetime; ?>"><?php echo $released->display; ?></time>
+				<span class=scripttype><?=$typename; ?></span>
+				<time class=posted title="released <?=$released->title; ?>" datetime="<?=$released->datetime; ?>"><?=$released->display; ?></time>
 			</p>
 <?php
 						if($user->IsAdmin()) {
 ?>
 			<nav class=actions>
-				<a class=edit href="editscr?id=<?php echo $id; ?>">edit this script</a>
+				<a class=edit href="editscr?id=<?=$id; ?>">edit this script</a>
 			</nav>
 <?php
 						}
@@ -32,11 +32,11 @@ if(isset($_GET['url']))
 ?>
 			<h2>files</h2>
 			<p class="downloads">
-				<a class="action zip" href="<?php echo $download; ?>">download</a>
+				<a class="action zip" href="<?=$download; ?>">download</a>
 <?php
 						if($github) {
 ?>
-				<a class="action github" href="https://github.com/misterhaan/<?php echo $github; ?>">github</a>
+				<a class="action github" href="https://github.com/misterhaan/<?=$github; ?>">github</a>
 <?php
 						}
 ?>
@@ -50,7 +50,7 @@ if(isset($_GET['url']))
 									if($getreqs->bind_result($reqname, $requrl))
 										while($getreqs->fetch()) {
 ?>
-				<li><a href="<?php echo $requrl; ?>"><?php echo $reqname; ?></a></li>
+				<li><a href="<?=$requrl; ?>"><?=$reqname; ?></a></li>
 <?php
 										}
 									else
@@ -72,7 +72,7 @@ if(isset($_GET['url']))
 							echo $inst;
 							if($wiki) {
 ?>
-			<p class=calltoaction><a class="action wiki" href="https://wiki.track7.org/<?php echo $wiki; ?>">read more on the track7 wiki</a></p>
+			<p class=calltoaction><a class="action wiki" href="https://wiki.track7.org/<?=$wiki; ?>">read more on the track7 wiki</a></p>
 <?php
 							}
 						}
@@ -88,7 +88,7 @@ $html->Open('script not found - software');
 
 			<p>
 				sorry, we don’t seem to have a script by that name.  try the list of
-				<a href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">all scripts</a>.
+				<a href="<?=dirname($_SERVER['SCRIPT_NAME']); ?>/">all scripts</a>.
 			</p>
 <?php
 $html->Close();

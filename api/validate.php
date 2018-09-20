@@ -90,6 +90,18 @@ class validateApi extends t7api {
 				</dd>
 			</dl>
 
+			<h2 id=getwebcodeurl>get webcodeurl</h2>
+			<p>check if a url is available for web code.</p>
+			<dl class=parameters>
+				<dt>value</dt>
+				<dd>url to check.</dd>
+				<dt>id</dt>
+				<dd>
+					id of web code that wants to use the url.  optional; assumes new web
+					code.
+				</dd>
+			</dl>
+
 <?php
 	}
 	
@@ -158,6 +170,14 @@ class validateApi extends t7api {
 	 */
 	protected static function photourlAction($ajax) {
 		self::ValidateUrl('photos', 'caption', $ajax);
+	}
+
+	/**
+	 * check availability of a url for web code.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function webcodeurlAction($ajax) {
+		self::ValidateUrl('code_web_scripts', 'name', $ajax);
 	}
 
 	/**

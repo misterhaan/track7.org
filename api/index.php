@@ -37,5 +37,9 @@ $html->Open('api');
 
 			<h2 class=api><a href=validate>validate</a></h2>
 			<p>the validate api provides field-level validation for forms.</p>
+
+			<h2 class=api><a href=webcode>webcode</a></h2>
+			<p>the webcode api manages web script code.</p>
+
 <?php
 $html->Close();
