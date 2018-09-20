@@ -133,7 +133,6 @@ class applicationsApi extends t7api {
 							if($binurl = self::GetFileUrl('bin', $filenamebase)) {
 								$bin32url = self::GetFileUrl('bin32', $filenamebase);
 								if($srcurl = self::GetFileUrl('src', $filenamebase)) {
-									$ajax->Data->ver = $ver;  // TODO:  remove debug
 									$released = $_POST['released'] ? t7format::LocalStrtotime($_POST['released']) : time();
 									$language = +$_POST['language'];
 									$dotnet = isset($_POST['dotnet']) && +$_POST['dotnet'] ? +$_POST['dotnet'] : '';
@@ -147,7 +146,6 @@ class applicationsApi extends t7api {
 										. '\', bin32url=nullif(\'' . $db->escape_string($bin32url)
 										. '\',\'\'), srcurl=\'' . $db->escape_string($srcurl)
 										. '\', changelog=\'' . $db->escape_string(t7format::Markdown($_POST['changelog'])) . '\'';
-									$ajax->Data->sql = $ins;  // TODO:  remove debug
 									if($db->real_query($ins)) {
 										$ajax->Data->url = $app->url;
 										if(time() - $released < 604800)  // within the last week
