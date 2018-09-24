@@ -46,6 +46,18 @@ class validateApi extends t7api {
 				</dd>
 			</dl>
 
+			<h2 id=getcalcurl>get calcurl</h2>
+			<p>check if a url is available for a calculator program.</p>
+			<dl class=parameters>
+				<dt>value</dt>
+				<dd>url to check.</dd>
+				<dt>id</dt>
+				<dd>
+					id of calculator program that wants to use the url.  optional; assumes
+					new entry.
+				</dd>
+			</dl>
+
 			<h2 id=getguideurl>get guideurl</h2>
 			<p>check if a url is available for a guide.</p>
 			<dl class=parameters>
@@ -104,7 +116,7 @@ class validateApi extends t7api {
 
 <?php
 	}
-	
+
 	/**
 	 * check availability of a url for an application.
 	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
@@ -127,6 +139,14 @@ class validateApi extends t7api {
 	 */
 	protected static function blogurlAction($ajax) {
 		self::ValidateUrl('blog_entries', 'title', $ajax);
+	}
+
+	/**
+	 * check availability of a url for a calculator program.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function calcurlAction($ajax) {
+		self::ValidateUrl('code_calc_progs', 'name', $ajax);
 	}
 
 	/**

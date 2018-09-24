@@ -17,6 +17,9 @@ $html->Open('api');
 			<h2 class=api><a href=blog>blog</a></h2>
 			<p>the blog api manages blog entries.</p>
 
+			<h2 class=api><a href=calcprog>calcprog</a></h2>
+			<p>the calcprog api manages calculator programs.</p>
+
 			<h2 class=api><a href=comments>comments</a></h2>
 			<p>the comments api manages comments.</p>
 

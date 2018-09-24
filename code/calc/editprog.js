@@ -1,72 +1,71 @@
 $(function() {
-	ko.applyBindings(window.ProgVM = new ProgViewModel());
-});
-
-function ProgViewModel() {
-	var self = this;
-	this.name = ko.observable("");
-	this.url = ko.observable("");
-	this.subject = ko.observable("");
-	this.model = ko.observable("");
-	this.desc = ko.observable("");
-	this.ticalc = ko.observable("");
-	this.released = ko.observable("");
-
-	this.defaultUrl = ko.pureComputed(function() {
-		return self.name().trim().replace(/\s/g, "-").replace(/[^a-z0-9\.\-_]*/g, "");
-	});
-
-	this.Load = function() {
-		$.get("?ajax=load", {id: FindID()}, function(result) {
-			if(!result.fail) {
-				self.name(result.name);
-				self.url(result.url);
-				self.subject(result.subject);
-				self.model(result.model);
-				self.desc(result.desc);
-				autosize.update($("#desc"));
-				self.ticalc(result.ticalc || "");
-				self.released(result.released);
-			} else
-				alert(result.message);
-		}, "json");
-	};
-	if(FindID())
-		this.Load();
-
-	this.Save = function() {
-		var data = new FormData();
-		var id = FindID();
-		if(id)
-			data.set("id", id);
-		data.set("name", self.name());
-		data.set("url", self.url());
-		data.set("subject", self.subject());
-		data.set("model", self.model());
-		data.set("desc", self.desc());
-		data.set("ticalc", self.ticalc());
-		data.set("released", self.released());
-		data.set("upload", $("#upload")[0].files[0]);
-		$.post({url: "?ajax=save", data: data, cache: false, contentType: false, processData: false, success: function(result) {
-			if(!result.fail)
-				window.location.href = ".#" + result.url;
+	var editprog = new Vue({
+		el: "#editprog",
+		data: {
+			name: "",
+			url: "",
+			subject: "",
+			model: "",
+			desc: "",
+			ticalc: "",
+			released: "",
+			saving: false
+		},
+		computed: {
+			defaultUrl: function() {
+				return NameToUrl(this.name);
+			},
+			ticalcPrefix: function() {
+				var prefix = this.ticalc.toString().slice(0, -2);
+				return prefix ? prefix + "/" : "";
+			}
+		},
+		created: function() {
+			this.id = $("#editprog input[name='id']").val();
+			if(this.id)
+				$.get("/api/calcprog/edit", {id: this.id}, result => {
+					if(!result.fail) {
+						this.name = result.name;
+						this.url = result.url;
+						this.originalUrl = result.url;
+						this.ValidateUrl();
+						this.subject = result.subject;
+						this.model = result.model;
+						this.desc = result.desc;
+						setTimeout(function() { autosize($("textarea")); }, 25);
+						this.ticalc = result.ticalc;
+						this.released = result.released;
+						this.ValidateReleased();
+					} else
+						alert(result.message);
+				});
 			else
-				alert(result.message);
-		}, dataType: "json"});
-	};
-}
-
-function FindID() {
-	if(window.location.search) {
-		var qs = window.location.search.substring(1);  // ignore the question mark
-		if(qs) {
-			qs = qs.split("&");
-			for(var i = 0; i < qs.length; i++) {
-				var v = qs[i].split("=");
-				if(v[0] == "id")
-					return v[1];
+				setTimeout(function() { autosize($("textarea")); }, 25);
+		},
+		methods: {
+			ValidateDefaultUrl: function() {
+				if(!this.url)
+					this.ValidateUrl();
+			},
+			ValidateUrl: function() {
+				ValidateInput("input[name='url']", "/api/validate/calcurl", this.id, this.url || this.defaultUrl, "validating url...", "url available", "url required");
+			},
+			ValidateReleased: function() {
+				ValidateInput("input[name='released']", "/api/validate/pastdatetime", this.id, this.released, "validating date / time...", "valid date / time", {valid: true, message: "will use current date / time"}, newdate => { this.released = newdate; });
+			},
+			Save: function() {
+				this.saving = true;
+				var fdata = new FormData($("#editprog")[0]);
+				fdata.append("originalurl", this.originalUrl);
+				$.post({url: "/api/calcprog/save", data: fdata, cache: false, contentType: false, processData: false, success: result => {
+					if(!result.fail)
+						window.location.href = ".#" + result.url;
+					else {
+						alert(result.message);
+						this.saving = false;
+					}
+				}, dataType: "json"});
 			}
 		}
-	}
-	return false;
-}
+	});
+});

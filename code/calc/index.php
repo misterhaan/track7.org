@@ -28,27 +28,27 @@ if($progs = $db->query('select p.id, p.url, p.name, p.released, s.name as subjec
 	while($prog = $progs->fetch_object()) {
 		$prog->released = t7format::TimeTag('smart', $prog->released, 'M j, Y \a\t g:i a');
 ?>
-				<article id="<?php echo $prog->url; ?>">
+				<article id="<?=$prog->url; ?>">
 					<header>
 						<h2>
-							<?php echo htmlspecialchars($prog->name); ?>
+							<?=htmlspecialchars($prog->name); ?>
 <?php
 		if($user->IsAdmin()) {
 ?>
-							<a class="edit action" href="editprog.php?id=<?php echo $prog->id; ?>" title="edit this program"></a>
+							<a class="edit action" href="editprog.php?id=<?=$prog->id; ?>" title="edit this program"></a>
 <?php
 		}
 ?>
 						</h2>
 						<p class=meta>
-							<time class=posted title="released <?php echo $prog->released->title; ?>" datetime="<?php echo $prog->released->datetime; ?>"><?php echo $prog->released->display; ?></time>
-							<span class=schoolsubject><?php echo $prog->subject; ?></span>
-							<span class=calculator><?php echo $prog->model; ?></span>
+							<time class=posted title="released <?=$prog->released->title; ?>" datetime="<?=$prog->released->datetime; ?>"><?=$prog->released->display; ?></time>
+							<span class=schoolsubject><?=$prog->subject; ?></span>
+							<span class=calculator><?=$prog->model; ?></span>
 						</p>
 					</header>
-					<?php echo $prog->deschtml; ?>
+					<?=$prog->deschtml; ?>
 					<p class=downloads>
-						<a class="zip action" href="files/<?php echo $prog->url; ?>.zip"><?php echo $prog->url; ?>.zip</a>
+						<a class="zip action" href="files/<?=$prog->url; ?>.zip"><?=$prog->url; ?>.zip</a>
 <?php
 		if($prog->ticalc) {
 ?>
