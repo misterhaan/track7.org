@@ -58,6 +58,18 @@ class validateApi extends t7api {
 				</dd>
 			</dl>
 
+			<h2 id=gameworldurl>get gameworldurl</h2>
+			<p>check if a url is available for a game world.</p>
+			<dl class=parameters>
+				<dt>value</dt>
+				<dd>url to check.</dd>
+				<dt>id</dt>
+				<dd>
+					id of game world that wants to use the url.  optional; assumes new
+					game world.
+				</dd>
+			</dl>
+
 			<h2 id=getguideurl>get guideurl</h2>
 			<p>check if a url is available for a guide.</p>
 			<dl class=parameters>
@@ -149,6 +161,14 @@ class validateApi extends t7api {
 		self::ValidateUrl('code_calc_progs', 'name', $ajax);
 	}
 
+	/**
+	 * check availability of a url for a game world.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function gameworldurlAction($ajax) {
+		self::ValidateUrl('code_game_worlds', 'name', $ajax);
+	}
+	
 	/**
 	 * check availability of a url for a guide.
 	 * @param t7ajax $ajax ajax object for returning data or reporting an error.

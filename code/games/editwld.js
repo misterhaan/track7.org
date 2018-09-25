@@ -1,70 +1,76 @@
 $(function() {
-	ko.applyBindings(window.WorldVM = new WorldViewModel());
-});
-
-function WorldViewModel() {
-	var self = this;
-	this.name = ko.observable("");
-	this.url = ko.observable("");
-	this.engine = ko.observable("");
-	this.desc = ko.observable("");
-	this.dmzx = ko.observable("");
-	this.released = ko.observable("");
-
-	this.defaultUrl = ko.pureComputed(function() {
-		return self.name().trim().replace(/\s/g, "-").replace(/[^a-z0-9\.\-_]*/g, "");
-	});
-
-	this.Load = function() {
-		$.get("?ajax=load", {id: FindID()}, function(result) {
-			if(!result.fail) {
-				self.name(result.name);
-				self.url(result.url);
-				self.engine(result.engine);
-				self.desc(result.desc);
-				autosize.update($("#desc"));
-				self.dmzx(result.dmzx || "");
-				self.released(result.released);
-			} else
-				alert(result.message);
-		}, "json");
-	};
-	if(FindID())
-		this.Load();
-
-	this.Save = function() {
-		var data = new FormData();
-		var id = FindID();
-		if(id)
-			data.set("id", id);
-		data.set("name", self.name());
-		data.set("url", self.url());
-		data.set("engine", self.engine());
-		data.set("desc", self.desc());
-		data.set("released", self.released());
-		data.set("dmzx", self.dmzx());
-		data.set("zip", $("#zip")[0].files[0]);
-		data.set("screenshot", $("#screenshot")[0].files[0]);
-		$.post({url: "?ajax=save", data: data, cache: false, contentType: false, processData: false, success: function(result) {
-			if(!result.fail)
-				window.location.href = ".#" + result.url;
+	var editwld = new Vue({
+		el: "#editwld",
+		data: {
+			name: "",
+			url: "",
+			engine: "",
+			desc: "",
+			dmzx: "",
+			released: "",
+			screenshot: false,
+			saving: false
+		},
+		computed: {
+			defaultUrl: function() {
+				return NameToUrl(this.name);
+			}
+		},
+		created: function() {
+			this.id = $("#editwld input[name='id']").val();
+			if(this.id)
+				$.get("/api/gameworlds/edit", {id: this.id}, result => {
+					if(!result.fail) {
+						this.name = result.name;
+						this.url = result.url;
+						this.originalUrl = result.url;
+						this.ValidateUrl();
+						this.engine = result.engine;
+						this.desc = result.desc;
+						setTimeout(function() { autosize($("textarea")); }, 25);
+						this.dmzx = result.dmzx;
+						this.released = result.released;
+						this.ValidateReleased();
+					} else
+						alert(result.message);
+				}, "json");
 			else
-				alert(result.message);
-		}, dataType: "json"});
-	};
-}
-
-function FindID() {
-	if(window.location.search) {
-		var qs = window.location.search.substring(1);  // ignore the question mark
-		if(qs) {
-			qs = qs.split("&");
-			for(var i = 0; i < qs.length; i++) {
-				var v = qs[i].split("=");
-				if(v[0] == "id")
-					return v[1];
+				setTimeout(function() { autosize($("textarea")); }, 25);
+		},
+		methods: {
+			ValidateDefaultUrl: function() {
+				if(!this.url)
+					this.ValidateUrl();
+			},
+			ValidateUrl: function() {
+				ValidateInput("input[name='url']", "/api/validate/gameworldurl", this.id, this.url || this.defaultUrl, "validating url...", "url available", "url required");
+			},
+			CacheScreenshot: function(e) {
+				var f = e.target.files[0];
+				if(f) {
+					var fr = new FileReader();
+					fr.onloadend = () => {
+						this.screenshot = fr.result;
+					};
+					fr.readAsDataURL(f);
+				}
+			},
+			ValidateReleased: function() {
+				ValidateInput("input[name='released']", "/api/validate/pastdatetime", this.id, this.released, "validating date / time...", "valid date / time", {valid: true, message: "will use current date / time"}, newdate => { this.released = newdate; });
+			},
+			Save: function() {
+				this.saving = true;
+				var fdata = new FormData($("#editwld")[0]);
+				fdata.set("originalurl", this.originalUrl);
+				$.post({url: "/api/gameworlds/save", data: fdata, cache: false, contentType: false, processData: false, success: result => {
+					if(!result.fail)
+						window.location.href = ".#" + result.url;
+					else {
+						alert(result.message);
+						this.saving = false;
+					}
+				}, dataType: "json"});
 			}
 		}
-	}
-	return false;
-}
+	});
+});

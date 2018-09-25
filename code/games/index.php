@@ -25,29 +25,29 @@ if($wlds = $db->query('select w.id, w.url, w.name, w.released, e.name as engine,
 			<nav id=gamewlds>
 <?php
 	while($wld = $wlds->fetch_object()) {
-		$wld->released = t7format::TimeTag('smart', $wld->released, 'M j, Y \a\t g:i a');
+		$wld->released = t7format::TimeTag('smart', $wld->released, t7format::DATE_LONG);
 ?>
-				<article id="<?php echo $wld->url; ?>">
+				<article id="<?=$wld->url; ?>">
 					<header>
 						<h2>
-							<?php echo htmlspecialchars($wld->name); ?>
+							<?=htmlspecialchars($wld->name); ?>
 <?php
 		if($user->IsAdmin()) {
 ?>
-							<a class="edit action" href="editwld.php?id=<?php echo $wld->id; ?>" title="edit this game world"></a>
+							<a class="edit action" href="editwld.php?id=<?=$wld->id; ?>" title="edit this game world"></a>
 <?php
 		}
 ?>
 						</h2>
 						<p class=meta>
-							<time class=posted title="released <?php echo $wld->released->title; ?>" datetime="<?php echo $wld->released->datetime; ?>"><?php echo $wld->released->display; ?></time>
-							<span class=gameengine><?php echo $wld->engine; ?></span>
+							<time class=posted title="released <?=$wld->released->title; ?>" datetime="<?=$wld->released->datetime; ?>"><?=$wld->released->display; ?></time>
+							<span class=gameengine><?=$wld->engine; ?></span>
 						</p>
 					</header>
-					<img class=screenshot alt="" src="files/<?php echo $wld->url; ?>.png">
-					<?php echo $wld->deschtml; ?>
+					<img class=screenshot alt="" src="files/<?=$wld->url; ?>.png">
+					<?=$wld->deschtml; ?>
 					<p class=downloads>
-						<a class="zip action" href="files/<?php echo $wld->url; ?>.zip"><?php echo $wld->url; ?>.zip</a>
+						<a class="zip action" href="files/<?=$wld->url; ?>.zip"><?=$wld->url; ?>.zip</a>
 <?php
 		if($wld->dmzx) {
 ?>

@@ -1858,6 +1858,9 @@ section#codemzx h2:after {
 	#editwld button {
 		margin: .75em 1em .75em 6.5em;
 	}
+	#editwld img.preview {
+		width: 150px;
+	}
 }
 
 /*---------------------------------------------------[ /code/vs/addrel.php ]--*/
