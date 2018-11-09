@@ -586,6 +586,10 @@ a.action.removefriend:before {
 a.action.download:before {
 	content: "\f019";
 }
+.actions a.pdf:before,
+a.action.pdf {
+	content: "\f1c1";
+}
 .actions a.list:before,
 a.action.list:before {
 	content: "\f03a";

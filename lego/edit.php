@@ -45,18 +45,17 @@ if($id) {
 						<img class="art preview" v-if=image :src=image>
 					</span>
 				</label>
-				<!-- ldraw data file (zipped) -->
-				<label title="upload ldraw data file (zipped)">
-					<span class=label>ldraw zip:</span>
+				<!-- ldraw data file -->
+				<label title="upload ldraw data file">
+					<span class=label>ldraw file:</span>
 					<span class=field>
-						<input type=file name=ldraw accept=".zip, application/zip, application/x-zip, application/x-zip-compressed">
+						<input type=file name=ldraw accept=".ldr">
 					</span>
 				</label>
-				<!-- step-by-step images (zipped) -->
-				<label title="upload step-by-step instruction images (zipped)">
+				<label title="upload step-by-step instructionss (pdf)">
 					<span class=label>instructions:</span>
 					<span class=field>
-						<input type=file name=instructions accept=".zip, application/zip, application/x-zip, application/x-zip-compressed">
+						<input type=file name=instructions accept="application/pdf">
 					</span>
 				</label>
 				<label title="number of pieces in this model">

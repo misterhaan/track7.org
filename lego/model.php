@@ -14,7 +14,7 @@ if(!$lego) {
 
 			<p>
 				sorry, we don’t seem to have a lego model by that name.  try picking one
-				from <a href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">the gallery</a>.
+				from <a href="<?=dirname($_SERVER['SCRIPT_NAME']); ?>/">the gallery</a>.
 			</p>
 <?php
 	$html->Close();
@@ -30,28 +30,27 @@ if($next = $db->query('select url, title from lego_models where posted>\'' . +$l
 $html = new t7html(['vue' => true]);
 $html->Open(htmlspecialchars($lego->title) . ' - lego models');
 ?>
-			<h1><?php echo htmlspecialchars($lego->title); ?></h1>
+			<h1><?=htmlspecialchars($lego->title); ?></h1>
 <?php
 if($user->IsAdmin()) {
 ?>
-			<nav class=actions><a class=edit href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . '/edit.php?id=' . $lego->id; ?>">edit this lego model</a></nav>
+			<nav class=actions><a class=edit href="<?=dirname($_SERVER['SCRIPT_NAME']) . '/edit.php?id=' . $lego->id; ?>">edit this lego model</a></nav>
 <?php
 }
 PrevNext($prev, $next);
 $lego->posted = t7format::TimeTag('smart', $lego->posted, 'g:i a \o\n l F jS Y');
 ?>
-			<p><img class=lego src="<?php echo dirname($_SERVER['SCRIPT_NAME']) . '/data/' . $lego->url . '.png'; ?>"></p>
+			<p><img class=lego src="<?=dirname($_SERVER['SCRIPT_NAME']) . '/data/' . $lego->url . '.png'; ?>"></p>
 			<p class="image meta">
-				<time class=posted datetime="<?php echo $lego->posted->datetime; ?>" title="posted <?php echo $lego->posted->title; ?>"><?php echo $lego->posted->display; ?></time>
-				<span class=pieces><?php echo $lego->pieces; ?> pieces</span>
-				<span class=rating data-stars=<?php echo round($lego->rating*2)/2; ?> title="rated <?php echo $lego->rating; ?> stars by <?php echo $lego->votes == 0 ? 'nobody' : ($lego->votes == 1 ? '1 person' : $lego->votes . ' people'); ?>"></span>
+				<time class=posted datetime="<?=$lego->posted->datetime; ?>" title="posted <?=$lego->posted->title; ?>"><?=$lego->posted->display; ?></time>
+				<span class=pieces><?=$lego->pieces; ?> pieces</span>
+				<span class=rating data-stars=<?=round($lego->rating*2)/2; ?> title="rated <?=$lego->rating; ?> stars by <?=$lego->votes == 0 ? 'nobody' : ($lego->votes == 1 ? '1 person' : $lego->votes . ' people'); ?>"></span>
 			</p>
 			<p class="actions image">
-				<a class=download href="data/<?php echo $lego->url; ?>-img.zip">step-by-step instructions</a>
-				<a class=download href="data/<?php echo $lego->url; ?>-ldr.zip">ldraw data</a>
+				<a class=pdf href="data/<?=$lego->url; ?>.pdf">step-by-step instructions</a>
+				<a class=download download href="data/<?=$lego->url; ?>.ldr">ldraw data</a>
 			</p>
 <?php
-// TODO:  allow cycling through the instructions?
 echo $lego->deschtml;
 ?>
 			<p>
@@ -68,15 +67,15 @@ function PrevNext($prev, $next) {
 <?php
 	if($next) {
 ?>
-				<a class=prev title="see the lego model posted after this" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . '/' . $next->url; ?>"><?php echo htmlspecialchars($next->title); ?></a>
+				<a class=prev title="see the lego model posted after this" href="<?=dirname($_SERVER['SCRIPT_NAME']) . '/' . $next->url; ?>"><?=htmlspecialchars($next->title); ?></a>
 <?php
 	}
 ?>
-				<a class=gallery title="see all lego models" href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">everything</a>
+				<a class=gallery title="see all lego models" href="<?=dirname($_SERVER['SCRIPT_NAME']); ?>/">everything</a>
 <?php
 	if($prev) {
 ?>
-				<a class=next title="see the lego model posted before this" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . '/' . $prev->url; ?>"><?php echo htmlspecialchars($prev->title); ?></a>
+				<a class=next title="see the lego model posted before this" href="<?=dirname($_SERVER['SCRIPT_NAME']) . '/' . $prev->url; ?>"><?=htmlspecialchars($prev->title); ?></a>
 <?php
 	}
 ?>

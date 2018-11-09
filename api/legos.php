@@ -139,9 +139,9 @@ class legosApi extends t7api {
 							if(isset($_FILES['image']) && $_FILES['image']['size'])
 								t7file::SaveUploadedImage($_FILES['image'], 'png', [$filenameprefix . '-thumb.png' => self::THUMBSIZE, $filenameprefix . '.png' => self::FULLSIZE]);
 							if(isset($_FILES['ldraw']) && $_FILES['ldraw']['size'])
-								move_uploaded_file($_FILES['ldraw']['tmp_name'], $filenameprefix . '-ldr.zip');
+								move_uploaded_file($_FILES['ldraw']['tmp_name'], $filenameprefix . '.ldr');
 							if(isset($_FILES['instructions']) && $_FILES['instructions']['size'])
-								move_uploaded_file($_FILES['instructions']['tmp_name'], $filenameprefix . '-img.zip');
+								move_uploaded_file($_FILES['instructions']['tmp_name'], $filenameprefix . '.pdf');
 							$ins = 'lego_models set title=\'' . $db->escape_string($title) . '\', url=\'' . $db->escape_string(trim($url)) . '\', ' . 'pieces=\'' . $pieces . '\', descmd=\'' . $db->escape_string(trim($_POST['descmd'])) . '\', deschtml=\'' . $db->escape_string(t7format::Markdown(trim($_POST['descmd']))) . '\'';
 							$ins = $id ? 'update ' . $ins . ' where id=\'' . $id . '\' limit 1' : 'insert into ' . $ins . ', posted=\'' . +time() . '\'';
 							if($db->real_query($ins)) {
@@ -157,13 +157,13 @@ class legosApi extends t7api {
 										rename($path . $_POST['originalurl'] . '-thumb.png', $path . $url . 'thumb.png');
 									}
 									if(isset($_FILES['ldraw']) && $_FILES['ldraw']['size'])
-										unlink($path . $_POST['originalurl'] . '-ldr.zip');
+										unlink($path . $_POST['originalurl'] . '.ldr');
 									else
-										rename($path . $_POST['originalurl'] . '-ldr.zip', $path . $url . '-ldr.zip');
+										rename($path . $_POST['originalurl'] . '.ldr', $path . $url . '.ldr');
 									if(isset($_FILES['instructions']) && $_FILES['instructions']['size'])
-										unlink($path . $_POST['originalurl'] . '-img.zip');
+										unlink($path . $_POST['originalurl'] . '.pdf');
 									else
-										rename($path . $_POST['originalurl'] . '-img.zip', $path . $url . '-img.zip');
+										rename($path . $_POST['originalurl'] . '.pdf', $path . $url . '.pdf');
 								}
 							} else
 								$ajax->Fail('database error saving lego model', $db->errno . ' ' . $db->error);
