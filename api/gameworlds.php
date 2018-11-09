@@ -2,7 +2,7 @@
 require_once dirname(__DIR__) . '/etc/class/t7.php';
 
 /**
- * handler for validate api requests.
+ * handler for gameworlds api requests.
  * @author misterhaan
  */
 class gameworldsApi extends t7api {
