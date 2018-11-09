@@ -16,14 +16,14 @@ if(isset($_GET['ajax'])) {
 
 $u = FindUser();
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 if($u) {
 	$html->Open(htmlspecialchars($u->displayname) . '’s latest replies');
 ?>
-			<h1 data-user=<?php echo $u->id; ?>>
-				<a href="/user/<?php echo $u->username; ?>/">
-					<img class="inline avatar" src="<?php echo $u->avatar; ?>">
-					<?php echo htmlspecialchars($u->displayname); ?></a>’s latest replies
+			<h1 data-user=<?=$u->id; ?>>
+				<a href="/user/<?=$u->username; ?>/">
+					<img class="inline avatar" src="<?=$u->avatar; ?>">
+					<?=htmlspecialchars($u->displayname); ?></a>’s latest replies
 			</h1>
 <?php
 } else {
@@ -31,68 +31,72 @@ if($u) {
 ?>
 			<h1>
 				latest replies
-				<a class=feed href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of the forum"></a>
+				<a class=feed href="<?=dirname($_SERVER['PHP_SELF']); ?>/feed.rss" title="rss feed of the forum"></a>
 			</h1>
 <?php
 }
 ?>
-			<p class=info data-bind="visible: !loading() && replies().length == 0">no forum activity</p>
+			<p class=info v-if="!loading && !replies.length" data-bind="visible: !loading() && replies().length == 0">no forum activity</p>
 
 			<!-- ko foreach: replies -->
-			<h2><a data-bind="text: title, attr: {href: '<?php echo dirname($_SERVER['PHP_SELF']); ?>/' + discussion + '#r' + id}"></a></h2>
-			<section class=comment data-bind="attr: {id: 'r' + id}">
+			<template v-for="reply in replies">
+			<h2><a :href="'<?=dirname($_SERVER['PHP_SELF']); ?>/' + reply.discussion + '#r' + reply.id" data-bind="text: title, attr: {href: '<?=dirname($_SERVER['PHP_SELF']); ?>/' + discussion + '#r' + id}">{{reply.title}}</a></h2>
+			<section class=comment :id="'r' + reply.id" data-bind="attr: {id: 'r' + id}">
 				<div class=userinfo>
 					<!-- ko if: username -->
-					<div class=username data-bind="css: {friend: friend}, attr: {title: friend ? (displayname || username) + ' is your friend' : null}">
-						<a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}"></a>
+					<template v-if=reply.username>
+					<div class=username :class="{friend: reply.friend}" :title="reply.friend ? (reply.displayname || reply.username) + ' is your friend' : null" data-bind="css: {friend: friend}, attr: {title: friend ? (displayname || username) + ' is your friend' : null}">
+						<a :href="'/user/' + reply.username + '/'" data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}">{{reply.displayname || reply.username}}</a>
 					</div>
-					<a data-bind="visible: avatar, attr: {href: '/user/' + username + '/'}"><img class=avatar alt="" data-bind="attr: {src: avatar}"></a>
-					<div class=userlevel data-bind="visible: level, text: level"></div>
+					<a v-if=reply.avatar :href="'/user/' + reply.username + '/'" data-bind="visible: avatar, attr: {href: '/user/' + username + '/'}"><img class=avatar alt="" :src=reply.avatar data-bind="attr: {src: avatar}"></a>
+					<div class=userlevel v-if=reply.level data-bind="visible: level, text: level">{{reply.level}}</div>
+					</template>
 					<!-- /ko -->
 					<!-- ko if: !username && contacturl -->
-					<div class=username><a data-bind="text: name, attr: {href: contacturl}"></a></div>
+					<div class=username v-if="!reply.username && reply.contacturl"><a :href=reply.contacturl data-bind="text: name, attr: {href: contacturl}">{{reply.name}}</a></div>
 					<!-- /ko -->
 					<!-- ko if: !username && !contacturl -->
-					<div class=username data-bind="text: name"></div>
+					<div class=username v-if="!reply.username && !reply.contacturl" data-bind="text: name">{{reply.name}}</div>
 					<!-- /ko -->
 				</div>
 				<div class=comment>
-					<header>posted <time data-bind="text: posted.display, attr: {datetime: posted.datetime}"></time></header>
-					<div class=content data-bind="visible: !editing(), html: html"></div>
-					<div class="content edit" data-bind="visible: editing"><textarea data-bind="value: markdown"></textarea></div>
+					<header>posted <time :datetime=reply.posted.datetime data-bind="text: posted.display, attr: {datetime: posted.datetime}">{{reply.posted.display}}</time></header>
+					<div class=content v-if=!reply.editing v-html=reply.html data-bind="visible: !editing(), html: html"></div>
+					<div class="content edit" v-if=reply.editing data-bind="visible: editing"><textarea v-model=reply.markdown data-bind="value: markdown"></textarea></div>
 					<div class=meta data-bind="foreach: edits">
-						<div class=edithistory>
+						<div v-for="edit in reply.edits" class=edithistory>
 							edited
-							<time data-bind="text: posted, attr: {datetime: datetime}"></time>
+							<time :datetime=edit.datetime data-bind="text: posted, attr: {datetime: datetime}">{{edit.posted}}</time>
 							by
-							<a data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}"></a>
+							<a :href="'/user/' + edit.username + '/'" data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}">{{edit.displayname || edit.username}}</a>
 						</div>
 					</div>
-					<footer data-bind="visible: canchange">
+					<footer v-if=reply.canchange data-bind="visible: canchange">
 						<!-- ko if: editing() -->
-						<a class="okay action" data-bind="click: $parent.SaveReply" href="?ajax=update">save</a>
+						<a class="okay action" v-if=reply.editing v-on:click.prevent=Save(reply) data-bind="click: $parent.SaveReply" href="/api/forum/reply">save</a>
 <?php
 if($user->IsTrusted()) {
 ?>
-						<a class="okay action" data-bind="click: $parent.StealthSaveReply" href="?ajax=stealthupdate">stealth save</a>
+						<a class="okay action" v-if=reply.editing v-on:click.prevent="Save(reply, true)" data-bind="click: $parent.StealthSaveReply" href="/api/forum/reply">stealth save</a>
 <?php
 }
 ?>
-						<a class="cancel action" data-bind="click: $parent.UneditReply" href="#cancel">cancel</a>
+						<a class="cancel action" v-if=reply.editing v-on:click.prevent=Unedit(reply) data-bind="click: $parent.UneditReply" href="#cancel">cancel</a>
 						<!-- /ko -->
 						<!-- ko ifnot: editing() -->
-						<a class="edit action" data-bind="click: $parent.EditReply" href="#edit">edit</a>
-						<a class="del action" data-bind="click: $parent.DeleteReply" href="?ajax=delete">delete</a>
+						<a class="edit action" v-if=!reply.editing v-on:click.prevent=Edit(reply) data-bind="click: $parent.EditReply" href="#edit">edit</a>
+						<a class="del action" v-if=!reply.editing v-on:click.prevent=Delete(reply) data-bind="click: $parent.DeleteReply" href="/api/forum/delete">delete</a>
 						<!-- /ko -->
 					</footer>
 				</div>
 			</section>
 
+			</template>
 			<!-- /ko -->
 
-			<p class=loading data-bind="visible: loading()">loading replies . . .</p>
+			<p class=loading v-if=loading data-bind="visible: loading()">loading replies . . .</p>
 
-			<p class=calltoaction data-bind="visible: more() && !loading()"><a class="action get" href="#load" data-bind="click: Load">load more replies</a></p>
+			<p class=calltoaction v-if="more && !loading" data-bind="visible: more() && !loading()"><a class="action get" v-on:click.prevent=Load href="#load" data-bind="click: Load">load more replies</a></p>
 <?php
 $html->Close();
 

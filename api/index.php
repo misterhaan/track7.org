@@ -23,6 +23,9 @@ $html->Open('api');
 			<h2 class=api><a href=comments>comments</a></h2>
 			<p>the comments api manages comments.</p>
 
+			<h2 class=api><a href=forum>forum</a></h2>
+			<p>the forum api manages the forums.</p>
+
 			<h2 class=api><a href=gameworlds>gameworlds</a></h2>
 			<p>the gameworlds api manages game worlds.</p>
 
