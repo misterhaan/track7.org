@@ -17,7 +17,7 @@ $html->Open('track7 administrative tools');
 				<li><a href="/votes.php">votes</a></li>
 				<li><a href="/tags.php">tag info</a></li>
 <?php
-if($_SERVER['SERVER_PORT'] == 80) {
+if($_SERVER['SERVER_PORT'] == 80 || $_SERVER['SERVER_PORT'] == 443) {
 ?>
 				<li><a href="/dh_phpmyadmin/data.track7.org/?db=track7">phpmyadmin</a></li>
 				<li><a href="https://panel.dreamhost.com/">dreamhost panel</a></li>

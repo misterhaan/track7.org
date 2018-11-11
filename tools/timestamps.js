@@ -1,45 +1,44 @@
 $(function() {
-	ko.applyBindings(window.TimestampVM = new TimestampViewModel());
-});
+	var main = new Vue({
+		el: "main",
+		data: {
+			inputtype: "",
+			timestamp: "",
+			formatted: "",
+			zone: "local",
 
-function TimestampViewModel() {
-	var self = this;
-
-	this.inputtype = ko.observable("");
-	this.timestamp = ko.observable("");
-	this.formatted = ko.observable("");
-	this.zone = ko.observable("local");
-
-	this.hasresults = ko.observable(false);
-	this.resulttimestamp = ko.observable("");
-	this.smart = ko.observable("");
-	this.ago = ko.observable("");
-	this.year = ko.observable("");
-	this.month = ko.observable("");
-	this.day = ko.observable("");
-	this.weekday = ko.observable("");
-	this.time = ko.observable("");
-
-	this.Analyze = function() {
-		var data = {type: this.inputtype(), zone: this.zone()};
-		if(this.inputtype() == 'timestamp')
-			data.timestamp = this.timestamp();
-		if(this.inputtype() == 'formatted')
-			data.formatted = this.formatted();
-		$.get("?ajax=analyze", data, function(result) {
-			if(result.fail)
-				alert(result.message)
-			else {
-				self.resulttimestamp(result.timestamp);
-				self.smart(result.smart);
-				self.ago(result.ago);
-				self.year(result.year);
-				self.month(result.month);
-				self.day(result.day);
-				self.weekday(result.weekday);
-				self.time(result.time);
-				self.hasresults(true);
+			hasresults: false,
+			resulttimestamp: "",
+			smart: "",
+			ago: "",
+			year: "",
+			month: "",
+			day: "",
+			weekday: "",
+			time: ""
+		},
+		methods: {
+			Analyze: function() {
+				var data = {type: this.inputtype, zone: this.zone};
+				if(this.inputtype == "timestamp")
+					data.timestamp = this.timestamp;
+				if(this.inputtype == "formatted")
+					data.formatted = this.formatted;
+				$.get("?ajax=analyze", data, result => {
+					if(!result.fail) {
+						this.resulttimestamp = result.timestamp;
+						this.smart = result.smart;
+						this.ago = result.ago;
+						this.year = result.year;
+						this.month = result.month;
+						this.day = result.day;
+						this.weekday = result.weekday;
+						this.time = result.time;
+						this.hasresults = true;
+					} else
+						alert(result.message);
+				}, "json");
 			}
-		}, "json");
-	};
-}
+		}
+	});
+});

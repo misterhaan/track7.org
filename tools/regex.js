@@ -1,5 +1,49 @@
 $(function() {
-	ko.applyBindings(window.vm = new RegexViewModel());
+	var match = new Vue({
+		el: "#match",
+		data: {
+			pattern: "",
+			subject: "",
+			all: false,
+			checked: false,
+			matches: []
+		},
+		methods: {
+			Match: function() {
+				$.get("?ajax=match", {pattern: this.pattern, subject: this.subject, all: +this.all}, result => {
+					if(result.fail)
+						alert(result.message);
+					else {
+						this.checked = true;
+						this.matches = result.matches;
+					}
+				}, "json");
+			}
+		}
+	});
+
+	var replace = new Vue({
+		el: "#replace",
+		data: {
+			pattern: "",
+			replacement: "",
+			subject: "",
+			replaced: false,
+			result: ""
+		},
+		methods: {
+			Replace: function() {
+				$.get("?ajax=replace", {pattern: this.pattern, replacement: this.replacement, subject: this.subject}, result => {
+					if(result.fail)
+						alert(result.message);
+					else {
+						this.replaced = true;
+						this.result = result.replacedResult;
+					}
+				}, "json");
+			}
+		}
+	});
 
 	if(!$(".tabcontent:visible").length) {  // this needs to be after the tab click handlers
 		if($(location.hash).length)
@@ -13,43 +57,3 @@ $(function() {
 		}
 	}
 });
-
-function RegexViewModel() {
-	var self = this;
-
-	this.match = {
-		pattern: ko.observable(""),
-		subject: ko.observable(""),
-		all: ko.observable(false),
-		checked: ko.observable(false),
-		matches: ko.observableArray([])
-	};
-	this.Match = function() {
-		$.get("?ajax=match", {pattern: this.match.pattern(), subject: this.match.subject(), all: +this.match.all()}, function(result) {
-			if(result.fail)
-				alert(result.message);
-			else {
-				self.match.checked(true);
-				self.match.matches(result.matches);
-			}
-		}, "json");
-	};
-
-	this.replace = {
-		pattern: ko.observable(""),
-		replacement: ko.observable(""),
-		subject: ko.observable(""),
-		replaced: ko.observable(false),
-		result: ko.observable("")
-	};
-	this.Replace = function() {
-		$.get("?ajax=replace", {pattern: this.replace.pattern(), replacement: this.replace.replacement(), subject: this.replace.subject()}, function(result) {
-			if(result.fail)
-				alert(result.message);
-			else {
-				self.replace.replaced(true);
-				self.replace.result(result.replacedResult);
-			}
-		}, "json");
-	};
-}

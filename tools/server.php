@@ -7,8 +7,8 @@ $html->Open('$_SERVER')
 <?php
 foreach($_SERVER as $tag => $data) {
 ?>
-			<h2><?php echo $tag; ?></h2>
-			<pre><code><?php echo $data; ?></code></pre>
+			<h2><?=$tag; ?></h2>
+			<pre><code><?=$data; ?></code></pre>
 
 <?php
 }

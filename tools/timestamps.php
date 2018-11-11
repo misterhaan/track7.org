@@ -10,32 +10,31 @@ if(isset($_GET['ajax'])) {
 	die;
 }
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open('timestamp converter');
 ?>
 			<h1>timestamp converter</h1>
-			<p></p>
 
-			<form id=timestamps data-bind="submit: Analyze">
+			<form id=timestamps v-on:submit.prevent=Analyze>
 				<fieldset class=selectafield>
 					<div>
-						<label class=label><input type=radio name=inputtype value=timestamp data-bind="checked: inputtype">timestamp:</label>
-						<label class=field><input type=number data-bind="value: timestamp" maxlength=10 step=1 min=0 max=4294967295></label>
+						<label class=label><input type=radio name=inputtype value=timestamp v-model=inputtype>timestamp:</label>
+						<label class=field><input type=number v-model=timestamp maxlength=10 step=1 min=0 max=4294967295></label>
 					</div>
 					<div>
-						<label class=label><input type=radio name=inputtype value=formatted data-bind="checked: inputtype">formatted:</label>
-						<label class=field><input data-bind="value: formatted" maxlength=64></label>
+						<label class=label><input type=radio name=inputtype value=formatted v-model=inputtype>formatted:</label>
+						<label class=field><input v-model=formatted maxlength=64></label>
 					</div>
 				</fieldset>
 				<fieldset class=checkboxes>
 					<legend>time zone:</legend>
 					<span class=field>
 						<label class=checkbox>
-							<input type=radio name=zone value=local data-bind="checked: zone">
+							<input type=radio name=zone value=local v-model=zone>
 							local
 						</label>
 						<label class=checkbox>
-							<input type=radio name=zone value=utc data-bind="checked: zone">
+							<input type=radio name=zone value=utc v-model=zone>
 							utc
 						</label>
 					</span>
@@ -43,17 +42,17 @@ $html->Open('timestamp converter');
 				<button>analyze</button>
 			</form>
 
-			<section data-bind="if: hasresults">
+			<section v-if=hasresults>
 				<h2>results</h2>
 				<dl id=timestampdata>
-					<dt>timestamp</dt><dd data-bind="text: resulttimestamp"></dd>
-					<dt>smart</dt><dd data-bind="html: smart"></dd>
-					<dt>ago</dt><dd data-bind="text: ago"></dd>
-					<dt>year</dt><dd data-bind="text: year"></dd>
-					<dt>month</dt><dd data-bind="text: month"></dd>
-					<dt>day</dt><dd data-bind="text: day"></dd>
-					<dt>weekday</dt><dd data-bind="text: weekday"></dd>
-					<dt>time</dt><dd data-bind="text: time"></dd>
+					<dt>timestamp</dt><dd>{{resulttimestamp}}</dd>
+					<dt>smart</dt><dd v-html=smart></dd>
+					<dt>ago</dt><dd>{{ago}}</dd>
+					<dt>year</dt><dd>{{year}}</dd>
+					<dt>month</dt><dd>{{month}}</dd>
+					<dt>day</dt><dd>{{day}}</dd>
+					<dt>weekday</dt><dd>{{weekday}}</dd>
+					<dt>time</dt><dd>{{time}}</dd>
 				</dl>
 			</section>
 <?php

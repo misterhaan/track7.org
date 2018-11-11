@@ -11,7 +11,7 @@ if(isset($_GET['ajax'])) {
 	die;
 }
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open('regular expression testing');
 ?>
 			<h1>regular expression testing</h1>
@@ -26,28 +26,28 @@ $html->Open('regular expression testing');
 					<h2>match</h2>
 					<p class=meta>
 						using php function
-						<a href="https://php.net/preg_match" data-bind="visible: !match.all()">preg_match</a>
-						<a href="https://php.net/preg_match_all" data-bind="visible: match.all">preg_match_all</a>
+						<a href="https://php.net/preg_match" v-if=!all>preg_match</a>
+						<a href="https://php.net/preg_match_all" v-if=all>preg_match_all</a>
 					</p>
-					<form class=regextest data-bind="submit: Match">
+					<form class=regextest v-on:submit.prevent=Match>
 						<label>
 							<span class=label>pattern:</span>
-							<span class=field><input data-bind="value: match.pattern"></span>
+							<span class=field><input v-model=pattern></span>
 						</label>
 						<label class=multiline>
 							<span class=label>subject:</span>
-							<span class=field><textarea data-bind="value: match.subject"></textarea></span>
+							<span class=field><textarea v-model=subject></textarea></span>
 						</label>
 						<label class=checkbox>
 							<span class=label></span>
-							<span class="checkbox"><input type=checkbox data-bind="checked: match.all">find all matches</span>
+							<span class="checkbox"><input type=checkbox v-model=all>find all matches</span>
 						</label>
 						<button>match</button>
 					</form>
-					<div data-bind="if: match.checked">
-						<p data-bind="visible: match.found && match.matches().length < 1">no matches found</p>
-						<ol class=matches data-bind="foreach: match.matches">
-							<li><pre><code data-bind="text: $data"></code></pre></li>
+					<div v-if=checked>
+						<p v-if="found && matches.length < 1">no matches found</p>
+						<ol class=matches>
+							<li v-for="match in matches"><pre><code>{{match}}</code></pre></li>
 						</ol>
 					</div>
 				</section>
@@ -57,22 +57,22 @@ $html->Open('regular expression testing');
 					<p class=meta>
 						using php function <a href="http://php.net/preg_replace">preg_replace</a>
 					</p>
-					<form class=regextest data-bind="submit: Replace">
+					<form class=regextest v-on:submit.prevent=Replace>
 						<label>
 							<span class=label>pattern:</span>
-							<span class=field><input data-bind="value: replace.pattern"></span>
+							<span class=field><input v-model=pattern></span>
 						</label>
 						<label>
 							<span class=label>replace:</span>
-							<span class=field><input data-bind="value: replace.replacement"></span>
+							<span class=field><input v-model=replacement></span>
 						</label>
 						<label class=multiline>
 							<span class=label>subject:</span>
-							<span class=field><textarea data-bind="value: replace.subject"></textarea></span>
+							<span class=field><textarea v-model=subject></textarea></span>
 						</label>
 						<button>replace</button>
 					</form>
-					<pre data-bind="visible: replace.replaced"><code data-bind="text: replace.result"></code></pre>
+					<pre v-if=replaced><code>{{result}}</code></pre>
 				</section>
 			</div>
 
