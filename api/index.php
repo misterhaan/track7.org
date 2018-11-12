@@ -44,6 +44,9 @@ $html->Open('api');
 			<h2 class=api><a href=tags>tags</a></h2>
 			<p>the tags api manages tags for everything that uses tags.</p>
 
+			<h2 class=api><a href=updates>updates</a></h2>
+			<p>the updates api manages site updates.</p>
+
 			<h2 class=api><a href=validate>validate</a></h2>
 			<p>the validate api provides field-level validation for forms.</p>
 

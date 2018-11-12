@@ -4,12 +4,12 @@ $id = +$_GET['id'];
 if($id)
 	if($update = $db->query('select id, posted, html from update_messages where id=' . $id))
 		if($update = $update->fetch_object()) {
-			$update->posted = t7format::TimeTag('smart', $update->posted, 'g:i a \o\n l F jS Y');
-			$html = new t7html(['ko' => true]);
+			$update->posted = t7format::TimeTag('smart', $update->posted, t7format::DATE_LONG);
+			$html = new t7html(['vue' => true]);
 			$html->Open('track7 update');
 ?>
 			<h1>track7 update</h1>
-			<p class=guidemeta><time class=posted title="posted <?php echo $update->posted->title; ?>" datetime="<?php echo $update->posted->datetime; ?>"><?php echo $update->posted->display; ?></time></p>
+			<p class=guidemeta><time class=posted title="posted <?=$update->posted->title; ?>" datetime="<?=$update->posted->datetime; ?>"><?=$update->posted->display; ?></time></p>
 <?php
 			echo $update->html;
 			$html->ShowComments('update', 'update', $update->id);
@@ -24,7 +24,7 @@ if($id)
 		$html->Open('track7 update');
 ?>
 			<h1>track7 update</h1>
-			<p class=error>error looking up update:  <?php echo $db->error; ?></p>
+			<p class=error>error looking up update:  <?=$db->error; ?></p>
 <?php
 		$html->Close();
 	}
