@@ -8,6 +8,7 @@ $(function() {
 		},
 		created: function() {
 			this.id = $("#addrel input[name='app']").val();
+			setTimeout(function() { autosize($("textarea")); }, 25);
 		},
 		methods: {
 			ValidateVersion: function() {
