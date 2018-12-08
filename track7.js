@@ -504,6 +504,7 @@ if(typeof Vue == "function") {
 				}
 			},
 			created: function() {
+				this.originalTags = [];
 				this.allTags = [];
 				$.get("/api/tags/names", {type: $("[data-tagtype]").data("tagtype")}, result => {
 					if(!result.fail)
