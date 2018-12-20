@@ -212,9 +212,10 @@ class t7user {
 			global $db;
 			$logins = [];
 			foreach(t7auth::GetAuthList() as $source)
-				$logins[] = 'select id from login_' . $source . ' where user=\'' . +$this->ID . '\'';
-			if($logins = $db->query(implode(' union ', $logins)))
-				$this->secureLoginCount = $logins->num_rows;
+				$logins[] = '(select count(1) from login_' . $source . ' where user=\'' . +$this->ID . '\')';
+			if($logins = $db->query('select ' . implode(' + ', $logins) . ' as num'))
+				if($logins = $logins->fetch_object())
+					$this->secureLoginCount = $logins->num;
 		}
 		return $this->secureLoginCount;
 	}
