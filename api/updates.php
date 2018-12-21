@@ -9,7 +9,7 @@ class updatesApi extends t7api {
 	const MAX_UPDATE_GET = 16;
 
 	/**
-	 * write out the documentation for the tags api controller.  the page is
+	 * write out the documentation for the updates api controller.  the page is
 	 * already opened with an h1 header, and will be closed after the call
 	 * completes.
 	 */
