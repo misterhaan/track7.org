@@ -2636,7 +2636,7 @@ main a.droptrigger {
 .linkedaccount.google:before,
 #authchoices .google:before {
 	content: "\f1a0";
-	background-color: #dd4f43;
+	background-color: #4285f4;
 }
 .linkedaccount.twitter:before,
 #authchoices .twitter:before {
@@ -2838,7 +2838,7 @@ section#contact a.steam:before {
 }
 @media (min-width: 25em) {
 	#rank {
-		margin: -2em -.5em .5em .5em;
+		margin: -4.5em -.5em .5em .5em;
 		padding: .25em .5em;
 		border-radius: .5em 0 0 .5em;
 		float: right;

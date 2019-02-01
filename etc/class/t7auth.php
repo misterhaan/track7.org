@@ -357,12 +357,12 @@ class t7authGoogle extends t7authRegisterable {
 	const SOURCE = 'google';
 	const FIELD = 'sub';
 	const REDIRECT = '/user/via/google.php';
-	const REQUEST = 'https://accounts.google.com/o/oauth2/auth';
-	const SCOPE = 'openid email';
-	const VERIFY = 'https://www.googleapis.com/oauth2/v3/token';
-	const INFO = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
+	const REQUEST = 'https://accounts.google.com/o/oauth2/v2/auth';
+	const SCOPE = 'openid email profile';
+	const VERIFY = 'https://oauth2.googleapis.com/token';
+	const INFO = 'https://openidconnect.googleapis.com/v1/userinfo';  // not used since that data is already in the id token
 
-	private $access;
+	private $id_token;
 
 	/**
 	 * build the url for logging in with google, with forgery protection and
@@ -428,6 +428,7 @@ class t7authGoogle extends t7authRegisterable {
 			$id = explode('.', $response->id_token);
 			$id = json_decode(base64_decode($id[1]));
 			$this->ID = $id->sub;
+			$this->id_token = $id;
 		}
 	}
 
@@ -436,29 +437,15 @@ class t7authGoogle extends t7authRegisterable {
 	 * @return boolean true if able to retrieve.
 	 */
 	public function GetUserInfo() {
-		if($this->access) {
-			$c = curl_init();
-			curl_setopt($c, CURLOPT_URL, self::INFO);
-			curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-			curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-			curl_setopt($c, CURLOPT_TIMEOUT, 30);
-			curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($c, CURLOPT_HEADER, false);
-			curl_setopt($c, CURLOPT_HTTPHEADER, array('Authorization: OAuth ' . $this->access));
-			$response = curl_exec($c);
-			curl_close($c);
-			$response = json_decode($response);
-			if(isset($response->sub) && $response->sub == $this->ID) {
-				$this->ProfileFull = $response->profile;
-				$this->ProfileShort = t7user::CollapseProfileLink($response->profile, self::SOURCE);
-				$this->Avatar = str_replace('?sz=50', '?sz=64', $response->picture);
-				$this->Username = explode('@', $response->email)[0];
-				$this->DisplayName = $response->name;
-				$this->Email = $response->email;
-				// unused:  gender
-				return true;
-			}
+		if($this->id_token) {
+			$this->ProfileFull = $this->id_token->profile;
+			$this->ProfileShort = t7user::CollapseProfileLink($this->id_token->profile, self::SOURCE);
+			$this->Avatar = $this->id_token->picture . '?sz=64';
+			$this->Username = explode('@', $this->id_token->email)[0];
+			$this->DisplayName = $this->id_token->name;
+			$this->Email = $this->id_token->email;
+			// unused:  gender
+			return true;
 		}
 		return false;
 	}
