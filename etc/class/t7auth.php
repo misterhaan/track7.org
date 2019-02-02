@@ -438,12 +438,18 @@ class t7authGoogle extends t7authRegisterable {
 	 */
 	public function GetUserInfo() {
 		if($this->id_token) {
-			$this->ProfileFull = $this->id_token->profile;
-			$this->ProfileShort = t7user::CollapseProfileLink($this->id_token->profile, self::SOURCE);
-			$this->Avatar = $this->id_token->picture . '?sz=64';
-			$this->Username = explode('@', $this->id_token->email)[0];
-			$this->DisplayName = $this->id_token->name;
-			$this->Email = $this->id_token->email;
+			if(isset($this->id_token->profile)) {
+				$this->ProfileFull = $this->id_token->profile;
+				$this->ProfileShort = t7user::CollapseProfileLink($this->id_token->profile, self::SOURCE);
+			}
+			if(isset($this->id_token->picture))
+				$this->Avatar = $this->id_token->picture . '?sz=64';
+			if(isset($this->id_token->email)) {
+				$this->Username = explode('@', $this->id_token->email)[0];
+				$this->Email = $this->id_token->email;
+			}
+			if(isset($this->id_token->name))
+				$this->DisplayName = $this->id_token->name;
 			// unused:  gender
 			return true;
 		}
