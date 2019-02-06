@@ -44,6 +44,16 @@ class commentsApi extends t7api {
 				</dd>
 			</dl>
 
+			<h2 id=getall>get all</h2>
+			<p>get the latest comments for all types and keys.</p>
+			<dl class=parameters>
+				<dt>oldest</dt>
+				<dd>
+					only get comments older than this timestamp.  optional; default gets
+					newest comments.
+				</dd>
+			</dl>
+
 			<h2 id=postdelete>post delete</h2>
 			<p>delete a comment.</p>
 			<dl class=parameters>
@@ -76,6 +86,18 @@ class commentsApi extends t7api {
 				<dd>id of comment.  required.</dd><dd>
 				<dt>markdown</dt>
 				<dd>new comment content in markdown format.  required.</dd>
+			</dl>
+
+			<h2 id=getuser>get user</h2>
+			<p>get the latest comments by the specified author.</p>
+			<dl class=parameters>
+				<dt>userid</dt>
+				<dd>id of the user to get comments for.</dd>
+				<dt>oldest</dt>
+				<dd>
+					only get comments older than this timestamp.  optional; default gets
+					newest comments.
+				</dd>
 			</dl>
 
 <?php
@@ -129,6 +151,66 @@ class commentsApi extends t7api {
 				$ajax->Fail('key and md are required.');
 		else
 			$ajax->Fail('type needs to be a value from this list:  ' . implode(', ', self::$AllowedTypes));
+	}
+
+	/**
+	 * get lastest comments on anything by anyone.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function allAction($ajax) {
+		global $db, $user;
+		$oldest = +$_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
+		if($cs = $db->prepare('select c.srctbl, c.id, c.title, c.url, c.posted, c.author as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.authorname, c.authorurl, '
+				. 'coalesce(a.markdown, b.markdown, cv.markdown, cw.markdown, g.markdown, l.markdown, p.markdown, s.markdown, uc.markdown) as markdown, coalesce(a.html, b.html, cv.html, cw.html, g.html, l.html, p.html, s.html, uc.html) as html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
+				'\' left join art_comments as a on a.id=c.id and c.srctbl=\'art_comments\' '
+				. 'left join blog_comments as b on b.id=c.id and c.srctbl=\'blog_comments\' '
+				. 'left join code_vs_comments as cv on cv.id=c.id and c.srctbl=\'code_vs_comments\' '
+				. 'left join code_web_comments as cw on cw.id=c.id and c.srctbl=\'code_web_comments\' '
+				. 'left join guide_comments as g on g.id=c.id and c.srctbl=\'guide_comments\' '
+				. 'left join lego_comments as l on l.id=c.id and c.srctbl=\'lego_comments\' '
+				. 'left join photos_comments as p on p.id=c.id and c.srctbl=\'photos_comments\' '
+				. 'left join stories_comments as s on s.id=c.id and c.srctbl=\'stories_comments\' '
+				. 'left join update_comments as uc on uc.id=c.id and c.srctbl=\'update_comments\' where c.conttype=\'comment\' and c.posted<? order by posted desc limit ' . self::MAXCOMMENTS))
+			if($cs->bind_param('i', $oldest))
+				if($cs->execute())
+					if($cs->bind_result($srctbl, $id, $title, $url, $posted, $canchange, $username, $displayname, $avatar, $level, $friend, $authorname, $authorurl, $markdown, $html)) {
+						$ajax->Data->comments = [];
+						$ajax->Data->oldest = 0;
+						while($cs->fetch()) {
+							$ajax->Data->oldest = +$posted;
+							$c = [
+								'srctbl' => $srctbl,
+								'id' => +$id,
+								'title' => $title,
+								'url' => $url,
+								'posted' => t7format::TimeTag(t7format::DATE_LONG, $posted),
+								'canchange' => $user->IsLoggedIn() && ($canchange == $user->ID && $markdown || $user->IsAdmin()),
+								'username' => $username,
+								'displayname' => $displayname,
+								'avatar' => $avatar === '' ? t7user::DEFAULT_AVATAR : $avatar,
+								'level' => $level,
+								'friend' => $friend,
+								'name' => !$username && $authorname == '' ? t7user::DEFAULT_NAME : $authorname,
+								'contacturl' => !$user->IsLoggedIn() && substr($authorurl, 0, 7) == 'mailto:' ? '' : $authorurl,
+								'html' => $html
+							];
+							if($c['canchange']) {
+								$c['editing'] = false;
+								$c['markdown'] = !$markdown && $user->IsAdmin() ? $html : $markdown;
+							}
+							$ajax->Data->comments[] = $c;
+						}
+						if($more = $db->query('select count(1) as num from contributions where conttype=\'comment\' and posted<\'' . +$ajax->Data->oldest . '\''))
+							if($more = $more->fetch_object())
+								$ajax->Data->more = +$more->num;
+					} else
+						$ajax->Fail('error binding results from comment lookup', $cs->errno . ' ' . $cs->error);
+				else
+					$ajax->Fail('error executing comment lookup', $cs->errno . ' ' . $cs->error);
+			else
+				$ajax->Fail('error binding parameters to look up comments', $cs->errno . ' ' . $cs->error);
+		else
+			$ajax->Fail('error preparing to look up comments', $db->errno . ' ' . $db->error);
 	}
 
 	/**
@@ -231,6 +313,65 @@ class commentsApi extends t7api {
 				$ajax->Fail('id and markdown are required.');
 		else
 			$ajax->Fail('type needs to be a value from this list:  ' . implode(', ', self::$AllowedTypes));
+	}
+
+	protected static function userAction($ajax) {
+		global $db, $user;
+		if($userid = +$_GET['userid']) {
+			$oldest = +$_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
+			if($cs = $db->prepare('select c.srctbl, c.id, c.title, c.url, c.posted, c.author as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.authorname, c.authorurl, '
+					. 'coalesce(a.markdown, b.markdown, cv.markdown, cw.markdown, g.markdown, l.markdown, p.markdown, s.markdown, uc.markdown) as markdown, coalesce(a.html, b.html, cv.html, cw.html, g.html, l.html, p.html, s.html, uc.html) as html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
+					'\' left join art_comments as a on a.id=c.id and c.srctbl=\'art_comments\' '
+					. 'left join blog_comments as b on b.id=c.id and c.srctbl=\'blog_comments\' '
+					. 'left join code_vs_comments as cv on cv.id=c.id and c.srctbl=\'code_vs_comments\' '
+					. 'left join code_web_comments as cw on cw.id=c.id and c.srctbl=\'code_web_comments\' '
+					. 'left join guide_comments as g on g.id=c.id and c.srctbl=\'guide_comments\' '
+					. 'left join lego_comments as l on l.id=c.id and c.srctbl=\'lego_comments\' '
+					. 'left join photos_comments as p on p.id=c.id and c.srctbl=\'photos_comments\' '
+					. 'left join stories_comments as s on s.id=c.id and c.srctbl=\'stories_comments\' '
+					. 'left join update_comments as uc on uc.id=c.id and c.srctbl=\'update_comments\' where c.conttype=\'comment\' and c.posted<? and (c.author=? or ?=0) order by posted desc limit ' . self::MAXCOMMENTS))
+				if($cs->bind_param('iii', $oldest, $userid, $userid))
+					if($cs->execute())
+						if($cs->bind_result($srctbl, $id, $title, $url, $posted, $canchange, $username, $displayname, $avatar, $level, $friend, $authorname, $authorurl, $markdown, $html)) {
+							$ajax->Data->comments = [];
+							$ajax->Data->oldest = 0;
+							while($cs->fetch()) {
+								$ajax->Data->oldest = +$posted;
+								$c = [
+									'srctbl' => $srctbl,
+									'id' => +$id,
+									'title' => $title,
+									'url' => $url,
+									'posted' => t7format::TimeTag(t7format::DATE_LONG, $posted),
+									'canchange' => $user->IsLoggedIn() && ($canchange == $user->ID && $markdown || $user->IsAdmin()),
+									'username' => $username,
+									'displayname' => $displayname,
+									'avatar' => $avatar === '' ? t7user::DEFAULT_AVATAR : $avatar,
+									'level' => $level,
+									'friend' => $friend,
+									'name' => !$username && $authorname == '' ? t7user::DEFAULT_NAME : $authorname,
+									'contacturl' => !$user->IsLoggedIn() && substr($authorurl, 0, 7) == 'mailto:' ? '' : $authorurl,
+									'html' => $html
+								];
+								if($c['canchange']) {
+									$c['editing'] = false;
+									$c['markdown'] = !$markdown && $user->IsAdmin() ? $html : $markdown;
+								}
+								$ajax->Data->comments[] = $c;
+							}
+							if($more = $db->query('select count(1) as num from contributions where conttype=\'comment\' and posted<\'' . +$ajax->Data->oldest . '\' and (author=\'' . +$userid . '\' or \'' . +$userid . '\'=0)'))
+								if($more = $more->fetch_object())
+									$ajax->Data->more = +$more->num;
+						} else
+							$ajax->Fail('error binding results from user comment lookup', $cs->errno . ' ' . $cs->error);
+					else
+						$ajax->Fail('error executing user comment lookup', $cs->errno . ' ' . $cs->error);
+				else
+					$ajax->Fail('error binding parameters to look up user comments', $cs->errno . ' ' . $cs->error);
+			else
+				$ajax->Fail('error preparing to look up user comments', $db->errno . ' ' . $db->error);
+		} else
+			$ajax->Fail('userid is required.  if you want all comments for all users, try /api/comments/all instead.');
 	}
 
 	/**

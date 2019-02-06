@@ -176,197 +176,99 @@ function InitVoting() {
  * @returns
  */
 function InitComments() {
-	if($("#comments").length) {
-		var comments;
-		if(typeof Vue === "function") {
-			// TODO:  load comments with vue
-			comments = new Vue({
-				el: "#comments",
-				data: {
-					comments: [],
-					oldest: "",
-					loading: false,
-					hasMore: false,
-					error: ""
+	if($("#comments").length && typeof Vue === "function") {
+		var comments = new Vue({
+			el: "#comments",
+			data: {
+				comments: [],
+				loading: false,
+				hasMore: false,
+				error: ""
+			},
+			created: function() {
+				this.Load();
+			},
+			methods: {
+				AddComment: function() {
+					var formdata = {md: $("#newcomment").val(), type: $("#addcomment").data("type"), key: $("#addcomment").data("key")};
+					if($("#authorname").length)
+						$.extend(formdata, {name: $("#authorname").val(), contact: $("#authorcontact").val()});
+					$.post("/api/comments/add", formdata, result => {
+						if(!result.fail) {
+							result.editing = false;
+							this.comments.push(result);
+							$("#newcomment").val("");
+						} else
+							alert(result.message);
+					});
 				},
-				methods: {
-					AddComment: function(comment) {
-						comment.editing = false;
-						this.comments.push(comment);
-					},
-					Load: function() {
-						this.loading = true;
-						if($("h1").data("user"))
-							;  // TODO:  load comment page comments
-						else
-							$.get("/api/comments/keyed", {type: $("#addcomment").data("type"), key: $("#addcomment").data("key"), oldest: this.oldest}, function(result) {
-								if(!result.fail) {
-									comments.comments = comments.comments.concat(result.comments);
-									comments.oldest = result.oldest;
-									comments.hasMore = result.hasMore;
-									Prism.highlightAll();
-								} else
-									comments.error = result.message;
-								comments.loading = false;
-							}, "json");
-					},
-					Edit: function(comment) {
-						comment.editing = true;
-						comment.savemarkdown = comment.markdown;
-						setTimeout(function() {
-							$(".content.edit textarea:visible").each(function() {
-								var ta = $(this);
-								if(ta.data("asinit"))
-									autosize.update(ta);
-								else {
-									autosize(ta);
-									ta.data("asinit", true);
-								}
-							});
-						}, 25);
-					},
-					Save: function(comment) {
-						$.post("/api/comments/save", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id, markdown: comment.markdown}, function(result) {
-							if(!result.fail) {
-								comment.html = result.html;
-								comment.editing = false;
-								Prism.highlightAll();
-							} else
+				Load: function() {
+					this.loading = true;
+					var userid = $("h1").data("user");
+					if(userid == "all") {
+						var endpoint = "all";
+						var data = {};
+					} else if(userid) {
+						endpoint = "user";
+						data = {userid: userid};
+					} else {
+						endpoint = "keyed";
+						data = {type: $("#addcomment").data("type"), key: $("#addcomment").data("key")};
+					}
+					data.oldest = this.oldest;
+					$.get("/api/comments/" + endpoint, data, result => {
+						if(!result.fail) {
+							this.comments = this.comments.concat(result.comments);
+							this.oldest = result.oldest;
+							this.hasMore = result.more;
+							setTimeout(() => { Prism.highlightAll(); }, 50);
+						} else
+							this.error = result.message;
+						this.loading = false;
+					}, "json");
+				},
+				Edit: function(comment) {
+					comment.editing = true;
+					comment.savemarkdown = comment.markdown;
+					setTimeout(function() {
+						$(".content.edit textarea:visible").each(function() {
+							var ta = $(this);
+							if(ta.data("asinit"))
+								autosize.update(ta);
+							else {
+								autosize(ta);
+								ta.data("asinit", true);
+							}
+						});
+					}, 25);
+				},
+				Save: function(comment) {
+					$.post("/api/comments/save", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id, markdown: comment.markdown}, function(result) {
+						if(!result.fail) {
+							comment.html = result.html;
+							comment.editing = false;
+							setTimeout(() => { Prism.highlightAll(); }, 50);
+						} else
+							alert(result.message);
+					}, "json");
+				},
+				Unedit: function(comment) {
+					comment.editing = false;
+					comment.markdown = comment.savemarkdown;
+					delete comment.savemarkdown;
+				},
+				Delete: function(comment, index) {
+					if(confirm("do you really want to delete your comment?  you won’t be able to get it back."))
+						$.post("/api/comments/delete", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id}, function(result) {
+							if(!result.fail)
+								comments.comments.splice(index, 1);
+							else
 								alert(result.message);
 						}, "json");
-					},
-					Unedit: function(comment) {
-						comment.editing = false;
-						comment.markdown = comment.savemarkdown;
-						delete comment.savemarkdown;
-					},
-					Delete: function(comment, index) {
-						if(confirm("do you really want to delete your comment?  you won’t be able to get it back."))
-							$.post("/api/comments/delete", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id}, function(result) {
-								if(!result.fail)
-									comments.comments.splice(index, 1);
-								else
-									alert(result.message);
-							}, "json");
-					}
 				}
-			});
-			comments.Load();
-		} else if(typeof ko === "object") {
-			ko.applyBindings(comments = new CommentsViewModel(), $("#comments")[0]);
-			comments.LoadComments();
-		}
-		$("#addcomment").submit(function() {
-			var formdata = {md: $("#newcomment").val(), type: $(this).data("type"), key: $(this).data("key")};
-			if($("#authorname").length)
-				$.extend(formdata, {name: $("#authorname").val(), contact: $("#authorcontact").val()});
-			$.post("/api/comments/add", formdata, function(result) {
-				if(!result.fail) {
-					comments.AddComment(result);
-					$("#newcomment").val("");
-				} else
-					alert(result.message);
-			});
-			return false;
-		});
-	}
-}
-
-/**
- * view model for comments on the page.  automatically loaded if knockout is
- * available and an element with the id "comments" exists.
- */
-function CommentsViewModel() {
-	var self = this;
-
-	self.comments = ko.observableArray([]);
-	self.oldest = "";
-
-	self.loadingComments = ko.observable(false);
-	self.hasMoreComments = ko.observable(false);
-	self.error = ko.observable(false);
-
-	self.AddComment = function(comment) {
-		comment.editing = ko.observable(false);
-		comment.markdown = ko.observable(comment.markdown);
-		comment.html = ko.observable(comment.html);
-		self.comments.push(comment);
-	}
-
-	self.LoadComments = function() {
-		self.loadingComments(true);
-		if($("h1").data("user"))
-			$.get("?ajax=getall", {userid: $("h1").data("user"), oldest: self.oldest}, function(result) {
-				if(result.fail)
-					alert(result.message);
-				else {
-					for(var c = 0; c < result.comments.length; c++) {
-						self.AddComment(result.comments[c]);
-					}
-					self.oldest = result.oldest;
-					self.hasMoreComments(result.more);
-					Prism.highlightAll();
-				}
-				self.loadingComments(false);
-			}, "json");
-		else
-			$.get("/comments.php", {ajax: "get", type: $("#addcomment").data("type"), key: $("#addcomment").data("key"), oldest: self.oldest}, function(result) {
-				if(!result.fail) {
-					for(var e = 0; e < result.comments.length; e++)
-						self.AddComment(result.comments[e]);
-					self.oldest = result.oldest;
-					self.hasMoreComments(result.more);
-					Prism.highlightAll();
-				} else
-					self.error(result.message);
-				self.loadingComments(false);
-			}, "json");
-	};
-
-	self.EditComment = function(comment) {
-		comment.editing(true);
-		comment.savedmarkdown = comment.markdown();
-		$("textarea[data-bind*='markdown']:visible").each(function() {
-			var ta = $(this);
-			if(ta.data("asinit"))
-				autosize.update(ta);
-			else {
-				autosize(ta);
-				ta.data("asinit", true);
 			}
 		});
-		return false;
 	}
-
-	self.SaveComment = function(comment) {
-		$.post("/comments.php?ajax=save", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id, markdown: comment.markdown()}, function(result) {
-			if(!result.fail) {
-				comment.html(result.html);
-				comment.editing(false);
-				Prism.highlightAll();
-			} else
-				alert(result.message);
-		});
-		return false;
-	}
-
-	self.UneditComment = function(comment) {
-		comment.editing(false);
-		comment.markdown(comment.savedmarkdown);
-		delete comment.savedmarkdown;
-		return false;
-	}
-
-	self.DeleteComment = function(comment) {
-		if(confirm("do you really want to delete your comment?  you won’t be able to get it back."))
-			$.post("/comments.php?ajax=delete", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id}, function(result) {
-				if(!result.fail)
-					self.comments.remove(comment);
-				else
-					alert(result.message);
-			});
-		return false;
-	};
 }
 
 /**

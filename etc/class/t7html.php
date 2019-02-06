@@ -24,7 +24,7 @@ class t7html {
 	<head>
 		<meta charset=utf-8>
 		<meta name=viewport content="width=device-width, initial-scale=1">
-		<title><?php echo $title; ?></title>
+		<title><?=$title; ?></title>
 		<link rel=stylesheet href="/track7.css">
 		<script src="/jquery-3.3.1.min.js" type="text/javascript"></script>
 		<script src="/autosize.min.js" type="text/javascript"></script>
@@ -54,7 +54,7 @@ class t7html {
 <?php
 		} elseif(file_exists(str_replace('.php', '.js', $_SERVER['SCRIPT_FILENAME']))) {
 ?>
-		<script src="<?php echo str_replace('.php', '.js', $_SERVER['SCRIPT_NAME']); ?>" type="text/javascript"></script>
+		<script src="<?=str_replace('.php', '.js', $_SERVER['SCRIPT_NAME']); ?>" type="text/javascript"></script>
 <?php
 		}
 ?>
@@ -76,7 +76,7 @@ class t7html {
 			$rss = $this->params['rss'];
 			if(isset($rss['title']) && isset($rss['url'])) {
 ?>
-		<link rel=alternate type=application/rss+xml title="<?php echo $rss['title']; ?>" href="<?php echo $rss['url']; ?>">
+		<link rel=alternate type=application/rss+xml title="<?=$rss['title']; ?>" href="<?=$rss['url']; ?>">
 <?php
 			}
 		}
@@ -84,7 +84,7 @@ class t7html {
 		<meta name="msapplication-TileColor" content="#335577">
 		<meta name="msapplication-TileImage" content="/mstile-144x144.png">
 	</head>
-	<body class=<?php echo isset($this->params['bodytype']) ? $this->params['bodytype'] : 'text'; ?>>
+	<body class=<?=isset($this->params['bodytype']) ? $this->params['bodytype'] : 'text'; ?>>
 		<header>
 			<a id=gohome href="/" title="track7 home"><img src="/images/home.png" alt="track7"></a>
 			<div id=userstatus>
@@ -92,7 +92,7 @@ class t7html {
 		global $user;
 		if($user->IsLoggedIn()) {
 ?>
-				<a id=whodat href="/user/<?php echo $user->Username; ?>/"><?php echo htmlspecialchars($user->DisplayName); ?><?php if($user->NotifyCount) echo '<span class=notifycount>' . $user->NotifyCount . '</span>'; ?><img class=avatar src="<?php echo $user->Avatar; ?>" alt=""></a>
+				<a id=whodat href="/user/<?=$user->Username; ?>/"><?=htmlspecialchars($user->DisplayName); ?><?php if($user->NotifyCount) echo '<span class=notifycount>' . $user->NotifyCount . '</span>'; ?><img class=avatar src="<?=$user->Avatar; ?>" alt=""></a>
 <?php
 		} else {
 ?>
@@ -107,7 +107,7 @@ class t7html {
 ?>
 		<div id=usermenu>
 			<nav id=useractions>
-				<a class=profile href="/user/<?php echo $user->Username; ?>/">profile</a>
+				<a class=profile href="/user/<?=$user->Username; ?>/">profile</a>
 				<a class=settings href="/user/settings.php">settings<?php if($user->SettingsAlerts) echo '<span class=notifycount>' . $user->SettingsAlerts . '</span>'; ?></a>
 				<a class=messages href="/user/messages.php">messages<?php if($user->UnreadMsgs) echo '<span class=notifycount>' . $user->UnreadMsgs . '</span>'; ?></a>
 				<a id=logoutlink href="?logout">sign out</a>
@@ -153,11 +153,11 @@ class t7html {
 	 */
 	public function ShowTags($tagType, $pluralName) {
 ?>
-			<nav class="tagcloud hidden" data-tagtype=<?php echo $tagType; ?> v-if=tags.length>
+			<nav class="tagcloud hidden" data-tagtype=<?=$tagType; ?> v-if=tags.length>
 				<header>tags</header>
 				<template v-for="tag in tags">
 				{{ }}
-				<a :href="tag.name + '/'" :title="'<?php echo $pluralName; ?> tagged ' + tag.name" :data-count=tag.count>{{tag.name}}</a>
+				<a :href="tag.name + '/'" :title="'<?=$pluralName; ?> tagged ' + tag.name" :data-count=tag.count>{{tag.name}}</a>
 				</template>
 			</nav>
 <?php
@@ -199,53 +199,44 @@ class t7html {
 ?>
 			<section id=comments>
 				<h2>comments</h2>
-				<p v-if=error data-bind="visible: error(), text: error">{{error}}</p>
-				<p v-if="!loading && !comments.length" data-bind="visible: !loadingComments() && comments().length == 0">
-					there are no comments on this <?php echo $name; ?> so far.  you could be the first!
+				<p v-if=error>{{error}}</p>
+				<p v-if="!loading && !comments.length">
+					there are no comments on this <?=$name; ?> so far.  you could be the first!
 				</p>
-				<!-- ko foreach: comments -->
 				<section class=comment v-for="(comment, index) in comments">
 					<div class=userinfo>
-						<!-- ko if: username -->
 						<template v-if=comment.username>
-						<div class=username :class="{friend: comment.friend}" :title="comment.friend ? (comment.displayname || comment.username) + ' is your friend' : null" data-bind="css: {friend: friend}, attr: {title: friend ? (displayname || username) + ' is your friend' : null}">
-							<a :href="'/user/' + comment.username + '/'" data-bind="text: displayname || username, attr: {href: '/user/' + username + '/'}">{{comment.displayname || comment.username}}</a>
+						<div class=username :class="{friend: comment.friend}" :title="comment.friend ? (comment.displayname || comment.username) + ' is your friend' : null">
+							<a :href="'/user/' + comment.username + '/'">{{comment.displayname || comment.username}}</a>
 						</div>
-						<a :href="'/user/' + comment.username + '/'" data-bind="visible: avatar, attr: {href: '/user/' + username + '/'}"><img class=avatar alt="" :src=comment.avatar data-bind="attr: {src: avatar}"></a>
-						<div class=userlevel data-bind="visible: level, text: level">{{comment.level}}</div>
+						<a :href="'/user/' + comment.username + '/'"><img class=avatar alt="" :src=comment.avatar></a>
+						<div class=userlevel>{{comment.level}}</div>
 						</template>
-						<!-- /ko -->
-						<!-- ko if: !username && contacturl -->
-						<div class=username v-if="!comment.username && comment.contacturl"><a :href=comment.contacturl data-bind="text: name, attr: {href: contacturl}">{{comment.name}}</a></div>
-						<!-- /ko -->
-						<!-- ko if: !username && !contacturl -->
-						<div v-if="!comment.username && !comment.contacturl" class=username data-bind="text: name">{{comment.name}}</div>
-						<!-- /ko -->
+						<div class=username v-if="!comment.username && comment.contacturl"><a :href=comment.contacturl>{{comment.name}}</a></div>
+						<div v-if="!comment.username && !comment.contacturl" class=username>{{comment.name}}</div>
 					</div>
 					<div class=comment>
-						<header>posted <time :datetime=comment.posted.datetime data-bind="text: posted.display, attr: {datetime: posted.datetime}">{{comment.posted.display}}</time></header>
-						<div v-if=!comment.editing class=content v-html=comment.html data-bind="visible: !editing(), html: html"></div>
-						<div v-if=comment.editing class="content edit" data-bind="visible: editing">
-							<textarea v-model=comment.markdown data-bind="value: markdown"></textarea>
+						<header>posted <time :datetime=comment.posted.datetime>{{comment.posted.display}}</time></header>
+						<div v-if=!comment.editing class=content v-html=comment.html></div>
+						<div v-if=comment.editing class="content edit">
+							<textarea v-model=comment.markdown></textarea>
 						</div>
-						<footer v-if=comment.canchange data-bind="visible: canchange">
-							<a class="okay action" v-if=comment.editing v-on:click.prevent=Save(comment) data-bind="visible: editing(), click: $parent.SaveComment" href="/comments.php?ajax=save">save</a>
-							<a class="cancel action" v-if=comment.editing v-on:click.prevent=Unedit(comment) data-bind="visible: editing(), click: $parent.UneditComment" href="#">cancel</a>
-							<a class="edit action" v-if=!comment.editing v-on:click.prevent=Edit(comment) data-bind="visible: !editing(), click: $parent.EditComment" href="/comments.php?ajax=edit">edit</a>
-							<a class="del action" v-if=!comment.editing v-on:click.prevent="Delete(comment, index)" data-bind="visible: !editing(), click: $parent.DeleteComment" href="/comments.php?ajax=delete">delete</a>
+						<footer v-if=comment.canchange>
+							<a class="okay action" v-if=comment.editing v-on:click.prevent=Save(comment) href="/api/comments/save">save</a>
+							<a class="cancel action" v-if=comment.editing v-on:click.prevent=Unedit(comment) href="#cancelEdit">cancel</a>
+							<a class="edit action" v-if=!comment.editing v-on:click.prevent=Edit(comment) href="#edit">edit</a>
+							<a class="del action" v-if=!comment.editing v-on:click.prevent="Delete(comment, index)" href="/api/comments/delete">delete</a>
 						</footer>
 					</div>
 				</section>
 
-				<!-- /ko -->
-
-				<form id=addcomment data-type=<?php echo $type; ?> data-key=<?php echo $key; ?>>
+				<form id=addcomment data-type=<?=$type; ?> data-key=<?=$key; ?> v-on:submit.prevent=AddComment>
 <?php
 		if($user->IsLoggedIn()) {
 ?>
 					<label title="you are signed in, so your comment will post with your avatar and a link to your profile">
 						<span class=label>name:</span>
-						<span class=field><a href="/user/<?php echo $user->Username; ?>/"><img class="inline avatar" src="<?php echo $user->Avatar; ?>"> <?php echo htmlspecialchars($user->DisplayName); ?></a></span>
+						<span class=field><a href="/user/<?=$user->Username; ?>/"><img class="inline avatar" src="<?=$user->Avatar; ?>"> <?=htmlspecialchars($user->DisplayName); ?></a></span>
 					</label>
 <?php
 		} else {
@@ -283,7 +274,7 @@ class t7html {
 ?>
 				<label>
 					<span class=label>tags:</span>
-					<span class="field list" data-tagtype=<?php echo $type;?>>
+					<span class="field list" data-tagtype=<?=$type;?>>
 						<span class=chosen v-for="(tag, index) in tags"><span>{{tag}}</span><a class="action del" href="#deltag" v-on:click.prevent=DelTag(index) :title="'remove the ' + tag + ' tag'"></a></span>
 						<span class=suggestinput>
 							<input id=tags autocomplete=off v-model=tagSearch v-on:keydown.down.prevent=NextTag v-on:keydown.up.prevent=PrevTag v-on:dblclick=ShowTagSuggestions v-on:blur=HideTagSuggestions(250) v-on:keydown.esc=HideTagSuggestions v-on:keydown.enter.prevent=AddCursorTag v-on:keydown.comma.prevent=AddTypedTag v-on:keydown.tab=AddCursorTag v-on:keydown.backspace=DelLastTag v-on:keydown=TagSearchKeyPress>
@@ -305,7 +296,7 @@ class t7html {
 		<footer>
 			<a href="/feed.rss" title="add track7 activity to your feed reader">rss</a>
 			<a href="https://twitter.com/track7feed" title="follow track7 on twitter">twitter</a>
-			<a href="https://github.com/misterhaan/track7.org/blob/master<?php echo $_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
+			<a href="https://github.com/misterhaan/track7.org/blob/master<?=$_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
 			<div id=copyright>© 1996 - 2018 track7 — <a href="/fewrights.php">few rights reserved</a></div>
 		</footer>
 	</body>
