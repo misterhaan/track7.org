@@ -13,7 +13,7 @@ if(isset($_GET['ajax'])) {
 	die;
 }
 
-$html = new t7html(['ko' => true]);
+$html = new t7html(['vue' => true]);
 $html->Open('guestbook');
 ?>
 			<h1>guestbook migration</h1>
@@ -24,42 +24,42 @@ $html->Open('guestbook');
 				the same entry twice.
 			</p>
 
-			<h2 data-bind="text: 'guestbook entry #' + num()"></h2>
-			<div class=meta><span class=posted data-bind="text: instant().display"></span></div>
-			<p class=fullentry data-bind="html: fullentry"></p>
+			<h2>guestbook entry #{{num}}</h2>
+			<div class=meta><span class=posted>{{instant.display}}</span></div>
+			<p class=fullentry v-html=fullentry></p>
 
 			<dl>
 				<dt>name</dt>
-				<dd data-bind="text: name"></dd>
+				<dd>{{name}}</dd>
 				<dt>e-mail</dt>
-				<dd data-bind="text: email"></dd>
+				<dd>{{email}}</dd>
 				<dt>website</dt>
-				<dd data-bind="text: website"></dd>
+				<dd>{{website}}</dd>
 				<dt>comment</dt>
-				<dd data-bind="html: comment"></dd>
+				<dd>{{comment}}</dd>
 			</dl>
 
 			<form id=gbaction>
 				<fieldset>
 					<legend>message to misterhaan</legend>
-					<label><input type=radio name=msgfrom value=email checked> <span data-bind="text: 'from ' + name() + ' (' + email() + ')'"></span></label>
-					<label><input type=radio name=msgfrom value=website> <span data-bind="text: 'from ' + name() + ' (' + website() + ')'"></span></label>
+					<label><input type=radio name=msgfrom value=email checked> <span>from {{name}} ({{email}})</span></label>
+					<label><input type=radio name=msgfrom value=website> <span>from {{name}} ({{website}})</span></label>
 					<label><input type=radio name=msgfrom value=username> from user <input name=msgusername></label>
-					<button data-bind="click: SaveMessage">save as message</button>
+					<button v-on:click=SaveMessage>save as message</button>
 				</fieldset>
 				<fieldset>
 					<legend>comment on art</legend>
 					<label>art url: <?=t7format::FullUrl('/art/'); ?><input id=arturl></label>
-					<label><input type=radio name=commentfrom value=email checked> <span data-bind="text: 'from ' + name() + ' (' + email() + ')'"></span></label>
-					<label><input type=radio name=commentfrom value=website> <span data-bind="text: 'from ' + name() + ' (' + website() + ')'"></span></label>
+					<label><input type=radio name=commentfrom value=email checked> <span>from {{name}} ({{email}})</span></label>
+					<label><input type=radio name=commentfrom value=website> <span>from {{name}} ({{website}})</span></label>
 					<label><input type=radio name=commentfrom value=username> from user <input name=commentusername></label>
-					<button data-bind="click: SaveComment">save as comment</button>
+					<button v-on:click=SaveComment>save as comment</button>
 				</fieldset>
-				<label><button data-bind="click: Skip">skip</button> to entry #<input id=nextentry type=number step=1></label>
+				<label><button v-on:click=Skip>skip</button> to entry #<input id=nextentry type=number step=1></label>
 			</form>
 
-			<ul data-bind="foreach: results">
-				<li data-bind="text: $data"></li>
+			<ul>
+				<li v-for="result in results">{{result}}</li>
 			</ul>
 <?php
 $html->Close();
