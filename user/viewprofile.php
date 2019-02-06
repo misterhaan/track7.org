@@ -6,42 +6,17 @@ if(isset($_GET['login'])) {
 	$u = new t7user($_GET['login']);
 	if(!$u->IsLoggedIn())
 		$u = new oldUser($_GET['login']);
-	if(isset($_GET['ajax'])) {
-		$ajax = new t7ajax();
-		if($u->IsLoggedIn())
-			switch($_GET['ajax']) {
-				case 'activity':
-					$before = isset($_GET['before']) && +$_GET['before'] ? +$_GET['before'] : false;
-					if($acts = t7contrib::GetUser($u->ID, $before, MAXACTIONS)) {
-						$ajax->Data->acts = [];
-						$ajax->Data->latest = false;
-						while($act = $acts->fetch_object()) {
-							$ajax->Data->latest = $act->posted;
-							$act->action = t7contrib::ActionWords($act->conttype);
-							$act->posted = t7format::TimeTag('ago', $act->posted, 'g:i a \o\n l F jS Y');
-							$ajax->Data->acts[] = $act;
-						}
-						$ajax->Data->more = t7contrib::More($ajax->Data->latest, $u->ID);
-					} else
-						$ajax->Fail('error looking up activity:  ' . $db->error);
-					break;
-			}
-		else
-			$ajax->Fail('user not found');
-		$ajax->Send();
-		die;
-	}
 	if($u->IsLoggedIn()) {
 		$u->DisplayName = htmlspecialchars($u->DisplayName);
 		$stats = $u->GetStats();
-		$html = new t7html(['ko' => true]);
+		$html = new t7html(['vue' => true]);
 		$html->Open($u->DisplayName);
 ?>
 			<header class=profile>
-				<img class=avatar src="<?php echo htmlspecialchars($u->Avatar); ?>" alt="">
+				<img class=avatar src="<?=htmlspecialchars($u->Avatar); ?>" alt="">
 				<div>
-					<h1<?php if($u->Fan) echo ' class=friend title="' . $u->DisplayName . ' is your friend"'; ?>><?=$u->DisplayName; ?></h1>
-					<p><?=$u->GetLevelName(); ?>, joined <time datetime="<?=gmdate('c', $stats->registered); ?>" title="<?php echo t7format::LocalDate('g:i a \o\n l F jS Y', $stats->registered); ?>"><?php echo t7format::HowLongAgo($stats->registered); ?> ago</time></p>
+					<h1 data-userid="<?=$u->ID; ?>" <?php if($u->Fan) echo ' class=friend title="' . $u->DisplayName . ' is your friend"'; ?>><?=$u->DisplayName; ?></h1>
+					<p><?=$u->GetLevelName(); ?>, joined <time datetime="<?=gmdate('c', $stats->registered); ?>" title="<?=t7format::LocalDate(t7format::DATE_LONG, $stats->registered); ?>"><?=t7format::HowLongAgo($stats->registered); ?> ago</time></p>
 				</div>
 			</header>
 <?php
@@ -51,7 +26,7 @@ if(isset($_GET['login'])) {
 <?php
 			if($u->ID != $user->ID) {
 ?>
-				<a class=message title="send <?php echo $u->DisplayName; ?> a private message" href="/user/messages.php#!to=<?php echo htmlspecialchars($u->Username); ?>">send message</a>
+				<a class=message title="send <?=$u->DisplayName; ?> a private message" href="/user/messages.php#!to=<?=htmlspecialchars($u->Username); ?>">send message</a>
 <?php
 			}
 			if($user->IsLoggedIn())
@@ -61,11 +36,11 @@ if(isset($_GET['login'])) {
 <?php
 				} elseif($u->Fan) {
 ?>
-				<a class=removefriend title="remove <?php echo $u->DisplayName; ?> from your friends" href="/user/?ajax=removefriend&amp;friend=<?php echo $u->ID; ?>">remove friend</a>
+				<a class=removefriend title="remove <?=$u->DisplayName; ?> from your friends" href="/api/users/removeFriend?friend=<?=$u->ID; ?>">remove friend</a>
 <?php
 				} else {
 ?>
-				<a class=addfriend title="add <?php echo $u->DisplayName; ?> as a friend" href="/user/?ajax=addfriend&amp;friend=<?php echo $u->ID; ?>">add friend</a>
+				<a class=addfriend title="add <?=$u->DisplayName; ?> as a friend" href="/api/users/addFriend?friend=<?=$u->ID; ?>">add friend</a>
 <?php
 				}
 ?>
@@ -93,17 +68,17 @@ if(isset($_GET['login'])) {
 <?php
 			if($stats->fans) {
 ?>
-					<li>#<?php echo Rank('fans', $stats->fans); ?> in fans with <?php echo $stats->fans; ?></li>
+					<li>#<?=Rank('fans', $stats->fans); ?> in fans with <?=$stats->fans; ?></li>
 <?php
 			}
 			if($stats->comments) {
 ?>
-					<li>#<?php echo Rank('comments', $stats->comments); ?> in <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/<?php echo $u->Username; ?>/comments" title="view all of <?php echo $u->Username; ?>’s comments">comments</a> with <?php echo $stats->comments; ?></li>
+					<li>#<?=Rank('comments', $stats->comments); ?> in <a href="<?=dirname($_SERVER['PHP_SELF']); ?>/<?=$u->Username; ?>/comments" title="view all of <?=$u->Username; ?>’s comments">comments</a> with <?=$stats->comments; ?></li>
 <?php
 			}
 			if($stats->replies) {
 ?>
-					<li>#<?php echo Rank('replies', $stats->replies); ?> in <a href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/<?php echo $u->Username; ?>/replies" title="view all of <?php echo $u->Username; ?>’s forum posts">forum posts</a> with <?php echo $stats->replies; ?></li>
+					<li>#<?=Rank('replies', $stats->replies); ?> in <a href="<?=dirname($_SERVER['PHP_SELF']); ?>/<?=$u->Username; ?>/replies" title="view all of <?=$u->Username; ?>’s forum posts">forum posts</a> with <?=$stats->replies; ?></li>
 <?php
 			}
 ?>
@@ -113,17 +88,17 @@ if(isset($_GET['login'])) {
 		}
 ?>
 			<section id=activity>
-				<p data-bind="visible: !loading() && activity().length < 1"><?php echo $u->DisplayName; ?> hasn’t posted anything to track7 yet.</p>
+				<p v-if="!loading && activity.length < 1"><?=$u->DisplayName; ?> hasn’t posted anything to track7 yet.</p>
 				<ol data-bind="foreach: activity">
-					<li data-bind="css: conttype">
-						<span class=action data-bind="text: action"></span>
-						<a data-bind="text: title, attr: {href: url}"></a>
-						<time data-bind="text: posted.display, attr: {datetime: posted.datetime, title: posted.title}"></time>
+					<li v-for="act in activity" :class=act.conttype>
+						<span class=action data-bind="text: action">{{act.action}}</span>
+						<a :href=act.url>{{act.title}}</a>
+						<time :datetime=act.posted.datetime :title=act.posted.title>{{act.posted.display}}</time>
 						ago
 					</li>
 				</ol>
-				<p class=loading data-bind="visible: loading">loading more activity...</p>
-				<p class="more calltoaction" data-bind="visible: !loading() && more()"><a href=#activity class="action get" data-bind="click: Load">show more activity from <?php echo $u->DisplayName; ?></a></p>
+				<p class=loading v-if=loading>loading more activity...</p>
+				<p class="more calltoaction" v-if="!loading && more"><a href=#activity class="action get" v-on:click=Load>show more activity from <?=$u->DisplayName; ?></a></p>
 			</section>
 <?php
 		$html->Close();

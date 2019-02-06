@@ -23,15 +23,19 @@ class t7file {
 	 * @param string $type type of uploaded image; can be png, jpeg, or jpg.
 	 * @param array $dests destinations to save, names are full file paths and values are maximum size.
 	 * @param array|boolean $exif if passed, the image will be rotated if exif data says it should be.
+	 * @param boolean $cropSquare whether to crop to a square centered in the image
 	 */
-	public static function SaveUploadedImage($upload, $type, $dests, $exif = false) {
+	public static function SaveUploadedImage($upload, $type, $dests, $exif = false, $cropSquare = false) {
 		$size = getimagesize($upload['tmp_name']);
 		$image = self::ReadImageFile($upload['tmp_name'], $type);
 		unlink($upload['tmp_name']);
 		if($exif)
 			$image = self::AutoRotateImage($image, $exif, $size);
 		foreach($dests as $filename => $max)
-			self::SaveResizedImage($image, $type, $filename, $size[0], $size[1], $max);
+			if($cropSquare)
+				self::SaveResizedSquareImage($image, $type, $filename, $size[0], $size[1], $max);
+			else
+				self::SaveResizedImage($image, $type, $filename, $size[0], $size[1], $max);
 	}
 
 	private static function SaveResizedImage($image, $type, $filename, $width, $height, $max) {
@@ -48,12 +52,24 @@ class t7file {
 			$w = $width;
 			$h = $height;
 		}
-		$resized = imagecreatetruecolor($w, $h);
+		self::SaveCroppedResizedImage($image, $type, $filename, $w, $h, $width, $height);
+	}
+
+	private static function SaveResizedSquareImage($image, $type, $filename, $width, $height, $max) {
+		$size = min($width, $height);
+		$left = $width > $height ? round(($width - $height) / 2) : 0;
+		$top = $height > $width ? round(($height - $width) / 2) : 0;
+		$s = min($size, $max);
+		self::SaveCroppedResizedImage($image, $type, $filename, $s, $s, $size, $size, $left, $top);
+	}
+
+	private static function SaveCroppedResizedImage($image, $type, $filename, $width, $height, $srcWidth, $srcHeight, $left = 0, $top = 0) {
+		$resized = imagecreatetruecolor($width, $height);
 		if($type == 'png') {
 			imagealphablending($resized, false);
 			imagesavealpha($resized, true);
 		}
-		imagecopyresampled($resized, $image, 0, 0, 0, 0, $w, $h, $width, $height);
+		imagecopyresampled($resized, $image, 0, 0, $left, $top, $width, $height, $srcWidth, $srcHeight);
 		self::SaveImageFile($resized, $filename, $type);
 		imagedestroy($resized);
 	}
@@ -95,5 +111,6 @@ class t7file {
 					$size[1] = $tmp;
 					return imagerotate($image, 90, 0);
 			}
+		return $image;
 	}
 }

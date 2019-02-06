@@ -1,7 +1,7 @@
 $(function() {
 	$("a[href$='#profile']").click(function() {
 		if(!$("#profile").data("loaded"))
-			$.get("/user/settings.php?ajax=loadprofile", {}, function(result) {
+			$.get("/api/settings/profile", {}, result => {
 				if(!result.fail) {
 					$("#username").val(result.username);
 					$("#username").change();
@@ -15,7 +15,7 @@ $(function() {
 
 	$("a[href$='#timezone']").click(function() {
 		if(!$("#timezone").data("loaded"))
-			$.get("/user/settings.php?ajax=loadtime", {}, function(result) {
+			$.get("/api/settings/time", {}, result => {
 				if(!result.fail) {
 					$("#currenttime").val(result.currenttime);
 					$("#dst").prop("checked", result.dst);
@@ -27,7 +27,7 @@ $(function() {
 
 	$("a[href$='#contact']").click(function() {
 		if(!$("#contact").data("loaded"))
-			$.get("/user/settings.php?ajax=loadcontact", {}, function(result) {
+			$.get("/api/settings/contact", {}, result => {
 				if(!result.fail) {
 					$("#email").val(result.email).change();
 					var vis = $("#vis_email");
@@ -69,7 +69,7 @@ $(function() {
 
 	$("a[href$='#notification']").click(function() {
 		if(!$("#notification").data("loaded"))
-			$.get("/user/settings.php?ajax=loadnotification", {}, function(result) {
+			$.get("/api/settings/notification", {}, result => {
 				if(!result.fail) {
 					$("#emaillabel").text(result.email);
 					$("#notifymsg")[0].checked = result.emailnewmsg;
@@ -91,8 +91,8 @@ $(function() {
 		}
 	}
 
-	$("#username").change(function() { ValidateField(this, "./?ajax=checkusername", "username", "validating username...", "username available."); });
-	$("#displayname").change(function() { ValidateField(this, "./?ajax=checkname", "name", "validating display name...", "display name available.", "username will be used for display."); });
+	$("#username").change(function() { ValidateField(this, "/api/settings/checkUsername", "username", "validating username...", "username available."); });
+	$("#displayname").change(function() { ValidateField(this, "/api/settings/checkName", "name", "validating display name...", "display name available.", "username will be used for display."); });
 	$("#avatarupload").change(function(event) {
 		var f = event.target.files[0];
 		if(f) {
@@ -121,12 +121,17 @@ $(function() {
 
 	$("#profile").submit(function() {
 		$("#profile button.save").prop("disabled", true).addClass("working");
-		$.post({url: "/user/settings.php?ajax=saveprofile", data: new FormData($("#profile")[0]), cache: false, contentType: false, processData: false, success: function(result) {
+		$.post({url: "/api/settings/profile", data: new FormData($("#profile")[0]), cache: false, contentType: false, processData: false, success: result => {
 			$("#profile button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				$("a[href='" + $("#whodat").attr("href") + "']").attr("href", "/user/" + result.username + "/");
 				$("#whodat").contents().get(0).nodeValue = result.displayname;
 				$("#whodat img.avatar").attr("src", result.avatar);
+				var filefield = $("#avatarupload");
+				filefield.wrap("<form>").closest("form").get(0).reset();
+				filefield.unwrap();
+				filefield.siblings("img.avatar").remove();
+				filefield.show();
 				$("input[name='avatar'][value='current']").prop("checked", true).siblings("img").attr("src", result.avatar);
 			} else
 				alert(result.message);
@@ -146,7 +151,7 @@ $(function() {
 
 	$("#timezone").submit(function() {
 		$("#timezone button.save").prop("disabled", true).addClass("working");
-		$.post("/user/settings.php?ajax=savetime", {currenttime: $("#currenttime").val(), dst: $("#dst").prop("checked")}, function(result) {
+		$.post("/api/settings/time", {currenttime: $("#currenttime").val(), dst: $("#dst").prop("checked")}, result => {
 			$("#timezone button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				// TODO:  indicate success?
@@ -156,14 +161,14 @@ $(function() {
 		return false;
 	});
 
-	$("#email").change(function() { ValidateField(this, "./?ajax=checkemail", "email", "validating e-mail address...", "looks like an e-mail address.", "e-mail address will be left blank."); });
-	$("#website").change(function() { ValidateField(this, "?ajax=checkurl", "url", "validating website url...", "url exists.", "no website listed."); });
-	$("#twitter").change(function() { ValidateField(this, "?ajax=checktwitter", "twitter", "validating twitter username...", "valid twitter handle.", "no twitter profile listed."); });
-	$("#google").change(function() { ValidateField(this, "?ajax=checkgoogle", "google", "validating google+ profile...", "valid google+ profile.", "no google+ profile listed."); });
-	$("#facebook").change(function() { ValidateField(this, "?ajax=checkfacebook", "facebook", "validating facebook username...", "valid facebook profile.", "no facebook profile listed."); });
-	$("#github").change(function() { ValidateField(this, "?ajax=checkgithub", "github", "validating github username...", "valid github profile.", "no github profile listed."); });
-	$("#deviantart").change(function() { ValidateField(this, "?ajax=checkdeviantart", "deviantart", "validating github username...", "valid deviantart profile.", "no deviantart profile listed."); });
-	$("#steam").change(function() { ValidateField(this, "?ajax=checksteam", "steam", "validating steam profile...", "valid steam profile.", "no steam profile listed."); });
+	$("#email").change(function() { ValidateField(this, "/api/settings/checkEmail", "email", "validating e-mail address...", "looks like an e-mail address.", "e-mail address will be left blank."); });
+	$("#website").change(function() { ValidateField(this, "/api/settings/checkUrl", "url", "validating website url...", "url exists.", "no website listed."); });
+	$("#twitter").change(function() { ValidateField(this, "/api/settings/checkTwitter", "twitter", "validating twitter username...", "valid twitter handle.", "no twitter profile listed."); });
+	$("#google").change(function() { ValidateField(this, "/api/settings/checkGoogle", "google", "validating google+ profile...", "valid google+ profile.", "no google+ profile listed."); });
+	$("#facebook").change(function() { ValidateField(this, "/api/settings/checkFacebook", "facebook", "validating facebook username...", "valid facebook profile.", "no facebook profile listed."); });
+	$("#github").change(function() { ValidateField(this, "/api/settings/checkGithub", "github", "validating github username...", "valid github profile.", "no github profile listed."); });
+	$("#deviantart").change(function() { ValidateField(this, "/api/settings/checkDeviantart", "deviantart", "validating github username...", "valid deviantart profile.", "no deviantart profile listed."); });
+	$("#steam").change(function() { ValidateField(this, "/api/settings/checkSteam", "steam", "validating steam profile...", "valid steam profile.", "no steam profile listed."); });
 
 	$("a.visibility.droptrigger").click(function(e) {
 		e.preventDefault();
@@ -192,7 +197,7 @@ $(function() {
 
 	$("#contact").submit(function() {
 		$("#contact button.save").prop("disabled", true).addClass("working");
-		$.post("/user/settings.php?ajax=savecontact", {email: $("#email").val(), vis_email: $("#vis_email").data("value"), website: $("#website").val(), vis_website: $("#vis_website").data("value"), twitter: $("#twitter").val(), vis_twitter: $("#vis_twitter").data("value"), google: $("#google").val(), vis_google: $("#vis_google").data("value"), facebook: $("#facebook").val(), vis_facebook: $("#vis_facebook").data("value"), github: $("#github").val(), vis_github: $("#vis_github").data("value"), deviantart: $("#deviantart").val(), vis_deviantart: $("#vis_deviantart").data("value"), steam: $("#steam").val(), vis_steam: $("#vis_steam").data("value")}, function(result) {
+		$.post("/api/settings/contact", {email: $("#email").val(), vis_email: $("#vis_email").data("value"), website: $("#website").val(), vis_website: $("#vis_website").data("value"), twitter: $("#twitter").val(), vis_twitter: $("#vis_twitter").data("value"), google: $("#google").val(), vis_google: $("#vis_google").data("value"), facebook: $("#facebook").val(), vis_facebook: $("#vis_facebook").data("value"), github: $("#github").val(), vis_github: $("#vis_github").data("value"), deviantart: $("#deviantart").val(), vis_deviantart: $("#vis_deviantart").data("value"), steam: $("#steam").val(), vis_steam: $("#vis_steam").data("value")}, result => {
 			$("#contact button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				// TODO:  indicate success; update form?
@@ -203,7 +208,7 @@ $(function() {
 
 	$("#notification").submit(function() {
 		$("#notification button.save").prop("disabled", true).addClass("working");
-		$.post("/user/settings.php?ajax=savenotification", {notifymsg: $("#notifymsg")[0].checked ? 1 : 0}, function(result) {
+		$.post("/api/settings/notification", {notifymsg: $("#notifymsg")[0].checked ? 1 : 0}, result => {
 			$("#notification button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				// TODO:  indicate success; update form?
@@ -213,7 +218,7 @@ $(function() {
 	});
 
 	$("a[href='#removetransition']").click(function() {
-		$.post("/user/settings.php?ajax=removetransition", {}, function(result) {
+		$.post("/api/settings/removeTransitionalLogin", {}, result => {
 			if(!result.fail)
 				window.location.reload(false);
 			else
@@ -222,7 +227,7 @@ $(function() {
 		return false;
 	});
 	$("a[href='#removeaccount']").click(function() {
-		$.post("/user/settings.php?ajax=removeaccount", {source: $(this).data("source"), id: $(this).data("id")}, function(result) {
+		$.post("/api/settings/removeLoginAccount", {source: $(this).data("source"), id: $(this).data("id")}, result => {
 			if(!result.fail)
 				window.location.reload(false);
 			else

@@ -23,6 +23,9 @@ $html->Open('api');
 			<h2 class=api><a href=comments>comments</a></h2>
 			<p>the comments api manages comments.</p>
 
+			<h2 class=api><a href=conversations>conversations</a></h2>
+			<p>the conversations api manages user messages.</p>
+
 			<h2 class=api><a href=forum>forum</a></h2>
 			<p>the forum api manages the forums.</p>
 
@@ -38,6 +41,9 @@ $html->Open('api');
 			<h2 class=api><a href=photos>photos</a></h2>
 			<p>the photos api manages the photo album.</p>
 
+			<h2 class=api><a href=settings>settings</a></h2>
+			<p>the settings api manages user profiles and settings.</p>
+
 			<h2 class=api><a href=stories>stories</a></h2>
 			<p>the stories api manages stories and other writings.</p>
 
@@ -46,6 +52,9 @@ $html->Open('api');
 
 			<h2 class=api><a href=updates>updates</a></h2>
 			<p>the updates api manages site updates.</p>
+
+			<h2 class=api><a href=users>users</a></h2>
+			<p>the users api manages users.</p>
 
 			<h2 class=api><a href=validate>validate</a></h2>
 			<p>the validate api provides field-level validation for forms.</p>

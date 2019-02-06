@@ -1,49 +1,52 @@
 $(function() {
+	var activity = new Vue({
+		el: "#activity",
+		data: {
+			activity: [],
+			loading: false,
+			more: false
+		},
+		created: function() {
+			this.user = $("h1").data("userid");
+			this.Load();
+		},
+		methods: {
+			Load: function() {
+				this.loading = true;
+				$.get("/api/activity/user", {before: this.latest, user: this.user}, result => {
+					if(!result.fail) {
+						this.activity = this.activity.concat(result.acts);
+						this.latest = result.latest;
+						this.more = result.more;
+					} else
+						alert(result.message);
+					this.loading = false;
+				}, "json");
+			}
+		}
+	});
 	$("a.addfriend").click(friend);
 	$("a.removefriend").click(friend);
-	ko.applyBindings(window.ActivityVM = new ActivityViewModel(), $("#activity")[0]);
 });
 
 function friend() {
-	var link = this;
-	$.get(link.href, {}, function(result) {
+	$.get(this.href, {}, result => {
 		if(!result.fail) {
-			if(link.className == "addfriend") {
-				link.className = "removefriend";
-				link.href = link.href.replace("add", "remove");
-				$(link).text("remove friend");
-				link.title = "remove " + link.title.substring(4, link.title.length - 12) + " from your friends";
+			if(this.className == "addfriend") {
+				this.className = "removefriend";
+				this.href = this.href.replace("add", "remove");
+				$(this).text("remove friend");
+				this.title = "remove " + this.title.substring(4, this.title.length - 12) + " from your friends";
+				$("h1").addClass("friend");
 			} else {
-				link.className = "addfriend";
-				link.href = link.href.replace("remove", "add");
-				$(link).text("add friend");
-				link.title = "add " + link.title.substring(7, link.title.length - 18) + " as a friend";
+				this.className = "addfriend";
+				this.href = this.href.replace("remove", "add");
+				$(this).text("add friend");
+				this.title = "add " + this.title.substring(7, this.title.length - 18) + " as a friend";
+				$("h1").removeClass("friend");
 			}
 		} else
 			alert(result.message);
 	}, "json");
 	return false;
-}
-
-function ActivityViewModel() {
-	var self = this;
-	this.activity = ko.observableArray([]);
-	this.latest = 0;
-	this.loading = ko.observable(false);
-	this.more = ko.observable(false);
-
-	this.Load = function() {
-		self.loading(true);
-		$.get("?ajax=activity", {before: self.latest}, function(result) {
-			if(!result.fail) {
-				for(var a = 0; a < result.acts.length; a++)
-					self.activity.push(result.acts[a]);
-				self.latest = result.latest;
-				self.more(result.more);
-			} else
-				alert(result.message);
-			self.loading(false);
-		}, "json");
-	};
-	this.Load();
 }
