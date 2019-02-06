@@ -116,21 +116,21 @@ class t7auth {
 									self::OpenPage($auth::SOURCE);
 ?>
 			<p>
-				this <?php echo $auth::SOURCE; ?> account is already linked to your
+				this <?=$auth::SOURCE; ?> account is already linked to your
 				track7 account.  maybe you meant to <a href="/user/settings.php#linkedaccounts">link
-				a different <?php echo $auth::SOURCE; ?> account</a>?
+				a different <?=$auth::SOURCE; ?> account</a>?
 			</p>
 <?php
 								} else { // adding a login that's already linked to a different account
 									self::OpenPage($auth::SOURCE);
 ?>
 			<p>
-				this <?php echo $auth::SOURCE; ?> account is linked to track7, but not
-				for who you’re currently signed in as.  if you want to link this <?php echo $auth::SOURCE; ?>
-				account to <?php echo htmlspecialchars($user->DisplayName); ?> then
+				this <?=$auth::SOURCE; ?> account is linked to track7, but not
+				for who you’re currently signed in as.  if you want to link this <?=$auth::SOURCE; ?>
+				account to <?=htmlspecialchars($user->DisplayName); ?> then
 				things are a bit complicated — you probably want to ask <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>
 				to merge things on the track7 side.  if you’re trying to sign in with
-				this <?php echo $auth::SOURCE; ?> account not as <?php echo htmlspecialchars($user->DisplayName); ?>
+				this <?=$auth::SOURCE; ?> account not as <?=htmlspecialchars($user->DisplayName); ?>
 				then you’ll need to sign out first (from the menu in the upper right).
 			</p>
 <?php
@@ -158,7 +158,7 @@ class t7auth {
 									self::OpenPage($auth::SOURCE);
 ?>
 			<p>
-				oops, we couldn’t link your <?php echo $auth::SOURCE; ?> account for
+				oops, we couldn’t link your <?=$auth::SOURCE; ?> account for
 				signing into track7.  generally if you see this you should tell
 				<a href="/user/misterhaan" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 			</p>
@@ -171,48 +171,48 @@ class t7auth {
 ?>
 			<p>
 				welcome to track7!  according to our records, you haven’t signed in with
-				this <?php echo $auth::SOURCE; ?> account before.  if you <em>have</em>
+				this <?=$auth::SOURCE; ?> account before.  if you <em>have</em>
 				signed in to track7 before, maybe you used a different account — you can
-				try signing in again with that account and then add this <?php echo $auth::SOURCE; ?>
+				try signing in again with that account and then add this <?=$auth::SOURCE; ?>
 				account as another sign-in option.  if you are new, we’ve filled in some
-				information based on your <?php echo $auth::SOURCE; ?> profile.  change
+				information based on your <?=$auth::SOURCE; ?> profile.  change
 				it if you like, then enjoy track7 as a signed-in actual person!
 			</p>
 
 			<h2>profile information</h2>
 			<form id=newuser>
-				<input type=hidden id=csrf value="<?php echo t7auth::GetCSRF(); ?>">
+				<input type=hidden id=csrf value="<?=t7auth::GetCSRF(); ?>">
 				<label>
 					<span class=label>username:</span>
-					<span class=field><input id=username maxlength=32 required value="<?php echo htmlspecialchars($auth->Username); ?>"></span>
+					<span class=field><input id=username maxlength=32 required value="<?=htmlspecialchars($auth->Username); ?>"></span>
 					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>display name:</span>
-					<span class=field><input id=displayname maxlength=32 value="<?php echo htmlspecialchars($auth->DisplayName); ?>"></span>
+					<span class=field><input id=displayname maxlength=32 value="<?=htmlspecialchars($auth->DisplayName); ?>"></span>
 					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>e-mail:</span>
-					<span class=field><input id=email maxlength=64 value="<?php echo htmlspecialchars($auth->Email); ?>"></span>
+					<span class=field><input id=email maxlength=64 value="<?=htmlspecialchars($auth->Email); ?>"></span>
 					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>website:</span>
-					<span class=field><input id=website maxlength=64 value="<?php echo htmlspecialchars($auth->Website); ?>"></span>
+					<span class=field><input id=website maxlength=64 value="<?=htmlspecialchars($auth->Website); ?>"></span>
 					<span class=validation></span>
 				</label>
 <?php
 									if($auth->ProfileShort) {
 ?>
 				<label>
-					<span class=checkbox><input type=checkbox checked id=linkprofile> link <a href="<?php echo htmlspecialchars($auth->ProfileFull); ?>">this profile</a> as your <?php echo $auth::SOURCE; ?> profile</span>
+					<span class=checkbox><input type=checkbox checked id=linkprofile> link <a href="<?=htmlspecialchars($auth->ProfileFull); ?>">this profile</a> as your <?=$auth::SOURCE; ?> profile</span>
 				</label>
 <?php
 									}
 ?>
 				<label>
-					<span class=checkbox><input type=checkbox checked id=useavatar> use this profile picture: <img class=avatar src="<?php echo htmlspecialchars($auth->Avatar); ?>"></span>
+					<span class=checkbox><input type=checkbox checked id=useavatar> use this profile picture: <img class=avatar src="<?=htmlspecialchars($auth->Avatar); ?>"></span>
 				</label>
 				<button>confirm</button>
 			</form>
@@ -222,8 +222,8 @@ class t7auth {
 								self::OpenPage($auth::SOURCE);
 ?>
 			<p>
-				oops, we couldn’t get any information about that <?php echo $auth::SOURCE; ?>
-				account.  this generally shouldn’t happen unless <?php echo $auth::SOURCE; ?>
+				oops, we couldn’t get any information about that <?=$auth::SOURCE; ?>
+				account.  this generally shouldn’t happen unless <?=$auth::SOURCE; ?>
 				goes down between logging in and looking up account information.
 				generally if you see this you should tell <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 			</p>
@@ -233,7 +233,7 @@ class t7auth {
 						self::OpenPage($auth::SOURCE);
 ?>
 			<p>
-				hey, so <?php echo $auth::SOURCE; ?> told us who you are, but when we
+				hey, so <?=$auth::SOURCE; ?> told us who you are, but when we
 				tried to check if you’d been here before something went wrong.
 				generally if you see this you should tell <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 			</p>
@@ -249,7 +249,7 @@ class t7auth {
 			<p>
 				oops, there's something wrong with your authentication data.  sometimes
 				that happens if you leave track7 open for a while without clicking any
-				links and then try to sign in, or if you wait too long on the <?php echo $auth::SOURCE; ?>
+				links and then try to sign in, or if you wait too long on the <?=$auth::SOURCE; ?>
 				sign in page.  if that sounds like you, just try again.
 			</p>
 <?php
@@ -259,7 +259,7 @@ class t7auth {
 ?>
 			<p>
 				no authentication data found!&nbsp; maybe you need to
-				<a href="<?php echo $auth::GetAuthURL('/', self::GetCSRF()); ?>">sign in with <?php echo $auth::SOURCE; ?></a>?
+				<a href="<?=$auth::GetAuthURL('/', self::GetCSRF()); ?>">sign in with <?=$auth::SOURCE; ?></a>?
 			</p>
 <?php
 		}
@@ -270,10 +270,10 @@ class t7auth {
 		global $html;
 		if(isset($html))
 			return;
-		$html = new t7html([]);
+		$html = new t7html(['vue' => true]);
 		$html->Open($source . ' sign-in');
 ?>
-			<h1><?php echo $source; ?> sign-in results</h1>
+			<h1><?=$source; ?> sign-in results</h1>
 <?php
 	}
 }

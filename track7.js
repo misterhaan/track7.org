@@ -592,5 +592,5 @@ if(typeof Vue == "function") {
 				}
 			}
 		}
-	}
+	};
 }

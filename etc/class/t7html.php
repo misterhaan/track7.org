@@ -286,7 +286,7 @@ class t7html {
 					<span class="field list" data-tagtype=<?php echo $type;?>>
 						<span class=chosen v-for="(tag, index) in tags"><span>{{tag}}</span><a class="action del" href="#deltag" v-on:click.prevent=DelTag(index) :title="'remove the ' + tag + ' tag'"></a></span>
 						<span class=suggestinput>
-							<input id=tags autocomplete=off v-model=tagSearch  v-on:keydown.down.prevent=NextTag v-on:keydown.up.prevent=PrevTag v-on:dblclick=ShowTagSuggestions v-on:blur=HideTagSuggestions(250) v-on:keydown.esc=HideTagSuggestions v-on:keydown.enter.prevent=AddCursorTag v-on:keydown.comma.prevent=AddTypedTag v-on:keydown.tab=AddCursorTag v-on:keydown.backspace=DelLastTag v-on:keydown=TagSearchKeyPress>
+							<input id=tags autocomplete=off v-model=tagSearch v-on:keydown.down.prevent=NextTag v-on:keydown.up.prevent=PrevTag v-on:dblclick=ShowTagSuggestions v-on:blur=HideTagSuggestions(250) v-on:keydown.esc=HideTagSuggestions v-on:keydown.enter.prevent=AddCursorTag v-on:keydown.comma.prevent=AddTypedTag v-on:keydown.tab=AddCursorTag v-on:keydown.backspace=DelLastTag v-on:keydown=TagSearchKeyPress>
 							<span class=suggestions v-if=showTagSuggestions>
 								<span v-for="tag in tagChoices" v-html=tag :class="{selected: tag.replace(/<[^>]>/g, '') == tagCursor}" :title="'add the ' + tag + ' tag'" v-on:click=AddTag(tag)></span>
 							</span>
