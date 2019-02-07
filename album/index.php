@@ -25,7 +25,7 @@ if($user->IsAdmin()) {
 }
 if($tag) {
 ?>
-			<div id=taginfo data-tagid=<?php echo $tag->id; ?>>
+			<div id=taginfo data-tagtype=photos data-tagid=<?php echo $tag->id; ?>>
 <?php
 	if($user->IsAdmin()) {
 ?>

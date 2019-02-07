@@ -27,7 +27,7 @@ if($user->IsAdmin()) {
 
 if($tag) {
 ?>
-			<p id=taginfo data-tagid=<?php echo $tag->id; ?>>
+			<p id=taginfo data-tagtype=guide data-tagid=<?=$tag->id; ?>>
 				showing guides dealing with
 <?php
 	if($user->IsAdmin()) {
@@ -42,7 +42,7 @@ if($tag) {
 <?php
 	}
 ?>
-				<span class=editable><?php echo $tag->description; ?></span>
+				<span class=editable><?=$tag->description; ?></span>
 				go back to <a href="/guides/">all guides</a>.
 			</p>
 <?php
@@ -54,7 +54,7 @@ if($tag) {
 <?php
 		while($draft = $drafts->fetch_object()) {
 ?>
-				<li><a href="<?php echo $draft->url; ?>"><?php echo $draft->title; ?></a></li>
+				<li><a href="<?=$draft->url; ?>"><?=$draft->title; ?></a></li>
 <?php
 		}
 ?>
@@ -111,8 +111,8 @@ function OpenPage($tag) {
 	$html->Open($pagetitle);
 	?>
 			<h1>
-				<?php echo $headingtext; ?>
-				<a class=feed href="<?php echo $feedurl ?>" title="rss feed of <?php echo $tag ? $tag->name : 'all'; ?> guides"></a>
+				<?=$headingtext; ?>
+				<a class=feed href="<?=$feedurl ?>" title="rss feed of <?=$tag ? $tag->name : 'all'; ?> guides"></a>
 			</h1>
 
 <?php

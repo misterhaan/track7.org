@@ -10,19 +10,23 @@ if(isset($_GET['tag']) && $tag = $db->query('select id, name, description from f
 $html = OpenPage($tag);
 if($tag) {
 ?>
-			<div class=editable id=taginfo data-tagid=<?=$tag->id; ?>><?=$tag->description; ?></div>
+			<div id=taginfo data-tagtype=forum data-tagid=<?=$tag->id; ?>>
 <?php
 	if($user->IsAdmin()) {
 ?>
-			<label class=multiline id=editdesc>
-				<span class=field><textarea></textarea></span>
-				<span>
-					<a href="#save" title="save tag description" class="action okay"></a>
-					<a href="#cancel" title="cancel editing" class="action cancel"></a>
-				</span>
-			</label>
+				<label class=multiline id=editdesc>
+					<span class=field><textarea></textarea></span>
+					<span>
+						<a href="#save" title="save tag description" class="action okay"></a>
+						<a href="#cancel" title="cancel editing" class="action cancel"></a>
+					</span>
+				</label>
 <?php
 	}
+?>
+				<div class=editable><?=$tag->description; ?></div>
+			</div>
+<?php
 } else
 	$html->ShowTags('forum', 'discussions');
 ?>
