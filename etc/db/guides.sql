@@ -66,5 +66,5 @@ create table guide_votes (
 	ip int unsigned not null default 0 comment 'ip address of anonymous voter.  use inet_aton() to store and inet_ntoa() to retrieve',
 	unique(guide,voter,ip),
 	vote tinyint unsigned not null default 3,
-	posted int not null default 0 comment 'unix timestam when the vote was cast', key(posted)
+	posted int not null default 0 comment 'unix timestamp when the vote was cast', key(posted)
 );
