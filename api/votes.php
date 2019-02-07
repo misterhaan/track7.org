@@ -51,7 +51,7 @@ class votesApi extends t7api {
 				} else
 					$ajax->Fail('error recording your rating', $db->errno . ' ' . $db->error);
 			} else
-				$ajax->Fail('unknown type.  known types are:  ' . join(', ', array_keys(self::VoteTypes)) . '.');
+				$ajax->Fail('unknown type.  known types are:  ' . implode(', ', self::VoteTypes) . '.');
 		else
 			$ajax->Fail('missing at least one required parameter:  type, key, and vote.');
 	}
@@ -74,7 +74,7 @@ class votesApi extends t7api {
 					} else
 						$ajax->Fail('error deleting vote', $db->errno . ' ' . $db->error);
 				} else
-					$ajax->Fail('unknown type.  known types are:  ' . join(', ', array_keys(self::VoteTypes)) . '.');
+					$ajax->Fail('unknown type.  known types are:  ' . implode(', ', self::VoteTypes) . '.');
 			else
 				$ajax->Fail('vote type, id, and item are required.');
 		else
