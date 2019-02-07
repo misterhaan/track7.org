@@ -56,6 +56,9 @@ $html->Open('api');
 			<h2 class=api><a href=users>users</a></h2>
 			<p>the users api manages users.</p>
 
+			<h2 class=api><a href=votes>votes</a></h2>
+			<p>the votes api manages votes.</p>
+
 			<h2 class=api><a href=validate>validate</a></h2>
 			<p>the validate api provides field-level validation for forms.</p>
 

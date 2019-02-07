@@ -150,8 +150,7 @@ function InitTags() {
 function InitVoting() {
 	if($("#vote").length) {
 		$("#vote, #vote span").click(function() {
-			// TODO:  move to api
-			$.post("/votes.php?ajax=cast", {type: $("#vote").data("type"), key: $("#vote").data("key"), vote: $(this).data("vote")}, function(result) {
+			$.post("/api/votes/cast", {type: $("#vote").data("type"), key: $("#vote").data("key"), vote: $(this).data("vote")}, result => {
 				if(!result.fail) {
 					$("#vote, #vote span").removeClass("voted");
 					$("#vote").addClass("voted");

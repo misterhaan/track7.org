@@ -1,38 +1,39 @@
 $(function() {
-	ko.applyBindings(window.VotesVM = new VotesViewModel());
-});
-
-function VotesViewModel() {
-	var self = this;
-	this.votes = ko.observableArray([]);
-	this.oldest = "";
-	this.more = ko.observable(0);
-	this.loading = ko.observable(false);
-
-	this.Load = function() {
-		self.loading(true);
-		$.get("?ajax=list", {oldest: self.oldest}, function(result) {
-			if(result.fail)
-				alert(result.message);
-			else {
-				for(var v = 0; v < result.votes.length; v++)
-					self.votes.push(result.votes[v]);
-				self.oldest = result.oldest;
-				self.more(result.more);
+	var votes = new Vue({
+		el: "#votes",
+		data: {
+			votes: [],
+			more: 0,
+			loading: false
+		},
+		created: function() {
+			this.Load();
+		},
+		methods: {
+			Load: function() {
+				this.loading = true;
+				$.get("/api/votes/list", {oldest: this.oldest}, result => {
+					if(!result.fail) {
+						this.votes = this.votes.concat(result.votes);
+						this.oldest = result.oldest;
+						this.more = result.more;
+					} else
+						alert(result.message);
+					this.loading = false;
+				}, "json");
+			},
+			Delete: function(vote) {
+				$.post("/api/votes/delete", {type: vote.type, id: vote.id, item: vote.item}, result => {
+					if(result.fail)
+						alert(result.message);
+					else if(result.deleted) {
+						var v = this.votes.indexOf(vote);
+						if(v > -1)
+							this.votes.splice(v, 1);
+					} else
+						alert("vote not deleted");
+				}, "json");
 			}
-			self.loading(false);
-		}, "json");
-	};
-	this.Load();
-
-	this.Delete = function(vote) {
-		$.post("?ajax=delete", {type: vote.type, id: vote.id, item: vote.item}, function(result) {
-			if(result.fail)
-				alert(result.message);
-			else if(result.deleted)
-				self.votes.remove(vote);
-			else
-				alert("vote not deleted");
-		}, "json");
-	}
-}
+		}
+	});
+});
