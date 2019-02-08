@@ -19,8 +19,17 @@ class tagsApi extends t7api {
 ?>
 			<p>
 				any type parameter in the tags api must be in this list:
-				<?php echo implode(', ', self::$AllowedTypes); ?>
+				<?=implode(', ', self::$AllowedTypes); ?>
 			</p>
+
+			<h2 id=getfullList>get fullList</h2>
+			<p>
+				retrieves a list of tags for a type with full details.
+			</p>
+			<dl class=parameters>
+				<dt>type</dt>
+				<dd>type of tags to list.  required.</dd>
+			</dl>
 
 			<h2 id=getlist>get list</h2>
 			<p>
@@ -50,6 +59,25 @@ class tagsApi extends t7api {
 				<dd>new tag description to set.  required.</dd>
 			</dl>
 <?php
+	}
+
+	/**
+	 * get all information for tags in use.
+	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
+	 */
+	protected static function fullListAction($ajax) {
+		global $db;
+		if(self::IsTypeSupported($_GET['type']))
+			if($tags = $db->query('select name, count, id, lastused, description from ' . $_GET['type'] . '_tags where count>=1 order by lastused desc')) {
+				$ajax->Data->tags = [];
+				while($tag = $tags->fetch_object()) {
+					$tag->lastused = t7format::TimeTag('ago', $tag->lastused, t7format::DATE_LONG);
+					$ajax->Data->tags[] = $tag;
+				}
+			} else
+				$ajax->Fail('error getting list of ' . $_GET['type'] . ' tags', $db->errno . ' ' . $db->error);
+		else
+			$ajax->Fail('unknown tag type for list.  supported tag types are:  ' . implode(', ', self::$AllowedTypes));
 	}
 
 	/**
