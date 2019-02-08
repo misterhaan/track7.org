@@ -1,7 +1,7 @@
 <?php
-define('_HTML_SITE_TITLE', 'track7');
-
 class t7html {
+	const SITE_TITLE = 'track7';
+
 	private $params;
 	private $isopen = false;
 	private $isclosed = false;
@@ -14,8 +14,8 @@ class t7html {
 		if($this->isopen)
 			return;
 		$this->isopen = true;
-		if(strpos($title, _HTML_SITE_TITLE) === false)
-			$title .= ' - ' . _HTML_SITE_TITLE;
+		if(strpos($title, self::SITE_TITLE) === false)
+			$title .= ' - ' . self::SITE_TITLE;
 		header('X-Sven: look out for the fruits of life');
 		header('Content-Type: text/html; charset=utf-8');
 ?>
@@ -292,7 +292,7 @@ class t7html {
 			<a href="/feed.rss" title="add track7 activity to your feed reader">rss</a>
 			<a href="https://twitter.com/track7feed" title="follow track7 on twitter">twitter</a>
 			<a href="https://github.com/misterhaan/track7.org/blob/master<?=$_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
-			<div id=copyright>© 1996 - 2018 track7 — <a href="/fewrights.php">few rights reserved</a></div>
+			<div id=copyright>© 1996 - 2019 track7 — <a href="/fewrights.php">few rights reserved</a></div>
 		</footer>
 	</body>
 </html>
