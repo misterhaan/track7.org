@@ -73,7 +73,7 @@ $html->Open('about track7');
 				picture a geek (though hopefully a little better looking).  i know both
 				the hardware and software sides of a computer pretty well, which is why
 				track7 uses mostly code i personally wrote and i have been building my
-				own computers for as long as i’ve had a website.  you can download some
+				own computers for longer than i’ve had a website.  you can download some
 				of my software in <a href="/code/">the analag underground</a> section.
 				you’ll also see i sometimes post in <a href="/bln/">my blog</a> about
 				web and desktop development.  i also sometimes write up more formal
@@ -87,22 +87,10 @@ $html->Open('about track7');
 				each photo has a description and / or story with it.  though i don’t
 				find the motivation to do it much anymore, i used to write
 				<a href="/pen/">short stories</a> and have also drawn a few
-				<a href="/art/#comics">comics</a> and <a href="/art/sketch.php">sketches</a>.
-				i also used to put together some of my favorite songs, design cover art,
-				and even mixed audio for <a href="/art/compilations.php">compilation cds</a>.
-				i still have my lego collection from growing up (and still get more
-				every now and then), and i started putting the stuff i’ve built on my
-				own into ldraw to generate instructions so you can build
-				<a href="/art/lego/">my lego models</a> too.
-			</p>
-			<p>
-				for physical activity i enjoy <a href="/discgolf/">disc golf</a>,
-				mountain biking, and soccer.  disc golf is the only one that you’ll see
-				on track7 currently.  i’m trying to do more mountain biking or even road
-				/ trail biking so maybe something bike related will show up on the site
-				eventually.  i’m also a bit of a video gamer, mostly on wii or my
-				computer.  sometimes i’ll post something about a game in my blog, and
-				even put up a couple <a href="/geek/#games">gaming pages</a>.
+				<a href="/art/">things</a>.  i still have my lego collection from
+				growing up, and i started putting the stuff i’ve built on my own into
+				ldraw to generate instructions so you can build
+				<a href="/lego/">my lego models</a> too.
 			</p>
 			<p>
 				now that you know a little bit about me, why not sign in and tell me a
