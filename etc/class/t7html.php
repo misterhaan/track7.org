@@ -29,14 +29,9 @@ class t7html {
 		<script src="/jquery-3.3.1.min.js" type="text/javascript"></script>
 		<script src="/autosize.min.js" type="text/javascript"></script>
 <?php
-		if(isset($this->params['ko']) && $this->params['ko']) {
-?>
-		<script src="/knockout-3.4.2.js" type="text/javascript"></script>
-<?php
-		}
 		if(isset($this->params['vue']) && $this->params['vue'])
 			if(file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.js')) {
-				?>
+?>
 		<script src="/vue.js" type="text/javascript"></script>
 <?php
 			} else {
