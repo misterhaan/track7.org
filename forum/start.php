@@ -1,15 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
 
-if(isset($_GET['ajax'])) {
-	$ajax = new t7ajax();
-	switch($_GET['ajax']) {
-		case 'post': PostDiscussion(); break;
-	}
-	$ajax->Send();
-	die;
-}
-
 $html = new t7html(['vue' => true]);
 $html->Open('new discussion');
 ?>
