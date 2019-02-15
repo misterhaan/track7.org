@@ -61,6 +61,7 @@ $html->Open('database transitions');
 					<tr><td><a href="forum.php">forum</a></td><td><?php echo $status[TR_FORUM]->stepnum; ?></td><td><?php echo $status[TR_FORUM]->status; ?></td></tr>
 					<tr><td><a href="extprofiles.php">external profiles</a></td><td><?php echo $status[TR_EXT_PROFILES]->stepnum; ?></td><td><?php echo $status[TR_EXT_PROFILES]->status; ?></td></tr>
 					<tr><td><a href="guestbook.php">guestbook</a></td><td><?=$status[TR_GUESTBOOK]->stepnum; ?></td><td><?=$status[TR_GUESTBOOK]->status; ?></td></tr>
+					<tr><td><a href="code-vs.php">applications</a></td></tr>
 				</tbody>
 			</table>
 <?php
