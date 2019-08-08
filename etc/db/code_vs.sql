@@ -30,7 +30,8 @@ insert into code_vs_studio (version, abbr, name) values
 	(10.0, '2010', 'visual studio 2010'),
 	(12.0, '2013', 'visual studio 2013'),
 	(14.0, '2015', 'visual studio 2015'),
-	(15.0, '2017', 'visual studio 2017');
+	(15.0, '2017', 'visual studio 2017'),
+	(16.0, '2019', 'visual studio 2019');
 
 create table code_vs_applications (
 	id smallint unsigned primary key auto_increment,
