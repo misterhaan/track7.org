@@ -138,7 +138,24 @@ class t7html {
 ?>
 		<main>
 <?php
+	}
 
+	/**
+	 * show an error message
+	 * @param string $message text to display to everyone
+	 * @param int $errno error number (only shown to admin)
+	 * @param string $error error message (only shown to admin)
+	 */
+	public function ShowError($message, $errno, $error) {
+		global $user;
+		if($user->IsAdmin())
+			$message .= ':  ' . $errno . ' ' . $error;
+		else
+			$message .= '.';
+?>
+			<p class=error><?=$message; ?></p>
+
+<?php
 	}
 
 	/**

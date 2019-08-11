@@ -1,0 +1,21 @@
+create table code_vs_releases (
+	id smallint unsigned primary key auto_increment,
+	application smallint unsigned not null,
+	foreign key (application) references code_vs_applications(id) on update cascade on delete cascade,
+	released int not null default 0 comment 'date this release was released',
+	key(released),
+	major tinyint unsigned not null default 0,
+	minor tinyint unsigned not null default 0,
+	revision tinyint unsigned not null default 0,
+	unique(application, major, minor, revision),
+	lang tinyint unsigned not null,
+	foreign key (lang) references code_vs_lang(id) on update cascade on delete cascade,
+	dotnet tinyint unsigned,
+	foreign key (dotnet) references code_vs_dotnet(id) on update cascade on delete cascade,
+	studio decimal(4,1) unsigned,
+	foreign key (studio) references code_vs_studio(version) on update cascade on delete cascade,
+	binurl varchar(128),
+	bin32url varchar(128) comment 'url to the 32-bit binary if binurl is a 64-bit binary',
+	srcurl varchar(128),
+	changelog text not null default '' comment 'html change log which is usually a bulleted list.  generated from markdown which is not saved.'
+);
