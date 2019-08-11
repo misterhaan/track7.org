@@ -263,7 +263,6 @@ body > header a {
 }
 #gohome img {
 	display: block;
-	vertical-align: bottom;
 	margin-top: 6px;
 	height: 36px;
 }
@@ -282,7 +281,6 @@ body > header a {
 	height: 42px;
 	line-height: 40px;
 	padding: 0 .5em;
-	vertical-align: middle;
 }
 .notifycount {
 	display: inline-block;
