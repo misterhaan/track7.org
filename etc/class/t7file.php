@@ -31,15 +31,20 @@ class t7file {
 		unlink($upload['tmp_name']);
 		if($exif)
 			$image = self::AutoRotateImage($image, $exif, $size);
-		foreach($dests as $filename => $max)
+		foreach($dests as $filename => $max) {
+			if(is_numeric($filename) && !is_numeric($max)) {
+				$filename = $max;
+				$max = 0;
+			}
 			if($cropSquare)
 				self::SaveResizedSquareImage($image, $type, $filename, $size[0], $size[1], $max);
 			else
 				self::SaveResizedImage($image, $type, $filename, $size[0], $size[1], $max);
+		}
 	}
 
 	private static function SaveResizedImage($image, $type, $filename, $width, $height, $max) {
-		if($width > $max || $height > $max){
+		if($max && ($width > $max || $height > $max)) {
 			$aspect = $width / $height;
 			if($aspect > 1) {
 				$w = $max;
