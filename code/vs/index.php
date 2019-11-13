@@ -58,5 +58,15 @@ if($apps = $db->query('call ListApplications')) {
 ?>
 			</nav>
 <?php
+} else {
+	$message = 'database error getting list of applications';
+	if($user->IsAdmin())
+		$message .= ':  ' . $db->errno . ' ' . $db->error;
+	else
+		$message .= '.';
+?>
+			<p class=error><?=$message; ?></p>
+
+<?php
 }
 $html->Close();
