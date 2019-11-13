@@ -36,7 +36,7 @@ class storiesApi extends t7api {
 	 */
 	protected static function listAction($ajax) {
 		global $db;
-		if($stories = $db->query('select ifnull(ss.lastposted,s.posted) as posted, if(ss.url is null,s.url,concat(ss.url,\'/\')) as url, ifnull(ss.title,s.title) as title, ifnull(ss.deschtml,s.deschtml) as deschtml, ss.numstories from stories as s left join stories_series as ss on ss.id=s.series where s.published=1 group by ifnull(s.series,-s.id) order by posted desc')) {
+		if($stories = $db->query('select max(ifnull(ss.lastposted,s.posted)) as posted, max(if(ss.url is null,s.url,concat(ss.url,\'/\'))) as url, max(ifnull(ss.title,s.title)) as title, max(ifnull(ss.deschtml,s.deschtml)) as deschtml, max(ss.numstories) as numstories from stories as s left join stories_series as ss on ss.id=s.series where s.published=1 group by ifnull(s.series,-s.id) order by posted desc')) {
 			$ajax->Data->stories = [];
 			while($story = $stories->fetch_object()) {
 				if($story->posted > 100)
@@ -48,7 +48,7 @@ class storiesApi extends t7api {
 		} else
 			$ajax->Fail('databasa error looking up stories', $db->errno . ' ' . $db->error);
 	}
-	
+
 	/**
 	 * get stories in a series.
 	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
