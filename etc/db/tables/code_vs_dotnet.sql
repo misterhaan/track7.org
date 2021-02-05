@@ -7,4 +7,5 @@ insert into code_vs_dotnet (version) values
 	('1.1'),
 	('2.0'),
 	('4.0'),
-	('4.5');
+	('4.5'),
+	('5.0');

@@ -44,11 +44,13 @@ function AddStudio2019() {
 ?>
 			<p>visual studio 2019 is already a choice.</p>
 <?php
+			AddNet50();
 		} else {
 			if($db->real_query('insert into code_vs_studio (version, abbr, name) values (16.0, \'2019\', \'visual studio 2019\')')) {
 ?>
 			<p>visual studio 2019 successfully added.</p>
 <?php
+				AddNet50();
 			} else {
 ?>
 			<p class=error>error adding visual studio 2019:  <?=$db->errno; ?> <?=$db->error; ?></p>
@@ -58,6 +60,35 @@ function AddStudio2019() {
 	else {
 ?>
 			<p class=error>error checking if visual studio 2019 has already been added:  <?=$db->errno; ?> <?=$db->error; ?></p>
+<?php
+	}
+}
+
+function AddNet50() {
+	global $db;
+?>
+
+			<h2>add .net 5.0</h2>
+<?php
+	if($net50chk = $db->query('select id from code_vs_dotnet where version=\'5.0\' limit 1'))
+		if($net50chk->fetch_object()) {
+?>
+			<p>.net 5.0 is already a choice.</p>
+<?php
+		} else {
+			if($db->real_query('insert into code_vs_dotnet (version) values (\'5.0\')')) {
+?>
+			<p>.net 5.0 successfully added.</p>
+<?php
+			} else {
+?>
+			<p class=error>error adding .net 5.0:  <?=$db->errno; ?> <?=$db->error; ?></p>
+<?php
+			}
+		}
+	else {
+?>
+			<p class=error>error checking if .net 5.0 has already been added:  <?=$db->errno; ?> <?=$db->error; ?></p>
 <?php
 	}
 }
