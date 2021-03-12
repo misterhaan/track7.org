@@ -29,9 +29,9 @@ $html->Open('user list');
 							<time class=lastlogin :datetime=user.lastlogin.datetime :title="'last signed in ' + user.lastlogin.title">{{user.lastlogin.display + ' ago'}}</time>
 							<time class=joined :datetime=user.registered.datetime :title="'joined ' + user.registered.title">{{user.registered.display + ' ago'}}</time>
 							<div class=counts>
-								<div class=fans v-if=+user.fans title="user.fans + (user.fans > 1 ? ' people call ' : ' person calls ') + user.displayname + ' a friend'">{{user.fans}}</div>
-								<div class=comments v-if=+user.comments title="user.displayname + ' has posted ' + user.comments + (user.comments > 1 ? ' comments' : ' comment')">{{user.comments}}</div>
-								<div class=forum v-if=+user.replies title="user.displayname + ' has posted ' + user.replies + (user.replies > 1 ? ' forum replies' : ' forum reply')}">{{user.replies}}</div>
+								<div class=fans v-if=+user.fans :title="user.fans + (user.fans > 1 ? ' people call ' : ' person calls ') + user.displayname + ' a friend'">{{user.fans}}</div>
+								<div class=comments v-if=+user.comments :title="user.displayname + ' has posted ' + user.comments + (user.comments > 1 ? ' comments' : ' comment')">{{user.comments}}</div>
+								<div class=forum v-if=+user.replies :title="user.displayname + ' has posted ' + user.replies + (user.replies > 1 ? ' forum replies' : ' forum reply')">{{user.replies}}</div>
 							</div>
 						</div>
 					</div>
