@@ -204,7 +204,7 @@ class t7user {
 	private $hasTransitionLogin = 0;
 
 	/**
-	 * whetherthe user has a secure (external) login.
+	 * whether the user has a secure (external) login.
 	 * @return int number of secure logins this user has, or false on database error
 	 */
 	public function SecureLoginCount() {

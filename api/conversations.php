@@ -116,7 +116,7 @@ class conversationsApi extends t7api {
 								$ajax->Data->message = $msg;
 								$ajax->Data->timesent = $timesent;
 							} else
-								$ajax->Fail('error sending message', $db->errno . ' ' . $db->error);
+								$ajax->Fail('error sending message:', $db->errno . ' ' . $db->error);
 						} else
 							$ajax->Fail('recipient not found.');
 					else

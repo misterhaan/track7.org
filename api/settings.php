@@ -324,7 +324,7 @@ class usersApi extends t7api {
 			case 'POST': self::SaveTime($ajax); break;
 		}
 	}
-	
+
 	private static function LoadContact($ajax) {
 		global $db, $user;
 		if($user->IsLoggedIn()) {
@@ -543,7 +543,7 @@ class usersApi extends t7api {
 			if($email = $db->query('select email from users_email where id=' . +$user->ID))
 				if($email = $email->fetch_object())
 					if($email->email) {
-						$ajax->Data->avatar = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email->email))) . '?s=128&d=retro';
+						$ajax->Data->avatar = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email->email))) . '?s=128&d=robohash';
 						self::UnlinkProfileAvatars();
 						self::DeleteUploadedAvatars();
 					} else
