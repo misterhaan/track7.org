@@ -33,7 +33,7 @@ if(isset($_GET['ajax'])) {
 				curl_setopt($c, CURLOPT_USERAGENT, 'track7.org git pull');
 				curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
 				curl_setopt($c, CURLOPT_TIMEOUT, 30);
-				curl_setopt($c, CURLOPT_HTTPHEADER, ['X-Auth-Email: ' . t7keysCloudflare::EMAIL, 'X-Auth-Key: ' . t7keysCloudflare::GLOBAL_API_KEY, 'Content-Type: application/json']);
+				curl_setopt($c, CURLOPT_HTTPHEADER, ['X-Auth-Email: ' . t7keysCloudflare::EMAIL, 'Authorization: Bearer ' . t7keysCloudflare::GLOBAL_API_KEY, 'Content-Type: application/json']);
 				curl_setopt($c, CURLOPT_POSTFIELDS, json_encode($data));
 				$ajax->Data->cloudflare = new stdClass();
 				$ajax->Data->cloudflare->text = curl_exec($c);
