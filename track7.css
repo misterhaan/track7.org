@@ -60,7 +60,7 @@ body.text {
 	display: none;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4, h5 {
 	font-family: monda;
 	line-height: 1.125em;
 }
