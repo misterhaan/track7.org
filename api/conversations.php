@@ -112,7 +112,7 @@ class conversationsApi extends t7api {
 											if($toemail = $db->query('select email from users_email where id=\'' . $to . '\' limit 1'))
 												if($toemail = $toemail->fetch_object())
 													if($toemail = $toemail->email)
-														t7send::Email('new message from ' . $user->DisplayName, 'visit ' . t7format::FullUrl($_SERVER['PHP_SELF'] . ' to read it and reply.' . "\r\n\r\n" . 'to change your e-mail settings, visit ' . t7format::FullUrl(dirname($_SERVER['PHP_SELF']) . '/settings.php#notification')), 'messages@track7.org', $toemail, 'track7 messenger');
+														t7send::Email('new message from ' . $user->DisplayName, 'visit ' . t7format::FullUrl('/user/messages.php') . ' to read it and reply.' . "\r\n\r\n" . 'to change your e-mail settings, visit ' . t7format::FullUrl('/user/settings.php#notification'), 'messages@track7.org', $toemail, 'track7 messenger');
 								$ajax->Data->message = $msg;
 								$ajax->Data->timesent = $timesent;
 							} else
@@ -129,6 +129,10 @@ class conversationsApi extends t7api {
 			$ajax->Fail('nobody’s logged in and we didn’t ask your name.  this can happen if the messages page has been left open a long time, and should probably be fixed my signing back in using a new tab so you don’t lose the message you just wrote.');
 	}
 
+	/**
+	 * update unread message count.
+	 * @param int|string $uid id of the user to update, otherwise the current user
+	 */
 	private static function UpdateUnreadCount($uid = false) {
 		global $user, $db;
 		if(!$uid)
