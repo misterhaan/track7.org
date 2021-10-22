@@ -1,4 +1,6 @@
 create procedure ListApplicationReleases(application_id smallint unsigned)
+deterministic
+reads sql data
 select
 	r.released,
 	concat(r.major, '.', r.minor, '.', r.revision) as version,
