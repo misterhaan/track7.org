@@ -263,7 +263,7 @@ class t7user {
 	 */
 	public static function GetProfileTypes() {
 		// order determines which order they will display on user profiles
-		return ['twitter', 'google', 'facebook', 'github', 'deviantart', 'steam'];
+		return ['twitter', 'facebook', 'github', 'deviantart', 'steam'];
 	}
 
 	/**

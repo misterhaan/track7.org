@@ -126,7 +126,7 @@ if($user->IsKnown()) {  // only known users can upload an avatar
 						<span class=validation></span>
 					</label>
 <?php
-foreach(t7auth::GetAuthList() as $site) {
+foreach(t7user::GetProfileTypes() as $site) {
 ?>
 					<label title="your <?=$site; ?> profile url">
 						<span class=label><?=$site; ?>:</span>
@@ -216,7 +216,17 @@ if($transition) {
 foreach($extlogins as $login) {
 ?>
 						<div class="linkedaccount <?=$login->source; ?>">
+<?php
+	if($login->url) {
+?>
 							<a href="<?=htmlspecialchars($login->url); ?>" title="view the <?=$login->name; ?> profile on <?=$login->source; ?>"><img src="<?=$login->avatar; ?>"></a>
+<?php
+	} else {
+?>
+							<img src="<?=$login->avatar; ?>" title="<?=$login->source; ?> profiles don’t have pages">
+<?php
+	}
+?>
 							<div class=actions>
 <?php
 	if(count($extlogins) > 1) {
