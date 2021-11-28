@@ -216,7 +216,7 @@ if($transition) {
 foreach($extlogins as $login) {
 ?>
 						<div class="linkedaccount <?=$login->source; ?>">
-							<a href="<?=htmlspecialchars($login->url); ?>" title="view the <?=$login->name; ?> profile on google"><img src="<?=$login->avatar; ?>"></a>
+							<a href="<?=htmlspecialchars($login->url); ?>" title="view the <?=$login->name; ?> profile on <?=$login->source; ?>"><img src="<?=$login->avatar; ?>"></a>
 							<div class=actions>
 <?php
 	if(count($extlogins) > 1) {
