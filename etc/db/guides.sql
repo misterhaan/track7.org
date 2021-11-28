@@ -3,8 +3,8 @@ create table guides (
 	url varchar(32) not null comment 'unique portion of the url to this guide (usually a url-friendly version of the title)', unique(url),
 	status enum('draft', 'submitted', 'published', 'rejected') not null default 'draft', key(status),
 	title varchar(128) not null default '' comment 'display title (may contain characters that aren’t safe for html)',
-	summary text not null default '' comment 'one-paragraph summary of this guide, in html (generated from summary_markdown)',
-	summary_markdown text not null default '' comment 'one-paragraph summary of this guide, in markdown',
+	summary text not null comment 'one-paragraph summary of this guide, in html (generated from summary_markdown)',
+	summary_markdown text not null comment 'one-paragraph summary of this guide, in markdown',
 	posted int comment 'unix timestamp when the guide was published or last time the draft was saved',
 	updated int comment 'unix timestamp when the guide was last published or updated', key(updated),
 	author smallint unsigned comment 'user who posted this guide',
@@ -22,7 +22,7 @@ create table guide_pages (
 	key(guide, number),
 	heading varchar(128) not null comment 'display title for this page (may contain characters that aren’t safe for html)',
 	html text not null comment 'html format of page text, generated from markdown',
-	markdown text not null default '' comment 'editable version of page text'
+	markdown text not null comment 'editable version of page text'
 );
 
 create table guide_tags (
@@ -54,8 +54,8 @@ create table guide_comments (
 	foreign key (user) references users(id) on delete cascade,
 	name varchar(48) not null default '' comment 'name of anonymous commenter',
 	contacturl varchar(255) not null default '' comment 'contact url for anonymous commenter',
-	html text not null default '' comment 'html format of comment text, generated from markdown',
-	markdown text not null default '' comment 'editable version of comment text'
+	html text not null comment 'html format of comment text, generated from markdown',
+	markdown text not null comment 'editable version of comment text'
 );
 
 create table guide_votes (

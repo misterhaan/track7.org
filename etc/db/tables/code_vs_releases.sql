@@ -17,5 +17,5 @@ create table code_vs_releases (
 	binurl varchar(128),
 	bin32url varchar(128) comment 'url to the 32-bit binary if binurl is a 64-bit binary',
 	srcurl varchar(128),
-	changelog text not null default '' comment 'html change log which is usually a bulleted list.  generated from markdown which is not saved.'
+	changelog text not null comment 'html change log which is usually a bulleted list.  generated from markdown which is not saved.'
 );

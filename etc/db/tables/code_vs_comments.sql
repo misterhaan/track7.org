@@ -8,6 +8,6 @@ create table code_vs_comments (
 	foreign key (user) references users(id) on update cascade on delete cascade,
 	name varchar(48) not null default '' comment 'name of anonymous commenter',
 	contacturl varchar(255) not null default '' comment 'contact url for anonymous commenter',
-	html text not null default '' comment 'html format of comment text, generated from markdown',
-	markdown text not null default '' comment 'editable version of comment text'
+	html text not null comment 'html format of comment text, generated from markdown',
+	markdown text not null comment 'editable version of comment text'
 );

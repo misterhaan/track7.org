@@ -77,8 +77,8 @@ create table users_messages (
 	name varchar(48) not null default '' comment 'name of anonymous message sender',
 	contacturl varchar(255) not null default '' comment 'contact url for anonymous message sender',
 	subject varchar(128) not null default '' comment 'message subject',
-	html text not null default '' comment 'html format of message text, generated from markdown',
-	markdown text not null default '' comment 'editable version of message text',
+	html text not null comment 'html format of message text, generated from markdown',
+	markdown text not null comment 'editable version of message text',
 	hasread bool not null default 0 comment 'whether this message has been read',
 	key(hasread),
 	hasreplied bool not null default 0 comment 'whether a reply to this message has been sent'

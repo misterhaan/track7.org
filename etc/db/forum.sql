@@ -17,8 +17,8 @@ create table forum_replies (
 	foreign key (user) references users(id) on delete cascade on update cascade,
 	name varchar(48) not null default '' comment 'name of anonymous poster',
 	contacturl varchar(255) not null default '' comment 'contact url for anonymous poster',
-	html text not null default '' comment 'html format of reply text, generated from markdown',
-	markdown text not null default '' comment 'editable version of reply text'
+	html text not null comment 'html format of reply text, generated from markdown',
+	markdown text not null comment 'editable version of reply text'
 );
 
 create table forum_tags (
@@ -28,7 +28,7 @@ create table forum_tags (
 	count smallint not null default 0 comment 'how many discussions use this tag',
 	lastused int not null default 0 comment 'unix timestamp for the last time a discussion was posted using this tag',
 	key (lastused),
-	description text not null default ''
+	description text
 );
 
 create table forum_discussion_tags (
