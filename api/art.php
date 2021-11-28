@@ -189,7 +189,6 @@ class artApi extends t7api {
 								$db->real_query('delete from art_taglinks where art=\'' . +$id . '\' and tag in (select id from art_tags where name in (trim(\'' . implode('\'), trim(\'', $del) . '\')))');
 							$add = isset($_POST['addtags']) && $_POST['addtags'] ? explode(',', $db->escape_string($_POST['addtags'])) : [];
 							if(count($add)) {
-								$ajax->Data->debug = $add; //'insert into art_tags (name) values (trim(\'' . implode('\')), (trim(\'', $add) . '\')) on duplicate key update name=name';
 								$db->real_query('insert into art_tags (name) values (trim(\'' . implode('\')), (trim(\'', $add) . '\')) on duplicate key update name=name');
 								$db->real_query('insert into art_taglinks (art, tag) select \'' . +$id . '\' as art, id as tag from art_tags where name in (trim(\'' . implode('\'), trim(\'', $add) . '\'))');
 							}
