@@ -6,7 +6,7 @@ class t7html {
 	private $isopen = false;
 	private $isclosed = false;
 
-	public function t7html($params) {
+	public function __construct($params) {
 		$this->params = $params;
 	}
 

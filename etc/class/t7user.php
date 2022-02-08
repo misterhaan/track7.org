@@ -76,7 +76,7 @@ class t7user {
 	 * stored in the session or a cookie.
 	 * @param integer $id user to look up, if not the logged-in user
 	 */
-	public function t7user($id = false) {
+	public function __construct($id = false) {
 		if($id) {  // when not the currently logged-in user
 			if(is_numeric($id))  // numeric id, need info for post
 				$this->GetBasic($id);

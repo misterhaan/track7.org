@@ -386,7 +386,7 @@ class t7authGoogle extends t7authRegisterable {
 	 * instantiated by the page specified in self::REDIRECT.  the querystring is
 	 * expected to be set by google after a login attempt.
 	 */
-	public function t7authGoogle() {
+	public function __construct() {
 		if($this->HasData = isset($_GET['state'])) {
 			parse_str($_GET['state'], $state);
 			if(isset($state['continue']))
@@ -488,7 +488,7 @@ class t7authTwitter extends t7authRegisterable {
 	 * expected to be set by twitter after a login attempt or from a login / add
 	 * account link.
 	 */
-	public function t7authTwitter() {
+	public function __construct() {
 		if(isset($_GET['startauth'])) {
 			if(isset($_GET['continue']))
 				$_SESSION['twitter_continue'] = $_GET['continue'];
@@ -679,7 +679,7 @@ class t7authFacebook extends t7authRegisterable {
 	 * instantiated by the page specified in self::REDIRECT.  the querystring is
 	 * expected to be set by facebook after a login attempt.
 	 */
-	public function t7authFacebook() {
+	public function __construct() {
 		if($this->HasData = isset($_GET['state'])) {
 			parse_str($_GET['state'], $state);
 			if(isset($state['continue']))
@@ -809,7 +809,7 @@ class t7authGithub extends t7authRegisterable {
 	 * by the page specified in self::REDIRECT.  the querystring is expected to be
 	 * set by github after a login attempt.
 	 */
-	public function t7authGithub() {
+	public function __construct() {
 		if($this->HasData = isset($_GET['state'])) {
 			parse_str($_GET['state'], $state);
 			if(isset($state['continue']))
@@ -923,7 +923,7 @@ class t7authDeviantart extends t7authRegisterable {
 		]);
 	}
 
-	public function t7authDeviantart() {
+	public function __construct() {
 		if($this->HasData = isset($_GET['code'])) {
 			parse_str($_GET['state'], $state);
 			if(isset($state['continue']))
@@ -1027,7 +1027,7 @@ class t7authSteam extends t7authRegisterable {
 	 * by the page specified in self::REDIRECT.  the querystring is expected to be
 	 * set by steam after a login attempt.
 	 */
-	public function t7authSteam() {
+	public function __construct() {
 		if($this->HasData = isset($_GET['openid_claimed_id'])) {
 			if(isset($_GET['continue']))
 				$this->Continue = $_GET['continue'];
@@ -1142,7 +1142,7 @@ class t7authTrack7 {
 	 * remember should be posted, with csrf and optionally continue provided
 	 * through the querystring.
 	 */
-	public function t7authTrack7() {
+	public function __construct() {
 		if($this->HasData = (isset($_POST['username']) && isset($_POST['password']))) {
 			if(isset($_GET['continue']))
 				$this->Continue = $_GET['continue'];

@@ -14,7 +14,7 @@ class t7ajax {
 	/**
 	 * initialize ajax response object.
 	 */
-	public function t7ajax() {
+	public function __construct() {
 		$this->Data = new stdClass();
 		$this->Data->fail = false;
 	}

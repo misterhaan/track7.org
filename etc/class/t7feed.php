@@ -17,7 +17,7 @@ class t7feed {
 	 * @param string $copyright the copyright of the contents of the feed.
 	 * @param string $lang the language of the feed.  default is 'en-us'.
 	 */
-	public function t7feed($title, $url = '', $description = '', $copyright = '', $lang = 'en-us') {
+	public function __construct($title, $url = '', $description = '', $copyright = '', $lang = 'en-us') {
 		header('Content-Type: application/rss+xml; charset=utf-8');
 		$this->xml = new XMLWriter();
 		$this->xml->openMemory();
