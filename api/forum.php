@@ -354,8 +354,8 @@ class forumApi extends t7api {
 		if(isset($_POST['title']) && ($title = trim($_POST['title'])) && isset($_POST['tags']) && is_array($_POST['tags']) && count($_POST['tags']) && isset($_POST['message']) && ($markdown = trim($_POST['message'])))
 			if($user->IsLoggedIn() || isset($_POST['name']) && isset($_POST['contact'])) {
 				$userid = $user->IsLoggedIn() ? +$user->ID : null;
-				$name = $user->IsLoggedIn() ? '' : trim($_POST['name']) ? trim($_POST['name']) : 'random internet person';
-				$contact = $user->IsLoggedIn() ? '' : trim($_POST['contact']) ? t7format::Link(trim($_POST['contact'])) : '';
+				$name = $user->IsLoggedIn() ? '' : (trim($_POST['name']) ? trim($_POST['name']) : 'random internet person');
+				$contact = $user->IsLoggedIn() ? '' : (trim($_POST['contact']) ? t7format::Link(trim($_POST['contact'])) : '');
 				$tags = $_POST['tags'];
 				$html = t7format::Markdown($markdown);
 				$posted = +time();

@@ -167,7 +167,7 @@ class photosApi extends t7api {
 								$_POST['taken'] = $exif['EXIF']['DateTimeOriginal'];
 						}
 						$taken = isset($_POST['taken']) && $_POST['taken'] ? t7format::LocalStrtotime($_POST['taken']) : '';
-						$year = isset($_POST['year']) && $_POST['year'] ? $_POST['year'] : $taken ? t7format::LocalDate('Y', $taken) : '';
+						$year = isset($_POST['year']) && $_POST['year'] ? $_POST['year'] : ($taken ? t7format::LocalDate('Y', $taken) : '');
 						$q = 'photos set caption=\'' . $db->escape_string($caption) . '\', url=\'' . $db->escape_string($url) . '\', youtube=\'' . $db->escape_string($youtube) . '\', storymd=\'' . $db->escape_string($_POST['storymd']) . '\', story=\'' . $db->escape_string(t7format::Markdown(trim($_POST['storymd']))) . '\', taken=' . ($taken ? '\'' . +$taken . '\'' : 'null') . ', year=' . +$year;
 						$q = $id
 							? 'update ' . $q . ' where id=\'' . +$id . '\' limit 1'
