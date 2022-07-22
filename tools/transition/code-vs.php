@@ -75,11 +75,13 @@ function AddNet50() {
 ?>
 			<p>.net 5.0 is already a choice.</p>
 <?php
+			AddStudio2022();
 		} else {
 			if($db->real_query('insert into code_vs_dotnet (version) values (\'5.0\')')) {
 ?>
 			<p>.net 5.0 successfully added.</p>
 <?php
+				AddStudio2022();
 			} else {
 ?>
 			<p class=error>error adding .net 5.0:  <?=$db->errno; ?> <?=$db->error; ?></p>
@@ -89,6 +91,66 @@ function AddNet50() {
 	else {
 ?>
 			<p class=error>error checking if .net 5.0 has already been added:  <?=$db->errno; ?> <?=$db->error; ?></p>
+<?php
+	}
+}
+
+function AddStudio2022() {
+	global $db;
+?>
+
+			<h2>add visual studio 2022</h2>
+<?php
+	if($vs2019chk = $db->query('select version from code_vs_studio where abbr=\'2022\' limit 1'))
+		if($vs2019chk->fetch_object()) {
+?>
+			<p>visual studio 2022 is already a choice.</p>
+<?php
+			AddNet60();
+		} else {
+			if($db->real_query('insert into code_vs_studio (version, abbr, name) values (17.0, \'2022\', \'visual studio 2022\')')) {
+?>
+			<p>visual studio 2022 successfully added.</p>
+<?php
+				AddNet60();
+			} else {
+?>
+			<p class=error>error adding visual studio 2022:  <?=$db->errno; ?> <?=$db->error; ?></p>
+<?php
+			}
+		}
+	else {
+?>
+			<p class=error>error checking if visual studio 2022 has already been added:  <?=$db->errno; ?> <?=$db->error; ?></p>
+<?php
+	}
+}
+
+function AddNet60() {
+	global $db;
+?>
+
+			<h2>add .net 6.0</h2>
+<?php
+	if($net50chk = $db->query('select id from code_vs_dotnet where version=\'6.0\' limit 1'))
+		if($net50chk->fetch_object()) {
+?>
+			<p>.net 6.0 is already a choice.</p>
+<?php
+		} else {
+			if($db->real_query('insert into code_vs_dotnet (version) values (\'6.0\')')) {
+?>
+			<p>.net 6.0 successfully added.</p>
+<?php
+			} else {
+?>
+			<p class=error>error adding .net 6.0:  <?=$db->errno; ?> <?=$db->error; ?></p>
+<?php
+			}
+		}
+	else {
+?>
+			<p class=error>error checking if .net 6.0 has already been added:  <?=$db->errno; ?> <?=$db->error; ?></p>
 <?php
 	}
 }
