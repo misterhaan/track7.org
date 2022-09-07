@@ -119,7 +119,7 @@ function Rank($stat, $value) {
 		case 'fans':
 		case 'comments':
 		case 'replies':
-			if($r = $db->query('select count(1) as rank from users_stats where ' . $stat . '>=' . +$value))
+			if($r = $db->query('select count(1) as `rank` from users_stats where ' . $stat . '>=' . +$value))
 				if($r = $r->fetch_object())
 					return $r->rank;
 			break;
