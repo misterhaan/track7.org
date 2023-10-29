@@ -1,4 +1,5 @@
 <?php
+
 /**
  * access keys template for t7 classes.  copy one directory level up from
  * document root, name .t7keys.php, and fill in with access values.  this
@@ -155,20 +156,13 @@ class t7keysBitly {
 
 class t7keysCloudflare {
 	/**
-	 * email address of the cloudflare account
-	 * @var string
-	 */
-	const EMAIL = '';
-
-	/**
-	 * global api key from https://www.cloudflare.com/a/profile
-	 * @var string
-	 */
-	const GLOBAL_API_KEY = '';
-
-	/**
-	 * id returned from requesting https://api.cloudflare.com/client/v4/zones with email and global api key
+	 * zone id shown in the bottom right "API" section of the website page in cloudflare
 	 * @var string
 	 */
 	const ID = '';
+
+	/**
+	 * api token created at https://dash.cloudflare.com/profile/api-tokens with Zone.Cache Purge access
+	 */
+	const TOKEN = '';
 }
