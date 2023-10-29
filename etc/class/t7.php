@@ -10,12 +10,13 @@ date_default_timezone_set(@date('e'));
 
 require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/.t7keys.php';
 
+mysqli_report(MYSQLI_REPORT_OFF);
 $db = new mysqli(t7keysDB::HOST, t7keysDB::USER, t7keysDB::PASS, t7keysDB::NAME);
 $db->real_query('set names \'utf8mb4\'');
 $db->set_charset('utf8mb4');
 
 spl_autoload_register(function ($class) {
-	switch($class) {
+	switch ($class) {
 		case 't7ajax':
 			require_once 't7ajax.php';
 			break;
