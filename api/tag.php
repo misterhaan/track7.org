@@ -20,6 +20,14 @@ class TagApi extends Api {
 			<dd>specify the subsite to list tags for. required, string.</dd>
 		</dl>
 
+		<h2 id=putdescription>PUT description/{subsite}/{tagname}</h2>
+		<p>updates the description of a tag.</p>
+		<dl class=parameters>
+			<dt>{subsite}</dt>
+			<dd>specify the subsite whose tag will update</dd>
+			<dt>{tagname}</dt>
+			<dd>specify the tag name to update</dd>
+		</dl>
 <?php
 	}
 
