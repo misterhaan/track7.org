@@ -129,7 +129,6 @@ abstract class Page extends Responder {
 		<?php
 		}
 		?>
-		<script src="/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="/prism.js" type="text/javascript"></script>
 		<script src="/usermenu.js" type=module></script>
 		<?php
