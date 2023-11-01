@@ -19,11 +19,11 @@ createApp({
 		Load: function() {
 			this.loading = true;
 
-			let url = "/api/photo/list/";
+			let url = "/api/photo.php/list";
 			if(this.tagid)
-				url += this.tagid + "/";
+				url += "/" + this.tagid;
 			if(this.photos.length)
-				url += this.photos.length;
+				url += "/" + this.photos.length;
 
 			$.get(url)
 				.done(result => {

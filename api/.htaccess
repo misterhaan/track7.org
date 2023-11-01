@@ -3,6 +3,5 @@ RewriteEngine On
 RewriteOptions inherit
 RewriteBase /api/
 
-RewriteRule (photo|tag)\/(.*)$ $1.php/$2 [QSA,L]
-RewriteRule ^([^\/\.]+)\/([^\/\.]+)$ $1.php?method=$2 [QSA]
-RewriteRule ^([^\/\.]+)$ $1.php
+RewriteRule ^([^\/\.]+)\/([^\/\.]+)$ $1.php?method=$2 [QSA,L]
+RewriteRule ^([^\/\.]+)$ $1.php [L]

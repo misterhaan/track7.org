@@ -17,7 +17,7 @@ if(tagcloud)
 		},
 		methods: {
 			Load: function() {
-				$.get("/api/tag/list/" + this.subsite)
+				$.get("/api/tag.php/list/" + this.subsite)
 					.done(result => {
 						this.tags = result;
 					}).fail(request => {
@@ -74,7 +74,7 @@ if(taginfo && editLink) {
 			SaveEdit: function() {
 				this.saving = true;
 				$.ajax({
-					url: "/api/tag/description/" + this.subsite + "/" + this.name,
+					url: "/api/tag.php/description/" + this.subsite + "/" + this.name,
 					type: "PUT",
 					data: this.description
 				}).done(() => {
