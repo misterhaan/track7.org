@@ -33,7 +33,7 @@ $html->Open('regular expression testing');
 			<a href="https://php.net/preg_match" v-if=!all>preg_match</a>
 			<a href="https://php.net/preg_match_all" v-if=all>preg_match_all</a>
 		</p>
-		<form class=regextest v-on:submit.prevent=DoMatch>
+		<form class=regextest v-on:submit.prevent=Match>
 			<label>
 				<span class=label>pattern:</span>
 				<span class=field><input v-model=pattern></span>
