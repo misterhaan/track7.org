@@ -1,5 +1,6 @@
-import { createApp } from 'vue';
-import autosize from 'autosize';
+import "jquery";
+import { createApp } from "vue";
+import autosize from "autosize";
 
 const tagcloud = document.querySelector(".tagcloud");
 if(tagcloud)

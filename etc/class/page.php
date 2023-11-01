@@ -23,16 +23,11 @@ abstract class Page extends Responder {
 			self::$title = $title . ' - ' . self::siteTitle;
 		else
 			self::$title = $title;
+		self::$importmap['jquery'] = '/jquery-3.7.1.min.js';
 		self::$importmap['vue'] = file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.esm-browser.js') ? '/vue.esm-browser.js' : '/vue.esm-browser.prod.js';
 		self::$importmap['autosize'] = '/autosize.esm.js';
-		self::Send();
-	}
-
-	/**
-	 * Call from constructor on pages that can filter by tags.
-	 */
-	protected static function UseTags(): void {
 		self::$importmap['tag'] = '/tag.js';
+		self::Send();
 	}
 
 	/**

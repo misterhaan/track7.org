@@ -1,3 +1,5 @@
+import "jquery";
+
 document.popup = [];
 InitUserMenu();
 InitLoginLogout();
