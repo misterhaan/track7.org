@@ -90,7 +90,10 @@ class CurrentUser extends User {
 	 * Look up the current user from session or cookie.
 	 * @param mysqli $db Database connection
 	 */
-	public function __construct(mysqli $db) {
+	public function __construct(?mysqli $db = null) {
+		if (!$db)
+			return;
+
 		if (isset($_SESSION[self::SessionKey]))
 			parent::__construct($db, +$_SESSION[self::SessionKey]);
 		elseif (isset($_COOKIE[self::CookieName])) {

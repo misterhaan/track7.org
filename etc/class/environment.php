@@ -46,7 +46,11 @@ abstract class Responder {
 		if (!self::$user) {
 			require_once 'user.php';
 			self::RequireDatabase();
-			self::$user = new CurrentUser(self::$db);
+			try {
+				self::$user = new CurrentUser(self::$db);
+			} catch (DetailedException $de) {
+				self::$user = new CurrentUser();
+			}
 		}
 		return self::$user;
 	}
