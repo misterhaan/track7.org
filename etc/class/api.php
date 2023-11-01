@@ -12,7 +12,7 @@ abstract class Api extends Responder {
 	/**
 	 * Respond to an API request or show API documentation.
 	 */
-	public static function Respond() {
+	public static function Respond(): void {
 		if (isset($_SERVER['PATH_INFO']) && substr($_SERVER['PATH_INFO'], 0, 1) == '/') {
 			$method = $_SERVER['REQUEST_METHOD'];
 			if (in_array($method, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])) {
@@ -31,15 +31,8 @@ abstract class Api extends Responder {
 			} else
 				self::NotFound("method $method is not supported.");
 		} else {
-			require_once 't7.php';
-			$html = new t7html();
-			$name = substr($_SERVER['SCRIPT_NAME'], 5, -4);  // five for '/api/' and -4 for '.php'
-			$html->Open($name . ' api');
-?>
-			<h1><?= $name; ?> api</h1>
-<?php
-			static::ShowDocumentation($html);
-			$html->Close();
+			require_once 'apiDocPage.php';
+			new ApiDocPage(static::class);
 		}
 	}
 
@@ -58,23 +51,23 @@ abstract class Api extends Responder {
 	 * Send a successful response.
 	 * @param mixed $data Response data (optional)
 	 */
-	protected static function Success($data = true) {
+	protected static function Success($data = true): void {
 		header('Content-Type: application/json');
 		die(json_encode($data));
 	}
 
 	/**
-	 * Write out the documentation for the API controller.  The page is already
-	 * opened with an h1 header, and will be closed after the call completes.
+	 * Provide documentation for this API when requested without an endpoint.
+	 * @return EndpointDocumentation[] Array of documentation for each endpoint of this API
 	 */
-	protected abstract static function ShowDocumentation();
+	public abstract static function GetEndpointDocumentation(): array;
 
 	/**
 	 * End the request with a detailed error.  Details are only showed to administrators.
 	 * @param DetailedException|string $error Exception with details or non-detailed error message
 	 * @param ?string $detail Extra detail for administrators.  Not used when $error is a DetailedException
 	 */
-	protected static function DetailedError(mixed $error, string $detail = null) {
+	protected static function DetailedError(mixed $error, string $detail = null): void {
 		http_response_code(500);
 		header('Content-Type: text/plain');
 		if (self::HasAdminSecurity())
@@ -95,9 +88,46 @@ abstract class Api extends Responder {
 	 * requests that look up an item by a key.
 	 * @param string $message short message describing what was not found
 	 */
-	protected static function NotFound(string $message = '') {
+	protected static function NotFound(string $message = ''): void {
 		http_response_code(404);
 		header('Content-Type: text/plain');
 		die($message);
+	}
+
+	/**
+	 * Mark the request as forbidden.  This generally applies when the request requires administrator permissions.
+	 * @param string $message short message describing what was forbidden
+	 */
+	protected static function Forbidden(string $message = ''): void {
+		http_response_code(403);
+		header('Content-Type: text/plain');
+		die($message);
+	}
+}
+
+class EndpointDocumentation {
+	public string $Method;
+	public string $Name;
+	public string $Documentation;
+	public array $PathParameters = [];
+
+	public function __construct(string $method, string $name, string $documentation) {
+		$this->Method = $method;
+		$this->Name = $name;
+		$this->Documentation = $documentation;
+	}
+}
+
+class ParameterDocumentation {
+	public string $Name;
+	public string $Type;
+	public string $Documentation;
+	public bool $Required;
+
+	public function __construct(string $name, string $type, string $documentation, bool $required = false) {
+		$this->Name = $name;
+		$this->Type = $type;
+		$this->Documentation = $documentation;
+		$this->Required = $required;
 	}
 }

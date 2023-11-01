@@ -1063,6 +1063,7 @@ article>header .guidemeta {
 }
 
 p,
+dl,
 table,
 blockquote {
 	margin: .75em .5em;
@@ -1076,6 +1077,7 @@ tbody {
 @media (min-width: 25em) {
 
 	p,
+	dl,
 	table,
 	blockquote {
 		margin: .75em 1em;

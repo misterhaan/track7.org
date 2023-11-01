@@ -3,32 +3,24 @@ require_once dirname(__DIR__) . '/etc/class/api.php';
 require_once 'tag.php';
 
 /**
- * API handler for tags.
+ * Handler for tag API requests.
  */
 class TagApi extends Api {
 	/**
-	 * write out the documentation for the photo api controller.  the page is
-	 * already opened with an h1 header, and will be closed after the call
-	 * completes.
+	 * Provide documentation for this API when requested without an endpoint.
+	 * @return EndpointDocumentation[] Array of documentation for each endpoint of this API
 	 */
-	protected static function ShowDocumentation() {
-?>
-		<h2 id=getlist>GET list/{subsite}</h2>
-		<p>retrieves the tags used by the specified subsite, in order of most-recently used.</p>
-		<dl class=parameters>
-			<dt>{subsite}</dt>
-			<dd>specify the subsite to list tags for. required, string.</dd>
-		</dl>
+	public static function GetEndpointDocumentation(): array {
+		$endpoints = [];
 
-		<h2 id=putdescription>PUT description/{subsite}/{tagname}</h2>
-		<p>updates the description of a tag.</p>
-		<dl class=parameters>
-			<dt>{subsite}</dt>
-			<dd>specify the subsite whose tag will update</dd>
-			<dt>{tagname}</dt>
-			<dd>specify the tag name to update</dd>
-		</dl>
-<?php
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'list', 'retrieves the tags used by the specified subsite, in order of most-recently used.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('subsite', 'string', 'specify the subsite to list tags for.', true);
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('PUT', 'description', 'updates the description of a tag to the html provided as the request body.  only available to administrators.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('subsite', 'string', 'specify the subsite whose tag will update.', true);
+		$endpoint->PathParameters[] = new ParameterDocumentation('tagName', 'string', 'specify the tag name to update.', true);
+
+		return $endpoints;
 	}
 
 	/**
@@ -54,6 +46,8 @@ class TagApi extends Api {
 		$name = array_shift($params);
 		if (!$name)
 			self::NotFound('name must be specified.');
+		if (!self::HasAdminSecurity())
+			self::Forbidden('only administrators can update tag descriptions.');
 		self::RequireDatabase();
 		$description = self::ReadRequestText();
 		self::Success(Tag::UpdateDescription(self::$db, $subsite, $name, $description));
