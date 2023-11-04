@@ -156,9 +156,32 @@ class PhotoTransition extends Page {
 		?>
 			<p>new <code>tagusage</code> view exists.</p>
 		<?php
-			self::Done();
+			self::CheckCommentTable();
 		} else
 			self::CreateTagUsageView();
+	}
+
+	private static function CheckCommentTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'comment\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>comment</code> table exists.</p>
+		<?php
+			self::CheckCommentRows();
+		} else
+			self::CreateCommentTable();
+	}
+
+	private static function CheckCommentRows(): void {
+		$missing = self::$db->query('select 1 from photos_comments as pc left join photos as op on op.id=pc.photo left join photo as ph on ph.id=op.url left join comment as c on c.post=ph.post and c.instant=from_unixtime(pc.posted) where c.id is null limit 1');
+		if ($missing->fetch_column())
+			self::CopyPhotoComments();
+		else {
+		?>
+			<p>all old photo comments exists in new <code>comment</code> table.</p>
+		<?php
+			self::Done();
+		}
 	}
 
 	private static function UserSetupLink(): void {
@@ -247,6 +270,21 @@ class PhotoTransition extends Page {
 		self::$db->real_query($file);
 	?>
 		<p>created <code>tagusage</code> view. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CreateCommentTable(): void {
+		$file = file_get_contents('../../etc/db/tables/comment.sql');
+		self::$db->real_query($file);
+	?>
+		<p>created <code>comment</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyPhotoComments(): void {
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(pc.posted), ph.post, pc.user, pc.name, pc.contacturl, pc.html, pc.markdown from photos_comments as pc left join photos as op on op.id=pc.photo left join photo as ph on ph.id=op.url left join comment as c on c.post=ph.post and c.instant=from_unixtime(pc.posted) where c.id is null');
+	?>
+		<p>copied photo comments into new <code>comment</code> table. refresh the page to take the next step.</p>
 	<?php
 	}
 
