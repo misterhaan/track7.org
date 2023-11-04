@@ -1,25 +1,73 @@
 <?php
 class Tag {
-	public $Name;
-	protected $subsite;
-	public $Description;
+	public string $Name;
+	protected string $subsite;
+
+	public function __construct(mysqli $db, string $name, string $subsite) {
+		try {
+			$select = $db->prepare('select name, subsite from tag where name=? and subsite=? limit 1');
+			$select->bind_param('ss', $name, $subsite);
+			$select->execute();
+			$select->bind_result($name, $subsite);
+			while ($select->fetch()) {
+				$this->Name = $name;
+				$this->subsite = $subsite;
+			}
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException("error verifying $subsite/$name exists", $mse);
+		}
+	}
+
+	public static function FromQueryString(mysqli $db, string $subsite): ?Tag {
+		if (isset($_GET['tag']) && $_GET['tag'])
+			return new Tag($db, $_GET['tag'], $subsite);
+		return null;
+	}
+
+	/**
+	 * Look up all the tags for a post
+	 * @param $db Database connection
+	 * @param $post Post ID to look up
+	 * @return string[] Tag names for the specified post
+	 */
+	public static function ForPost(mysqli $db, int $post): array {
+		try {
+			$select = $db->prepare('select tag from post_tag where post=?');
+			$select->bind_param('i', $post);
+			$select->execute();
+			$select->bind_result($tag);
+			$tags = [];
+			while ($select->fetch())
+				$tags[] = $tag;
+			return $tags;
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException("error looking up tags for post #$post", $mse);
+		}
+	}
+}
+
+class ActiveTag extends Tag {
+	public string $Description;
 
 	public function __construct(mysqli $db, string $name, string $subsite) {
 		try {
 			$select = $db->prepare('select name, subsite, description from tag where name=? and subsite=? limit 1');
 			$select->bind_param('ss', $name, $subsite);
 			$select->execute();
-			$select->bind_result($this->Name, $this->subsite, $this->Description);
-			$select->fetch();
+			$select->bind_result($name, $subsite, $description);
+			while ($select->fetch()) {
+				$this->Name = $name;
+				$this->subsite = $subsite;
+				$this->Description = $description;
+			}
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException("error looking up $subsite tag information", $mse);
 		}
-		return null;
 	}
 
-	public static function FromQueryString(mysqli $db, string $subsite): ?Tag {
+	public static function FromQueryString(mysqli $db, string $subsite): ?ActiveTag {
 		if (isset($_GET['tag']) && $_GET['tag'])
-			return new Tag($db, $_GET['tag'], $subsite);
+			return new ActiveTag($db, $_GET['tag'], $subsite);
 		return null;
 	}
 
@@ -57,9 +105,8 @@ class Tag {
 	}
 }
 
-class TagFrequency {
-	public $Name;
-	public $Count;
+class TagFrequency extends Tag {
+	public int $Count;
 
 	public function __construct(string $name, int $count) {
 		$this->Name = $name;

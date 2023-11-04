@@ -4,10 +4,10 @@ require_once 'tag.php';
 
 class AlbumIndex extends Page {
 	private const Subsite = 'album';
-	private static ?Tag $tag = null;
+	private static ?ActiveTag $tag = null;
 
 	public function __construct() {
-		self::$tag = Tag::FromQueryString(self::RequireDatabase(), self::Subsite);
+		self::$tag = ActiveTag::FromQueryString(self::RequireDatabase(), self::Subsite);
 		self::$bodytype = 'gallery';
 		self::$rss = new TitledLink(
 			self::$tag ? self::$tag->Name . ' photos' : 'photos',
@@ -26,8 +26,8 @@ class AlbumIndex extends Page {
 		</h1>
 		<?php
 		if (!self::$tag)
-			self::ShowTags('photos');
-		if (self::$user->IsAdmin())
+			self::ShowTagCloud('photos');
+		if (self::HasAdminSecurity())
 			self::ShowAdminActions();
 		if (self::$tag)
 			self::$tag->ShowInfo(self::HasAdminSecurity());

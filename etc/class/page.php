@@ -19,15 +19,20 @@ abstract class Page extends Responder {
 	 * @param $title Title of the page to show on the browser tab.
 	 */
 	public function __construct(string $title) {
-		if (strpos($title, self::siteTitle) === false)
-			self::$title = $title . ' - ' . self::siteTitle;
-		else
-			self::$title = $title;
+		self::SetTitle($title);
 		self::$importmap['jquery'] = '/jquery-3.7.1.min.js';
 		self::$importmap['vue'] = file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.esm-browser.js') ? '/vue.esm-browser.js' : '/vue.esm-browser.prod.js';
 		self::$importmap['autosize'] = '/autosize.esm.js';
 		self::$importmap['tag'] = '/tag.js';
+		self::$importmap['comment'] = '/comment.js';
 		self::Send();
+	}
+
+	private static function SetTitle(string $title): void {
+		if (strpos($title, self::siteTitle) === false)
+			self::$title = $title . ' - ' . self::siteTitle;
+		else
+			self::$title = $title;
 	}
 
 	/**
@@ -38,7 +43,7 @@ abstract class Page extends Responder {
 	/**
 	 * Send the page as a response.
 	 */
-	private static function Send(): void {
+	private static function Send(string $overrideMain = ''): void {
 		header('X-Sven: look out for the fruits of life');
 		header('Content-Type: text/html; charset=utf-8');
 ?>
@@ -54,11 +59,14 @@ abstract class Page extends Responder {
 			?>
 			<main>
 				<?php
-				try {
-					static::MainContent();
-				} catch (DetailedException $de) {
-					self::DetailedError($de);
-				}
+				if ($overrideMain)
+					echo $overrideMain;
+				else
+					try {
+						static::MainContent();
+					} catch (DetailedException $de) {
+						self::DetailedError($de);
+					}
 				?>
 			</main>
 			<?php
@@ -71,13 +79,42 @@ abstract class Page extends Responder {
 	}
 
 	/**
-	 * show a list of tags
+	 * Show a cloud of tags
 	 * @param string $pluralName what to call multiple of the item that can be tagged
 	 */
-	protected static function ShowTags($pluralName) {
+	protected static function ShowTagCloud($pluralName): void {
 	?>
 		<nav class="tagcloud" data-plural-name="<?= $pluralName; ?>"></nav>
-	<?php
+		<?php
+	}
+
+	protected static function ShowTags(int $post): void {
+		$tags = Tag::ForPost(self::RequireDatabase(), $post);
+		if (count($tags)) {
+		?>
+			<span class=tags>
+				<?php
+				foreach ($tags as $tag) {
+				?>
+					<a href="<?= dirname($_SERVER['SCRIPT_NAME']) . '/' . $tag; ?>/"><?= $tag; ?></a><?php if ($tag != $tags[count($tags) - 1]) echo ','; ?>
+				<?php
+				}
+				?>
+			</span>
+		<?php
+		}
+	}
+
+	/**
+	 * End the page with a not found error.
+	 * @param $title Not found error title
+	 * @param $body HTML body of the not found error message
+	 */
+	protected static function NotFound(string $title, string $body) {
+		header('HTTP/1.0 404 Not Found');
+		self::SetTitle($title);
+		self::Send("<h1>$title</h1>$body");
+		die;
 	}
 
 	/**
@@ -85,20 +122,28 @@ abstract class Page extends Responder {
 	 * @param DetailedException|string $error Exception with details or non-detailed error message
 	 * @param ?string $detail Extra detail for administrators.  Not used when $error is a DetailedException
 	 */
-	protected static function DetailedError(mixed $error, string $detail = null) {
-		http_response_code(500);
-		header('Content-Type: text/plain');
+	protected static function DetailedError(mixed $error, string $detail = null): void {
 		if (self::HasAdminSecurity())
 			if ($error instanceof DetailedException)
-				die($error->getDetailedMessage());
+				self::Error($error->getDetailedMessage());
 			elseif ($detail)
-				die("$error:  $detail");
+				self::Error("$error:  $detail");
 			else
-				die($error);
+				self::Error($error);
 		elseif ($error instanceof DetailedException)
-			die($error->getMessage());
+			self::Error($error->getMessage());
 		else
-			die($error . '.');
+			self::Error($error . '.');
+	}
+
+	/**
+	 * Show an error message.
+	 * @param $message Error message to show
+	 */
+	protected static function Error(string $message): void {
+		?>
+		<p class=error><?= $message; ?></p>
+	<?php
 	}
 
 	private static function SendHead(): void {
@@ -107,7 +152,7 @@ abstract class Page extends Responder {
 		<head>
 			<meta charset=utf-8>
 			<meta name=viewport content="width=device-width, initial-scale=1">
-			<title><?= self::$title; ?></title>
+			<title><?= htmlspecialchars(self::$title); ?></title>
 			<link rel=stylesheet href="/track7.css">
 			<?php
 			if (self::$rss && self::$rss->Title && self::$rss->URL) {
