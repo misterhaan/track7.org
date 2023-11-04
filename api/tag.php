@@ -50,7 +50,7 @@ class TagApi extends Api {
 			self::Forbidden('only administrators can update tag descriptions.');
 		self::RequireDatabase();
 		$description = self::ReadRequestText();
-		self::Success(Tag::UpdateDescription(self::$db, $subsite, $name, $description));
+		self::Success(ActiveTag::UpdateDescription(self::$db, $subsite, $name, $description));
 	}
 }
 TagApi::Respond();

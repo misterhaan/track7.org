@@ -48,9 +48,11 @@ abstract class Responder {
 			self::RequireDatabase();
 			try {
 				self::$user = new CurrentUser(self::$db);
+				return self::$user;
 			} catch (DetailedException $de) {
-				self::$user = new CurrentUser();
+				// if there's an error creating the user we're going to ignore it and just say nobody's logged in
 			}
+			self::$user = new CurrentUser();
 		}
 		return self::$user;
 	}

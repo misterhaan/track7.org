@@ -47,7 +47,7 @@ createApp({
 			</ol>
 
 			<p class=loading v-if=loading>loading more photos . . .</p>
-			<p class="more calltoaction" v-if="hasMore && !loading"><a class="action get" href=#nextpage v-on:click.prevent=Load>load more photos</a></p>
+			<p class="more calltoaction" v-if="hasMore && !loading"><a class="action get" href=#nextpage @click.prevent=Load>load more photos</a></p>
 			<p v-if="!photos.length && !loading">this album is empty!</p>
 			<p class=error v-if=error>{{error}}</p>
 	`
