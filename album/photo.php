@@ -13,7 +13,7 @@ class AlbumPhoto extends Page {
 		$tag = Tag::FromQueryString(self::RequireDatabase(), self::Subsite);
 		if (isset($_GET['tag']) && !$tag)
 			self::RedirectWithoutTag();
-		self::$tag = $tag->Name;
+		self::$tag = $tag ? $tag->Name : null;
 		self::$photo = Photo::FromQueryString(self::RequireDatabase());
 		if (!self::$photo)
 			self::NotFound('404 photo not found', '<p>sorry, we don’t have a photo by that name. try picking one from <a href=' . dirname($_SERVER['SCRIPT_NAME']) . '>the gallery</a>.</p>');
