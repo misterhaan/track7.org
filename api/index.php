@@ -20,6 +20,9 @@ $html->Open('api');
 <h2 class=api><a href=calcprog>calcprog</a></h2>
 <p>the calcprog api manages calculator programs.</p>
 
+<h2 class=api><a href=comment.php>comment</a></h2>
+<p>the comment api manages comments.</p>
+
 <h2 class=api><a href=comments>comments</a></h2>
 <p>the comments api manages comments.</p>
 

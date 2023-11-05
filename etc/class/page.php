@@ -105,6 +105,12 @@ abstract class Page extends Responder {
 		}
 	}
 
+	protected static function ShowComments(int $post): void {
+		?>
+		<section id=comments data-post=<?= $post; ?>></section>
+	<?php
+	}
+
 	/**
 	 * End the page with a not found error.
 	 * @param $title Not found error title
@@ -141,7 +147,7 @@ abstract class Page extends Responder {
 	 * @param $message Error message to show
 	 */
 	protected static function Error(string $message): void {
-		?>
+	?>
 		<p class=error><?= $message; ?></p>
 	<?php
 	}

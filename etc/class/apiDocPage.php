@@ -45,7 +45,25 @@ class ApiDocPage extends Page {
 				self::ShowParameterDocumentation($param);
 			?>
 		</dl>
-	<?php
+		<?php
+		if ($endpoint->BodyFormat != 'none') {
+		?>
+			<p>
+				this endpoint expects a request body in <?= $endpoint->BodyFormat; ?> format.
+				<?= $endpoint->BodyDocumentation; ?>
+			</p>
+			<?php
+			if (count($endpoint->BodyParameters)) {
+			?>
+				<dl class=parameters>
+					<?php
+					foreach ($endpoint->BodyParameters as $param)
+						self::ShowParameterDocumentation($param);
+					?>
+				</dl>
+		<?php
+			}
+		}
 	}
 
 	private static function GetEndpointPath(array $params): string {
@@ -60,7 +78,7 @@ class ApiDocPage extends Page {
 	}
 
 	private static function ShowParameterDocumentation(ParameterDocumentation $param) {
-	?>
+		?>
 		<dt><code><?= $param->Name; ?></code></dt>
 		<dd><?= $param->Documentation; ?> <?= $param->Required ? 'reqiured' : 'optional'; ?>, <?= $param->Type; ?>.</dd>
 <?php

@@ -1,0 +1,127 @@
+<?php
+require_once 'environment.php';
+require_once 'user.php';
+require_once 'formatDate.php';
+
+class Comment {
+	private const ListLimit = 24;
+
+	public int $ID;
+	public TimeTagData $Instant;
+	public string $HTML;
+	public ?string $Markdown;
+	public Author $Author;
+	public bool $CanChange;
+
+	public function __construct(CurrentUser $user, int $id, int $instant, string $html, ?string $markdown, ?int $authorUserID, Author $author) {
+		$this->ID = $id;
+		$this->Instant = new TimeTagData($user, FormatDate::LongHTML, $instant);
+		$this->HTML = $html;
+		$this->CanChange = $user->IsAdmin() || $user->ID == $authorUserID;
+		if ($this->CanChange) {
+			$this->Markdown = $markdown;
+			if (!$markdown && $user->IsAdmin())
+				$this->Markdown = $html;
+		}
+		$this->Author = $author;
+	}
+
+	/**
+	 * List comments for a post, most recent first.
+	 */
+	public static function ListByPost(mysqli $db, CurrentUser $currentUser, int $postID, int $skip = 0): CommentList {
+		$limit = self::ListLimit + 1;
+		// TODO:  migrate users_friends table
+		try {
+			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html from comment as c left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=? where c.post=? order by c.instant desc limit ? offset ?');
+			$select->bind_param('iiii', $currentUser->ID, $postID, $limit, $skip);
+			$select->execute();
+			$select->bind_result($id, $instant, $authorUserID, $username, $displayname, $avatar, $level, $friend, $name, $contact, $markdown, $html);
+			$list = new CommentList();
+			while ($select->fetch())
+				if (count($list->Comments) < self::ListLimit)
+					$list->Comments[] = new Comment($currentUser, $id, $instant, $html, $markdown, $authorUserID, new Author($username, $displayname, $name, $contact, $avatar, +$level, boolval($friend)));
+				else
+					$list->HasMore = true;
+			return $list;
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up comments for post', $mse);
+		}
+	}
+
+	public static function Create(mysqli $db, CurrentUser $currentUser, int $post, string $markdown, string $name, string $contact): Comment {
+		require_once 'formatText.php';
+		$html = FormatText::Markdown($markdown);
+		$userID = $currentUser->IsLoggedIn() ? $currentUser->ID : null;
+		$now = time();
+		try {
+			$insert = $db->prepare('insert into comment (instant, post, user, name, contact, html, markdown) values (from_unixtime(?), ?, ?, ?, ?, ?, ?)');
+			$insert->bind_param('iiissss', $now, $post, $userID, $name, $contact, $html, $markdown);
+			$insert->execute();
+			return new Comment($currentUser, $insert->insert_id, $now, $html, $markdown, $userID, new Author($currentUser->Username, $currentUser->DisplayName, $name, $contact, $currentUser->Avatar, $currentUser->Level, false));
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error saving comment', $mse);
+		}
+	}
+
+	public static function Update(mysqli $db, CurrentUser $currentUser, int $id, string $markdown): string {
+		require_once 'formatText.php';
+		$html = FormatText::Markdown($markdown);
+		$userID = $currentUser->ID;
+		$isAdmin = +$currentUser->IsAdmin();
+		try {
+			$update = $db->prepare('update comment set markdown=?, html=? where id=? and (user=? or ?) limit 1');
+			$update->bind_param('ssiii', $markdown, $html, $id, $userID, $isAdmin);
+			$update->execute();
+			if ($update->affected_rows)
+				return $html;
+			else
+				throw new DetailedException('comment not updated.  this could mean you saved without changing, this isn’t your comment, or it no longer exists.');
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error updating comment', $mse);
+		}
+	}
+
+	public static function Delete(mysqli $db, CurrentUser $currentUser, int $id): void {
+		$userID = $currentUser->ID;
+		$isAdmin = +$currentUser->IsAdmin();
+		try {
+			$delete = $db->prepare('delete from comment where id=? and (user=? or ?) limit 1');
+			$delete->bind_param('iii', $id, $userID, $isAdmin);
+			$delete->execute();
+			if (!$delete->affected_rows)
+				throw new DetailedException('comment not deleted.  this could mean this isn’t your comment or it no longer exists.');
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error deleting comment', $mse);
+		}
+	}
+}
+
+class Author {
+	public string $Name;
+	public string $URL;
+	public ?string $Avatar;
+	public string $Level;
+	public bool $IsFriend;
+
+	public function __construct(?string $username, ?string $displayname, ?string $name, ?string $contact, ?string $avatar, int $level, bool $isFriend) {
+		if ($displayname)
+			$this->Name = $displayname;
+		elseif ($username)
+			$this->Name = $username;
+		else
+			$this->Name = $name;
+		if ($username)
+			$this->URL = "/user/$username/";
+		else
+			$this->URL = $contact;
+		$this->Avatar = $avatar;
+		$this->Level = $level ? UserLevel::Name($level) : '';
+		$this->IsFriend = $isFriend;
+	}
+}
+
+class CommentList {
+	public array $Comments = [];
+	public bool $HasMore = false;
+}

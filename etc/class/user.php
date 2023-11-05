@@ -10,17 +10,33 @@ class UserLevel {
 	public const Known = 2;
 	public const Trusted = 3;
 	public const Admin = 4;
+
+	public static function Name(int $level) {
+		return match ($level) {
+			self::New => 'new',
+			self::Known => 'known',
+			self::Trusted => 'trusted',
+			self::Admin => 'admin',
+			default => 'anonymous'
+		};
+	}
 }
 
 /**
  * A track7 user
  */
 class User {
+	protected const DefaultName = 'random internet person';
+	protected const DefaultAvatar = '/images/user.jpg';
+
 	/**
 	 * ID of the user, or zero for anonymous user
 	 */
 	public int $ID = 0;
-	protected int $Level = UserLevel::Anonymous;
+	/**
+	 * Access level this user has
+	 */
+	public int $Level = UserLevel::Anonymous;
 	/**
 	 * Username, or empty string for anonymous user
 	 */
@@ -33,9 +49,6 @@ class User {
 	 * URL to the user's avatar image
 	 */
 	public string $Avatar = self::DefaultAvatar;
-
-	protected const DefaultName = 'random internet person';
-	protected const DefaultAvatar = '/images/user.jpg';
 
 	/**
 	 * Create a basic track7 user looking up by ID.
@@ -170,5 +183,5 @@ class CurrentUser extends User {
 			}
 		return 0;
 	}
-	// TODO: delete expired login_remembered rows at some point
+	// TODO:  delete expired login_remembered rows at some point
 }

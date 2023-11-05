@@ -110,11 +110,16 @@ class EndpointDocumentation {
 	public string $Name;
 	public string $Documentation;
 	public array $PathParameters = [];
+	public string $BodyFormat;
+	public string $BodyDocumentation;
+	public array $BodyParameters = [];
 
-	public function __construct(string $method, string $name, string $documentation) {
+	public function __construct(string $method, string $name, string $documentation, string $bodyFormat = 'none', string $bodyDocumentation = '') {
 		$this->Method = $method;
 		$this->Name = $name;
 		$this->Documentation = $documentation;
+		$this->BodyFormat = $bodyFormat;
+		$this->BodyDocumentation = $bodyDocumentation;
 	}
 }
 
