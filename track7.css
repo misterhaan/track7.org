@@ -193,11 +193,22 @@ button {
 	cursor: pointer;
 }
 
+button.link {
+	border: none;
+	background: transparent;
+	padding: none;
+}
+
+button.link:hover:not(:disabled) {
+	text-decoration: underline;
+}
+
 button:disabled {
 	font-weight: normal;
 	border: none;
 	background-color: #eed;
 	color: #777;
+	cursor: not-allowed;
 }
 
 .working:after {
@@ -633,7 +644,7 @@ a.action {
 }
 
 .actions a:before,
-a.action:before {
+.action:before {
 	font-family: fontawesome;
 	font-weight: normal;
 	font-size: .8em;
@@ -653,7 +664,7 @@ a.action.new:before {
 }
 
 .actions a.edit:before,
-a.action.edit:before {
+.action.edit:before {
 	content: "\f040";
 }
 
@@ -668,17 +679,17 @@ a.action.publish:before {
 }
 
 .actions a.okay:before,
-a.action.okay:before {
+.action.okay:before {
 	content: "\f00c";
 }
 
 .actions a.cancel:before,
-a.action.cancel:before {
+.action.cancel:before {
 	content: "\f05e";
 }
 
 .actions a.del:before,
-a.action.del:before {
+.action.del:before {
 	content: "\f00d";
 	color: #b64;
 }
@@ -1384,6 +1395,7 @@ ol.messages li .userinfo {
 	content: "\f006";
 }
 
+.comment .username.friend:after,
 .suggesteduser .username.friend:after {
 	margin-left: .25em;
 }
@@ -1475,7 +1487,7 @@ section.comment .comment .content.edit textarea {
 }
 
 main label,
-main button,
+main button:not(.link),
 fieldset.checkboxes,
 fieldset.selectafield div {
 	margin: .75em .5em;
@@ -1485,7 +1497,7 @@ fieldset.selectafield div {
 @media (min-width: 25em) {
 
 	main label,
-	main button,
+	main button:not(.link),
 	fieldset.checkboxes,
 	fieldset.selectafield div {
 		margin: .75em 1em;

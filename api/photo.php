@@ -23,8 +23,6 @@ class PhotoApi extends Api {
 	 * @param array $params May contain number of photos to skip and/or name of tag to look for (empty array will skip 0 and retrieve all photos regardless of tags)
 	 */
 	protected static function GET_list(array $params): void {
-		$db = self::RequireDatabase();
-
 		$tagName = '';
 		$skip = 0;
 		foreach ($params as $param)
@@ -32,7 +30,7 @@ class PhotoApi extends Api {
 				$skip = +$param;
 			else if ($param)
 				$tagName = trim($param);
-		self::Success(IndexPhoto::List($db, $tagName, $skip));
+		self::Success(IndexPhoto::List(self::RequireDatabase(), $tagName, $skip));
 	}
 }
 PhotoApi::Respond();

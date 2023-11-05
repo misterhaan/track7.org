@@ -4,8 +4,8 @@ require_once 'environment.php';
 class IndexPhoto {
 	private const ListLimit = 24;
 
-	public $ID;
-	public $Title;
+	public string $ID;
+	public string $Title;
 
 	private function __construct(string $id, string $title) {
 		$this->ID = $id;
@@ -60,4 +60,37 @@ class PhotoList {
 }
 
 class Photo extends IndexPhoto {
+	public int $Post;
+	public string $Youtube;
+	public int $Instant;
+	public int $Taken;
+	public int $Year;
+	public string $Story;
+
+	public function __construct(string $id, int $post, string $youtube, string $title, int $instant, int $taken, int $year, string $story) {
+		$this->ID = $id;
+		$this->Post = $post;
+		$this->Youtube = $youtube;
+		$this->Title = $title;
+		$this->Instant = $instant;
+		$this->Taken = $taken;
+		$this->Year = $year;
+		$this->Story = $story;
+	}
+
+	public static function FromQueryString(mysqli $db): ?Photo {
+		if (!isset($_GET['photo']) || !$_GET['photo'])
+			return null;
+		try {
+			$select = $db->prepare('select ph.id, ph.post, ph.youtube, ps.title, unix_timestamp(ps.instant), unix_timestamp(ph.taken), ph.year, ph.story from photo as ph left join post as ps on ps.id=ph.post where ph.id=? limit 1');
+			$select->bind_param('s', $_GET['photo']);
+			$select->execute();
+			$select->bind_result($id, $post, $youtube, $title, $instant, $taken, $year, $story);
+			if ($select->fetch())
+				return new Photo($id, $post, $youtube, $title, $instant, $taken, $year, $story);
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up photo', $mse);
+		}
+		return null;
+	}
 }
