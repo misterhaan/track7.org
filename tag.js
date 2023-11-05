@@ -37,8 +37,12 @@ if(tagcloud)
 
 const taginfo = document.querySelector("#taginfo");
 const editLink = $("a[href$='#tagedit']");
-if(taginfo && editLink) {
-	const initialDescription = taginfo.querySelector(".editable")?.innerHTML;
+if(taginfo && editLink.length) {
+	const tagDescription = taginfo.querySelector(".editable");
+	const initialDescription = tagDescription?.innerHTML;
+	if(tagDescription)
+		tagDescription.textContent = "";
+
 	createApp({
 		data() {
 			return {
