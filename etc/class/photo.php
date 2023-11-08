@@ -63,11 +63,11 @@ class Photo extends IndexPhoto {
 	public int $Post;
 	public string $Youtube;
 	public int $Instant;
-	public int $Taken;
+	public ?int $Taken;
 	public int $Year;
 	public string $Story;
 
-	public function __construct(string $id, int $post, string $youtube, string $title, int $instant, int $taken, int $year, string $story) {
+	public function __construct(string $id, int $post, string $youtube, string $title, int $instant, ?int $taken, int $year, string $story) {
 		$this->ID = $id;
 		$this->Post = $post;
 		$this->Youtube = $youtube;
