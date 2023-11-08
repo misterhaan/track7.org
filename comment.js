@@ -58,7 +58,7 @@ if(comments) {
 				}
 			}
 		},
-		template: /*html*/ `
+		template: /* html */ `
 			<section class=comment>
 				<div class=userinfo>
 					<div class=username :class="{friend: comment.Author.IsFriend}" :title="comment.Author.IsFriend ? comment.Author.Name + ' is your friend' : null">
