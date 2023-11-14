@@ -1578,6 +1578,10 @@ main .field.list input:focus {
 	outline: none;
 }
 
+main .field.list:focus-within {
+	outline: medium auto currentColor;
+}
+
 /* draw the active input outline for chrome on desktop */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
 	main .field.list.focused {
