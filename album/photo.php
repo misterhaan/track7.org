@@ -185,12 +185,27 @@ class PrevNext {
 	public ?TitledLink $Next = null;
 }
 
-die;
 
-$tag = false;
-$photo = new stdClass();
+/**
+ * Pairing of a title and a URL
+ */
+class TitledLink {
+	/**
+	 * Link title
+	 */
+	public string $Title = '';
+	/**
+	 * Link URL
+	 */
+	public string $URL = '';
 
-$html = new t7html(['vue' => true]);
-$html->Open(htmlspecialchars($photo->caption) . ($tag ? ' - ' . $tag->name . ' - photos' : ' - photos'));
-$html->ShowComments('photo', 'photos', $photo->id);
-$html->Close();
+	/**
+	 * Default constructor
+	 * @param $title Link title
+	 * @param $url Link URL
+	 */
+	public function __construct(string $title, string $url) {
+		$this->Title = $title;
+		$this->URL = $url;
+	}
+}

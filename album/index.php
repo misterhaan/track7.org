@@ -9,21 +9,13 @@ class AlbumIndex extends Page {
 	public function __construct() {
 		self::$tag = ActiveTag::FromQueryString(self::RequireDatabase(), self::Subsite);
 		self::$bodytype = 'gallery';
-		self::$rss = new TitledLink(
-			self::$tag ? self::$tag->Name . ' photos' : 'photos',
-			dirname($_SERVER['PHP_SELF']) . '/feed.rss' . (self::$tag ? '?tags=' . self::$tag->Name : '')
-		);
 		parent::__construct(self::$tag ? self::$tag->Name . ' - photo album' : 'photo album');
 	}
 
 	protected static function MainContent(): void {
 		$headingtext = 'photo album' . (self::$tag ? ' — ' . self::$tag->Name : '');
 ?>
-		<h1>
-			<?= $headingtext; ?>
-
-			<a class=feed href="<?= self::$rss->URL ?>" title="rss feed of <?= self::$tag ? self::$tag->Name : 'all'; ?> photos"></a>
-		</h1>
+		<h1><?= $headingtext; ?></h1>
 		<?php
 		if (!self::$tag)
 			self::ShowTagCloud('photos');

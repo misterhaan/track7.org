@@ -10,7 +10,6 @@ abstract class Page extends Responder {
 
 	protected static string $title = self::siteTitle;
 	protected static string $bodytype = 'text';
-	protected static ?TitledLink $rss = null;
 	protected static array $importmap = [];
 	protected static array $params = [];
 
@@ -162,11 +161,6 @@ abstract class Page extends Responder {
 			<title><?= htmlspecialchars(self::$title); ?></title>
 			<link rel=stylesheet href="/track7.css">
 			<?php
-			if (self::$rss && self::$rss->Title && self::$rss->URL) {
-			?>
-				<link rel=alternate type=application/rss+xml title="<?= self::$rss->Title; ?>" href="<?= self::$rss->URL; ?>">
-			<?php
-			}
 			self::SendScripts();
 			self::SendIcons();
 			?>
@@ -281,36 +275,11 @@ abstract class Page extends Responder {
 	private static function SendFooter() {
 		?>
 		<footer>
-			<a href="/feed.rss" title="add track7 activity to your feed reader">rss</a>
 			<a href="https://twitter.com/track7feed" title="follow track7 on twitter">twitter</a>
 			<a href="https://github.com/misterhaan/track7.org/blob/master<?= $_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
 			<a href="/privacy.php" title="view the privacy policy">privacy</a>
 			<div id=copyright>© 1996 - <?= self::copyrightEndYear; ?> track7 — <a href="/fewrights.php">few rights reserved</a></div>
 		</footer>
 <?php
-	}
-}
-
-/**
- * Pairing of a title and a URL
- */
-class TitledLink {
-	/**
-	 * Link title
-	 */
-	public string $Title = '';
-	/**
-	 * Link URL
-	 */
-	public string $URL = '';
-
-	/**
-	 * Default constructor
-	 * @param $title Link title
-	 * @param $url Link URL
-	 */
-	public function __construct(string $title, string $url) {
-		$this->Title = $title;
-		$this->URL = $url;
 	}
 }
