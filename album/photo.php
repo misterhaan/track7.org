@@ -10,9 +10,11 @@ class AlbumPhoto extends Page {
 	private static ?PrevNext $prevNext = null;
 
 	public function __construct() {
-		$tag = Tag::FromQueryString(self::RequireDatabase(), self::Subsite);
-		if (isset($_GET['tag']) && !$tag)
-			self::RedirectWithoutTag();
+		try {
+			$tag = Tag::FromQueryString(self::RequireDatabase(), self::Subsite);
+		} catch (Exception) {
+			self::Redirect($_GET['photo']);
+		}
 		self::$tag = $tag ? $tag->Name : null;
 		self::$photo = Photo::FromQueryString(self::RequireDatabase());
 		if (!self::$photo)
@@ -21,14 +23,6 @@ class AlbumPhoto extends Page {
 		if (self::$tag)
 			$title .= ' - ' . self::$tag;
 		parent::__construct("$title - photos");
-	}
-
-	private static function RedirectWithoutTag(): void {
-		// TODO:  move t7format
-		require_once 'Parsedown.php';
-		require_once 't7format.php';
-		header('Location: ' . t7format::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['name']));
-		die;
 	}
 
 	protected static function MainContent(): void {

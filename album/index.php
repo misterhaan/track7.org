@@ -7,7 +7,12 @@ class AlbumIndex extends Page {
 	private static ?ActiveTag $tag = null;
 
 	public function __construct() {
-		self::$tag = ActiveTag::FromQueryString(self::RequireDatabase(), self::Subsite);
+		try {
+			self::$tag = ActiveTag::FromQueryString(self::RequireDatabase(), self::Subsite);
+		} catch (Exception) {
+			self::Redirect();
+		}
+
 		self::$bodytype = 'gallery';
 		parent::__construct(self::$tag ? self::$tag->Name . ' - photo album' : 'photo album');
 	}

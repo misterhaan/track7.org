@@ -9,10 +9,11 @@ class Tag {
 			$select->bind_param('ss', $name, $subsite);
 			$select->execute();
 			$select->bind_result($name, $subsite);
-			while ($select->fetch()) {
+			if ($select->fetch()) {
 				$this->Name = $name;
 				$this->subsite = $subsite;
-			}
+			} else
+				throw new DetailedException('tag not found.');
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException("error verifying $subsite/$name exists", $mse);
 		}
@@ -101,11 +102,12 @@ class ActiveTag extends Tag {
 			$select->bind_param('ss', $name, $subsite);
 			$select->execute();
 			$select->bind_result($name, $subsite, $description);
-			while ($select->fetch()) {
+			if ($select->fetch()) {
 				$this->Name = $name;
 				$this->subsite = $subsite;
 				$this->Description = $description;
-			}
+			} else
+				throw new DetailedException('tag not found.');
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException("error looking up $subsite tag information", $mse);
 		}

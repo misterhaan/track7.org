@@ -36,6 +36,16 @@ abstract class Page extends Responder {
 	}
 
 	/**
+	 * Redirect somewhere within the subdirectory of the current script.  Must be called from constructor to work.  Halts the script.
+	 * @param $relativePath Relative path (no starting slash) the redirect should target.  Default is the index page.
+	 */
+	protected static function Redirect(string $relativePath = ''): void {
+		require_once 'formatUrl.php';
+		header('Location: ' . FormatURL::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $item));
+		die;
+	}
+
+	/**
 	 * Output the main content of the page, starting with an h1 tag to show the title.
 	 */
 	protected abstract static function MainContent(): void;
