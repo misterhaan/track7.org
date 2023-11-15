@@ -13,7 +13,7 @@ class AlbumPhoto extends Page {
 		try {
 			$tag = Tag::FromQueryString(self::RequireDatabase(), self::Subsite);
 		} catch (Exception) {
-			self::Redirect($_GET['photo']);
+			self::Redirect(isset($_GET['photo']) && $_GET['photo'] ? $_GET['photo'] : '');
 		}
 		self::$tag = $tag ? $tag->Name : null;
 		self::$photo = Photo::FromQueryString(self::RequireDatabase());
