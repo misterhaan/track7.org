@@ -5,6 +5,15 @@ class FormatDate {
 	public const Long = 'g:i a \o\n l F jS Y';
 	public const LongHTML = 'g:i a \o\n l F j<\s\u\p>S</\s\u\p> Y';
 
+	public static function LocalToTimestamp(string $dateString, CurrentUser $user): int|false {
+		$nonlocal = strtotime($dateString);
+		if ($nonlocal === false)
+			return false;  // date string not understood
+		if (!$user->DST)
+			$nonlocal = strtotime($nonlocal . ' seconds GMT');
+		return $nonlocal - $user->TzOffset;
+	}
+
 	public static function Local(string $format, string $timestamp, CurrentUser $user): string {
 		if ($user->DST)
 			return date($format, $timestamp + $user->TzOffset);

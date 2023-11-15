@@ -29,6 +29,9 @@ $html->Open('api');
 <h2 class=api><a href=conversations>conversations</a></h2>
 <p>the conversations api manages user messages.</p>
 
+<h2 class=api><a href=date.php>date</a></h2>
+<p>the date api manages dates.</p>
+
 <h2 class=api><a href=forum>forum</a></h2>
 <p>the forum api manages the forums.</p>
 
@@ -43,9 +46,6 @@ $html->Open('api');
 
 <h2 class=api><a href=photo.php>photo</a></h2>
 <p>the photo api manages the photo album.</p>
-
-<h2 class=api><a href=photos>photos</a></h2>
-<p>the photos api manages the photo album.</p>
 
 <h2 class=api><a href=settings>settings</a></h2>
 <p>the settings api manages user profiles and settings.</p>

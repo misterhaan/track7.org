@@ -44,6 +44,52 @@ class Tag {
 			throw DetailedException::FromMysqliException("error looking up tags for post #$post", $mse);
 		}
 	}
+
+	/**
+	 * Remove tags from a post
+	 * @param $db Database connection
+	 * @param $post Post ID tags should be removed from
+	 * @param $tagList Comma-separated list of tags to remove
+	 */
+	public static function RemoveFromPost(mysqli $db, int $post, string $tagList): void {
+		try {
+			$delete = $db->prepare('delete from post_tag where post=? and tag=?');
+			$delete->bind_param('is', $post, $tag);
+			foreach (explode(',', $tagList) as $tag)
+				$delete->execute();
+			$delete->close();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException("error removing tags from post #$post", $mse);
+		}
+	}
+
+	/**
+	 * Add tags to a post
+	 * @param $db Database connection
+	 * @param $post Post ID tags should be added to
+	 * @param $subsite Subsite these tags are used in (only matters if tags haven't already been used)
+	 * @param $tagList Comma-separated list of tags to add
+	 */
+	public static function AddToPost(mysqli $db, int $post, string $subsite, string $tagList): void {
+		$tags = explode(',', $tagList);
+		try {
+			$insert = $db->prepare('insert ignore into tag (name, subsite) values (?, ?)');
+			$insert->bind_param('ss', $tag, $subsite);
+			foreach ($tags as $tag)
+				if ($tag)
+					$insert->execute();
+			$insert->close();
+
+			$insert = $db->prepare('insert into post_tag (post, tag) values (?, ?)');
+			$insert->bind_param('is', $post, $tag);
+			foreach ($tags as $tag)
+				if ($tag)
+					$insert->execute();
+			$insert->close();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException("error adding tags to post #$post", $mse);
+		}
+	}
 }
 
 class ActiveTag extends Tag {

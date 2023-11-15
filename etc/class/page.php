@@ -25,6 +25,7 @@ abstract class Page extends Responder {
 		self::$importmap['autosize'] = '/autosize.esm.js';
 		self::$importmap['tag'] = '/tag.js';
 		self::$importmap['comment'] = '/comment.js';
+		self::$importmap['validate'] = '/validate.js';
 		self::Send();
 	}
 

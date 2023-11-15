@@ -136,3 +136,19 @@ class DetailedException extends RuntimeException {
 		return $this->getMessage();
 	}
 }
+
+/** Result object returned by validation functions */
+class ValidationResult {
+	/** Validation state, valid or invalid */
+	public string $State;
+	/** Reason why the result is invalid, or maybe a message about being valid */
+	public string $Message = '';
+	/** Value that should replace the validated value in case the validator changed the formatting */
+	public string $NewValue = '';
+
+	public function __construct(string $state, string $message = '', string $newValue = '') {
+		$this->State = $state;
+		$this->Message = $message;
+		$this->NewValue = $newValue;
+	}
+}
