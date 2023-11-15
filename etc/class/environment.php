@@ -21,7 +21,7 @@ abstract class Responder {
 	 * @param DetailedException|string $error Exception with details or non-detailed error message
 	 * @param ?string $detail Extra detail for administrators.  Not used when $error is a DetailedException
 	 */
-	protected abstract static function DetailedError(mixed $error, string $detail = null);
+	protected abstract static function DetailedError(mixed $error, string $detail = null): void;
 
 	/**
 	 * Check if the current user has administrator security.
