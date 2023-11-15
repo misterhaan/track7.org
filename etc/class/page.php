@@ -41,7 +41,7 @@ abstract class Page extends Responder {
 	 */
 	protected static function Redirect(string $relativePath = ''): void {
 		require_once 'formatUrl.php';
-		header('Location: ' . FormatURL::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $item));
+		header('Location: ' . FormatURL::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $relativePath));
 		die;
 	}
 
