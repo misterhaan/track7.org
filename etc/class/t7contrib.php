@@ -1,4 +1,5 @@
 <?php
+
 /**
  * track7 contributions class
  * @author misterhaan
@@ -13,10 +14,14 @@ class t7contrib {
 	 */
 	public static function GetAll($before = false, $limit = 9) {
 		global $db;
-		$sql = 'select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author';
-		if($before !== false)
-			$sql .= ' where c.posted<' . +$before;
-		$sql .= ' order by c.posted desc limit ' . $limit;
+		$sql = 'select * from ('
+			. 'select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author union all '
+			. 'select \'comment\' as conttype, unix_timestamp(c.instant) as posted, concat(p.url, \'#comments\') as url, u.username, u.displayname, c.name as authorname, c.contact as authorurl, p.title, c.html as preview, p.hasmore from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user union all '
+			. 'select case p.subsite when \'album\' then \'photo\' else p.subsite end as conttype, unix_timestamp(p.instant) as posted, p.url, u.username, u.displayname, \'\' as authorname, \'\' as authorurl, p.title, p.preview, p.hasmore from post as p left join user as u on u.id=p.author'
+			. ') as allcontributions';
+		if ($before !== false)
+			$sql .= ' where posted<' . +$before;
+		$sql .= ' order by posted desc limit ' . $limit;
 		return $db->query($sql);
 	}
 
@@ -30,7 +35,7 @@ class t7contrib {
 	public static function GetUser($userid, $before = false, $limit = 12) {
 		global $db;
 		$sql = 'select conttype, posted, url, title from contributions where author=\'' . +$userid . '\'';
-		if($before !== false)
+		if ($before !== false)
 			$sql .= ' and posted<' . +$before;
 		$sql .=	' order by posted desc limit ' . +$limit;
 		return $db->query($sql);
@@ -45,10 +50,10 @@ class t7contrib {
 	public static function More($before, $userid = false) {
 		global $db;
 		$sql = 'select 1 from contributions where posted<' . +$before;
-		if($userid)
+		if ($userid)
 			$sql .= ' and author=\'' . +$userid . '\'';
 		$sql .= ' limit 1';
-		if($more = $db->query($sql))
+		if ($more = $db->query($sql))
 			return $more->num_rows > 0;
 		return false;
 	}
@@ -59,7 +64,7 @@ class t7contrib {
 	 * @return string Contribution prefix
 	 */
 	public static function Prefix($type) {
-		switch($type) {
+		switch ($type) {
 			case 'comment':
 				return 'comment on ';
 		}
@@ -72,7 +77,7 @@ class t7contrib {
 	 * @return string Contribution postfix
 	 */
 	public static function Postfix($type) {
-		switch($type) {
+		switch ($type) {
 			case 'discuss':
 				return ' discussion';
 		}
@@ -85,13 +90,13 @@ class t7contrib {
 	 * @return string Action words (defaults to [type]ed) if unknown type
 	 */
 	public static function ActionWords($type) {
-		switch($type) {
+		switch ($type) {
 			case 'comment':
 				return 'commented on';
 			case 'guide':
 				return 'posted guide';
 		}
-		if(substr($type, -1) == 'e')
+		if (substr($type, -1) == 'e')
 			return $type . 'd';
 		return $type . 'ed';
 	}
