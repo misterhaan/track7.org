@@ -13,15 +13,6 @@ create table photos (
 	storymd text not null comment 'description of this photo in markdown (for editing)'
 );
 
-create table photos_taglinks (
-	tag smallint unsigned not null,
-	photo smallint unsigned not null,
-	primary key (tag, photo),
-	key (photo),
-	foreign key (tag) references photos_tags(id) on delete cascade on update cascade,
-	foreign key (photo) references photos(id) on delete cascade on update cascade
-);
-
 create table photos_comments (
 	id smallint unsigned primary key auto_increment,
 	photo smallint unsigned not null comment 'photo this comment was posted to',
