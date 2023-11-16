@@ -13,7 +13,10 @@ class TagApi extends Api {
 	public static function GetEndpointDocumentation(): array {
 		$endpoints = [];
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'list', 'retrieves the tags used by the specified subsite, in order of most-recently used.');
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'list', 'retrieves basic information on the tags used by the specified subsite, in order of most-recently used.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('subsite', 'string', 'specify the subsite to list tags for.', true);
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'stats', 'retrieves all information on the tags used by the specified subsite, in order of most-recently used.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('subsite', 'string', 'specify the subsite to list tags for.', true);
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('PUT', 'description', 'updates the description of a tag to the html provided as the request body.  only available to administrators.');
@@ -33,6 +36,14 @@ class TagApi extends Api {
 			self::NotFound('subsite must be specified.');
 		self::RequireDatabase();
 		self::Success(TagFrequency::List(self::$db, $subsite));
+	}
+
+	protected static function GET_stats(array $params): void {
+		$subsite = array_shift($params);
+		if (!$subsite)
+			self::NotFound('subsite must be specified.');
+		self::RequireUser();
+		self::Success(TagStatistics::List(self::$db, self::$user, $subsite));
 	}
 
 	/**

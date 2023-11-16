@@ -142,7 +142,7 @@ class ActiveTag extends Tag {
 <?php
 	}
 
-	public static function UpdateDescription(mysqli $db, string $subsite, string $name, string $description) {
+	public static function UpdateDescription(mysqli $db, string $subsite, string $name, string $description): void {
 		try {
 			$update = $db->prepare('update tag set description=? where subsite=? and name=? limit 1');
 			$update->bind_param('sss', $description, $subsite, $name);
@@ -161,7 +161,7 @@ class TagFrequency extends Tag {
 		$this->Count = $count;
 	}
 
-	public static function List(mysqli $db, string $subsite) {
+	public static function List(mysqli $db, string $subsite): array {
 		try {
 			$select = $db->prepare('select tag as name, count from tagusage where count>1 and subsite=? order by lastused desc');
 			$select->bind_param('s', $subsite);
@@ -170,6 +170,35 @@ class TagFrequency extends Tag {
 			$tags = [];
 			while ($select->fetch())
 				$tags[] = new TagFrequency($name, $count);
+			return $tags;
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException("error looking up $subsite tags", $mse);
+		}
+	}
+}
+
+class TagStatistics extends Tag {
+	public string $Description;
+	public int $Count;
+	public TimeTagData $LastUsed;
+
+	public function __construct(CurrentUser $user, string $name, string $description, int $count, int $lastUsed) {
+		$this->Name = $name;
+		$this->Description = $description;
+		$this->Count = $count;
+		require_once 'formatDate.php';
+		$this->LastUsed = new TimeTagData($user, 'ago', $lastUsed, FormatDate::Long);
+	}
+
+	public static function List(mysqli $db, CurrentUser $user, string $subsite): array {
+		try {
+			$select = $db->prepare('select t.name, t.description, u.count, unix_timestamp(u.lastused) from tag as t left join tagusage as u on u.tag=t.name and u.subsite=t.subsite where t.subsite=? order by lastused desc');
+			$select->bind_param('s', $subsite);
+			$select->execute();
+			$select->bind_result($name, $description, $count, $lastused);
+			$tags = [];
+			while ($select->fetch())
+				$tags[] = new TagStatistics($user, $name, $description, $count, $lastused);
 			return $tags;
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException("error looking up $subsite tags", $mse);

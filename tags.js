@@ -10,24 +10,30 @@ $(function() {
 		computed: {
 			prefix: function() {
 				switch(this.type) {
-					case "blog":  return "showing blog entries";
+					case "blog": return "showing blog entries";
 					case "guide": return "showing guides dealing with";
-					default:      return "";
+					default: return "";
 				}
 			},
 			postfix: function() {
 				switch(this.type) {
-					case "blog":  return "go back to all entries.";
+					case "blog": return "go back to all entries.";
 					case "guide": return "go back to all guides.";
-					default:      return "";
+					default: return "";
 				}
 			},
 			urlPrefix: function() {
 				switch(this.type) {
-					case "blog":   return "/bln/";
-					case "guide":  return "/guides/";
+					case "blog": return "/bln/";
+					case "guide": return "/guides/";
 					case "photos": return "/album/";
-					default:       return "/" + this.type + "/";
+					default: return "/" + this.type + "/";
+				}
+			},
+			subsite() {
+				switch(this.type) {
+					case "photos": return 'album';
+					default: return '';  // not migrated yet
 				}
 			}
 		},
@@ -36,13 +42,19 @@ $(function() {
 				this.type = type;
 				this.loading = true;
 				this.tags = [];
-				$.get("/api/tags/fullList", {type: type}, result => {
-					if(!result.fail)
-						this.tags = result.tags.map(t => $.extend(t, {editing: false}));
-					else
-						alert(result.message);
-					this.loading = false;
-				}, "json");
+				if(this.subsite)
+					$.get("/api/tag.php/stats/" + this.subsite)
+						.done(result => {
+							this.tags = result.map(t => { return { name: t.Name, count: t.Count, lastused: { datetime: t.LastUsed.DateTime, display: t.LastUsed.Display, title: t.LastUsed.Tooltip }, description: t.Description, editing: false }; });
+						});
+				else
+					$.get("/api/tags/fullList", { type: type }, result => {
+						if(!result.fail)
+							this.tags = result.tags.map(t => $.extend(t, { editing: false }));
+						else
+							alert(result.message);
+						this.loading = false;
+					}, "json");
 			},
 			Edit: function(tag) {
 				tag.editing = true;
@@ -57,14 +69,27 @@ $(function() {
 				this.descriptionedit = false;
 			},
 			Save: function(tag) {
-				$.post("/api/tags/setdesc", {type: this.type, id: tag.id, description: this.descriptionedit}, result => {
-					if(!result.fail) {
+				if(this.subsite)
+					$.ajax({
+						url: "/api/tag.php/description/" + this.subsite + "/" + tag.name,
+						type: "PUT",
+						data: this.descriptionedit
+					}).done(() => {
 						tag.description = this.descriptionedit;
 						this.descriptionedit = false;
 						tag.editing = false;
-					} else
-						alert(result.message);
-				}, "json");
+					}).fail(request => {
+						alert(request.responseText);
+					});
+				else
+					$.post("/api/tags/setdesc", { type: this.type, id: tag.id, description: this.descriptionedit }, result => {
+						if(!result.fail) {
+							tag.description = this.descriptionedit;
+							this.descriptionedit = false;
+							tag.editing = false;
+						} else
+							alert(result.message);
+					}, "json");
 			}
 		}
 	});
