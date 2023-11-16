@@ -8,14 +8,22 @@ class PhotoTransition extends TransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$missing = self::$db->query('select 1 from photos left join post on post.subsite=\'album\' and post.url=concat(\'/album/\', photos.url) where post.id is null limit 1');
-		if ($missing->fetch_column())
-			self::CopyPhotosToPost();
-		else {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from photos left join post on post.subsite=\'album\' and post.url=concat(\'/album/\', photos.url) where post.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyPhotosToPost();
+			else {
 ?>
-			<p>all old photos exist in new <code>post</code> table.</p>
+				<p>all old photos exist in new <code>post</code> table.</p>
+			<?php
+				self::CheckPhotoTable();
+			}
+		} else {
+			?>
+			<p>old photos table no longer exists.</p>
 		<?php
-			self::CheckPhotoTable();
+			self::Done();
 		}
 	}
 
@@ -58,7 +66,7 @@ class PhotoTransition extends TransitionPage {
 			?>
 			<p>old photo tags table no longer exists.</p>
 			<?php
-			self::Done();
+			self::CheckCommentTriggers();
 		}
 	}
 
@@ -98,21 +106,30 @@ class PhotoTransition extends TransitionPage {
 		if ($exists->fetch_column()) {
 		?>
 			<p>new <code>comment</code> table exists.</p>
-		<?php
+			<?php
 			self::CheckCommentRows();
 		} else
 			self::CreateCommentTable();
 	}
 
 	private static function CheckCommentRows(): void {
-		$missing = self::$db->query('select 1 from photos_comments as pc left join photos as op on op.id=pc.photo left join photo as ph on ph.id=op.url left join comment as c on c.post=ph.post and c.instant=from_unixtime(pc.posted) where c.id is null limit 1');
-		if ($missing->fetch_column())
-			self::CopyPhotoComments();
-		else {
-		?>
-			<p>all old photo comments exists in new <code>comment</code> table.</p>
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_comments\' limit 1');
+		if ($exists->fetch_column()) {
+
+			$missing = self::$db->query('select 1 from photos_comments as pc left join photos as op on op.id=pc.photo left join photo as ph on ph.id=op.url left join comment as c on c.post=ph.post and c.instant=from_unixtime(pc.posted) where c.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyPhotoComments();
+			else {
+			?>
+				<p>all old photo comments exists in new <code>comment</code> table.</p>
+			<?php
+				self::CheckOldTagLinks();
+			}
+		} else {
+			?>
+			<p>old photo comments table no longer exists.</p>
 		<?php
-			self::CheckOldTagLinks();
+			self::CheckOldPhotos();
 		}
 	}
 
@@ -121,6 +138,9 @@ class PhotoTransition extends TransitionPage {
 		if ($exists->fetch_column())
 			self::DeleteOldTagLinks();
 		else {
+		?>
+			<p>old photo tagging table no longer exists.</p>
+		<?php
 			self::CheckOldTags();
 		}
 	}
@@ -130,6 +150,69 @@ class PhotoTransition extends TransitionPage {
 		if ($exists->fetch_column())
 			self::DeleteOldTags();
 		else {
+		?>
+			<p>old photo tags table no longer exists.</p>
+		<?php
+			self::CheckCommentTriggers();
+		}
+	}
+
+	private static function CheckCommentTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'photos_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteCommentTriggers();
+		else {
+		?>
+			<p>old photo comment triggers no longer exists.</p>
+		<?php
+			self::CheckPhotoTriggers();
+		}
+	}
+
+	private static function CheckPhotoTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'photos\' limit 1');
+		if ($exists->fetch_column())
+			self::DeletePhotoTriggers();
+		else {
+		?>
+			<p>old photo triggers no longer exists.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckContributions(): void {
+		$exists = self::$db->query('select 1 from contributions where srctbl=\'photos\' or srctbl=\'photos_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteContributions();
+		else {
+		?>
+			<p>photo contributions no longer exist.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckOldComments(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldComments();
+		else {
+		?>
+			<p>old photo comments table no longer exists.</p>
+		<?php
+			self::CheckOldPhotos();
+		}
+	}
+
+	private static function CheckOldPhotos(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldPhotos();
+		else {
+		?>
+			<p>old photos table no longer exists.</p>
+		<?php
 			self::Done();
 		}
 	}
@@ -204,6 +287,44 @@ class PhotoTransition extends TransitionPage {
 		self::$db->real_query('drop table photos_tags');
 	?>
 		<p>deleted old photo tag table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteCommentTriggers(): void {
+		self::$db->real_query('drop trigger if exists photo_comment_added');
+		self::$db->real_query('drop trigger if exists photo_comment_changed');
+		self::$db->real_query('drop trigger if exists photo_comment_deleted');
+	?>
+		<p>deleted old photo comment triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeletePhotoTriggers(): void {
+		self::$db->real_query('drop trigger if exists photo_added');
+		self::$db->real_query('drop trigger if exists photo_changed');
+	?>
+		<p>deleted old photo triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteContributions(): void {
+		self::$db->real_query('delete from contributions where srctbl=\'photos\' or srctbl=\'photos_comments\'');
+	?>
+		<p>deleted old photo contributions. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldComments(): void {
+		self::$db->real_query('drop table photos_comments');
+	?>
+		<p>deleted old photo comments table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldPhotos(): void {
+		self::$db->real_query('drop table photos');
+	?>
+		<p>deleted old photos table. refresh the page to take the next step.</p>
 	<?php
 	}
 

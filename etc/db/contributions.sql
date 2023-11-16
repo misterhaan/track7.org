@@ -1,8 +1,8 @@
 create table contributions (
-	srctbl enum('blog_comments', 'blog_entries', 'guides', 'guide_comments', 'photos', 'photos_comments', 'art', 'art_comments', 'lego_models', 'lego_comments', 'stories', 'stories_comments', 'code_vs_releases', 'code_vs_comments', 'code_web_scripts', 'code_web_comments', 'update_messages', 'update_comments', 'forum_replies') not null comment 'name of the table this activity is fully stored in',
+	srctbl enum('blog_comments', 'blog_entries', 'guides', 'guide_comments', 'art', 'art_comments', 'lego_models', 'lego_comments', 'stories', 'stories_comments', 'code_vs_releases', 'code_vs_comments', 'code_web_scripts', 'code_web_comments', 'update_messages', 'update_comments', 'forum_replies') not null comment 'name of the table this activity is fully stored in',
 	id smallint unsigned not null comment 'id of this activity in srctbl',
 	primary key(srctbl, id),
-	conttype enum('comment', 'guide', 'post', 'photo', ' art', 'lego', 'story', 'code', 'update', 'discuss'),
+	conttype enum('comment', 'guide', 'post', 'art', 'lego', 'story', 'code', 'update', 'discuss'),
 	posted int not null,
 	key(posted),
 	url varchar(32) not null default '' comment 'url to this contribution (blank for site updates)',
@@ -177,50 +177,3 @@ where srctbl='guide_comments' and id=new.id;
 
 create trigger guide_comment_deleted after delete on guide_comments for each row
 delete from contributions where srctbl='guide_comments' and id=old.id;
-
-create trigger photo_added after insert on photos for each row
-insert into contributions set
-	srctbl='photos',
-	id=new.id,
-	conttype='photo',
-	posted=new.posted,
-	url=concat('/album/', new.url, '/'),
-	author=1,
-	title=new.caption,
-	preview=concat('<p><img class=photo src="/album/photos/', new.url, '.jpeg"></p>'),
-	hasmore=1;
-
-delimiter ;;
-create trigger photo_changed after update on photos for each row
-begin
-	update contributions set
-		title=new.caption
-	where srctbl='photos' and id=new.id;
-	update contributions set
-		title=new.caption
-	where srctbl='photos_comments' and id in (select * from (select c.id from photos_comments as c where c.photo=new.id) as cl);
-end;;
-
-drop trigger photo_comment_added;
-create trigger photo_comment_added after insert on photos_comments for each row
-insert into contributions set
-	srctbl='photos_comments',
-	id=new.id,
-	conttype='comment',
-	posted=new.posted,
-	url=concat('/album/', (select url from photos where id=new.photo), '#comments'),
-	author=new.user,
-	authorname=new.name,
-	authorurl=new.contacturl,
-	title=(select caption from photos where id=new.photo),
-	preview=left(new.html, locate('</p>', new.html) + 3),
-	hasmore=length(new.html)-length(replace(new.html, '</p>', ''))>4;
-
-create trigger photo_comment_changed after update on photos_comments for each row
-update contributions set
-	preview=left(new.html, locate('</p>', new.html) + 3),
-	hasmore=length(new.html)-length(replace(new.html, '</p>', ''))>4
-where srctbl='photos_comments' and id=new.id;
-
-create trigger photo_comment_deleted after delete on photos_comments for each row
-delete from contributions where srctbl='photos_comments' and id=old.id;
