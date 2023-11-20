@@ -1,7 +1,4 @@
 <?php
-
-use FFI\ParserException;
-
 require_once dirname(__DIR__) . '/etc/class/api.php';
 require_once 'comment.php';
 
