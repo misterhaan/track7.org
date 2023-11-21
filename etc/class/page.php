@@ -24,6 +24,7 @@ abstract class Page extends Responder {
 		self::$importmap['autosize'] = '/autosize.esm.js';
 		self::$importmap['tag'] = '/tag.js';
 		self::$importmap['comment'] = '/comment.js';
+		self::$importmap['vote'] = '/vote.js';
 		self::$importmap['validate'] = '/validate.js';
 		self::Send();
 	}
@@ -76,6 +77,10 @@ abstract class Page extends Responder {
 						static::MainContent();
 					} catch (DetailedException $de) {
 						self::DetailedError($de);
+					} catch (mysqli_sql_exception $mse) {
+						self::DetailedError(DetailedException::FromMysqliException('database error.', $mse));
+					} catch (Exception $e) {
+						self::DetailedError($e->getMessage());
 					}
 				?>
 			</main>
@@ -94,7 +99,7 @@ abstract class Page extends Responder {
 	 */
 	protected static function ShowTagCloud($pluralName): void {
 	?>
-		<nav class="tagcloud" data-plural-name="<?= $pluralName; ?>"></nav>
+		<nav class=tagcloud data-plural-name="<?= $pluralName; ?>"></nav>
 		<?php
 	}
 
@@ -118,6 +123,24 @@ abstract class Page extends Responder {
 	protected static function ShowComments(int $post): void {
 		?>
 		<section id=comments data-post=<?= $post; ?>></section>
+	<?php
+	}
+
+	protected static function ShowVoteWidget(int $post, int $vote, string $prompt): void {
+	?>
+		<p>
+			<?= $prompt; ?>
+			<span id=vote <?= $vote >= 1 ? 'class=voted ' : ''; ?>data-post=<?= $post; ?> data-vote=1 title="one star — bad">
+				<span <?= $vote >= 2 ? 'class=voted ' : ''; ?>data-vote=2 title="two stars — below average">
+					<span <?= $vote >= 3 ? 'class=voted ' : ''; ?>data-vote=3 title="three stars — average">
+						<span <?= $vote >= 4 ? 'class=voted ' : ''; ?>data-vote=4 title="four stars — above average">
+							<span <?= $vote >= 5 ? 'class=voted ' : ''; ?>data-vote=5 title="five stars — great">
+							</span>
+						</span>
+					</span>
+				</span>
+			</span>
+		</p>
 	<?php
 	}
 
