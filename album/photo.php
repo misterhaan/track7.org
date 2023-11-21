@@ -16,9 +16,11 @@ class AlbumPhoto extends Page {
 			self::Redirect(isset($_GET['photo']) && $_GET['photo'] ? $_GET['photo'] : '');
 		}
 		self::$tag = $tag ? $tag->Name : null;
+
 		self::$photo = Photo::FromQueryString(self::RequireDatabase());
 		if (!self::$photo)
 			self::NotFound('404 photo not found', '<p>sorry, we don’t have a photo by that name. try picking one from <a href=' . dirname($_SERVER['SCRIPT_NAME']) . '>the gallery</a>.</p>');
+
 		$title = self::$photo->Title;
 		if (self::$tag)
 			$title .= ' - ' . self::$tag;
@@ -27,7 +29,7 @@ class AlbumPhoto extends Page {
 
 	protected static function MainContent(): void {
 ?>
-		<h1><?= self::$photo->Title; ?></h1>
+		<h1><?= htmlspecialchars(self::$photo->Title); ?></h1>
 	<?php
 		if (self::HasAdminSecurity())
 			self::ShowAdminActions();
@@ -102,14 +104,14 @@ class AlbumPhoto extends Page {
 	private static function FindPrevNextTagged(): void {
 		self::$prevNext = new PrevNext();
 
-		$select = self::$db->prepare('select ps.title, ps.url from post_tag as pt left join post as ps on ps.id=pt.post where pt.tag=? and ps.instant<from_unixtime(?) order by ps.instant desc limit 1');
+		$select = self::$db->prepare('select ps.title, ps.url from post_tag as pt left join post as ps on ps.id=pt.post where pt.tag=? and ps.instant<from_unixtime(?) and ps.subsite=\'album\' order by ps.instant desc limit 1');
 		$select->bind_param('si', self::$tag, self::$photo->Instant);
 		$select->execute();
 		$select->bind_result($title, $url);
 		while ($select->fetch())
 			self::$prevNext->Prev = new TitledLink($title, $url);
 
-		$select = self::$db->prepare('select ps.title, ps.url from post_tag as pt left join post as ps on ps.id=pt.post where pt.tag=? and ps.instant>from_unixtime(?) order by ps.instant limit 1');
+		$select = self::$db->prepare('select ps.title, ps.url from post_tag as pt left join post as ps on ps.id=pt.post where pt.tag=? and ps.instant>from_unixtime(?) and ps.subsite=\'album\' order by ps.instant limit 1');
 		$select->bind_param('si', self::$tag, self::$photo->Instant);
 		$select->execute();
 		$select->bind_result($title, $url);
@@ -120,14 +122,14 @@ class AlbumPhoto extends Page {
 	private static function FindPrevNextAll(): void {
 		self::$prevNext = new PrevNext();
 
-		$select = self::$db->prepare('select title, url from post where instant<from_unixtime(?) order by instant desc limit 1');
+		$select = self::$db->prepare('select title, url from post where instant<from_unixtime(?) and subsite=\'album\' order by instant desc limit 1');
 		$select->bind_param('i', self::$photo->Instant);
 		$select->execute();
 		$select->bind_result($title, $url);
 		while ($select->fetch())
 			self::$prevNext->Prev = new TitledLink($title, $url);
 
-		$select = self::$db->prepare('select title, url from post where instant>from_unixtime(?) order by instant limit 1');
+		$select = self::$db->prepare('select title, url from post where instant>from_unixtime(?) and subsite=\'album\' order by instant limit 1');
 		$select->bind_param('i', self::$photo->Instant);
 		$select->execute();
 		$select->bind_result($title, $url);
@@ -178,7 +180,6 @@ class PrevNext {
 	public ?TitledLink $Prev = null;
 	public ?TitledLink $Next = null;
 }
-
 
 /**
  * Pairing of a title and a URL
