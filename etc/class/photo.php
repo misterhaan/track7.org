@@ -117,7 +117,7 @@ class EditPhoto extends Photo {
 		return null;
 	}
 
-	public static function FromPOST(CurrentUser $user) {
+	public static function FromPOST(CurrentUser $user): EditPhoto {
 		if (!isset($_POST['id'], $_POST['title'], $_POST['story']))
 			throw new DetailedException('id, title, and story are required');
 		if (!($id = trim($_POST['id'])))
@@ -152,7 +152,7 @@ class EditPhoto extends Photo {
 				return new ValidationResult('invalid', "“{$newID}” already in use by $title.");
 			return new ValidationResult('valid');
 		} catch (mysqli_sql_exception $mse) {
-			throw DetailedException::FromMysqliException('error checking photo ID', $mse);
+			throw DetailedException::FromMysqliException('error checking photo id', $mse);
 		}
 	}
 
