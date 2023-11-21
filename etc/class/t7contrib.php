@@ -34,9 +34,13 @@ class t7contrib {
 	 */
 	public static function GetUser($userid, $before = false, $limit = 12) {
 		global $db;
-		$sql = 'select conttype, posted, url, title from contributions where author=\'' . +$userid . '\'';
+		$sql = 'select * from ('
+			. 'select conttype, posted, url, title from contributions where author=\'' . +$userid . '\' union all '
+			. 'select \'comment\' as conttype, unix_timestamp(c.instant) as posted, concat(p.url, \'#comments\') as url, p.title from comment as c left join post as p on p.id=c.post where c.user=\'' . +$userid . '\' union all '
+			. 'select case p.subsite when \'album\' then \'photo\' else p.subsite end as conttype, unix_timestamp(p.instant) as posted, p.url, p.title from post as p where p.author=\'' . +$userid . '\''
+			. ') as allcontributions';
 		if ($before !== false)
-			$sql .= ' and posted<' . +$before;
+			$sql .= ' where posted<' . +$before;
 		$sql .=	' order by posted desc limit ' . +$limit;
 		return $db->query($sql);
 	}
