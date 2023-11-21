@@ -191,12 +191,12 @@ class EditPhoto extends Photo {
 		try {
 			$db->begin_transaction();
 
-			require_once 'formatText.php';
 			$insert = $db->prepare('insert into post (instant, title, subsite, url, author, preview, hasmore) values (now(), ?, \'album\', concat(\'/album/\', ?), 1, concat(\'<p><img class=photo src="/album/photos/\', ?, \'.jpeg"></p>\'), 1)');
 			$insert->bind_param('sss', $this->Title, $this->ID, $this->ID);
 			$insert->execute();
 			$this->Post = $db->insert_id;
 
+			require_once 'formatText.php';
 			$html = FormatText::Markdown($this->Story);
 			$insert = $db->prepare('insert into photo (id, post, youtube, taken, year, story, storymd) values (?, ?, ?, from_unixtime(?), ?, ?, ?)');
 			$insert->bind_param('sisiiss', $this->ID, $this->Post, $this->Youtube, $this->Taken, $this->Year, $html, $this->Story);
