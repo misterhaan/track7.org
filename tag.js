@@ -222,3 +222,17 @@ export const TagsField = {
 		</span>
 	`
 };
+
+export function FindAddedTags(toTags, fromTags) {
+	if(toTags == fromTags)
+		return "";
+	if(fromTags == "")
+		return toTags;
+	const tags = toTags.split(",");
+	const refTags = fromTags.split(",");
+	const ret = [];
+	for(const tag of tags)
+		if(refTags.indexOf(tag) == -1)
+			ret.push(tag);
+	return ret.join(",");
+}

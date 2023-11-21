@@ -1,8 +1,8 @@
 import "jquery";
-import { createApp, watch } from 'vue';
+import { createApp } from 'vue';
 import autosize from "autosize";
 import { NameToUrl, ValidatingField } from "validate";
-import { TagsField } from "tag";
+import { TagsField, FindAddedTags } from "tag";
 
 createApp({
 	data() {
@@ -10,7 +10,7 @@ createApp({
 			photo: {},
 			image: null,
 			invalidFields: [],
-			saving: false,
+			saving: false
 		};
 	},
 	computed: {
@@ -21,7 +21,7 @@ createApp({
 			return this.photo.ID || this.defaultUrl;
 		},
 		canSave: function() {
-			return !this.saving && this.photo.Title && this.invalidFields <= 0 && this.photo.StoryMarkdown && (this.image || this.id == this.effectiveUrl);
+			return !this.saving && this.photo.Title && this.invalidFields.length <= 0 && this.photo.StoryMarkdown && (this.image || this.id);
 		}
 	},
 	created: function() {
@@ -136,17 +136,3 @@ createApp({
 }).component("ValidatingField", ValidatingField)
 	.component("TagsField", TagsField)
 	.mount("#editphoto");
-
-function FindAddedTags(toTags, fromTags) {
-	if(toTags == fromTags)
-		return "";
-	if(fromTags == "")
-		return toTags;
-	const tags = toTags.split(",");
-	const refTags = fromTags.split(",");
-	const ret = [];
-	for(const tag of tags)
-		if(refTags.indexOf(tag) == -1)
-			ret.push(tag);
-	return ret.join(",");
-}
