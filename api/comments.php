@@ -162,9 +162,8 @@ class commentsApi extends t7api {
 		global $db, $user;
 		$oldest = +$_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
 		if ($cs = $db->prepare('select * from (select c.srctbl, c.id, c.title, c.url, c.posted, c.author as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.authorname, c.authorurl, '
-			. 'coalesce(a.markdown, b.markdown, cv.markdown, cw.markdown, g.markdown, l.markdown, s.markdown, uc.markdown) as markdown, coalesce(a.html, b.html, cv.html, cw.html, g.html, l.html, s.html, uc.html) as html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
-			'\' left join art_comments as a on a.id=c.id and c.srctbl=\'art_comments\' '
-			. 'left join blog_comments as b on b.id=c.id and c.srctbl=\'blog_comments\' '
+			. 'coalesce(b.markdown, cv.markdown, cw.markdown, g.markdown, l.markdown, s.markdown, uc.markdown) as markdown, coalesce(b.html, cv.html, cw.html, g.html, l.html, s.html, uc.html) as html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
+			'\' left join blog_comments as b on b.id=c.id and c.srctbl=\'blog_comments\' '
 			. 'left join code_vs_comments as cv on cv.id=c.id and c.srctbl=\'code_vs_comments\' '
 			. 'left join code_web_comments as cw on cw.id=c.id and c.srctbl=\'code_web_comments\' '
 			. 'left join guide_comments as g on g.id=c.id and c.srctbl=\'guide_comments\' '
@@ -320,9 +319,8 @@ class commentsApi extends t7api {
 		if ($userid = +$_GET['userid']) {
 			$oldest = +$_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
 			if ($cs = $db->prepare('select * from (select c.srctbl, c.id, c.title, c.url, c.posted, c.author as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.authorname, c.authorurl, '
-				. 'coalesce(a.markdown, b.markdown, cv.markdown, cw.markdown, g.markdown, l.markdown, s.markdown, uc.markdown) as markdown, coalesce(a.html, b.html, cv.html, cw.html, g.html, l.html, s.html, uc.html) as html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
-				'\' left join art_comments as a on a.id=c.id and c.srctbl=\'art_comments\' '
-				. 'left join blog_comments as b on b.id=c.id and c.srctbl=\'blog_comments\' '
+				. 'coalesce(b.markdown, cv.markdown, cw.markdown, g.markdown, l.markdown, s.markdown, uc.markdown) as markdown, coalesce(b.html, cv.html, cw.html, g.html, l.html, s.html, uc.html) as html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
+				'\' left join blog_comments as b on b.id=c.id and c.srctbl=\'blog_comments\' '
 				. 'left join code_vs_comments as cv on cv.id=c.id and c.srctbl=\'code_vs_comments\' '
 				. 'left join code_web_comments as cw on cw.id=c.id and c.srctbl=\'code_web_comments\' '
 				. 'left join guide_comments as g on g.id=c.id and c.srctbl=\'guide_comments\' '

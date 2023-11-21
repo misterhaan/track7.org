@@ -35,7 +35,7 @@ class PhotoTransition extends TransitionPage {
 		<?php
 			self::CheckPhotoRows();
 		} else
-			self::CreatePhotoTable();
+			self::CreateTable('photo');
 	}
 
 	private static function CheckPhotoRows(): void {
@@ -85,34 +85,12 @@ class PhotoTransition extends TransitionPage {
 		} else {
 			?>
 			<p>old photo tagging table no longer exists.</p>
-		<?php
+			<?php
 			self::CheckOldTags();
 		}
 	}
 
-	private static function CheckTagUsageView(): void {
-		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'tagusage\' limit 1');
-		if ($exists->fetch_column()) {
-		?>
-			<p>new <code>tagusage</code> view exists.</p>
-		<?php
-			self::CheckCommentTable();
-		} else
-			self::CreateTagUsageView();
-	}
-
-	private static function CheckCommentTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'comment\' limit 1');
-		if ($exists->fetch_column()) {
-		?>
-			<p>new <code>comment</code> table exists.</p>
-			<?php
-			self::CheckCommentRows();
-		} else
-			self::CreateCommentTable();
-	}
-
-	private static function CheckCommentRows(): void {
+	protected static function CheckCommentRows(): void {
 		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_comments\' limit 1');
 		if ($exists->fetch_column()) {
 
@@ -163,7 +141,7 @@ class PhotoTransition extends TransitionPage {
 			self::DeleteCommentTriggers();
 		else {
 		?>
-			<p>old photo comment triggers no longer exists.</p>
+			<p>old photo comment triggers no longer exist.</p>
 		<?php
 			self::CheckPhotoTriggers();
 		}
@@ -175,7 +153,7 @@ class PhotoTransition extends TransitionPage {
 			self::DeletePhotoTriggers();
 		else {
 		?>
-			<p>old photo triggers no longer exists.</p>
+			<p>old photo triggers no longer exist.</p>
 		<?php
 			self::CheckContributions();
 		}
@@ -224,14 +202,6 @@ class PhotoTransition extends TransitionPage {
 	<?php
 	}
 
-	private static function CreatePhotoTable(): void {
-		$file = file_get_contents('../../etc/db/tables/photo.sql');
-		self::$db->real_query($file);
-	?>
-		<p>created <code>photo</code> table. refresh the page to take the next step.</p>
-	<?php
-	}
-
 	private static function CopyPhotosToPhoto(): void {
 		self::$db->real_query('insert into photo (id, post, youtube, taken, year, story, storymd) select ph.url, ps.id, ph.youtube, from_unixtime(ph.taken), ph.year, ph.story, ph.storymd from photos as ph left join post as ps on ps.url=concat(\'/album/\', ph.url) left join photo on photo.id=ph.url where photo.id is null');
 	?>
@@ -250,22 +220,6 @@ class PhotoTransition extends TransitionPage {
 		self::$db->real_query('insert into post_tag (post, tag) select ph.post, pt.name from photos_taglinks as pl left join photos as op on op.id=pl.photo left join photo as ph on ph.id=op.url left join photos_tags as pt on pt.id=pl.tag left join post_tag npt on npt.post=ph.post and npt.tag=pt.name where npt.post is null');
 	?>
 		<p>copied photo tagging into new <code>post_tag</code> table. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function CreateTagUsageView(): void {
-		$file = file_get_contents('../../etc/db/views/tagusage.sql');
-		self::$db->real_query($file);
-	?>
-		<p>created <code>tagusage</code> view. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function CreateCommentTable(): void {
-		$file = file_get_contents('../../etc/db/tables/comment.sql');
-		self::$db->real_query($file);
-	?>
-		<p>created <code>comment</code> table. refresh the page to take the next step.</p>
 	<?php
 	}
 

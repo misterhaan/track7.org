@@ -32,7 +32,7 @@ abstract class TransitionPage extends Page {
 	}
 
 	private static function CheckUserRows(): void {
-		// TODO:  check for all users to be migrated
+		throw new DetailedException('can’t check for all users since CheckUserRows() hasn’t been implemented');
 	}
 
 	private static function CheckUserRow(): void {
@@ -54,7 +54,7 @@ abstract class TransitionPage extends Page {
 		<?php
 			self::CheckSubsiteRow();
 		} else
-			self::CreateSubsiteTable();
+			self::CreateTable('subsite');
 	}
 
 	private static function CheckSubsiteRow(): void {
@@ -76,7 +76,7 @@ abstract class TransitionPage extends Page {
 		<?php
 			static::CheckPostRows();
 		} else
-			self::CreatePostTable();
+			self::CreateTable('post');
 	}
 
 	protected abstract static function CheckPostRows(): void;
@@ -89,7 +89,7 @@ abstract class TransitionPage extends Page {
 		<?php
 			static::CheckTagRows();
 		} else
-			self::CreateTagTable();
+			self::CreateTable('tag');
 	}
 
 	protected abstract static function CheckTagRows(): void;
@@ -102,22 +102,64 @@ abstract class TransitionPage extends Page {
 		<?php
 			static::CheckPostTagRows();
 		} else
-			self::CreatePostTagTable();
+			self::CreateTable('post_tag');
 	}
 
 	protected abstract static function CheckPostTagRows(): void;
 
+	protected static function CheckTagUsageView(): void {
+		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'tagusage\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>tagusage</code> view exists.</p>
+		<?php
+			self::CheckCommentTable();
+		} else
+			self::CreateTagUsageView();
+	}
+
+	private static function CheckCommentTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'comment\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>comment</code> table exists.</p>
+		<?php
+			static::CheckCommentRows();
+		} else
+			self::CreateTable('comment');
+	}
+
+	protected abstract static function CheckCommentRows(): void;
+
+	protected static function CheckVoteTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'vote\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>vote</code> table exists.</p>
+		<?php
+			self::CheckRatingView();
+		} else
+			self::CreateTable('vote');
+	}
+
+	protected static function CheckRatingView(): void {
+		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'rating\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>rating</code> view exists.</p>
+		<?php
+			static::CheckVoteRows();
+		} else
+			self::CreateRatingView();
+	}
+
+	protected static function CheckVoteRows(): void {
+		throw new DetailedException('votes not implemented for this transition.');
+	}
+
 	private static function UserSetupLink(): void {
 		?>
 		<p><a href=users.php>user migration</a> is not far enough along to start <?= self::$subsite->name; ?> migration.</p>
-	<?php
-	}
-
-	private static function CreateSubsiteTable(): void {
-		$file = file_get_contents('../../etc/db/tables/subsite.sql');
-		self::$db->real_query($file);
-	?>
-		<p>created <code>subsite</code> table. refresh the page to take the next step.</p>
 	<?php
 	}
 
@@ -131,27 +173,27 @@ abstract class TransitionPage extends Page {
 	<?php
 	}
 
-	private static function CreatePostTable(): void {
-		$file = file_get_contents('../../etc/db/tables/post.sql');
+	private static function CreateTagUsageView(): void {
+		$file = file_get_contents('../../etc/db/views/tagusage.sql');
 		self::$db->real_query($file);
 	?>
-		<p>created <code>post</code> table. refresh the page to take the next step.</p>
+		<p>created <code>tagusage</code> view. refresh the page to take the next step.</p>
 	<?php
 	}
 
-	private static function CreateTagTable(): void {
-		$file = file_get_contents('../../etc/db/tables/tag.sql');
+	private static function CreateRatingView(): void {
+		$file = file_get_contents('../../etc/db/views/rating.sql');
 		self::$db->real_query($file);
 	?>
-		<p>created <code>tag</code> table. refresh the page to take the next step.</p>
+		<p>created <code>rating</code> view. refresh the page to take the next step.</p>
 	<?php
 	}
 
-	private static function CreatePostTagTable(): void {
-		$file = file_get_contents('../../etc/db/tables/post_tag.sql');
+	protected static function CreateTable(string $name): void {
+		$file = file_get_contents("../../etc/db/tables/$name.sql");
 		self::$db->real_query($file);
 	?>
-		<p>created <code>post_tag</code> table. refresh the page to take the next step.</p>
+		<p>created <code><?= $name; ?></code> table. refresh the page to take the next step.</p>
 <?php
 	}
 }

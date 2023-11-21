@@ -3,6 +3,7 @@
 class Image {
 	private string $path;
 	private mixed $exif = null;
+	private mixed $size = null;
 
 	public function __construct($path) {
 		$this->path = $path;
@@ -20,8 +21,26 @@ class Image {
 		return $this->exif;
 	}
 
+	public function GetSize(): array|false {
+		if ($this->size == null)
+			$this->size = getimagesize($this->path);
+		return $this->size;
+	}
+
+	public function GetExtension(): string {
+		$this->GetSize();
+		switch ($this->size[2]) {
+			case IMAGETYPE_JPEG:
+				return 'jpeg';
+			case IMAGETYPE_PNG:
+				return 'png';
+			default:
+				return '';
+		}
+	}
+
 	public function SaveResized(string $type, array $destMap, bool $cropSquare = false): void {
-		$size = getimagesize($this->path);
+		$size = $this->GetSize();
 		$image = $this->ReadImageFile($type);
 		if (!$image)
 			throw new DetailedException('unable to read image file', $this->path);

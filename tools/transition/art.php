@@ -1,226 +1,378 @@
 <?php
-  define('TR_ART', 6);
-  define('STEP_COPYART', 1);
-  define('STEP_COPYCOVERS', 2);
-  define('STEP_TAGART', 3);
-  define('STEP_TAGCOVERS', 4);
-  define('STEP_COUNTTAGS', 5);
-  define('STEP_COPYCOVERCOMMENTS', 6);
-  define('STEP_COPYARTCOMMENTS', 7);
-  define('STEP_COPYVOTES', 8);
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
 
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-  $html = new t7html([]);
-  $html->Open('art migration');
-?>
-      <h1>art migration</h1>
-<?php
-  if(isset($_GET['dostep']))
-    switch($_GET['dostep']) {
-      case 'copyart':
-        if($db->real_query('insert into art (url, title, format, posted, deschtml) select id, id, (select id from image_formats where ext=\'png\' limit 1), adddate, replace(description,\'&nbsp;\',\' \') from track7_t7data.art'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYART . ', status=\'visual art migrated\' where id=' . TR_ART . ' and stepnum<' . STEP_COPYART);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copycovers':
-        if($db->real_query('insert into art (url, title, format, deschtml) select id, title, (select id from image_formats where ext=\'jpg\' limit 1), concat(\'<p>\',replace(coverart,\'&nbsp;\',\' \'),\'</p><p>\',replace(music,\'&nbsp;\',\' \')) from track7_t7data.compcds order by sort'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYCOVERS . ', status=\'cover art migrated\' where id=' . TR_ART . ' and stepnum<' . STEP_COPYCOVERS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'tagart':
-        if($db->real_query('insert into art_taglinks (tag, art) select t.id as tag, na.id as art from track7_t7data.art as oa left join art_tags as t on t.name=oa.type left join art as na on na.url=oa.id'))
-          $db->real_query('update transition_status set stepnum=' . STEP_TAGART . ', status=\'sketches and digital art tagged\' where id=' . TR_ART . ' and stepnum<' . STEP_TAGART);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'tagcovers':
-        if($db->real_query('insert into art_taglinks (tag, art) select t.id as tag, a.id as art from track7_t7data.compcds as c left join art_tags as t on t.name=\'cover\' left join art as a on a.url=c.id'))
-          $db->real_query('update transition_status set stepnum=' . STEP_TAGCOVERS . ', status=\'cover art tagged\' where id=' . TR_ART . ' and stepnum<' . STEP_TAGCOVERS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'counttags':
-        if($db->real_query('update art_tags as t set t.count=(select count(1) from art_taglinks as tl where tl.tag=t.id group by tl.tag), t.lastused=(select a.posted from art_taglinks as tl left join art as a on a.id=tl.art where tl.tag=t.id order by a.posted desc limit 1)'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COUNTTAGS . ', status=\'tag last used and count updated\' where id=' . TR_ART . ' and stepnum<' . STEP_COUNTTAGS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copycovercomments':
-        if($db->real_query('insert into art_comments (art, posted, user, name, contacturl, html) select a.id, c.instant, u.id, c.name, c.url, replace(c.comments, \'&nbsp;\', \' \') from track7_t7data.comments as c left join art as a on a.url=substr(c.page,9,length(c.page)-12) left join transition_users as u on u.olduid=c.uid where c.page like \'/art/cd/%\' order by c.instant'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYCOVERCOMMENTS . ', status=\'cover art comments copied\' where id=' . TR_ART . ' and stepnum<' . STEP_COPYCOVERCOMMENTS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copyartcomments':
-        if(isset($_POST['cid']) && isset($_POST['aid']) && is_array($_POST['cid']) && is_array($_POST['aid']) && count($_POST['cid']) == count($_POST['aid'])) {
-          $art = $comment = 0;
-          $ins = $db->prepare('insert into art_comments (art, posted, user, name, contacturl, html) select ?, c.instant, u.id, c.name, c.url, replace(c.comments,\'&nbsp;\',\' \') from track7_t7data.comments as c left join transition_users as u on u.olduid=c.uid where c.id=?');
-          $ins->bind_param('ii', $art, $comment);
-          for($i = 0; $i < count($_POST['cid']); $i++) {
-            $art = +$_POST['aid'][$i];
-            if($art) {
-              $comment = +$_POST['cid'][$i];
-              $ins->execute();
-            }
-          }
-          $ins->close();
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYARTCOMMENTS . ', status=\'sketch comments copied\' where id=' . TR_ART . ' and stepnum<' . STEP_COPYARTCOMMENTS);
-        } else
-          echo '<p class=error>form fields not present or misaligned.</p>';
-        break;
-      case 'copyvotes':
-        if($db->real_query('insert into art_votes (art, voter, ip, vote, posted) select a.id, u.id, inet_aton(v.ip), case v.vote when -3 then 1 when 3 then 5 else v.vote+3 end as vote, v.time from track7_t7data.votes as v left join track7_t7data.ratings as r on r.id=v.ratingid left join art as a on a.url=r.selector left join transition_users as u on u.olduid=v.uid where r.type=\'sketch\' or r.type=\'digital\' order by v.time'))
-          if($db->real_query('update art as a, (select art, round((sum(vote)+3)/(count(1)+1),2) as rating, count(1) as votes from art_votes group by art) as s set a.rating=s.rating, a.votes=s.votes where a.id=s.art'))
-            $db->real_query('update transition_status set stepnum=' . STEP_COPYVOTES . ', status=\'completed\' where id=\'' . TR_ART . '\' and stepnum<' . STEP_COPYVOTES);
-          else
-            echo '<pre><code>' . $db->error . '</code></pre>';
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-  }
+class ArtTransition extends TransitionPage {
+	public function __construct() {
+		self::$subsite = new Subsite('art', 'visual art', 'see sketches and digital artwork', 'arted');
+		parent::__construct();
+	}
 
-  if($status = $db->query('select stepnum, status from transition_status where id=' . TR_ART))
-    $status = $status->fetch_object();
+	protected static function CheckPostRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art\' limit 1');
+		if ($exists->fetch_column()) {
+			$hasNewColumn = self::$db->query('show columns from art like \'post\'');
+			if ($hasNewColumn->num_rows) {
 ?>
-      <h2>sketches and digital art</h2>
-<?php
-  if($status->stepnum < STEP_COPYART) {
-?>
-      <p>
-        the art migration begins with the visual art table, which contains
-        sketches and digital art.  make sure the art table, image_formats table
-        (with data), and triggers to update contributions (along with
-        contribution enum entries) have been created, then copy that art!
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=copyart">copy that art!</a></nav>
-<?php
-  } else {
-?>
-      <p>sketches and digital art have been migrated successfully.</p>
+				<p>new <code>art</code> table exists.</p>
+				<?php
+				self::CheckArtRows();
+			} else {
+				$missing = self::$db->query('select 1 from art left join post on post.subsite=\'art\' and post.url=concat(\'/art/\', art.url) where post.id is null limit 1');
+				if ($missing->fetch_column())
+					self::CopyArtToPost();
+				else {
+				?>
+					<p>all old art exist in new <code>post</code> table.</p>
+				<?php
+					self::CheckTagTable();
+				}
+			}
+		} else
+			self::CreateTable('art');
+	}
 
-      <h2>cover art</h2>
-<?php
-    if($status->stepnum < STEP_COPYCOVERS) {
-?>
-      <p>
-        cover art will be combined with the rest of the art.  this step has no
-        new requirements after the previous step.
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=copycovers">copy cover art!</a></nav>
-<?php
-    } else {
-?>
-      <p>cover art has been migrated successfully.</p>
+	protected static function CheckTagRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_tags\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from art_tags as ot left join tag as t on t.name=ot.name and t.subsite=\'art\' where t.name is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyArtTags();
+			else {
+				?>
+				<p>all old art tags exist in new <code>tag</code> table.</p>
+			<?php
+				self::CheckPostTagTable();
+			}
+		} else {
+			?>
+			<p>old art tags table no longer exists.</p>
+			<?php
+			self::CheckArtTable();
+		}
+	}
 
-      <h2>tags</h2>
-<?php
-      if($status->stepnum < STEP_TAGART) {
-?>
-      <p>
-        since sketches, digital art, and cover art are all combined now, they
-        need to be tagged to remember where they came from.  the art_tags table
-        should have the sketch, digital, and cover tags before taking this step.
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=tagart">tag that art!</a></nav>
-<?php
-      } elseif($status->stepnum < STEP_TAGCOVERS) {
-?>
-      <p>
-        since sketches, digital art, and cover art are all combined now, they
-        need to be tagged to remember where they came from.  now that the
-        sketches and digital art have been tagged, it’s time to tag the cover
-        art.
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=tagcovers">tag the covers!</a></nav>
-<?php
-      } else {
-?>
-      <p>sketches, digital art, and cover art have been tagged successfully.</p>
+	protected static function CheckPostTagRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_taglinks\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from art_taglinks as atl left join art as oa on oa.id=atl.art left join post as p on p.url=concat(\'/art/\', oa.url) left join art_tags as oat on oat.id=atl.tag left join post_tag as npt on npt.post=p.id and npt.tag=oat.name where npt.post is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyArtPostTags();
+			else {
+			?>
+				<p>all old art tagging exists in new <code>post_tag</code> table.</p>
+			<?php
+				self::CheckTagUsageView();
+			}
+		} else {
+			?>
+			<p>old art tagging table no longer exists.</p>
+			<?php
+			self::CheckOldTags();
+		}
+	}
 
-<?php
-        if($status->stepnum < STEP_COUNTTAGS) {
-?>
-      <p>
-        now that all the art is tagged, it’s time to update the count and last
-        used date for each tag.
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=counttags">count the tags!</a></nav>
-<?php
-        } else {
-?>
-      <h2>comments</h2>
-<?php
-          if($status->stepnum < STEP_COPYCOVERCOMMENTS) {
-?>
-      <p>
-        cover art was on separate pages, so migrating them is straightforward.
-        make sure the art_comments table and its triggers exist (also it must be
-        a srctbl option in contributions).
-      </p>
-      <nav class=calltoaction><a class="okay action" href="?dostep=copycovercomments">copy those comments!</a></nav>
-<?php
-          } else {
-?>
-      <p>cover art comments have been copied successfully.</p>
+	protected static function CheckCommentRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_comments\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from art_comments as ac left join art as oa on oa.id=ac.art left join post as p on p.url=concat(\'/art/\', oa.url) left join comment as c on c.post=p.id and c.instant=from_unixtime(ac.posted) where c.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyArtComments();
+			else {
+			?>
+				<p>all old art comments exists in new <code>comment</code> table.</p>
+			<?php
+				self::CheckVoteTable();
+			}
+		} else {
+			?>
+			<p>old art comments table no longer exists.</p>
+			<?php
+			self::CheckOldTagLinks();
+		}
+	}
 
-<?php
-            if($status->stepnum < STEP_COPYARTCOMMENTS) {
-?>
-      <p>
-        sketches and digital art were on just two pages for all the art of each
-        kind, so those comments need to be paired up with the sketch they’re
-        commenting on when possible.  others will be lost in time...
-      </p>
-<?php
-              if($comments = $db->query('select id, comments from track7_t7data.comments where page=\'/art/sketch.php\' order by instant'))
-                if($arts = $db->query('select id, title from art')) {
-                  $artopts = '<option value=0>(ignore)</option>';
-                  while($art = $arts->fetch_object())
-                    $artopts .= '<option value=' . +$art->id . '>' . htmlspecialchars($art->title) . '</option>';
-?>
-      <form method=post action="?dostep=copyartcomments">
-<?php
-                  while($comment = $comments->fetch_object()) {
-                    echo $comment->comments;
-?>
-        <input type=hidden name="cid[]" value="<?php echo $comment->id; ?>">
-        <select name="aid[]"><?php echo $artopts; ?></select>
-<?php
-                  }
-?>
-        <button>migrate art comments</button>
-      </form>
-<?php
-                }
-            } else {
-?>
-      <p>sketch comments have been copied successfully.</p>
+	protected static function CheckVoteRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_votes\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from art_votes as av left join art as oa on oa.id=av.art left join post as p on p.url=concat(\'/art/\', oa.url) left join vote as v on v.post=p.id and (av.voter>0 and v.user=av.voter or av.ip>0 and v.ip=av.ip) where v.vote is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyArtVotes();
+			else {
+			?>
+				<p>all old art votes exists in new <code>vote</code> table.</p>
+			<?php
+				self::CheckCommentTriggers();
+			}
+		} else {
+			?>
+			<p>old art tags table no longer exists.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
 
-      <h2>votes</h2>
+	private static function CheckCommentTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'art_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteCommentTriggers();
+		else {
+		?>
+			<p>old art comment triggers no longer exist.</p>
+		<?php
+			self::CheckArtTriggers();
+		}
+	}
+
+	private static function CheckArtTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'art\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteArtTriggers();
+		else {
+		?>
+			<p>old art triggers no longer exist.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckContributions(): void {
+		$exists = self::$db->query('select 1 from contributions where srctbl=\'art\' or srctbl=\'art_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteContributions();
+		else {
+		?>
+			<p>art contributions no longer exist.</p>
+		<?php
+			self::CheckOldVotes();
+		}
+	}
+
+	private static function CheckOldVotes(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_votes\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldVotes();
+		else {
+		?>
+			<p>old art tags table no longer exists.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckOldComments(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldComments();
+		else {
+		?>
+			<p>old art comments table no longer exists.</p>
+		<?php
+			self::CheckOldTagLinks();
+		}
+	}
+
+	private static function CheckOldTagLinks(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_taglinks\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldTagLinks();
+		else {
+		?>
+			<p>old art tagging table no longer exists.</p>
+		<?php
+			self::CheckOldTags();
+		}
+	}
+
+	private static function CheckOldTags(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_tags\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldTags();
+		else {
+		?>
+			<p>old art tags table no longer exists.</p>
+			<?php
+			self::CheckArtTable();
+		}
+	}
+
+	private static function CheckArtTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art\' limit 1');
+		if ($exists->fetch_column()) {
+			$hasNewColumn = self::$db->query('show columns from art like \'post\'');
+			if ($hasNewColumn->num_rows) {
+			?>
+				<p>new <code>art</code> table exists.</p>
+			<?php
+				self::CheckArtRows();
+			} else
+				self::RenameArtTable();
+		} else
+			self::CreateTable('art');
+	}
+
+	private static function CheckArtRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'oldart\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from oldart as oa left join art as a on a.id=oa.url where a.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyArt();
+			else {
+			?>
+				<p>all old art exist in new <code>art</code> table.</p>
+			<?php
+				self::CheckOldArtTable();
+			}
+		} else {
+			?>
+			<p>old art table no longer exists.</p>
+		<?php
+			self::CheckImageFormatTable();
+		}
+	}
+
+	private static function CheckOldArtTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'oldart\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldArtTable();
+		else {
+		?>
+			<p>old art table no longer exists.</p>
+		<?php
+			self::CheckImageFormatTable();
+		}
+	}
+
+	private static function CheckImageFormatTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'image_formats\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteImageFormatTable();
+		else {
+		?>
+			<p>old image format table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
+
+	private static function CopyArtToPost(): void {
+		self::$db->real_query('insert into post (instant, title, subsite, url, author, preview, hasmore) select from_unixtime(oa.posted), oa.title, \'art\', concat(\'/art/\', oa.url), 1, concat(\'<p><img class=art src="/art/img/\', oa.url, \'.\', f.ext , \'"></p>\'), true from art as oa left join image_formats as f on f.id=oa.format left join post on post.subsite=\'art\' and post.url=concat(\'/art/\', oa.url) where post.id is null');
+		?>
+		<p>copied art into new <code>post</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyArtTags(): void {
+		self::$db->real_query('insert into tag (name, subsite, description) select ot.name, \'art\', ot.description from art_tags as ot left join tag on tag.name=ot.name and tag.subsite=\'art\' where tag.name is null');
+	?>
+		<p>copied art tags into new <code>tag</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyArtPostTags(): void {
+		self::$db->real_query('insert into post_tag (post, tag) select p.id, oat.name from art_taglinks as atl left join art as oa on oa.id=atl.art join post as p on p.url=concat(\'/art/\', oa.url) left join art_tags as oat on oat.id=atl.tag left join post_tag as npt on npt.post=p.id and npt.tag=oat.name where npt.post is null');
+	?>
+		<p>copied art tagging into new <code>post_tag</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyArtComments(): void {
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(ac.posted), p.id, ac.user, ac.name, ac.contacturl, ac.html, ac.markdown from art_comments as ac left join art as oa on oa.id=ac.art left join post as p on p.url=concat(\'/art/\', oa.url) left join comment as c on c.post=p.id and c.instant=from_unixtime(ac.posted) where c.id is null');
+	?>
+		<p>copied art comments into new <code>comment</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyArtVotes(): void {
+		self::$db->query('insert into vote (post, user, ip, instant, vote) select p.id, av.voter, av.ip, from_unixtime(av.posted), av.vote from art_votes as av left join art as oa on oa.id=av.art left join post as p on p.url=concat(\'/art/\', oa.url) left join vote as v on v.post=p.id and (av.voter>0 and v.user=av.voter or av.ip>0 and v.ip=av.ip) where v.vote is null');
+	?>
+		<p>copied art votes into new <code>vote</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteCommentTriggers(): void {
+		self::$db->real_query('drop trigger if exists art_comment_added');
+		self::$db->real_query('drop trigger if exists art_comment_changed');
+		self::$db->real_query('drop trigger if exists art_comment_deleted');
+	?>
+		<p>deleted old art comment triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteArtTriggers(): void {
+		self::$db->real_query('drop trigger if exists art_added');
+		self::$db->real_query('drop trigger if exists art_changed');
+	?>
+		<p>deleted old art triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteContributions(): void {
+		self::$db->real_query('delete from contributions where srctbl=\'art\' or srctbl=\'art_comments\'');
+	?>
+		<p>deleted old art contributions. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldVotes(): void {
+		self::$db->real_query('drop table art_votes');
+	?>
+		<p>deleted old art votes table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldComments(): void {
+		self::$db->real_query('drop table art_comments');
+	?>
+		<p>deleted old art comments table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldTagLinks(): void {
+		self::$db->real_query('drop table art_taglinks');
+	?>
+		<p>deleted old art tagging table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldTags(): void {
+		self::$db->real_query('drop table art_tags');
+	?>
+		<p>deleted old art tags table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function RenameArtTable(): void {
+		self::$db->real_query('rename table art to oldart');
+	?>
+		<p>renamed old art table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyArt(): void {
+		self::$db->real_query('insert into art (id, post, ext, deviation, html, markdown) select oa.url, p.id, f.ext, oa.deviation, oa.deschtml, oa.descmd from oldart as oa left join post as p on p.url=concat(\'/art/\', oa.url) left join image_formats as f on f.id=oa.format left join art as a on a.id=oa.url where a.id is null');
+	?>
+		<p>copied art into new <code>art</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldArtTable(): void {
+		self::$db->real_query('drop table oldart');
+	?>
+		<p>deleted old art table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteImageFormatTable(): void {
+		self::$db->real_query('drop table image_formats');
+	?>
+		<p>deleted old image format table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function Done(): void {
+	?>
+		<p>done migrating art, at least for now!</p>
 <?php
-              if($status->stepnum < STEP_COPYVOTES) {
-?>
-      <p>
-        sketches and digital art have some votes, so bring forward their votes
-        and recalculate their ratings.
-      </p>
-      <nav class=calltoaction><a class="okay action" href="?dostep=copyvotes">copy those votes!</a></nav>
-<?php
-              } else {
-?>
-      <p>
-        all art votes have been copied and ratings recalculated.  we’re done
-        here!
-      </p>
-<?php
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  $html->Close();
-?>
+	}
+}
+new ArtTransition();

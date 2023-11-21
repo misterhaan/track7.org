@@ -10,7 +10,6 @@ create table subsite (
 -- ('bln', 'blog', 'read the blog', 'blogged'),
 -- ('guides', 'guides', 'learn how i’ve done things', 'guided'),
 -- ('lego', 'lego models', 'download instructions for custom lego models', 'legoed'),
--- ('art', 'visual art', 'see sketches and digital artwork', 'arted'),
 -- ('pen', 'stories', 'read short fiction and a poem', 'storied'),
 -- ('code', 'software', 'download free software with source code', 'coded'),
 -- ('forum', 'forum', 'join or start conversations', 'forumed');

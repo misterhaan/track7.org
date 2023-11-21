@@ -1,129 +1,201 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/page.php';
+require_once 'tag.php';
+require_once 'art.php';
 
-$tag = false;
-if(isset($_GET['tag']))
-	if($tag = $db->query('select id, name from art_tags where name=\'' . $db->escape_string($_GET['tag']) . '\' limit 1'))
-		if($tag = $tag->fetch_object())
-			;  // got a tag
-		else {  // tag not found, so try getting to the entry without the tag
-			header('Location: ' . t7format::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $_GET['name']));
-			die;
+class Artwork extends Page {
+	private const Subsite = 'art';
+	private static ?string $tag = null;
+	private static ?Art $art = null;
+	private static ?PrevNext $prevNext = null;
+
+	public function __construct() {
+		try {
+			$tag = Tag::FromQueryString(self::RequireDatabase(), self::Subsite);
+		} catch (Exception) {
+			self::Redirect(isset($_GET['art']) && $_GET['art'] ? $_GET['art'] : '');
 		}
+		self::$tag = $tag ? $tag->Name : null;
 
-$art = false;
+		self::$art = Art::FromQueryString(self::RequireDatabase(), self::RequireUser());
+		if (!self::$art)
+			self::NotFound('404 art not found', '<p>sorry, we don’t have art by that name. try picking one from <a href=' . dirname($_SERVER['SCRIPT_NAME']) . '>the gallery</a>.</p>');
 
-if(isset($_GET['art']) && $art = $db->query('select a.id, a.url, i.ext, a.title, a.posted, a.rating, a.votes, a.deviation, a.deschtml, v.vote from art as a left join image_formats as i on i.id=a.format left join art_votes as v on v.art=a.id and ' . ($user->IsLoggedIn() ? 'voter=\'' . +$user->ID . '\' ' : 'ip=inet_aton(\'' . $db->escape_string($_SERVER['REMOTE_ADDR']) . '\') ') . 'where url=\'' . $db->escape_string($_GET['art']) . '\' limit 1'))
-	$art = $art->fetch_object();
-if(!$art) {
-	header('HTTP/1.0 404 Not Found');
-	$html = new t7html([]);
-	$html->Open($tag ? 'not found - ' . $tag->name . ' - art' : 'not found - art');
-?>
-			<h1>404 art not found</h1>
+		$title = self::$art->Title;
+		if (self::$tag)
+			$title .= ' - ' . self::$tag;
+		parent::__construct("$title - art");
+	}
 
-			<p>
-				sorry, we don’t seem to have art by that name.  try picking one from
-				<a href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">the gallery</a>.
-			</p>
-<?php
-	$html->Close();
-	die;
-}
+	protected static function MainContent(): void {
+?>
+		<h1><?= htmlspecialchars(self::$art->Title); ?></h1>
+	<?php
+		if (self::HasAdminSecurity())
+			self::ShowAdminActions();
+		self::ShowPrevNext();
+		self::ShowArt();
+		self::ShowMetadata();
+		echo self::$art->Description;
+		self::ShowVoteWidget(self::$art->Post, self::$art->Vote, 'how do you like it?');
+		self::ShowPrevNext();
+		self::ShowComments(self::$art->Post);
+	}
 
-$prev = $next = false;
-if($tag) {
-	if($prev = $db->query('select a.url, a.title from art_taglinks as tl left join art as a on a.id=tl.art where tl.tag=\'' . +$tag->id . '\' and a.posted<\'' . +$art->posted . '\' or a.posted=\'' . +$art->posted . '\' and a.id<\'' . +$art->id . '\' order by a.posted desc, a.id desc limit 1'))
-		$prev = $prev->fetch_object();
-	if($next = $db->query('select a.url, a.title from art_taglinks as tl left join art as a on a.id=tl.art where tl.tag=\'' . +$tag->id . '\' and a.posted>\'' . +$art->posted . '\' or a.posted=\'' . +$art->posted . '\' and a.id>\'' . +$art->id . '\' order by a.posted, a.id limit 1'))
-		$next = $next->fetch_object();
-} else {
-	if($prev = $db->query('select url, title from art where posted<\'' . +$art->posted . '\' or posted=\'' . +$art->posted . '\' and id<\'' . +$art->id . '\' order by posted desc, id desc limit 1'))
-		$prev = $prev->fetch_object();
-	if($next = $db->query('select url, title from art where posted>\'' . +$art->posted . '\' or posted=\'' . +$art->posted . '\' and id>\'' . +$art->id . '\' order by posted, id limit 1'))
-		$next = $next->fetch_object();
-}
+	private static function ShowAdminActions(): void {
+	?>
+		<nav class=actions><a class=edit href="<?= dirname($_SERVER['SCRIPT_NAME']) . '/edit.php?id=' . self::$art->ID; ?>">edit this art</a></nav>
+	<?php
+	}
 
-$html = new t7html(['vue' => true]);
-$html->Open(htmlspecialchars($art->title) . ($tag ? ' - ' . $tag->name . ' - art' : ' - art'));
-?>
-			<h1><?=htmlspecialchars($art->title); ?></h1>
-<?php
-if($user->IsAdmin()) {
-?>
-			<nav class=actions><a class=edit href="<?=dirname($_SERVER['SCRIPT_NAME']) . '/edit.php?id=' . $art->id; ?>">edit this art</a></nav>
-<?php
-}
-TagPrevNext($prev, $tag, $next);
-?>
-			<p><img class=art src="<?=dirname($_SERVER['SCRIPT_NAME']) . '/img/' . $art->url . '.' . $art->ext; ?>"></p>
-			<p class="art meta">
-<?php
-if(+$art->posted) {
-	$art->posted = t7format::TimeTag('smart', $art->posted, 'g:i a \o\n l F jS Y');
-?>
-				<time class=posted datetime="<?php echo $art->posted->datetime; ?>" title="posted <?php echo $art->posted->title; ?>"><?php echo $art->posted->display; ?></time>
-<?php
-}
-if($tags = $db->query('select t.name from art_taglinks as tl left join art_tags as t on t.id=tl.tag where tl.art=\'' . +$art->id . '\''))
-	if($tagcount = $tags->num_rows) {
-?>
-				<span class=tags>
-<?php
-		while($t = $tags->fetch_object()) {
-?>
-					<a href="<?=dirname($_SERVER['SCRIPT_NAME']) . '/' . $t->name; ?>/"><?=$t->name; ?></a><?php if(--$tagcount) echo ','; ?>
-<?php
-		}
-?>
-				</span>
+	private static function ShowPrevNext(): void {
+		if (!self::$prevNext)
+			self::FindPrevNext();
+	?>
+		<nav class=tagprevnext>
+			<?php
+			if (self::$prevNext->Next) {
+				$tooltip = 'see the art posted after this';
+				$url = explode('/', self::$prevNext->Next->URL);
+				$url = '/' . $url[count($url) - 1];
+				if (self::$tag) {
+					$tooltip .= ' in ' . self::$tag;
+					$url = '/' . self::$tag . $url;
+				}
+				$url = dirname($_SERVER['SCRIPT_NAME']) . $url;
+			?>
+				<a class=prev title="<?= $tooltip; ?>" href="<?= $url; ?>"><?= htmlspecialchars(self::$prevNext->Next->Title); ?></a>
+			<?php
+			}
+			if (self::$tag) {
+			?>
+				<a class=tag title="see all art posted in <?= self::$tag; ?>" href="<?= dirname($_SERVER['SCRIPT_NAME']) . '/' . self::$tag . '/'; ?>"><?= self::$tag; ?></a>
+			<?php
+			} else {
+			?>
+				<a class=gallery title="see all art" href="<?= dirname($_SERVER['SCRIPT_NAME']); ?>/">everything</a>
+			<?php
+			}
+			if (self::$prevNext->Prev) {
+				$tooltip = 'see the art posted before this';
+				$url = explode('/', self::$prevNext->Prev->URL);
+				$url = '/' . $url[count($url) - 1];
+				if (self::$tag) {
+					$tooltip .= ' in ' . self::$tag;
+					$url = '/' . self::$tag . $url;
+				}
+				$url = dirname($_SERVER['SCRIPT_NAME']) . $url;
+			?>
+				<a class=next title="<?= $tooltip; ?>" href="<?= $url; ?>"><?= htmlspecialchars(self::$prevNext->Prev->Title); ?></a>
+			<?php
+			}
+			?>
+		</nav>
+	<?php
+	}
+
+	private static function FindPrevNext(): void {
+		self::RequireDatabase();
+		if (self::$tag)
+			self::FindPrevNextTagged();
+		else
+			self::FindPrevNextAll();
+	}
+
+	private static function FindPrevNextTagged(): void {
+		self::$prevNext = new PrevNext();
+
+		$select = self::$db->prepare('select p.title, p.url from post_tag as pt left join post as p on p.id=pt.post where subsite=\'art\' and pt.tag=? and (p.instant<from_unixtime(?) or p.instant=from_unixtime(?) and p.id<?) order by p.instant desc, p.id desc limit 1');
+		$select->bind_param('siii', self::$tag, self::$art->Instant, self::$art->Instant, self::$art->Post);
+		$select->execute();
+		$select->bind_result($title, $url);
+		while ($select->fetch())
+			self::$prevNext->Prev = new TitledLink($title, $url);
+
+		$select = self::$db->prepare('select p.title, p.url from post_tag as pt left join post as p on p.id=pt.post where subsite=\'art\' and pt.tag=? and (p.instant>from_unixtime(?) or p.instant=from_unixtime(?) and p.id<?) order by p.instant, p.id limit 1');
+		$select->bind_param('siii', self::$tag, self::$art->Instant, self::$art->Instant, self::$art->Post);
+		$select->execute();
+		$select->bind_result($title, $url);
+		while ($select->fetch())
+			self::$prevNext->Next = new TitledLink($title, $url);
+	}
+
+	private static function FindPrevNextAll(): void {
+		self::$prevNext = new PrevNext();
+
+		$select = self::$db->prepare('select title, url from post where subsite=\'art\' and (instant<from_unixtime(?) or instant=from_unixtime(?) and id<?) order by instant desc, id desc limit 1');
+		$select->bind_param('iii', self::$art->Instant, self::$art->Instant, self::$art->Post);
+		$select->execute();
+		$select->bind_result($title, $url);
+		while ($select->fetch())
+			self::$prevNext->Prev = new TitledLink($title, $url);
+
+		$select = self::$db->prepare('select title, url from post where subsite=\'art\' and (instant>from_unixtime(?) or instant=from_unixtime(?) and id>?) order by instant, id limit 1');
+		$select->bind_param('iii', self::$art->Instant, self::$art->Instant, self::$art->Post);
+		$select->execute();
+		$select->bind_result($title, $url);
+		while ($select->fetch())
+			self::$prevNext->Next = new TitledLink($title, $url);
+	}
+
+	private static function ShowArt(): void {
+	?>
+		<p><img class=art src="<?= dirname($_SERVER['SCRIPT_NAME']) . '/img/' . self::$art->ID . '.' . self::$art->Ext; ?>"></p>
+	<?php
+	}
+
+	private static function ShowMetadata(): void {
+		require_once 'formatDate.php';
+	?>
+		<p class="art meta">
+			<?php
+			if (self::$art->Instant) {
+				$posted = new TimeTagData(self::$user, 'smart', self::$art->Instant, FormatDate::Long);
+			?>
+				<time class=posted datetime="<?= $posted->DateTime; ?>" title="posted <?= $posted->Tooltip; ?>"><?= $posted->Display; ?></time>
+			<?php
+			}
+			self::ShowTags(self::$art->Post);
+			?>
+			<span class=rating data-stars=<?= round(self::$art->Rating * 2) / 2; ?> title="rated <?= self::$art->Rating; ?> stars by <?= self::$art->VoteCount == 0 ? 'nobody' : (self::$art->VoteCount == 1 ? '1 person' : self::$art->VoteCount . ' people'); ?>"></span>
+			<?php
+			if (self::$art->Deviation) {
+			?>
+				<a class=deviantart href="https://deviantart.com/art/<?= self::$art->Deviation; ?>" title="see <?= htmlspecialchars(self::$art->Title); ?> on deviantart">deviantart</a>
+			<?php
+			}
+			?>
+		</p>
 <?php
 	}
-?>
-				<span class=rating data-stars=<?=round($art->rating * 2) / 2; ?> title="rated <?=$art->rating; ?> stars by <?php echo $art->votes == 0 ? 'nobody' : ($art->votes == 1 ? '1 person' : $art->votes . ' people'); ?>"></span>
-<?php
-if($art->deviation) {
-?>
-				<a class=deviantart href="https://deviantart.com/art/<?=$art->deviation; ?>" title="see <?=htmlspecialchars($art->title); ?> on deviantart">deviantart</a>
-<?php
 }
-?>
-			</p>
-<?php
-echo $art->deschtml;
-?>
-			<p>
-				how do you like it?  <?php $html->ShowVote('art', $art->id, $art->vote); ?>
-			</p>
-<?php
-TagPrevNext($prev, $tag, $next);
-$html->ShowComments('art', 'art', $art->id);
-$html->Close();
+new Artwork();
 
-function TagPrevNext($prev, $tag, $next) {
-?>
-			<nav class=tagprevnext>
-<?php
-	if($next) {
-?>
-				<a class=prev title="see the art posted after this<?php if($tag) echo ' in ' . $tag->name; ?>" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . ($tag ? '/' . $tag->name . '/' : '/') . $next->url; ?>"><?php echo htmlspecialchars($next->title); ?></a>
-<?php
+class PrevNext {
+	public ?TitledLink $Prev = null;
+	public ?TitledLink $Next = null;
+}
+
+/**
+ * Pairing of a title and a URL
+ */
+class TitledLink {
+	/**
+	 * Link title
+	 */
+	public string $Title = '';
+	/**
+	 * Link URL
+	 */
+	public string $URL = '';
+
+	/**
+	 * Default constructor
+	 * @param $title Link title
+	 * @param $url Link URL
+	 */
+	public function __construct(string $title, string $url) {
+		$this->Title = $title;
+		$this->URL = $url;
 	}
-	if($tag) {
-?>
-				<a class=tag title="see all art posted in <?php echo $tag->name; ?>" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . '/' . $tag->name . '/'; ?>"><?php echo $tag->name; ?></a>
-<?php
-	} else {
-?>
-				<a class=gallery title="see all art" href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/">everything</a>
-<?php
-	}
-	if($prev) {
-?>
-				<a class=next title="see the art posted before this<?php if($tag) echo ' in ' . $tag->name; ?>" href="<?php echo dirname($_SERVER['SCRIPT_NAME']) . ($tag ? '/' . $tag->name . '/' : '/') . $prev->url; ?>"><?php echo htmlspecialchars($prev->title); ?></a>
-<?php
-	}
-?>
-			</nav>
-<?php
 }

@@ -11,7 +11,7 @@ $html->Open('api');
 <h2 class=api><a href=applications>applications</a></h2>
 <p>the applications api manages applications with source code.</p>
 
-<h2 class=api><a href=art>art</a></h2>
+<h2 class=api><a href=art.php>art</a></h2>
 <p>the art api manages art.</p>
 
 <h2 class=api><a href=blog>blog</a></h2>
@@ -64,6 +64,9 @@ $html->Open('api');
 
 <h2 class=api><a href=users>users</a></h2>
 <p>the users api manages users.</p>
+
+<h2 class=api><a href=vote.php>vote</a></h2>
+<p>the vote api manages votes.</p>
 
 <h2 class=api><a href=votes>votes</a></h2>
 <p>the votes api manages votes.</p>

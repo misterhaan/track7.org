@@ -1,76 +1,126 @@
-$(function() {
-	var editart = new Vue({
-		el: "#editart",
-		mixins: [vueMixins.tagSuggest],
-		data: {
-			id: $("#artid").val(),
-			title: "",
-			url: "",
-			art: false,
-			descmd: "",
-			deviation: "",
+import { createApp } from 'vue';
+import { NameToUrl, ValidatingField } from "validate";
+import autosize from "autosize";
+import { TagsField, FindAddedTags } from "tag";
+
+createApp({
+	data() {
+		return {
+			art: {},
+			image: null,
+			invalidFields: [],
 			saving: false
+		};
+	},
+	computed: {
+		defaultUrl: function() {
+			return NameToUrl(this.art.Title);
 		},
-		computed: {
-			defaultUrl: function() {
-				return NameToUrl(this.title);
-			}
+		effectiveUrl: function() {
+			return this.art.ID || this.defaultUrl;
 		},
-		created: function() {
-			if(this.id)
-				$.get("/api/art/edit", {id: this.id}, result => {
-					if(!result.fail) {
-						this.title = result.title;
-						this.url = result.url;
-						this.ValidateUrl();
-						this.originalUrl = result.url;
-						this.ext = result.ext;
-						this.descmd = result.descmd;
-						setTimeout(function() { autosize($("textarea[name='descmd']")); }, 25);
-						this.deviation = result.deviation;
-						this.taglist = result.tags;
-						this.originalTags = result.tags ? result.tags.split(",") : [];
-					} else
-						alert(result.message);
-				}, "json");
-			else {
-				this.originalUrl = "";
-				this.originalTags = [];
-				setTimeout(function() { autosize($("textarea[name='descmd']")); }, 25);
-			}
-		},
-		methods: {
-			ValidateDefaultUrl: function() {
-				if(!this.url)
-					this.ValidateUrl();
-			},
-			ValidateUrl: function() {
-				ValidateInput("input[name='url']", "/api/validate/arturl", this.id, this.url || this.defaultUrl, "validating url...", "url available", "url required");
-			},
-			CacheArt: function(e) {
-				var f = e.target.files[0];
-				if(f) {
-					var fr = new FileReader();
-					fr.onloadend = () => {
-						this.art = fr.result;
-					};
-					fr.readAsDataURL(f);
-				}
-			},
-			Save: function() {
-				this.saving = true;
-				var fdata = new FormData($("#editart")[0]);
-				fdata.append("originalurl", this.originalUrl);
-				fdata.append("deltags", this.deltags);
-				fdata.append("addtags", this.addtags);
-				$.post({url: "/api/art/save", data: fdata, cache: false, contentType: false, processData: false, success: result => {
-					if(!result.fail)
-						window.location.href = result.url;
-					else
-						alert(result.message);
-					this.saving = false;
-				}, dataType: "json"});
-			}
+		canSave: function() {
+			return !this.saving && this.art.Title && this.invalidFields.length <= 0 && this.art.Description && (this.image || this.id);
 		}
-	});
-});
+	},
+	created() {
+		const queryString = new URLSearchParams(window.location.search);
+		if(this.id = queryString.get("id") || "")
+			this.Load();
+		else {
+			this.originalTags = "";
+			this.Autosize();
+		}
+	},
+	methods: {
+		Autosize() {
+			this.$nextTick(() => {
+				autosize(this.$refs.descriptionField);
+			});
+		},
+		Load() {
+			$.get("/api/art.php/edit/" + this.id).done(art => {
+				this.art = art;
+				this.originalTags = this.art.Tags;
+				this.Autosize();
+			}).fail(request => {
+				alert(request.responseText);
+			});
+		},
+		OnValidated(fieldName, isValid, newValue) {
+			if(isValid)
+				this.invalidFields = this.invalidFields.filter(field => field != fieldName);
+			else
+				this.invalidFields.push(fieldName);
+			this[fieldName] = newValue;
+		},
+		PreviewArt(event) {
+			const file = event.target.files[0];
+			if(file) {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					this.image = reader.result;
+				};
+				reader.readAsDataURL(file);
+			} else
+				this.image = null;
+		},
+		TagsChanged(value) {
+			this.art.Tags = value;
+		},
+		Save() {
+			this.saving = true;
+			const data = new FormData(this.$refs.artForm);
+			data.append("id", this.effectiveUrl);
+			data.append("addtags", FindAddedTags(this.art.Tags, this.originalTags));
+			data.append("deltags", FindAddedTags(this.originalTags, this.art.Tags));
+
+			$.post({ url: "/api/art.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
+				window.location.href = result;
+			}).fail(request => {
+				alert(request.responseText);
+			}).always(() => {
+				this.saving = false;
+			});
+		}
+	},
+	template: /* html */ `
+		<form @submit.prevent=Save ref=artForm>
+			<label>
+				<span class=label>title:</span>
+				<span class=field><input name=title maxlength=32 required v-model=art.Title></span>
+			</label>
+			<label>
+				<span class=label>url:</span>
+				<ValidatingField :value=art.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/art.php/idAvailable/' + this.id + '='"
+					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
+					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+'}"
+					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"
+				></ValidatingField>
+			</label>
+			<label title="upload the art">
+				<span class=label>art:</span>
+				<span class=field>
+					<input type=file name=image accept=".jpg, .jpeg, .png, image/jpeg, image/jpg, image/png" @change=PreviewArt :class="{hidden: image}">
+					<img class="art preview" v-if=image :src=image>
+				</span>
+			</label>
+			<label class=multiline>
+				<span class=label>description:</span>
+				<span class=field><textarea name=description v-model=art.Description ref=descriptionField></textarea></span>
+			</label>
+			<label>
+				<span class=label>deviantart:</span>
+				<span class=field>https://deviantart.com/art/<input name=deviation maxlength=64 v-model=art.Deviation></span>
+			</label>
+			<label>
+				<span class=label>tags:</span>
+				<TagsField :tags=art.Tags @changed=TagsChanged></TagsField>
+			</label>
+			<button :disabled=!canSave :class="{working: saving}">save</button>
+			<p v-if="id && art.Ext"><img class="art preview" :src="id ? 'img/' + id + '.' + art.Ext : ''"></p>
+		</form>
+	`
+}).component("ValidatingField", ValidatingField)
+	.component("TagsField", TagsField)
+	.mount("#editart");
