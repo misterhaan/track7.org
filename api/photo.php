@@ -117,8 +117,12 @@ class PhotoApi extends Api {
 
 		if ($id)
 			$photo->Update(self::$db, $id);
-		else
+		else {
 			$photo->SaveNew(self::$db);
+			require_once 't7send.php';
+			require_once 'formatUrl.php';
+			t7send::Tweet(($photo->Youtube ? 'new video: ' : 'new photo: ') . $photo->Title, FormatURL::FullUrl('/album/' . $photo->ID));
+		}
 
 		if ($id && $id != $photo->ID) {
 			$path = $_SERVER['DOCUMENT_ROOT'] . '/album/photos/';
