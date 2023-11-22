@@ -172,7 +172,7 @@ class EditArt extends Art {
 			while ($select->fetch());
 
 			$update = $db->prepare('update post set title=?, url=concat(\'/art/\', ?), preview=concat(\'<p><img class=art src="/art/img/\', ?, \'.\', ?, \'"></p>\') where id=? limit 1');
-			$update->bind_param('ssssi', $this->Title, $this->ID, $this->Ext, $this->ID, $this->Post);
+			$update->bind_param('ssssi', $this->Title, $this->ID, $this->ID, $this->Ext, $this->Post);
 			$update->execute();
 
 			$tags = explode('+', trim($this->Tags, '-'));
