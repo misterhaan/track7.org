@@ -2,7 +2,6 @@
 define('TR_BLOG', 2);
 define('TR_GUIDES', 3);
 define('TR_MESSAGES', 4);
-define('TR_ART', 6);
 define('TR_LEGOS', 7);
 define('TR_STORIES', 8);
 define('TR_WEB_SCRIPTS', 9);
@@ -23,7 +22,6 @@ if ($ss = $db->query('select id, stepnum, status from transition_status'))
 initStatus(TR_BLOG);
 initStatus(TR_GUIDES);
 initStatus(TR_MESSAGES);
-initStatus(TR_ART);
 initStatus(TR_LEGOS);
 initStatus(TR_STORIES);
 initStatus(TR_WEB_SCRIPTS);
@@ -40,6 +38,7 @@ $html->Open('database transitions');
 <ul>
 	<li><a href=users.php>users</a></li>
 	<li><a href=photos.php>photo album</a></li>
+	<li><a href=art.php>art</a></li>
 </ul>
 
 <table>
@@ -65,11 +64,6 @@ $html->Open('database transitions');
 			<td><a href="messages.php">messages</a></td>
 			<td><?php echo $status[TR_MESSAGES]->stepnum; ?></td>
 			<td><?php echo $status[TR_MESSAGES]->status; ?></td>
-		</tr>
-		<tr>
-			<td><a href="art.php">art</a></td>
-			<td><?php echo $status[TR_ART]->stepnum; ?></td>
-			<td><?php echo $status[TR_ART]->status; ?></td>
 		</tr>
 		<tr>
 			<td><a href="legos.php">legos</a></td>
