@@ -779,7 +779,7 @@ a.action.unlink:before {
 	}
 }
 
-.tagcloud {
+.tagcloud:not(:empty) {
 	background-color: #ddc;
 	font-size: .8em;
 	padding: .125em .625em .25em;
