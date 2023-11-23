@@ -93,7 +93,6 @@ class PhotoTransition extends TransitionPage {
 	protected static function CheckCommentRows(): void {
 		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_comments\' limit 1');
 		if ($exists->fetch_column()) {
-
 			$missing = self::$db->query('select 1 from photos_comments as pc left join photos as op on op.id=pc.photo left join photo as ph on ph.id=op.url left join comment as c on c.post=ph.post and c.instant=from_unixtime(pc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyPhotoComments();
