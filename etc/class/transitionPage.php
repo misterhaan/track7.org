@@ -74,9 +74,20 @@ abstract class TransitionPage extends Page {
 		?>
 			<p>new <code>post</code> table exists.</p>
 		<?php
-			static::CheckPostRows();
+			static::CheckPostPublishedColumn();
 		} else
 			self::CreateTable('post');
+	}
+
+	protected static function CheckPostPublishedColumn(): void {
+		$hasNewColumn = self::$db->query('show columns from post like \'published\'');
+		if ($hasNewColumn->num_rows) {
+		?>
+			<p>new <code>post</code> table has published column.</p>
+		<?php
+			static::CheckPostRows();
+		} else
+			self::AddPostPublishedColumn();
 	}
 
 	protected abstract static function CheckPostRows(): void;
@@ -169,7 +180,14 @@ abstract class TransitionPage extends Page {
 		$insert->execute();
 		$insert->close();
 	?>
-		<p>created photo album row in new <code>subsite</code> table. refresh the page to take the next step.</p>
+		<p>created <?= self::$subsite->name; ?> row in new <code>subsite</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function AddPostPublishedColumn(): void {
+		self::$db->real_query('alter table post add published boolean not null default true after id, add key(published)');
+	?>
+		<p>added <code>published</code> column to <code>post</code> table. refresh the page to take the next step.</p>
 	<?php
 	}
 

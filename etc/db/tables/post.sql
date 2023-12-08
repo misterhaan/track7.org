@@ -1,5 +1,7 @@
 create table post (
 	id int unsigned primary key auto_increment,
+	published boolean not null default true,
+	key(published),
 	instant datetime comment 'when this was posted',
 	key(instant),
 	title varchar(128) not null default '',
