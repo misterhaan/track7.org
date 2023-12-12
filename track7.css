@@ -787,7 +787,7 @@ a.action.unlink:before {
 }
 
 @media (min-width: 25em) {
-	.tagcloud {
+	.tagcloud:not(:empty) {
 		margin: 0 .625em;
 		padding: .25em .5em .325em;
 		border-radius: .25em;
@@ -795,7 +795,7 @@ a.action.unlink:before {
 }
 
 @media (min-width: 40em) {
-	.tagcloud {
+	.tagcloud:not(:empty) {
 		float: right;
 		margin: -1.75em -.625em .625em .625em;
 		border-radius: .25em 0 0 .25em;
@@ -913,7 +913,6 @@ article>header .guidemeta {
 	article>header .postmeta,
 	article>header .guidemeta {
 		margin: 0 .625em .75em;
-		border-radius: 0 0 .625em .625em;
 	}
 }
 
