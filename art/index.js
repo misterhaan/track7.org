@@ -1,6 +1,6 @@
 import "jquery";
-import { createApp } from 'vue';
-import 'tag';
+import { createApp } from "vue";
+import "tag";
 
 createApp({
 	data() {
