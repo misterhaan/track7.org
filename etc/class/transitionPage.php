@@ -186,6 +186,9 @@ abstract class TransitionPage extends Page {
 
 	private static function AddPostPublishedColumn(): void {
 		self::$db->real_query('alter table post add published boolean not null default true after id, add key(published)');
+		self::$db->real_query('drop view tagusage');
+		$file = file_get_contents('../../etc/db/views/tagusage.sql');
+		self::$db->real_query($file);
 	?>
 		<p>added <code>published</code> column to <code>post</code> table. refresh the page to take the next step.</p>
 	<?php
