@@ -312,7 +312,7 @@ class t7html {
 				<a href="https://twitter.com/track7feed" title="follow track7 on twitter">twitter</a>
 				<a href="https://github.com/misterhaan/track7.org/blob/master<?= $_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
 				<a href="/privacy.php" title="view the privacy policy">privacy</a>
-				<div id=copyright>© 1996 - 2023 track7 — <a href="/fewrights.php">few rights reserved</a></div>
+				<div id=copyright>© 1996 - 2024 track7 — <a href="/fewrights.php">few rights reserved</a></div>
 			</footer>
 		</body>
 

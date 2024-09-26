@@ -6,7 +6,7 @@ require_once 'environment.php';
  */
 abstract class Page extends Responder {
 	private const siteTitle = 'track7';
-	private const copyrightEndYear = 2023;
+	private const copyrightEndYear = 2024;
 
 	protected static string $title = self::siteTitle;
 	protected static string $bodytype = 'text';
