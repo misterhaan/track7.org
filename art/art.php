@@ -175,27 +175,3 @@ class PrevNext {
 	public ?TitledLink $Prev = null;
 	public ?TitledLink $Next = null;
 }
-
-/**
- * Pairing of a title and a URL
- */
-class TitledLink {
-	/**
-	 * Link title
-	 */
-	public string $Title = '';
-	/**
-	 * Link URL
-	 */
-	public string $URL = '';
-
-	/**
-	 * Default constructor
-	 * @param $title Link title
-	 * @param $url Link URL
-	 */
-	public function __construct(string $title, string $url) {
-		$this->Title = $title;
-		$this->URL = $url;
-	}
-}
