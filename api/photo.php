@@ -56,6 +56,10 @@ class PhotoApi extends Api {
 		self::Success(IndexPhoto::List(self::RequireDatabase(), $tagName, $skip));
 	}
 
+	/**
+	 * Get all information on a photo for purposes of editing.
+	 * @param array $params ID of photo to edit
+	 */
 	protected static function GET_edit(array $params): void {
 		$id = array_shift($params);
 		if (!$id)
@@ -70,6 +74,10 @@ class PhotoApi extends Api {
 			self::NotFound("unable to find photo “$id.”");
 	}
 
+	/**
+	 * Check if a photo ID is available.
+	 * @param array $params Current ID followed by an equal sign followed by the new ID to check.  Currenty ID may be blank.
+	 */
 	protected static function GET_idAvailable($params): void {
 		$oldNewID = array_shift($params);
 		if (!$oldNewID)
@@ -85,6 +93,10 @@ class PhotoApi extends Api {
 		self::Success(EditPhoto::IdAvailable(self::RequireDatabase(), $oldID, $newID));
 	}
 
+	/**
+	 * Saves changes to a photo.
+	 * @param array $params Current ID of the photo being changed, or blank if it's new.
+	 */
 	protected static function POST_save(array $params): void {
 		if (!self::HasAdminSecurity())
 			self::Forbidden('only the administrator can edit photos.  you might need to log in again.');

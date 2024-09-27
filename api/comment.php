@@ -32,6 +32,10 @@ class CommentApi extends Api {
 		return $endpoints;
 	}
 
+	/**
+	 * Get the latest comments for the specified post with most recent first.
+	 * @param array $params ID of the post, then number of comments to skip.
+	 */
 	protected static function GET_bypost(array $params): void {
 		$post = +array_shift($params);
 		if (!$post)
@@ -41,6 +45,10 @@ class CommentApi extends Api {
 		self::Success(Comment::ListByPost(self::$db, self::$user, $post, $skip));
 	}
 
+	/**
+	 * Post a new comment.
+	 * @param array $params ID of post to put the comment on.
+	 */
 	protected static function POST_new(array $params): void {
 		$post = +array_shift($params);
 		if (!$post)
@@ -57,6 +65,10 @@ class CommentApi extends Api {
 		self::Success(Comment::Create(self::$db, self::$user, $post, $markdown, $name, $contact));
 	}
 
+	/**
+	 * Update an existing comment.
+	 * @param array $params ID of the comment to update.
+	 */
 	protected static function PATCH_id(array $params): void {
 		$id = +array_shift($params);
 		if (!$id)
@@ -69,6 +81,10 @@ class CommentApi extends Api {
 		self::Success(Comment::Update(self::$db, self::$user, $id, $markdown));
 	}
 
+	/**
+	 * Delete a comment.
+	 * @param array $params ID of the comment to delete.
+	 */
 	protected static function DELETE_id(array $params): void {
 		$id = +array_shift($params);
 		if (!$id)

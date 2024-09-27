@@ -38,6 +38,10 @@ class TagApi extends Api {
 		self::Success(TagFrequency::List(self::$db, $subsite));
 	}
 
+	/**
+	 * Get all information on the tags used by the specified subsite.
+	 * @param array $params Subsite name
+	 */
 	protected static function GET_stats(array $params): void {
 		$subsite = array_shift($params);
 		if (!$subsite)

@@ -20,6 +20,10 @@ class VoteApi extends Api {
 		return $endpoints;
 	}
 
+	/**
+	 * Cast a vote.
+	 * @param array $params Post ID being voted on
+	 */
 	public static function POST_cast(array $params): void {
 		$post = +array_shift($params);
 		if (!$post)

@@ -54,6 +54,10 @@ class ArtApi extends Api {
 		self::Success(IndexArt::List(self::RequireDatabase(), $tagName, $skip));
 	}
 
+	/**
+	 * Get all information on an art for purposes of editing.
+	 * @param array $params ID of art to edit
+	 */
 	protected static function GET_edit(array $params): void {
 		$id = array_shift($params);
 		if (!$id)
@@ -64,6 +68,10 @@ class ArtApi extends Api {
 			self::NotFound("unable to find art “$id.”");
 	}
 
+	/**
+	 * Check if an art ID is available.
+	 * @param array $params Current ID followed by an equal sign followed by the new ID to check.  Currenty ID may be blank.
+	 */
 	protected static function GET_idAvailable($params): void {
 		$oldNewID = array_shift($params);
 		if (!$oldNewID)
@@ -79,6 +87,10 @@ class ArtApi extends Api {
 		self::Success(EditArt::IdAvailable(self::RequireDatabase(), $oldID, $newID));
 	}
 
+	/**
+	 * Saves changes to an art.
+	 * @param array $params Current ID of the art being changed, or blank if it's new.
+	 */
 	protected static function POST_save(array $params): void {
 		if (!self::HasAdminSecurity())
 			self::Forbidden('only the administrator can edit art.  you might need to log in again.');

@@ -19,6 +19,10 @@ class DateApi extends Api {
 		return $endpoints;
 	}
 
+	/**
+	 * Validate that a date is in the past.
+	 * @param array $params String representation of a date to validate.
+	 */
 	protected static function GET_validatePast(array $params) {
 		$dateString = trim(array_shift($params));
 		if (!$dateString)
