@@ -116,10 +116,8 @@ class ArtApi extends Api {
 			$art->Update(self::$db, $id);
 		else {
 			$art->SaveNew(self::$db);
-			// TODO:  migrate t7send
-			require_once 't7send.php';
 			require_once 'formatUrl.php';
-			t7send::Tweet('new art: ' . $art->Title, FormatURL::FullUrl('/art/' . $art->ID));
+			self::Tweet('new art: ' . $art->Title, FormatURL::FullUrl('/art/' . $art->ID));
 		}
 
 		if ($id && $id != $art->ID) {

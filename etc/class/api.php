@@ -48,6 +48,17 @@ abstract class Api extends Responder {
 	}
 
 	/**
+	 * Sends a message to Twitter to be posted as a tweet.
+	 * @param string $message Tweet message
+	 * @param ?string $url URL to include with tweet (optional; sent through shortener)
+	 */
+	protected static function Tweet(string $message, ?string $url = ''): void {
+		// TODO:  migrate t7send
+		require_once 't7send.php';
+		t7send::Tweet($message, $url);
+	}
+
+	/**
 	 * Send a successful response.
 	 * @param mixed $data Response data (optional)
 	 */

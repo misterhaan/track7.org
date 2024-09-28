@@ -131,10 +131,8 @@ class PhotoApi extends Api {
 			$photo->Update(self::$db, $id);
 		else {
 			$photo->SaveNew(self::$db);
-			// TODO:  migrate t7send
-			require_once 't7send.php';
 			require_once 'formatUrl.php';
-			t7send::Tweet(($photo->Youtube ? 'new video: ' : 'new photo: ') . $photo->Title, FormatURL::FullUrl('/album/' . $photo->ID));
+			self::Tweet(($photo->Youtube ? 'new video: ' : 'new photo: ') . $photo->Title, FormatURL::FullUrl('/album/' . $photo->ID));
 		}
 
 		if ($id && $id != $photo->ID) {
