@@ -51,7 +51,7 @@ createApp({
 				this.invalidFields = this.invalidFields.filter(field => field != fieldName);
 			else
 				this.invalidFields.push(fieldName);
-			this[fieldName] = newValue;
+			this.photo[fieldName] = newValue;
 		},
 		PreviewPhoto(event) {
 			const file = event.target.files[0];
