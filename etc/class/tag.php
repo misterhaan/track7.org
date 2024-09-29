@@ -161,10 +161,10 @@ class TagFrequency extends Tag {
 		$this->Count = $count;
 	}
 
-	public static function List(mysqli $db, string $subsite): array {
+	public static function List(mysqli $db, string $subsite, int $minOccurrences): array {
 		try {
-			$select = $db->prepare('select tag as name, count from tagusage where count>1 and subsite=? order by lastused desc');
-			$select->bind_param('s', $subsite);
+			$select = $db->prepare('select tag as name, count from tagusage where count>=? and subsite=? order by lastused desc');
+			$select->bind_param('is', $minOccurrences, $subsite);
 			$select->execute();
 			$select->bind_result($name, $count);
 			$tags = [];

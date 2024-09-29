@@ -111,7 +111,7 @@ export const TagsField = {
 		};
 	},
 	created() {
-		$.get("/api/tag.php/list/" + subsite).done(result => {
+		$.get("/api/tag.php/list/" + subsite + "/1").done(result => {
 			this.allTags = result.map(tag => tag.Name);
 		}).fail(request => {
 			alert(request.responseText);
@@ -226,7 +226,7 @@ export const TagsField = {
 export function FindAddedTags(toTags, fromTags) {
 	if(toTags == fromTags)
 		return "";
-	if(fromTags == "")
+	if(!fromTags)
 		return toTags;
 	const tags = toTags.split(",");
 	const refTags = fromTags.split(",");

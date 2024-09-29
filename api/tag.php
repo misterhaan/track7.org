@@ -15,6 +15,7 @@ class TagApi extends Api {
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'list', 'retrieves basic information on the tags used by the specified subsite, in order of most-recently used.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('subsite', 'string', 'specify the subsite to list tags for.', true);
+		$endpoint->PathParameters[] = new ParameterDocumentation('minOccurrences', 'integer', 'minimum occurrences to be included.  default is 2.');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'stats', 'retrieves all information on the tags used by the specified subsite, in order of most-recently used.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('subsite', 'string', 'specify the subsite to list tags for.', true);
@@ -28,14 +29,16 @@ class TagApi extends Api {
 
 	/**
 	 * Get tags used by a subsite.
-	 * @param array $params Subsite name (required) as first param
+	 * @param array $params Subsite name (required) as first param; minimum occurrences (optional, default 2) as second param
 	 */
 	protected static function GET_list(array $params): void {
 		$subsite = array_shift($params);
 		if (!$subsite)
 			self::NotFound('subsite must be specified.');
-		self::RequireDatabase();
-		self::Success(TagFrequency::List(self::$db, $subsite));
+		$minOccurrences = +array_shift($params);
+		if ($minOccurrences < 1)
+			$minOccurrences = 2;
+		self::Success(TagFrequency::List(self::RequireDatabase(), $subsite, $minOccurrences));
 	}
 
 	/**
