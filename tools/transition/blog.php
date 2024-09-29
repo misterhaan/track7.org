@@ -1,191 +1,292 @@
 <?php
-  define('TR_BLOG', 2);
-  define('STEP_CHECKUSERS', 1);
-  define('STEP_COPYENTRIES', 2);
-  define('STEP_COPYTAGS', 3);
-  define('STEP_LINKTAGS', 4);
-  define('STEP_COPYCOMMENTS', 5);
-  define('STEP_TIMETAGS', 6);
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
 
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-  $html = new t7html([]);
-  $html->Open('blog migration');
-?>
-      <h1>blog migration</h1>
-<?php
-  if(isset($_GET['dostep']))
-    switch($_GET['dostep']) {
-      case 'checkusers':
-        if($us = $db->query('select u.login, count(1) as comments from track7_t7data.comments as c left join track7_t7data.users as u on u.uid=c.uid left join transition_users as t on t.olduid=c.uid where c.uid is not null and c.uid>0 and c.page like \'/bln/%\' and t.id is null group by c.uid'))
-          if($us->num_rows) {
-?>
-      <p>
-        the following users commented on blog entries and haven’t been migrated:
-      </p>
-      <ul>
-<?php
-            while($u = $us->fetch_object()) {
-?>
-        <li><a href="/user/<?php echo $u->login; ?>/"><?php echo $u->login; ?></a> (<?php echo $u->comments; ?> comments)</li>
-<?php
-            }
-?>
-      </ul>
-      <p>
-        visit <a href="users.php">user migration</a> and migrate these users
-        before continuing.
-      </p>
-<?php
-          } else
-            $db->real_query('update transition_status set stepnum=' . STEP_CHECKUSERS . ', status=\'commenting users migrated\' where id=' . TR_BLOG . ' and stepnum<' . STEP_CHECKUSERS);
-        else {
-?>
-      <p class=error>error checking for unmigrated users who commented</p>
-<?php
-        }
-        break;
-      case 'copyentries':
-        if($db->real_query('insert into blog_entries (url, status, posted, title, content) select name, status, instant, replace(replace(replace(replace(title, \'&lsquo;\', \'‘\'), \'&rsquo;\', \'’\'), \'&ldquo;\', \'“\'), \'&rdquo;\', \'”\'), replace(replace(replace(replace(replace(replace(replace(post, \'&nbsp;\', \' \'), \'&mdash;\', \'—\'), \'&rsquo;\', \'’\'), \'&lsquo;\', \'‘\'), \'&ldquo;\', \'“\'), \'&rdquo;\', \'”\'), \'&quot;\', \'"\') from track7_t7data.bln'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYENTRIES . ', status=\'blog entries copied\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_COPYENTRIES);
-        break;
-      case 'copytags':
-        if($db->real_query('insert into blog_tags (name, description) select name, replace(description, \'&rsquo;\', \'’\') from track7_t7data.taginfo where type=\'entries\' and count>0'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYTAGS . ', status=\'blog tags copied\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_COPYTAGS);
-        break;
-      case 'linktags':
-        if($tags = $db->query('select e.id, b.tags from track7_t7data.bln as b left join blog_entries as e on e.url=b.name where e.status=\'published\'')) {
-          $tagids = [];
-          if($taglistres = $db->query('select id, name from blog_tags'))
-            while($taglist = $taglistres->fetch_object())
-              $tagids[$taglist->name] = $taglist->id;
-          $linktags = $db->prepare('insert into blog_entrytags (tag, entry) values (?, ?)');
-          $linktags->bind_param('ii', $tagid, $entryid);
-          $tagcounts = [];
-          while($tag = $tags->fetch_object()) {
-            $entryid = $tag->id;
-            $tag->tags = explode(',', $tag->tags);
-            foreach($tag->tags as $tagname) {
-              $tagid = $tagids[$tagname];
-              if(!isset($tagcounts[$tagid]))
-                $tagcounts[$tagid] = 0;
-              $tagcounts[$tagid]++;
-              $linktags->execute();
-            }
-          }
-          $linktags->close();
-          $settagcount = $db->prepare('update blog_tags set count=? where id=?');
-          $settagcount->bind_param('ii', $count, $tagid);
-          foreach($tagcounts as $tagid => $count)
-            $settagcount->execute();
-          $settagcount->close();
-          $db->real_query('update transition_status set stepnum=' . STEP_LINKTAGS . ', status=\'blog tags linked\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_LINKTAGS);
-        }
-        break;
-      case 'copycomments':
-        if($db->real_query('insert into blog_comments (entry, posted, user, name, contacturl, html) select e.id, c.instant, u.id, c.name, c.url, replace(replace(replace(c.comments, \'&nbsp;\', \' \'), \'&rsquo;\', \'’\'), \'&mdash;\', \'—\') from track7_t7data.comments as c left join blog_entries as e on e.url=substr(c.page, 6) left join transition_users as u on u.olduid=c.uid where page like \'/bln/%\' order by c.instant'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYCOMMENTS . ', status=\'completed\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_COPYCOMMENTS);
-        break;
-      case 'timetags':
-        if($db->real_query('update blog_tags set lastused=(select max(e.posted) as lastused from blog_entrytags as et left join blog_entries as e on e.id=et.entry where et.tag=blog_tags.id group by et.tag)'))
-          $db->real_query('update transition_status set stepnum=' . STEP_TIMETAGS . ', status=\'completed\' where id=\'' . TR_BLOG . '\' and stepnum<' . STEP_TIMETAGS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-    }
+class BlogTransition extends TransitionPage {
+	public function __construct() {
+		self::$subsite = new Subsite('bln', 'blog', 'read the blog', 'blogged');
+		parent::__construct();
+	}
 
-  if($status = $db->query('select stepnum, status from transition_status where id=' . TR_BLOG))
-    $status = $status->fetch_object();
+	protected static function CheckPostRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entries\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from blog_entries left join post on post.subsite=\'bln\' and post.url=concat(\'/bln/\', blog_entries.url) where post.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyBlogToPost();
+			else {
 ?>
-      <h2>commenters</h2>
-<?php
-  if($status->stepnum < STEP_CHECKUSERS) {
-?>
-      <p>
-        before blog entries can be migrated, all users who have commented on a
-        blog entry must migrate.
-      </p>
-      <nav class=actions><a href="?dostep=checkusers">check user migration status</a></nav>
-<?php
-  } else {
-?>
-      <p>
-        all blog commenters have been migrated.
-      </p>
+				<p>all old blog entries exist in new <code>post</code> table.</p>
+			<?php
+				self::CheckBlogTable();
+			}
+		} else {
+			?>
+			<p>old blog table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
 
-      <h2>entries</h2>
-<?php
-    if($status->stepnum < STEP_COPYENTRIES) {
-?>
-      <p>
-        both published and draft entries will be copied.  any draft entries
-        that are no longer wanted can be deleted later.
-      </p>
-      <nav class=actions><a href="?dostep=copyentries">copy blog entries</a></nav>
-<?php
-    } else {
-?>
-      <p>
-        all blog entries have been copied to the new database.
-      </p>
+	private static function CheckBlogTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>blog</code> table exists.</p>
+		<?php
+			self::CheckBlogRows();
+		} else
+			self::CreateTable('blog');
+	}
 
-      <h2>tags</h2>
-<?php
-      if($status->stepnum < STEP_COPYTAGS) {
-?>
-      <p>
-        tags are a 2-step process, which starts with copying blog tag
-        definitions.
-      </p>
-      <nav class=actions><a href="?dostep=copytags">copy blog tags</a></nav>
-<?php
-      } elseif($status->stepnum < STEP_LINKTAGS) {
-?>
-      <p>
-        tags are a 2-step process, which finishes with linking blogs to tags.
-      </p>
-      <nav class=actions><a href="?dostep=linktags">link blog entries to tags</a></nav>
-<?php
-      } else {
-?>
-      <p>
-        all blog tags have been copied to the new database.
-      </p>
+	private static function CheckBlogRows(): void {
+		$missing = self::$db->query('select 1 from blog_entries left join blog on blog.id=blog_entries.url where blog.id is null limit 1');
+		if ($missing->fetch_column())
+			self::CopyEntriesToBlog();
+		else {
+		?>
+			<p>all old blog entries exist in new <code>blog</code> table.</p>
+			<?php
+			self::CheckTagTable();
+		}
+	}
 
-      <h2>comments</h2>
-<?php
-        if($status->stepnum < STEP_COPYCOMMENTS) {
-?>
-      <p>
-        blog comments are ready to be copied.
-      </p>
-      <nav class=actions><a href="?dostep=copycomments">copy blog comments</a></nav>
-<?php
-        } else {
-?>
-      <p>
-        all blog comments have been copied to the new database.
-      </p>
+	protected static function CheckTagRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_tags\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from blog_tags as ot left join tag as t on t.name=ot.name and t.subsite=\'bln\' where t.name is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyBlogTags();
+			else {
+			?>
+				<p>all old blog tags exist in new <code>tag</code> table.</p>
+			<?php
+				self::CheckPostTagTable();
+			}
+		} else {
+			?>
+			<p>old blog tags table no longer exists.</p>
+			<?php
+			self::CheckOldBlog();
+		}
+	}
 
-      <h2>tags last used</h2>
+	protected static function CheckPostTagRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entrytags\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from blog_entrytags as bet left join blog_entries as ob on ob.id=bet.entry left join post as p on p.url=concat(\'/bln/\', ob.url) left join blog_tags as obt on obt.id=bet.tag left join post_tag as npt on npt.post=p.id and npt.tag=obt.name where npt.post is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyBlogPostTags();
+			else {
+			?>
+				<p>all old blog tagging exists in new <code>post_tag</code> table.</p>
+			<?php
+				self::CheckTagUsageView();
+			}
+		} else {
+			?>
+			<p>old blog tagging table no longer exists.</p>
+			<?php
+			self::CheckOldTags();
+		}
+	}
+
+	protected static function CheckCommentRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_comments\' limit 1');
+		if ($exists->fetch_column()) {
+
+			$missing = self::$db->query('select 1 from blog_comments as bc left join blog_entries as ob on ob.id=bc.entry left join blog as b on b.id=ob.url left join comment as c on c.post=b.post and c.instant=from_unixtime(bc.posted) where c.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyBlogComments();
+			else {
+			?>
+				<p>all old blog comments exists in new <code>comment</code> table.</p>
+			<?php
+				self::CheckCommentTriggers();
+			}
+		} else {
+			?>
+			<p>old blog comment table no longer exists.</p>
+		<?php
+			self::CheckOldTagLinks();
+		}
+	}
+
+	private static function CheckCommentTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'blog_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteCommentTriggers();
+		else {
+		?>
+			<p>old blog comment triggers no longer exist.</p>
+		<?php
+			self::CheckEntryTriggers();
+		}
+	}
+
+	private static function CheckEntryTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'blog_entries\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteEntryTriggers();
+		else {
+		?>
+			<p>old blog triggers no longer exist.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckContributions(): void {
+		$exists = self::$db->query('select 1 from contributions where srctbl=\'blog_entries\' or srctbl=\'blog_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteContributions();
+		else {
+		?>
+			<p>blog contributions no longer exist.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckOldComments(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldComments();
+		else {
+		?>
+			<p>old blog comment table no longer exists.</p>
+		<?php
+			self::CheckOldTagLinks();
+		}
+	}
+
+	private static function CheckOldTagLinks(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entrytags\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldTagLinks();
+		else {
+		?>
+			<p>old blog tagging table no longer exists.</p>
+		<?php
+			self::CheckOldTags();
+		}
+	}
+
+	private static function CheckOldTags(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_tags\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldTags();
+		else {
+		?>
+			<p>old blog tags table no longer exists.</p>
+		<?php
+			self::CheckOldBlog();
+		}
+	}
+
+	private static function CheckOldBlog(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entries\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldBlog();
+		else {
+		?>
+			<p>old blog table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
+
+	private static function CopyBlogToPost(): void {
+		self::$db->real_query('insert into post (published, instant, title, subsite, url, author, preview, hasmore) select ob.status=\'published\', from_unixtime(ob.posted), ob.title, \'bln\', concat(\'/bln/\', ob.url), 1, left(ob.content, locate(\'</p>\', ob.content) + 3) as preview, length(ob.content) - length(replace(ob.content, \'</p>\', \'\')) > 4 from blog_entries as ob left join post on post.subsite=\'bln\' and post.url=concat(\'/bln/\', ob.url) where post.id is null');
+		?>
+		<p>copied blog into new <code>post</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyEntriesToBlog(): void {
+		self::$db->real_query('insert into blog (id, post, html, markdown) select ob.url, p.id, ob.content, ob.markdown from blog_entries as ob left join post as p on p.url=concat(\'/bln/\', ob.url) left join blog on blog.id=ob.url where blog.id is null');
+	?>
+		<p>copied blog entries into new <code>blog</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyBlogTags(): void {
+		self::$db->real_query('insert into tag (name, subsite, description) select ot.name, \'bln\', concat(\'<p>blog entries \', ot.description, \'</p>\') from blog_tags as ot left join tag on tag.name=ot.name and tag.subsite=\'bln\' where tag.name is null');
+	?>
+		<p>copied blog tags into new <code>tag</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyBlogPostTags(): void {
+		self::$db->real_query('insert into post_tag (post, tag) select b.post, bt.name from blog_entrytags as bet left join blog_entries as ob on ob.id=bet.entry left join blog as b on b.id=ob.url left join blog_tags as bt on bt.id=bet.tag left join post_tag npt on npt.post=b.post and npt.tag=bt.name where npt.post is null');
+	?>
+		<p>copied blog tagging into new <code>post_tag</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyBlogComments(): void {
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(bc.posted), b.post, bc.user, bc.name, bc.contacturl, bc.html, bc.markdown from blog_comments as bc left join blog_entries as ob on ob.id=bc.entry left join blog as b on b.id=ob.url left join comment as c on c.post=b.post and c.instant=from_unixtime(bc.posted) where c.id is null');
+	?>
+		<p>copied blog comments into new <code>comment</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteCommentTriggers(): void {
+		self::$db->real_query('drop trigger if exists blog_comment_added');
+		self::$db->real_query('drop trigger if exists blog_comment_changed');
+		self::$db->real_query('drop trigger if exists blog_comment_deleted');
+	?>
+		<p>deleted old blog comment triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteEntryTriggers(): void {
+		self::$db->real_query('drop trigger if exists blog_entry_added');
+		self::$db->real_query('drop trigger if exists blog_entry_changed');
+		self::$db->real_query('drop trigger if exists blog_entry_deleted');
+	?>
+		<p>deleted old blog entry triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteContributions(): void {
+		self::$db->real_query('delete from contributions where srctbl=\'blog_entries\' or srctbl=\'blog_comments\'');
+	?>
+		<p>deleted old blog contributions. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldComments(): void {
+		self::$db->real_query('drop table blog_comments');
+	?>
+		<p>deleted old blog comments table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldTagLinks(): void {
+		self::$db->real_query('drop table blog_entrytags');
+	?>
+		<p>deleted old blog tagging table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldTags(): void {
+		self::$db->real_query('drop table blog_tags');
+	?>
+		<p>deleted old blog tag table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldBlog(): void {
+		self::$db->real_query('drop table blog_entries');
+	?>
+		<p>deleted old blog table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function Done(): void {
+	?>
+		<p>done migrating blog, at least for now!</p>
 <?php
-          if($status->stepnum < STEP_TIMETAGS) {
-?>
-      <p>
-        i forgot to set the last used timestamp on blog tags, so they need to be
-        recalculated.
-      </p>
-      <nav class=actions><a href="?dostep=timetags">find tag last used times</a></nav>
-<?php
-          } else {
-?>
-      <p>
-        tags last used times have been updated.  we’re done here!
-      </p>
-<?php
-          }
-        }
-      }
-    }
-  }
-  $html->Close();
-?>
+	}
+}
+new BlogTransition();

@@ -14,7 +14,7 @@ $html->Open('api');
 <h2 class=api><a href=art.php>art</a></h2>
 <p>the art api manages art.</p>
 
-<h2 class=api><a href=blog>blog</a></h2>
+<h2 class=api><a href=blog.php>blog</a></h2>
 <p>the blog api manages blog entries.</p>
 
 <h2 class=api><a href=calcprog>calcprog</a></h2>

@@ -11,6 +11,21 @@ class FormatText {
 		}
 		return self::$parsedown->parse($markdown);
 	}
+
+	public static function Preview(string $html): Preview {
+		$paragraphs = array_filter(explode('</p>', $html));
+		return new Preview(array_shift($paragraphs) . '</p>', count($paragraphs) > 0);
+	}
+}
+
+class Preview {
+	public string $Text;
+	public bool $HasMore;
+
+	public function __construct(string $text, bool $hasMore) {
+		$this->Text = $text;
+		$this->HasMore = $hasMore;
+	}
 }
 
 /**

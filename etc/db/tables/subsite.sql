@@ -7,7 +7,6 @@ create table subsite (
 
 -- create all subsites
 -- insert into subsite (id, name, calltoaction, verb) values
--- ('bln', 'blog', 'read the blog', 'blogged'),
 -- ('guides', 'guides', 'learn how i’ve done things', 'guided'),
 -- ('lego', 'lego models', 'download instructions for custom lego models', 'legoed'),
 -- ('pen', 'stories', 'read short fiction and a poem', 'storied'),
