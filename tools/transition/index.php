@@ -38,6 +38,7 @@ $html->Open('database transitions');
 	<li><a href=photos.php>photo album</a></li>
 	<li><a href=art.php>art</a></li>
 	<li><a href=blog.php>blog</a></li>
+	<li><a href=code.php>code</a></li>
 </ul>
 
 <table>
