@@ -35,7 +35,7 @@ class IndexArt {
 			$result = new ArtList();
 			while ($select->fetch())
 				if (count($result->Art) < self::ListLimit)
-					$result->Art[] = new IndexArt($id, $ext);
+					$result->Art[] = new self($id, $ext);
 				else
 					$result->HasMore = true;
 			return $result;
@@ -81,7 +81,7 @@ class Art extends IndexArt {
 		$this->Vote = $vote;
 	}
 
-	public static function FromQueryString(mysqli $db, CurrentUser $user): ?Art {
+	public static function FromQueryString(mysqli $db, CurrentUser $user): ?self {
 		if (!isset($_GET['art']) || !$_GET['art'])
 			return null;
 		$ip = $user->IsLoggedIn() ? '0.0.0.0' : $_SERVER['REMOTE_ADDR'];
@@ -91,7 +91,7 @@ class Art extends IndexArt {
 			$select->execute();
 			$select->bind_result($id, $ext, $title, $post, $deviation, $instant, $description, $rating, $votes, $vote);
 			if ($select->fetch())
-				return new Art($id, $ext, $title, $post, $deviation, $instant, $description, $rating, $votes, $vote);
+				return new self($id, $ext, $title, $post, $deviation, $instant, $description, $rating, $votes, $vote);
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error looking up art', $mse);
 		}
@@ -107,21 +107,21 @@ class EditArt extends Art {
 		$this->Tags = $tags;
 	}
 
-	public static function FromID(mysqli $db, string $id): ?EditArt {
+	public static function FromID(mysqli $db, string $id): ?self {
 		try {
 			$select = $db->prepare('select a.id, a.ext, p.title, a.deviation, coalesce(nullif(a.markdown, \'\'), a.html) as description, group_concat(pt.tag) from art as a left join post as p on p.id=a.post left join post_tag as pt on pt.post=p.id where a.id=? group by a.id');
 			$select->bind_param('s', $id);
 			$select->execute();
 			$select->bind_result($id, $ext, $title, $deviation, $description, $tags);
 			if ($select->fetch())
-				return new EditArt($id, $ext, $title, $deviation, $description, $tags ? $tags : '');
+				return new self($id, $ext, $title, $deviation, $description, $tags ? $tags : '');
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error looking up art', $mse);
 		}
 		return null;
 	}
 
-	public static function FromPOST(): EditArt {
+	public static function FromPOST(): self {
 		if (!isset($_POST['id'], $_POST['title'], $_POST['description']))
 			throw new DetailedException('id, title, and description are required');
 		if (!($id = trim($_POST['id'])))
@@ -133,7 +133,7 @@ class EditArt extends Art {
 		$deviation = isset($_POST['deviation']) ? trim($_POST['deviation']) : '';
 		$deltags = isset($_POST['deltags']) ? trim($_POST['deltags']) : '';
 		$addtags = isset($_POST['addtags']) ? trim($_POST['addtags']) : '';
-		return new EditArt($id, '', $title, $deviation, $description, "-$deltags+$addtags");
+		return new self($id, '', $title, $deviation, $description, "-$deltags+$addtags");
 	}
 
 	public static function IdAvailable(mysqli $db, string $oldID, string $newID): ValidationResult {

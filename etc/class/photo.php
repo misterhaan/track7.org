@@ -35,7 +35,7 @@ class IndexPhoto {
 			$result = new PhotoList();
 			while ($select->fetch())
 				if (count($result->Photos) < self::ListLimit)
-					$result->Photos[] = new IndexPhoto($id, $title);
+					$result->Photos[] = new self($id, $title);
 				else
 					$result->HasMore = true;
 			return $result;
@@ -78,7 +78,7 @@ class Photo extends IndexPhoto {
 		$this->Story = $story;
 	}
 
-	public static function FromQueryString(mysqli $db): ?Photo {
+	public static function FromQueryString(mysqli $db): ?self {
 		if (!isset($_GET['photo']) || !$_GET['photo'])
 			return null;
 		try {
@@ -87,7 +87,7 @@ class Photo extends IndexPhoto {
 			$select->execute();
 			$select->bind_result($id, $post, $youtube, $title, $instant, $taken, $year, $story);
 			if ($select->fetch())
-				return new Photo($id, $post, $youtube, $title, $instant, $taken, $year, $story);
+				return new self($id, $post, $youtube, $title, $instant, $taken, $year, $story);
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error looking up photo', $mse);
 		}
@@ -103,21 +103,21 @@ class EditPhoto extends Photo {
 		$this->Tags = $tags;
 	}
 
-	public static function FromID(mysqli $db, string $id): ?EditPhoto {
+	public static function FromID(mysqli $db, string $id): ?self {
 		try {
 			$select = $db->prepare('select ph.id, ph.youtube, ps.title, unix_timestamp(ph.taken), ph.year, coalesce(nullif(ph.storymd, \'\'), ph.story), group_concat(pt.tag) from photo as ph left join post as ps on ps.id=ph.post left join post_tag as pt on pt.post=ph.post where ph.id=? group by ph.id');
 			$select->bind_param('s', $id);
 			$select->execute();
 			$select->bind_result($id, $youtube, $title, $taken, $year, $story, $tags);
 			if ($select->fetch())
-				return new EditPhoto($id, $youtube, $title, $taken, $year, $story, $tags);
+				return new self($id, $youtube, $title, $taken, $year, $story, $tags);
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error looking up photo', $mse);
 		}
 		return null;
 	}
 
-	public static function FromPOST(CurrentUser $user): EditPhoto {
+	public static function FromPOST(CurrentUser $user): self {
 		if (!isset($_POST['id'], $_POST['title'], $_POST['story']))
 			throw new DetailedException('id, title, and story are required');
 		if (!($id = trim($_POST['id'])))
@@ -137,7 +137,7 @@ class EditPhoto extends Photo {
 		$year = isset($_POST['year']) && is_numeric($_POST['year']) ? +$_POST['year'] : 0;
 		$deltags = isset($_POST['deltags']) ? trim($_POST['deltags']) : '';
 		$addtags = isset($_POST['addtags']) ? trim($_POST['addtags']) : '';
-		return new EditPhoto($id, $youtube, $title, $taken, $year, $story, "-$deltags+$addtags");
+		return new self($id, $youtube, $title, $taken, $year, $story, "-$deltags+$addtags");
 	}
 
 	public static function IdAvailable(mysqli $db, string $oldID, string $newID): ValidationResult {

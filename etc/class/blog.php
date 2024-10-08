@@ -111,7 +111,7 @@ class Blog {
 		$this->Tags = explode(',', $tags);
 	}
 
-	public static function FromQueryString(mysqli $db, CurrentUser $user): ?Blog {
+	public static function FromQueryString(mysqli $db, CurrentUser $user): ?self {
 		if (!isset($_GET['name']) || !$_GET['name'])
 			return null;
 		try {
@@ -141,21 +141,21 @@ class EditBlog {
 		$this->Tags = $tags;
 	}
 
-	public static function FromID(mysqli $db, string $id): ?EditBlog {
+	public static function FromID(mysqli $db, string $id): ?self {
 		try {
 			$select = $db->prepare('select b.id, p.title, coalesce(nullif(b.markdown, \'\'), b.html), ifnull(group_concat(pt.tag),\'\') from blog as b left join post as p on p.id=b.post left join post_tag as pt on pt.post=p.id where b.id=? group by b.id limit 1');
 			$select->bind_param('s', $id);
 			$select->execute();
 			$select->bind_result($id, $title, $markdown, $tags);
 			if ($select->fetch())
-				return new EditBlog($id, $title, $markdown, $tags);
+				return new self($id, $title, $markdown, $tags);
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error looking up blog entry', $mse);
 		}
 		return null;
 	}
 
-	private static function FromPostID(mysqli $db, int $post, CurrentUser $user): ?Blog {
+	private static function FromPostID(mysqli $db, int $post, CurrentUser $user): ?self {
 		try {
 			$select = $db->prepare('select b.id, p.title, coalesce(nullif(b.markdown, \'\'), b.html), ifnull(group_concat(pt.tag),\'\') from blog as b left join post as p on p.id=b.post left join post_tag as pt on pt.post=p.id where b.post=? group by b.id limit 1');
 			$select->bind_param('i', $post);
@@ -169,7 +169,7 @@ class EditBlog {
 		return null;
 	}
 
-	public static function FromPOST(): EditBlog {
+	public static function FromPOST(): self {
 		if (!isset($_POST['id'], $_POST['title'], $_POST['markdown']))
 			throw new DetailedException('id, title, and markdown are required');
 		if (!($id = trim($_POST['id'])))
@@ -180,7 +180,7 @@ class EditBlog {
 			throw new DetailedException('markdown cannot be blank');
 		$deltags = isset($_POST['deltags']) ? trim($_POST['deltags']) : '';
 		$addtags = isset($_POST['addtags']) ? trim($_POST['addtags']) : '';
-		return new EditBlog($id, $title, $markdown, "-$deltags+$addtags");
+		return new self($id, $title, $markdown, "-$deltags+$addtags");
 	}
 
 	public static function IdAvailable(mysqli $db, string $oldID, string $newID): ValidationResult {
@@ -258,7 +258,7 @@ class EditBlog {
 		}
 	}
 
-	public static function Publish(mysqli $db, int $post, CurrentUser $user): ?Blog {
+	public static function Publish(mysqli $db, int $post, CurrentUser $user): ?self {
 		$entry = self::FromPostID($db, $post, $user);
 		if ($entry)
 			try {
@@ -271,7 +271,7 @@ class EditBlog {
 		return $entry;
 	}
 
-	public static function Delete(mysqli $db, string $id): ?Blog {
+	public static function Delete(mysqli $db, string $id): ?self {
 		$entry = self::FromID($db, $id);
 		if ($entry) {
 			if ($entry->Published)
