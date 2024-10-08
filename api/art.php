@@ -126,8 +126,8 @@ class ArtApi extends Api {
 				unlink($path . $id . '.*');
 				unlink($path . $id . '-prev.*');
 			} else {
-				rename($path . $id . '.' . $art->Ext, $path . $photo->ID . '.' . $art->Ext);
-				rename($path . $id . '-prev.' . $art->Ext, $path . $photo->ID . '-prev.' . $art->Ext);
+				rename($path . $id . '.' . $art->Ext, $path . $art->ID . '.' . $art->Ext);
+				rename($path . $id . '-prev.' . $art->Ext, $path . $art->ID . '-prev.' . $art->Ext);
 			}
 		}
 		self::Success('/art/' . $art->ID);
