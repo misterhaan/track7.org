@@ -8,7 +8,7 @@ $html->Open('api');
 <h2 class=api><a href=activity>activity</a></h2>
 <p>the activity api retrieves latest activity.</p>
 
-<h2 class=api><a href=applications>applications</a></h2>
+<h2 class=api><a href=application.php>application</a></h2>
 <p>the applications api manages applications with source code.</p>
 
 <h2 class=api><a href=art.php>art</a></h2>
@@ -16,9 +16,6 @@ $html->Open('api');
 
 <h2 class=api><a href=blog.php>blog</a></h2>
 <p>the blog api manages blog entries.</p>
-
-<h2 class=api><a href=calcprog>calcprog</a></h2>
-<p>the calcprog api manages calculator programs.</p>
 
 <h2 class=api><a href=comment.php>comment</a></h2>
 <p>the comment api manages comments.</p>
@@ -35,9 +32,6 @@ $html->Open('api');
 <h2 class=api><a href=forum>forum</a></h2>
 <p>the forum api manages the forums.</p>
 
-<h2 class=api><a href=gameworlds>gameworlds</a></h2>
-<p>the gameworlds api manages game worlds.</p>
-
 <h2 class=api><a href=guides>guides</a></h2>
 <p>the guides api manages guides.</p>
 
@@ -46,6 +40,9 @@ $html->Open('api');
 
 <h2 class=api><a href=photo.php>photo</a></h2>
 <p>the photo api manages the photo album.</p>
+
+<h2 class=api><a href=release.php>release</a></h2>
+<p>the release api manages application releases.</p>
 
 <h2 class=api><a href=settings>settings</a></h2>
 <p>the settings api manages user profiles and settings.</p>
@@ -65,14 +62,14 @@ $html->Open('api');
 <h2 class=api><a href=users>users</a></h2>
 <p>the users api manages users.</p>
 
+<h2 class=api><a href=validate>validate</a></h2>
+<p>the validate api provides field-level validation for forms.</p>
+
 <h2 class=api><a href=vote.php>vote</a></h2>
 <p>the vote api manages votes.</p>
 
 <h2 class=api><a href=votes>votes</a></h2>
 <p>the votes api manages votes.</p>
-
-<h2 class=api><a href=validate>validate</a></h2>
-<p>the validate api provides field-level validation for forms.</p>
 
 <h2 class=api><a href=webcode>webcode</a></h2>
 <p>the webcode api manages web script code.</p>

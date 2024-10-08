@@ -95,9 +95,6 @@ $html->Open('database transitions');
 			<td><?= $status[TR_GUESTBOOK]->stepnum; ?></td>
 			<td><?= $status[TR_GUESTBOOK]->status; ?></td>
 		</tr>
-		<tr>
-			<td><a href="code-vs.php">applications</a></td>
-		</tr>
 	</tbody>
 </table>
 <?php
