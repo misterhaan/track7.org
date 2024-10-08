@@ -126,7 +126,7 @@ abstract class TransitionPage extends Page {
 		<?php
 			self::CheckCommentTable();
 		} else
-			self::CreateTagUsageView();
+			self::CreateView('tagusage');
 	}
 
 	private static function CheckCommentTable(): void {
@@ -161,7 +161,7 @@ abstract class TransitionPage extends Page {
 		<?php
 			static::CheckVoteRows();
 		} else
-			self::CreateRatingView();
+			self::CreateView('rating');
 	}
 
 	protected static function CheckVoteRows(): void {
@@ -194,27 +194,19 @@ abstract class TransitionPage extends Page {
 	<?php
 	}
 
-	private static function CreateTagUsageView(): void {
-		$file = file_get_contents('../../etc/db/views/tagusage.sql');
-		self::$db->real_query($file);
-	?>
-		<p>created <code>tagusage</code> view. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function CreateRatingView(): void {
-		$file = file_get_contents('../../etc/db/views/rating.sql');
-		self::$db->real_query($file);
-	?>
-		<p>created <code>rating</code> view. refresh the page to take the next step.</p>
-	<?php
-	}
-
 	protected static function CreateTable(string $name): void {
 		$file = file_get_contents("../../etc/db/tables/$name.sql");
 		self::$db->real_query($file);
 	?>
 		<p>created <code><?= $name; ?></code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	protected static function CreateView(string $name): void {
+		$file = file_get_contents("../../etc/db/views/$name.sql");
+		self::$db->real_query($file);
+	?>
+		<p>created <code><?= $name; ?></code> view. refresh the page to take the next step.</p>
 <?php
 	}
 }
