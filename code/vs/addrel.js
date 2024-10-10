@@ -3,6 +3,7 @@ import { ValidatingField } from "validate";
 import autosize from "autosize";
 
 createApp({
+	name: "AddRelease",
 	data() {
 		return {
 			release: {},

@@ -5,6 +5,7 @@ import { NameToUrl, ValidatingField } from "validate";
 import { TagsField, FindAddedTags } from "tag";
 
 createApp({
+	name: "EditPhoto",
 	data() {
 		return {
 			photo: {},

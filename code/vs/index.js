@@ -2,6 +2,7 @@ import "jquery";
 import { createApp } from "vue";
 
 createApp({
+	name: "VS Apps",
 	data() {
 		return {
 			applications: [],

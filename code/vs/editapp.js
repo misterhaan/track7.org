@@ -3,6 +3,7 @@ import { NameToUrl, ValidatingField } from "validate";
 import autosize from "autosize";
 
 createApp({
+	name: "EditApp",
 	data() {
 		return {
 			app: {},

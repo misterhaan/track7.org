@@ -3,8 +3,7 @@ import { createApp } from "vue";
 import "comment";
 
 createApp({
-	created: function() {
-	},
+	name: "BlogActions",
 	methods: {
 		Publish() {
 			const publishLink = $("nav.actions a.publish");

@@ -4,6 +4,7 @@ import autosize from "autosize";
 import { TagsField, FindAddedTags } from "tag";
 
 createApp({
+	name: "EditEntry",
 	data() {
 		return {
 			entry: {},

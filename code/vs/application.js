@@ -3,6 +3,7 @@ import { createApp } from "vue";
 import "comment";
 
 createApp({
+	name: "Releases",
 	data() {
 		return {
 			releases: [],

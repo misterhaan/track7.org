@@ -86,6 +86,7 @@ if(comments) {
 	};
 
 	createApp({
+		name: "Comments",
 		data() {
 			return {
 				comments: [],

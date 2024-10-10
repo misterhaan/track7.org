@@ -3,6 +3,7 @@ import { createApp } from "vue";
 import "tag";
 
 createApp({
+	name: "BlogEntries",
 	data() {
 		return {
 			entries: [],
