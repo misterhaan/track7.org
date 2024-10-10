@@ -66,7 +66,7 @@ class BlogApi extends Api {
 
 	/**
 	 * Check if a blog entry ID is available.
-	 * @param array $params Current ID followed by an equal sign followed by the new ID to check.  Currenty ID may be blank.
+	 * @param array $params Current ID followed by an equal sign followed by the new ID to check.  Current ID may be blank.
 	 */
 	protected static function GET_idAvailable($params): void {
 		$oldNewID = array_shift($params);
