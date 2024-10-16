@@ -71,11 +71,6 @@ $html->Open('database transitions');
 			<td><?php echo $status[TR_STORIES]->status; ?></td>
 		</tr>
 		<tr>
-			<td><a href="code-web.php">web scripts</a></td>
-			<td><?php echo $status[TR_WEB_SCRIPTS]->stepnum; ?></td>
-			<td><?php echo $status[TR_WEB_SCRIPTS]->status; ?></td>
-		</tr>
-		<tr>
 			<td><a href="updates.php">site updates</a></td>
 			<td><?php echo $status[TR_UPDATES]->stepnum; ?></td>
 			<td><?php echo $status[TR_UPDATES]->status; ?></td>

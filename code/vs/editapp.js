@@ -1,3 +1,4 @@
+import "jquery";
 import { createApp } from 'vue';
 import { NameToUrl, ValidatingField } from "validate";
 import autosize from "autosize";

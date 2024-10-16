@@ -1,94 +1,61 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/page.php';
+require_once 'script.php';
 
-$scr = false;
-if(isset($_GET['url']))
-	if($sel = $db->prepare('select s.id, s.name, u.name as typename, s.released, s.deschtml, s.download, s.github, s.insthtml, s.wiki from code_web_scripts as s left join code_web_usetype as u on u.id=s.usetype where s.url=?'))
-		if($sel->bind_param('s', $_GET['url']))
-			if($sel->execute())
-				if($sel->bind_result($id, $name, $typename, $released, $desc, $download, $github, $inst, $wiki))
-					if($sel->fetch()) {
-						$sel->close();
-						$released = t7format::TimeTag('smart', $released, 'Y-m-d g:i:s a');
-						if(!$download)
-							$download = 'files/' . $_GET['url'] . '.zip';
-						$html = new t7html(['vue' => true]);
-						$html->Open(htmlspecialchars($name) . ' - scripts - software');
+class ScriptPage extends Page {
+	private static ?Script $script = null;
+
+	public function __construct() {
+		self::$script = Script::FromQueryString(self::RequireDatabase(), self::RequireUser());
+		if (!self::$script)
+			self::NotFound('404 script not found', 'sorry, we don’t seem to have a script by that name. try the list of <a href="' . dirname($_SERVER['SCRIPT_NAME']) . '/">all scripts</a>.');
+		parent::__construct(self::$script->Title . ' - web scripts - software');
+	}
+
+	protected static function MainContent(): void {
 ?>
-			<h1><?=htmlspecialchars($name); ?></h1>
-			<p class=guidemeta>
-				<span class=scripttype><?=$typename; ?></span>
-				<time class=posted title="released <?=$released->title; ?>" datetime="<?=$released->datetime; ?>"><?=$released->display; ?></time>
-			</p>
-<?php
-						if($user->IsAdmin()) {
-?>
-			<nav class=actions>
-				<a class=edit href="editscr?id=<?=$id; ?>">edit this script</a>
-			</nav>
-<?php
-						}
-						echo $desc;
-?>
-			<h2>files</h2>
-			<p class="downloads">
-				<a class="action zip" href="<?=$download; ?>">download</a>
-<?php
-						if($github) {
-?>
-				<a class="action github" href="https://github.com/misterhaan/<?=$github; ?>">github</a>
-<?php
-						}
-?>
-			</p>
-			<h2>requirements</h2>
-			<ul class=requirements>
-<?php
-						if($getreqs = $db->prepare('select ri.name, ri.url from code_web_requirements as r left join code_web_reqinfo as ri on ri.id=r.req where r.script=? order by ri.name')) {
-							if($getreqs->bind_param('i', $id))
-								if($getreqs->execute())
-									if($getreqs->bind_result($reqname, $requrl))
-										while($getreqs->fetch()) {
-?>
-				<li><a href="<?=$requrl; ?>"><?=$reqname; ?></a></li>
-<?php
-										}
-									else
-										echo '<li class=error>error binding result:  ' . $getreqs->error . '</li>';
-								else
-									echo '<li class=error>error executing requirements query:  ' . $getreqs->error . '</li>';
-							else
-								echo '<li class=error>error binding script id:  ' . $getreqs->error . '</li>';
-							$getreqs->close();
-						} else
-							echo '<li class=error>error preparing to look up requirements:  ' . $db->error . '</li>';
-?>
-			</ul>
-<?php
-						if($inst || $wiki) {
-?>
+		<h1><?= htmlspecialchars(self::$script->Title); ?></h1>
+		<p class=guidemeta>
+			<span class=scripttype><?= self::$script->Type; ?></span>
+			<time class=posted title="released <?= self::$script->Instant->Tooltip; ?>" datetime="<?= self::$script->Instant->DateTime; ?>"><?= self::$script->Instant->Display; ?></time>
+		</p>
+		<?php
+		if (self::HasAdminSecurity())
+			self::ShowAdminActions();
+		echo self::$script->Description;
+		?>
+		<h2>files</h2>
+		<p class="downloads">
+			<a class="action zip" href="<?= self::$script->Download; ?>">download</a>
+			<?php
+			if (self::$script->GitHub) {
+			?>
+				<a class="action github" href="https://github.com/misterhaan/<?= self::$script->GitHub; ?>">github</a>
+			<?php
+			}
+			?>
+		</p>
+		<?php
+		if (self::$script->Instructions || self::$script->Wiki) {
+		?>
 			<h2>instructions</h2>
-<?php
-							echo $inst;
-							if($wiki) {
-?>
-			<p class=calltoaction><a class="action wiki" href="https://wiki.track7.org/<?=$wiki; ?>">read more on the track7 wiki</a></p>
-<?php
-							}
-						}
-						$html->ShowComments('script', 'code_web', $id);
-						$html->Close();
-						die;
-					}
-header('HTTP/1.0 404 Not Found');
-$html = new t7html([]);
-$html->Open('script not found - software');
-?>
-			<h1>404 script not found</h1>
+			<?php
+			echo self::$script->Instructions;
+			if (self::$script->Wiki) {
+			?>
+				<p class=calltoaction><a class="action wiki" href="https://wiki.track7.org/<?= self::$script->Wiki; ?>">read more on the track7 wiki</a></p>
+		<?php
+			}
+		}
+		self::ShowComments(self::$script->Post);
+	}
 
-			<p>
-				sorry, we don’t seem to have a script by that name.  try the list of
-				<a href="<?=dirname($_SERVER['SCRIPT_NAME']); ?>/">all scripts</a>.
-			</p>
+	private static function ShowAdminActions(): void {
+		?>
+		<nav class=actions>
+			<a class=edit href="editscr?id=<?= self::$script->ID; ?>">edit this script</a>
+		</nav>
 <?php
-$html->Close();
+	}
+}
+new ScriptPage();

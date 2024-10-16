@@ -66,9 +66,28 @@ class CodeTransition extends TransitionPage {
 		} else {
 			?>
 			<p>old applications table no longer exists.</p>
+			<?php
+			self::CheckScriptPostRows();
+		}
+	}
+
+	private static function CheckScriptPostRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_web_scripts\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from code_web_scripts left join post on post.subsite=\'code\' and post.url=concat(\'/code/web/\', code_web_scripts.url) where post.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyScriptsToPost();
+			else {
+			?>
+				<p>all old scripts exist in new <code>post</code> table.</p>
+			<?php
+				self::CheckScriptTable();
+			}
+		} else {
+			?>
+			<p>old web scripts table no longer exists.</p>
 		<?php
-			// TODO:  check other code post rows
-			self::Done();
+			self::CheckContributions();
 		}
 	}
 
@@ -127,6 +146,17 @@ class CodeTransition extends TransitionPage {
 			self::CreateView('latestapplication');
 	}
 
+	private static function CheckScriptTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'script\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>script</code> table exists.</p>
+		<?php
+			self::CheckScriptRows();
+		} else
+			self::CreateTable('script');
+	}
+
 	private static function CheckCalcRows(): void {
 		$missing = self::$db->query('select 1 from code_calc_progs left join calcprog on calcprog.id=code_calc_progs.url where calcprog.id is null limit 1');
 		if ($missing->fetch_column())
@@ -170,6 +200,18 @@ class CodeTransition extends TransitionPage {
 		else {
 		?>
 			<p>all old application releases exist in new <code>release</code> table.</p>
+		<?php
+			self::CheckScriptTable();
+		}
+	}
+
+	private static function CheckScriptRows(): void {
+		$missing = self::$db->query('select 1 from code_web_scripts left join script on script.id=code_web_scripts.url where script.id is null limit 1');
+		if ($missing->fetch_column())
+			self::CopyToScripts();
+		else {
+		?>
+			<p>all old web scripts exist in new <code>script</code> table.</p>
 			<?php
 			self::CheckTagTable();
 		}
@@ -202,8 +244,27 @@ class CodeTransition extends TransitionPage {
 		} else {
 			?>
 			<p>old application comment table no longer exists.</p>
+			<?php
+			self::CheckScriptCommentRows();
+		}
+	}
+
+	private static function CheckScriptCommentRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_web_comments\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from code_web_comments as sc left join code_web_scripts as os on os.id=sc.script left join script as s on s.id=os.url left join comment as c on c.post=s.post and c.instant=from_unixtime(sc.posted) where c.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyScriptComments();
+			else {
+			?>
+				<p>all old web script comments exists in new <code>comment</code> table.</p>
+			<?php
+				self::CheckScriptCommentTriggers();
+			}
+		} else {
+			?>
+			<p>old web script comment table no longer exists.</p>
 		<?php
-			// TODO:  check comments for code that has comments
 			self::CheckOldCalc();
 		}
 	}
@@ -252,6 +313,30 @@ class CodeTransition extends TransitionPage {
 		?>
 			<p>old application procedures no longer exist.</p>
 		<?php
+			self::CheckScriptCommentTriggers();
+		}
+	}
+
+	private static function CheckScriptCommentTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'code_web_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteScriptCommentTriggers();
+		else {
+		?>
+			<p>old web script comment triggers no longer exist.</p>
+		<?php
+			self::CheckScriptTriggers();
+		}
+	}
+
+	private static function CheckScriptTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'code_web_scripts\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteScriptTriggers();
+		else {
+		?>
+			<p>old web script triggers no longer exist.</p>
+		<?php
 			self::CheckOldCalc();
 		}
 	}
@@ -288,7 +373,30 @@ class CodeTransition extends TransitionPage {
 		?>
 			<p>old application tables no longer exist.</p>
 		<?php
-			// TODO:  delete old tables for other code
+			self::CheckOldScripts();
+		}
+	}
+
+	private static function CheckOldScripts(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name like \'code_web_%\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldScripts();
+		else {
+		?>
+			<p>old web script tables no longer exist.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckContributions(): void {
+		$exists = self::$db->query('select 1 from contributions where srctbl in (\'code_vs_releases\', \'code_web_scripts\', \'code_web_comments\') limit 1');
+		if ($exists->fetch_column())
+			self::DeleteContributions();
+		else {
+		?>
+			<p>code contributions no longer exist.</p>
+		<?php
 			self::Done();
 		}
 	}
@@ -311,6 +419,13 @@ class CodeTransition extends TransitionPage {
 		self::$db->real_query('insert into post (instant, title, subsite, url, author, preview, hasmore) select from_unixtime(r.released), concat(a.name, \' v\', r.major, \'.\', r.minor, \'.\', r.revision), \'code\', concat(\'/code/vs/\', a.url), 1, r.changelog, true from code_vs_applications as a left join code_vs_releases as r on r.application=a.id left join code_vs_releases as r_after on r_after.application=a.id and r.released<r_after.released left join post on post.subsite=\'code\' and post.url=concat(\'/code/vs/\', a.url) where post.id is null and r_after.id is null');
 	?>
 		<p>copied applications into new <code>post</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyScriptsToPost(): void {
+		self::$db->real_query('insert into post (instant, title, subsite, url, author, preview, hasmore) select from_unixtime(s.released), s.name, \'code\', concat(\'/code/web/\', s.url), 1, s.deschtml, true from code_web_scripts as s left join post as p on p.subsite=\'code\' and p.url=concat(\'/code/web/\', s.url) where p.id is null');
+	?>
+		<p>copied web scripts into new <code>post</code> table. refresh the page to take the next step.</p>
 	<?php
 	}
 
@@ -342,10 +457,25 @@ class CodeTransition extends TransitionPage {
 	<?php
 	}
 
+	private static function CopyToScripts(): void {
+		self::$db->real_query('insert into script (id, post, type, download, github, wiki, mddescription, description, mdinstructions, instructions)
+		select s.url, p.id, t.name, s.download, s.github, s.wiki, s.descmd, s.deschtml, s.instmd, s.insthtml from code_web_scripts as s left join code_web_usetype as t on t.id=s.usetype left join post as p on p.url=concat(\'/code/web/\', s.url) left join script on script.id=s.url where script.id is null');
+	?>
+		<p>copied web scripts into new <code>script</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
 	private static function CopyApplicationComments(): void {
-		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(ac.posted), a.post, ac.user, ac.name, ac.contacturl, ac.html, ac.markdown from code_vs_comments as ac left join code_vs_applications as oa on oa.id=ac.application left join application as a on a.id=oa.url left join comment as c on c.post=b.post and c.instant=from_unixtime(bc.posted) where c.id is null');
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(ac.posted), a.post, ac.user, ac.name, ac.contacturl, ac.html, ac.markdown from code_vs_comments as ac left join code_vs_applications as oa on oa.id=ac.application left join application as a on a.id=oa.url left join comment as c on c.post=a.post and c.instant=from_unixtime(ac.posted) where c.id is null');
 	?>
 		<p>copied application comments into new <code>comment</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyScriptComments(): void {
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(sc.posted), s.post, sc.user, sc.name, sc.contacturl, sc.html, sc.markdown from code_web_comments as sc left join code_web_scripts as os on os.id=sc.script left join script as s on s.id=os.url left join comment as c on c.post=s.post and c.instant=from_unixtime(sc.posted) where c.id is null');
+	?>
+		<p>copied web script comments into new <code>comment</code> table. refresh the page to take the next step.</p>
 	<?php
 	}
 
@@ -380,6 +510,23 @@ class CodeTransition extends TransitionPage {
 	<?php
 	}
 
+	private static function DeleteScriptCommentTriggers(): void {
+		self::$db->real_query('drop trigger if exists code_web_comment_added');
+		self::$db->real_query('drop trigger if exists code_web_comment_changed');
+		self::$db->real_query('drop trigger if exists code_web_comment_deleted');
+	?>
+		<p>deleted old web script comment triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteScriptTriggers(): void {
+		self::$db->real_query('drop trigger if exists code_web_script_added');
+		self::$db->real_query('drop trigger if exists code_web_script_changed');
+	?>
+		<p>deleted old web script triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
 	private static function DeleteOldCalc(): void {
 		self::$db->real_query('drop table if exists code_calc_progs');
 		self::$db->real_query('drop table if exists code_calc_model');
@@ -406,6 +553,26 @@ class CodeTransition extends TransitionPage {
 		self::$db->real_query('drop table if exists code_vs_applications');
 	?>
 		<p>deleted old application tables. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldScripts(): void {
+		self::$db->begin_transaction();
+		self::$db->real_query('drop table if exists code_web_comments');
+		self::$db->real_query('drop table if exists code_web_requirements');
+		self::$db->real_query('drop table if exists code_web_scripts');
+		self::$db->real_query('drop table if exists code_web_reqinfo');
+		self::$db->real_query('drop table if exists code_web_usetype');
+		self::$db->commit();
+	?>
+		<p>deleted old web script tables. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteContributions(): void {
+		self::$db->real_query('delete from contributions where srctbl in(\'code_vs_releases\', \'code_web_scripts\', \'code_web_comments\')');
+	?>
+		<p>deleted old code contributions. refresh the page to take the next step.</p>
 	<?php
 	}
 

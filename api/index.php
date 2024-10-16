@@ -71,8 +71,8 @@ $html->Open('api');
 <h2 class=api><a href=votes>votes</a></h2>
 <p>the votes api manages votes.</p>
 
-<h2 class=api><a href=webcode>webcode</a></h2>
-<p>the webcode api manages web script code.</p>
+<h2 class=api><a href=web.php>web</a></h2>
+<p>the web api manages web script code.</p>
 
 <?php
 $html->Close();

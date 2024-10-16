@@ -84,7 +84,7 @@ class ApplicationApi extends Api {
 	 */
 	protected static function POST_save(array $params): void {
 		if (!self::HasAdminSecurity())
-			self::Forbidden('only the administrator can edit applications.  you might need to log in again.');
+			self::Forbidden('only the administrator can save applications.  you might need to log in again.');
 
 		$id = array_shift($params);
 		$application = EditApplication::FromPOST();
