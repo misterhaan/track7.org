@@ -198,7 +198,7 @@ class TagStatistics extends Tag {
 			$select->bind_result($name, $description, $count, $lastused);
 			$tags = [];
 			while ($select->fetch())
-				$tags[] = new TagStatistics($user, $name, $description, $count, $lastused);
+				$tags[] = new self($user, $name, $description, +$count, +$lastused);
 			return $tags;
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException("error looking up $subsite tags", $mse);

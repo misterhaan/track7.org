@@ -10,14 +10,12 @@ $(function() {
 		computed: {
 			prefix: function() {
 				switch(this.type) {
-					case "blog": return "showing blog entries";
 					case "guide": return "showing guides dealing with";
 					default: return "";
 				}
 			},
 			postfix: function() {
 				switch(this.type) {
-					case "blog": return "go back to all entries.";
 					case "guide": return "go back to all guides.";
 					default: return "";
 				}
@@ -32,7 +30,9 @@ $(function() {
 			},
 			subsite() {
 				switch(this.type) {
-					case "photos": return 'album';
+					case "photos": return "album";
+					case "art": return "art";
+					case "blog": return "bln";
 					default: return '';  // not migrated yet
 				}
 			}
