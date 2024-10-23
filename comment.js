@@ -137,12 +137,10 @@ if(comments) {
 				this.loading = true;
 				let url = "/api/comment.php/bypost/" + postID;
 				if(this.comments.length)
-					url += "/" + comments.length;
+					url += "/" + this.comments.length;
 				$.get(url)
 					.done(result => {
-						let newComment;
-						while(newComment = result.Comments.shift())
-							this.comments.unshift(newComment);
+						this.comments = this.comments.concat(result.Comments);
 						this.hasMore = result.HasMore;
 						this.$nextTick(() => {
 							Prism.highlightAll();
@@ -168,8 +166,11 @@ if(comments) {
 			<p v-if="!loading && !comments.length">
 				there are no comments so far. you could be the first!
 			</p>
-			<!-- calltoaction for loading older comments -->
+
 			<Comment v-for="(comment, index) in comments" :key=comment.id :comment=comment @delete=Delete(index)></Comment>
+
+		<p class=loading v-if=loading>loading more comments . . .</p>
+		<p class="more calltoaction" v-if=hasMore><a class="action get" href=#nextpage @click.prevent=Load>load more comments</a></p>
 
 			<form id=addcomment @submit.prevent=Add>
 				<label v-if=user title="you are signed in, so your comment will post with your avatar and a link to your profile">
