@@ -12,7 +12,7 @@ class IndexBlog {
 	public array $Tags = [];
 	public int $CommentCount;
 
-	public function __construct(CurrentUser $user, string $id, ?int $instant, string $title, string $preview, string $tags, int $commentCount) {
+	private function __construct(CurrentUser $user, string $id, ?int $instant, string $title, string $preview, string $tags, int $commentCount) {
 		$this->ID = $id;
 		if ($instant)
 			$this->Instant = new TimeTagData($user, 'M j, Y', $instant, FormatDate::Long);
@@ -27,7 +27,7 @@ class IndexBlog {
 	 * @param $db Database connection
 	 * @param $user Signed-in user
 	 * @param $tagName Only list entries with this tag, or list all entries if blank
-	 * @param $skip Number of art to skip (zero unless getting more)
+	 * @param $skip Number of entries to skip (zero unless getting more)
 	 * @return BlogList Next group of entries
 	 */
 	public static function List(mysqli $db, CurrentUser $user, string $tagName = '', int $skip = 0): BlogList {

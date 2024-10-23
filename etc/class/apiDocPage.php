@@ -80,7 +80,7 @@ class ApiDocPage extends Page {
 	private static function ShowParameterDocumentation(ParameterDocumentation $param) {
 		?>
 		<dt><code><?= $param->Name; ?></code></dt>
-		<dd><?= $param->Documentation; ?> <?= $param->Required ? 'reqiured' : 'optional'; ?>, <?= $param->Type; ?>.</dd>
+		<dd><?= $param->Documentation; ?> <?= $param->Required ? 'required' : 'optional'; ?>, <?= $param->Type; ?>.</dd>
 <?php
 	}
 }
