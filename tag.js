@@ -95,6 +95,51 @@ if(taginfo && editLink.length) {
 	}).mount("#taginfo");
 }
 
+export const ExistingTagsField = {
+	props: [
+		"tags"
+	],
+	emits: [
+		"changed"
+	],
+	data() {
+		return {
+			allTags: [],
+			tagArray: []
+		};
+	},
+	created() {
+		$.get("/api/tag.php/list/" + subsite + "/1").done(result => {
+			this.allTags = result.map(tag => tag.Name).sort();
+		}).fail(request => {
+			alert(request.responseText);
+		});
+	},
+	watch: {
+		tags(value) {
+			this.tagArray = value ? value.split(",") : [];
+		},
+		tagArray(value) {
+			this.Changed();
+		}
+	},
+	methods: {
+		Changed() {
+			this.$emit("changed", this.tagArray.join(","));
+		}
+	},
+	template: /* html */ `
+		<fieldset class=checkboxes>
+			<legend>tags:</legend>
+			<span class=field>
+				<label v-for="tag in allTags" class=checkbox>
+					<input type=checkbox v-model=tagArray :value=tag> {{tag}}
+				</label>
+			</span>
+		</fieldset>
+	`
+};
+
 export const TagsField = {
 	props: [
 		"tags"

@@ -32,6 +32,14 @@ abstract class Responder {
 	}
 
 	/**
+	 * Check if the current user has trusted (or better) security.
+	 */
+	protected static function IsUSerTrusted(): bool {
+		self::RequireUser();
+		return self::$user->IsTrusted();
+	}
+
+	/**
 	 * Check if the current user is logged in.
 	 */
 	protected static function IsUserLoggedIn(): bool {

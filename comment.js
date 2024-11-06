@@ -4,6 +4,7 @@ import { createApp } from "vue";
 import autosize from "autosize";
 
 const user = GetCurrentUser();
+const subsite = document.location.pathname.split("/")[1];
 
 const comments = document.querySelector("#comments");
 if(comments) {
@@ -20,6 +21,9 @@ if(comments) {
 			};
 		},
 		computed: {
+			trusted: function() {
+				return user && user.Level >= "3-trusted";
+			},
 			canSave: function() {
 				return !this.saving && this.comment.Markdown && this.oldMarkdown != this.comment.Markdown.trim();
 			}
@@ -41,12 +45,19 @@ if(comments) {
 					Prism.highlightAll();
 				});
 			},
-			Save: function() {
+			Save: function(leaveANote) {
 				this.saving = true;
-				$.ajax({ url: "/api/comment.php/id/" + this.comment.ID, type: "PATCH", data: this.comment.Markdown })
+				let url = "/api/comment.php/id/";
+				if(!leaveANote)
+					url += "stealth/";
+				url += this.comment.ID;
+
+				$.ajax({ url: url, type: "PATCH", data: this.comment.Markdown })
 					.done(html => {
 						this.editing = false;
 						this.comment.HTML = html;
+						if(leaveANote)
+							this.comment.Edits.push({ Instant: { Display: "just now" }, DisplayName: user.DisplayName, Username: user.URL.split("/")[1] });
 						this.$nextTick(() => {
 							Prism.highlightAll();
 						});
@@ -78,8 +89,17 @@ if(comments) {
 					<div v-if=editing class="content edit">
 						<textarea v-model=comment.Markdown ref=editField></textarea>
 					</div>
+					<div class=meta>
+						<div class=edithistory v-for="edit in comment.Edits">
+							edited
+							<time :datetime=edit.Instant.DateTime v-html=edit.Instant.Display></time>
+							by
+							<a :href="'/user/' + edit.Username + '/'">{{edit.DisplayName}}</a>
+						</div>
+					</div>
 					<footer v-if=comment.CanChange>
-						<button class="okay action link" :class="{working: saving}" v-if=editing :disabled=!canSave @click=Save>save</button>
+						<button class="okay action link" :class="{working: saving}" v-if=editing :disabled=!canSave @click=Save(true) title="save changes and leave an edit note">save</button>
+						<button class="okay action link" :class="{working: saving}" v-if="editing && trusted" :disabled=!canSave @click=Save(false) title="save changes without leaving an edit note">stealth save</button>
 						<a class="cancel action" v-if=editing @click.prevent=Unedit href="#cancelEdit">cancel</a>
 						<a class="edit action" v-if=!editing @click.prevent=Edit href="#edit">edit</a>
 						<a class="del action" v-if=!editing @click.prevent="Delete" href="/api/comment.php">delete</a>
@@ -111,6 +131,15 @@ if(comments) {
 			},
 			canSave: function() {
 				return !this.saving && this.newComment.markdown.trim() && (this.user || this.newComment.name.trim());
+			},
+			heading: function() {
+				return subsite != "forum";
+			},
+			commentLabel: function() {
+				return subsite == "forum" ? "reply" : "comment";
+			},
+			commentLabelPlural: function() {
+				return subsite == "forum" ? "replies" : "comments";
 			}
 		},
 		created: function() {
@@ -160,19 +189,19 @@ if(comments) {
 			}
 		},
 		template: /*html*/ `
-			<h2>comments</h2>
+			<h2 v-if=heading>comments</h2>
 			<p class=error v-if=error>{{error}}</p>
 			<p v-if="!loading && !comments.length">
-				there are no comments so far. you could be the first!
+				there are no {{commentLabelPlural}} so far. you could be the first!
 			</p>
 
 			<Comment v-for="(comment, index) in comments" :key=comment.id :comment=comment @delete=Delete(index)></Comment>
 
-		<p class=loading v-if=loading>loading more comments . . .</p>
-		<p class="more calltoaction" v-if=hasMore><a class="action get" href=#nextpage @click.prevent=Load>load more comments</a></p>
+		<p class=loading v-if=loading>loading more {{commentLabelPlural}} . . .</p>
+		<p class="more calltoaction" v-if=hasMore><a class="action get" href=#nextpage @click.prevent=Load>load more {{commentLabelPlural}}</a></p>
 
 			<form id=addcomment @submit.prevent=Add>
-				<label v-if=user title="you are signed in, so your comment will post with your avatar and a link to your profile">
+				<label v-if=user :title="'you are signed in, so your ' + commentLabel + ' will post with your avatar and a link to your profile'">
 					<span class=label>name:</span>
 					<span class=field><a :href=user.URL><img class="inline avatar" :src=user.Avatar> {{user.DisplayName}}</a></span>
 				</label>
@@ -187,10 +216,10 @@ if(comments) {
 					</label>
 				</template>
 				<label class=multiline title="enter your comments using markdown">
-					<span class=label>comment:</span>
+					<span class=label>{{commentLabel}}:</span>
 					<span class=field><textarea ref=commentField v-model=newComment.markdown></textarea></span>
 				</label>
-				<button :class="{working: saving}" :disabled=!canSave>post comment</button>
+				<button :class="{working: saving}" :disabled=!canSave>post {{commentLabel}}</button>
 			</form>
 
 		`

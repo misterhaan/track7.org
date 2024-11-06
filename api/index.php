@@ -29,7 +29,7 @@ $html->Open('api');
 <h2 class=api><a href=date.php>date</a></h2>
 <p>the date api manages dates.</p>
 
-<h2 class=api><a href=forum>forum</a></h2>
+<h2 class=api><a href=forum.php>forum</a></h2>
 <p>the forum api manages the forums.</p>
 
 <h2 class=api><a href=guides>guides</a></h2>

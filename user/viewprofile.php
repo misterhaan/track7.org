@@ -72,7 +72,7 @@ if (isset($_GET['login'])) {
 					}
 					if ($stats->replies) {
 					?>
-						<li>#<?= Rank('replies', $stats->replies); ?> in <a href="<?= dirname($_SERVER['PHP_SELF']); ?>/<?= $u->Username; ?>/replies" title="view all of <?= $u->Username; ?>’s forum posts">forum posts</a> with <?= $stats->replies; ?></li>
+						<li>#<?= Rank('replies', $stats->replies); ?> in <a href="<?= dirname($_SERVER['PHP_SELF']); ?>/<?= $u->Username; ?>/comments" title="view all of <?= $u->Username; ?>’s forum posts">forum posts</a> with <?= $stats->replies; ?></li>
 					<?php
 					}
 					?>

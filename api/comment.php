@@ -24,6 +24,7 @@ class CommentApi extends Api {
 		$endpoint->BodyParameters[] = new ParameterDocumentation('contact', 'string', 'contact email or url of commenter (ignored if signed in)');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('PATCH', 'id', 'update an existing comment.  must be logged in as the user who originally posted the comment or the administrator.', 'markdown', 'it will be saved as the new comment.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('stealth', 'bool', 'if included, will update in stealth mode and not add an indicator of the edit.  only effective when user is trusted.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('commentID', 'integer', 'id of the comment to update.', true);
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('DELETE', 'id', 'delete an existing comment.  must be logged in as the user who originally posed the comment or the administrator.');
@@ -70,7 +71,9 @@ class CommentApi extends Api {
 	 * @param array $params ID of the comment to update.
 	 */
 	protected static function PATCH_id(array $params): void {
-		$id = +array_shift($params);
+		$id = array_shift($params);
+		$stealth = $id == 'stealth';
+		$id = $stealth ? +array_shift($params) : +$id;
 		if (!$id)
 			self::NotFound('comment id must be specified.');
 		$markdown = self::ReadRequestText();
@@ -78,7 +81,9 @@ class CommentApi extends Api {
 			self::DetailedError('cannot save empty comment.  if you meant to remove it, use “delete” instead.');
 		if (!self::IsUserLoggedIn())
 			self::Forbidden('must be signed in to update comment.  if you’ve had this page open a while you might need to open a new tab to sign back in and then try saving again.');
-		self::Success(Comment::Update(self::$db, self::$user, $id, $markdown));
+		if ($stealth && !self::IsUSerTrusted())
+			self::Forbidden('must be trusted in order to stealth save.  if you’re seeing this, there’s mismatched logic somewhere and you should report it so i can fix it.');
+		self::Success(Comment::Update(self::$db, self::$user, $id, $markdown, $stealth));
 	}
 
 	/**
@@ -90,7 +95,7 @@ class CommentApi extends Api {
 		if (!$id)
 			self::NotFound('comment id must be specified.');
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('must be signed in to delete comment.  if you’ve had this page open a while you might need to open a new tab to sign back in and then try saving again.');
+			self::Forbidden('must be signed in to delete comment.  if you’ve had this page open a while you might need to open a new tab to sign back in and then try again.');
 		self::Success(Comment::Delete(self::$db, self::$user, $id));
 	}
 }

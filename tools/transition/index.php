@@ -3,9 +3,7 @@ define('TR_GUIDES', 3);
 define('TR_MESSAGES', 4);
 define('TR_LEGOS', 7);
 define('TR_STORIES', 8);
-define('TR_WEB_SCRIPTS', 9);
 define('TR_UPDATES', 10);
-define('TR_FORUM', 11);
 define('TR_EXT_PROFILES', 12);
 define('TR_GUESTBOOK', 13);
 
@@ -22,9 +20,7 @@ initStatus(TR_GUIDES);
 initStatus(TR_MESSAGES);
 initStatus(TR_LEGOS);
 initStatus(TR_STORIES);
-initStatus(TR_WEB_SCRIPTS);
 initStatus(TR_UPDATES);
-initStatus(TR_FORUM);
 initStatus(TR_EXT_PROFILES);
 initStatus(TR_GUESTBOOK);
 
@@ -39,6 +35,7 @@ $html->Open('database transitions');
 	<li><a href=art.php>art</a></li>
 	<li><a href=blog.php>blog</a></li>
 	<li><a href=code.php>code</a></li>
+	<li><a href=forum.php>forum</a></li>
 </ul>
 
 <table>
@@ -74,11 +71,6 @@ $html->Open('database transitions');
 			<td><a href="updates.php">site updates</a></td>
 			<td><?php echo $status[TR_UPDATES]->stepnum; ?></td>
 			<td><?php echo $status[TR_UPDATES]->status; ?></td>
-		</tr>
-		<tr>
-			<td><a href="forum.php">forum</a></td>
-			<td><?php echo $status[TR_FORUM]->stepnum; ?></td>
-			<td><?php echo $status[TR_FORUM]->status; ?></td>
 		</tr>
 		<tr>
 			<td><a href="extprofiles.php">external profiles</a></td>

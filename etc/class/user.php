@@ -26,7 +26,7 @@ class UserLevel {
  * A track7 user
  */
 class User {
-	protected const DefaultName = 'random internet person';
+	public const DefaultName = 'random internet person';
 	protected const DefaultAvatar = '/images/user.jpg';
 
 	/**
@@ -140,6 +140,13 @@ class CurrentUser extends User {
 	 */
 	public function IsLoggedIn(): bool {
 		return $this->Level > UserLevel::Anonymous;
+	}
+
+	/**
+	 * True if the current user is trusted or an administrator.
+	 */
+	public function IsTrusted(): bool {
+		return $this->Level >= UserLevel::Trusted;
 	}
 
 	/**

@@ -1,36 +1,86 @@
-$(function() {
-	var editdiscussion = new Vue({
-		el: "#editdiscussion",
-		data: {
+import "jquery";
+import { GetCurrentUser } from "user";
+import { createApp } from "vue";
+import { ExistingTagsField } from "tag";
+import autosize from "autosize";
+
+const user = GetCurrentUser();
+
+
+createApp({
+	name: "StartDiscussion",
+	data() {
+		return {
 			name: "",
 			contact: "",
 			title: "",
-			tags: [],
+			tags: "",
 			message: "",
 			saving: false
+		};
+	},
+	computed: {
+		canSave: function() {
+			return !this.saving && this.title.trim() && this.tags.trim() && this.message.trim();
 		},
-		computed: {
-			hasRequiredFields: function() {
-				return this.title.trim() && this.tags.length && this.message.trim();
-			}
-		},
-		created: function() {
-			setTimeout(() => {
-				autosize($("textarea[name='message']"));
-			}, 25);
-		},
-		methods: {
-			Save: function() {
-				this.saving = true;
-				$.post("/api/forum/start", $("#editdiscussion").serializeArray(), result => {
-					if(!result.fail)
-						window.location.href = result.url;
-					else {
-						alert(result.message);
-						this.saving = false;
-					}
-				}, "json");
-			}
+		user: function() {
+			return user;
 		}
-	});
-});
+	},
+	created() {
+		this.$nextTick(() => {
+			autosize(this.$refs.textField);
+		});
+	},
+	methods: {
+		TagsChanged(newTags) {
+			this.tags = newTags;
+		},
+		Save() {
+			this.saving = true;
+			const data = {
+				title: this.title,
+				tags: this.tags,
+				message: this.message
+			};
+			if(!user) {
+				data.name = this.name;
+				data.contact = this.contact;
+			}
+			$.post("/api/forum.php/start", data).done(result => {
+				window.location.href = result;
+			}).fail(request => {
+				alert(request.responseText);
+			}).always(() => {
+				this.saving = false;
+			});
+		}
+	},
+	template: /* html */ `
+		<form v-on:submit.prevent=Save>
+			<label v-if=user>
+				<span class=label>name:</span>
+				<span class=field><a :href=user.URL><img class="inline avatar" :src=user.Avatar> {{user.DisplayName}}</a></span>
+			</label>
+			<label v-if=!user title="tell us your name to make it easier to talk to you, or better yet:  sign in!">
+				<span class=label>name:</span>
+				<span class=field><input v-model=name placeholder="random internet person" maxlength=48></span>
+			</label>
+			<label v-if=!user title="leave a contact url or e-mail address to give people another option of contacting you">
+				<span class=label>contact:</span>
+				<span class=field><input v-model=contact maxlength=255></span>
+			</label>
+			<label>
+				<span class=label>title:</span>
+				<span class=field><input v-model=title maxlength=128 required></span>
+			</label>
+			<ExistingTagsField @changed=TagsChanged />
+			<label class=multiline title="your message to start the discussion (you can use markdown here)">
+				<span class=label>message:</span>
+				<span class=field><textarea rows="" cols="" v-model=message ref=textField></textarea></span>
+			</label>
+			<button :disabled=!canSave :class="{working: saving}">start discussion</button>
+		</form>
+	`
+}).component("ExistingTagsField", ExistingTagsField)
+	.mount("#editdiscussion");;

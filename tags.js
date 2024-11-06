@@ -33,6 +33,7 @@ $(function() {
 					case "photos": return "album";
 					case "art": return "art";
 					case "blog": return "bln";
+					case "forum": return "forum";
 					default: return '';  // not migrated yet
 				}
 			}
