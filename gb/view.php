@@ -1,21 +1,59 @@
 <?php
-if(isset($_GET['book'])) {
-	require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-	if($book = $db->query('select id, header, footer from track7_t7data.gbbooks where name=\'' . $db->escape_string($_GET['book']) . '\' limit 1'))
-		if($book = $book->fetch_object()) {
-			echo $book->header;
-			if($entries = $db->query('select entry from track7_t7data.gbentries where bookid=\'' . +$book->id . '\' order by id desc'))
-				if($entries->num_rows)
-					while($entry = $entries->fetch_object())
-						echo $entry->entry;
-				else
-					echo '<p>there are no entries in this guestbook yet.</p>';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/environment.php';
+
+class Guestbook extends Responder {
+	function __construct() {
+		$book = isset($_GET['book']) ? trim($_GET['book']) : '';
+		if (!$book)
+			self::DetailedError('no guestbook to view!');
+
+		$db = self::RequireDatabase();
+		try {
+			$select = $db->prepare('select id, header, footer from track7_t7data.gbbooks where name=? limit 1');
+			$select->bind_param('s', $book);
+			$select->execute();
+			$select->bind_result($id, $header, $footer);
+			if (!$select->fetch())
+				self::DetailedError("could not find a guestbook named $book in the database");
+			$select->close();
+		} catch (mysqli_sql_exception $mse) {
+			self::DetailedError(DetailedException::FromMysqliException('error looking up guestbook', $mse));
+		}
+		echo $header;
+		try {
+			$select = $db->prepare('select entry from track7_t7data.gbentries where bookid=? order by id desc');
+			$select->bind_param('i', $id);
+			$select->execute();
+			$select->bind_result($entry);
+			if ($select->num_rows())
+				while ($select->fetch())
+					echo $entry;
+			else {
+				echo '<p>there are no entries in this guestbook yet.</p>';
+			}
+		} catch (mysqli_sql_exception $mse) {
+			self::DetailedError(DetailedException::FromMysqliException('error looking up guestbook entries', $mse));
+		}
+		echo $footer;
+	}
+
+	/**
+	 * Show a detailed error.  Details are only showed to administrators.
+	 * @param DetailedException|string $error Exception with details or non-detailed error message
+	 * @param ?string $detail Extra detail for administrators.  Not used when $error is a DetailedException
+	 */
+	protected static function DetailedError(mixed $error, string $detail = null): void {
+		if (self::HasAdminSecurity())
+			if ($error instanceof DetailedException)
+				die($error->getDetailedMessage());
+			elseif ($detail)
+				die("$error:  $detail");
 			else
-				echo 'error reading database when trying to look up entries for this guestbook:<br>' . $db->error;
-			echo $book->footer;
-		} else
-			echo 'could not find a guestbook named \'' . htmlspecialchars($_GET['book']) . '\' in the database.';
-	else
-		echo 'database error trying to look up guestbook:<br>' . $db->error;
-} else
-	echo 'no guestbook to view!';
+				die($error);
+		elseif ($error instanceof DetailedException)
+			die($error->getMessage());
+		else
+			die($error . '.');
+	}
+}
+new Guestbook();
