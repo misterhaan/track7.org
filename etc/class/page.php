@@ -22,8 +22,9 @@ abstract class Page extends Responder {
 		self::$importmap['jquery'] = '/jquery-3.7.1.min.js';
 		self::$importmap['vue'] = file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.esm-browser.js') ? '/vue.esm-browser.js' : '/vue.esm-browser.prod.js';
 		self::$importmap['autosize'] = '/autosize.esm.js';
-		self::$importmap['tag'] = '/tag.js';
 		self::$importmap['comment'] = '/comment.js';
+		self::$importmap['tag'] = '/tag.js';
+		self::$importmap['user'] = '/user.js';
 		self::$importmap['vote'] = '/vote.js';
 		self::$importmap['validate'] = '/validate.js';
 		self::Send();
@@ -250,7 +251,7 @@ abstract class Page extends Responder {
 				<?php
 				if (self::IsUserLoggedIn()) {
 				?>
-					<a id=whodat href="/user/<?= self::$user->Username; ?>/"><?= htmlspecialchars(self::$user->DisplayName); ?><?php if (self::$user->NotifyCount) echo '<span class=notifycount>' . self::$user->NotifyCount . '</span>'; ?><img class=avatar src="<?= self::$user->Avatar; ?>" alt=""></a>
+					<a id=whodat href="/user/<?= self::$user->Username; ?>/" data-level=<?= self::$user->Level . '-' . UserLevel::Name(self::$user->Level); ?>><?= htmlspecialchars(self::$user->DisplayName); ?><?php if (self::$user->NotifyCount) echo '<span class=notifycount>' . self::$user->NotifyCount . '</span>'; ?><img class=avatar src="<?= self::$user->Avatar; ?>" alt=""></a>
 				<?php
 				} else {
 				?>

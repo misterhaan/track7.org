@@ -1,13 +1,17 @@
 import "jquery";
+import { GetCurrentUser } from "user";
 import { createApp } from "vue";
 import autosize from "autosize";
+
+const user = GetCurrentUser();
 
 const comments = document.querySelector("#comments");
 if(comments) {
 	const postID = $(comments).data("post");
 
 	const Comment = {
-		props: ['comment'],
+		props: ["comment"],
+		emits: ["delete"],
 		data() {
 			return {
 				editing: false,
@@ -102,20 +106,15 @@ if(comments) {
 			};
 		},
 		computed: {
+			user: function() {
+				return user;
+			},
 			canSave: function() {
 				return !this.saving && this.newComment.markdown.trim() && (this.user || this.newComment.name.trim());
 			}
 		},
 		created: function() {
 			this.Load();
-			const userLink = $("#whodat");
-			if(userLink.length) {
-				this.user = {
-					URL: userLink.attr("href"),
-					DisplayName: userLink.text(),
-					Avatar: userLink.find("img").attr("src")
-				};
-			}
 			this.$nextTick(() => {
 				autosize(this.$refs.commentField);
 			});
