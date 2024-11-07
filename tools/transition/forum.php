@@ -21,7 +21,7 @@ class ForumTransition extends TransitionPage {
 			}
 		} else {
 			?>
-			<p>old blog table no longer exists.</p>
+			<p>old forum discussions table no longer exists.</p>
 			<?php
 			self::Done();
 		}
@@ -148,7 +148,7 @@ class ForumTransition extends TransitionPage {
 			self::DeleteDiscussionTriggers();
 		else {
 		?>
-			<p>old blog triggers no longer exist.</p>
+			<p>old discussion triggers no longer exist.</p>
 		<?php
 			self::CheckContributions();
 		}
@@ -208,7 +208,7 @@ class ForumTransition extends TransitionPage {
 			self::DeleteOldTags();
 		else {
 		?>
-			<p>old blog tags table no longer exists.</p>
+			<p>old forum tags table no longer exists.</p>
 		<?php
 			self::CheckOldDiscussions();
 		}
