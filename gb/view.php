@@ -25,12 +25,13 @@ class Guestbook extends Responder {
 			$select->bind_param('i', $id);
 			$select->execute();
 			$select->bind_result($entry);
-			if ($select->num_rows())
-				while ($select->fetch())
-					echo $entry;
-			else {
-				echo '<p>there are no entries in this guestbook yet.</p>';
+			$any = false;
+			while ($select->fetch()) {
+				$any = true;
+				echo $entry;
 			}
+			if (!$any)
+				echo '<p>there are no entries in this guestbook yet.</p>';
 		} catch (mysqli_sql_exception $mse) {
 			self::DetailedError(DetailedException::FromMysqliException('error looking up guestbook entries', $mse));
 		}

@@ -15,19 +15,20 @@ class GuestbookIndex extends Page {
 			$select = $db->prepare('select name from track7_t7data.gbbooks');
 			$select->execute();
 			$select->bind_result($book);
-			if ($select->num_rows) {
+			$any = false;
 		?>
-				<ul>
-					<?php
-					while ($select->fetch()) {
-					?>
-						<li><a href="view.php?book=<?= $book->name; ?>"><?= $book->name; ?></a></li>
-					<?php
-					}
-					?>
-				</ul>
+			<ul>
+				<?php
+				while ($select->fetch()) {
+					$any = true;
+				?>
+					<li><a href="view.php?book=<?= $book->name; ?>"><?= $book->name; ?></a></li>
+				<?php
+				}
+				?>
+			</ul>
 			<?php
-			} else {
+			if (!$any) {
 			?>
 				<p>no hosted guestbooks found.</p>
 <?php
