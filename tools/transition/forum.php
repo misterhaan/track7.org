@@ -272,7 +272,7 @@ class ForumTransition extends TransitionPage {
 	}
 
 	private static function DeleteDiscussionTriggers(): void {
-		self::$db->real_query('forum_discussion_changed');
+		self::$db->real_query('drop trigger if exists forum_discussion_changed');
 	?>
 		<p>deleted old forum discussion triggers. refresh the page to take the next step.</p>
 	<?php
