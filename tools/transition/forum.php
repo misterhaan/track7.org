@@ -111,7 +111,7 @@ class ForumTransition extends TransitionPage {
 	}
 
 	private static function CheckEditRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and event_object_table=\'forum_edits\' limit 1');
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_edits\' limit 1');
 		if ($exists->fetch_column()) {
 			$missing = self::$db->query('select 1 from forum_edits as fe left join edit as e on e.instant=from_unixtime(fe.posted) and e.user=fe.editor where e.id is null limit 1');
 			if ($missing->fetch_column())
