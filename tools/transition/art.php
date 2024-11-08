@@ -153,7 +153,7 @@ class ArtTransition extends TransitionPage {
 			self::DeleteOldVotes();
 		else {
 		?>
-			<p>old art tags table no longer exists.</p>
+			<p>old art votes table no longer exists.</p>
 		<?php
 			self::CheckOldComments();
 		}

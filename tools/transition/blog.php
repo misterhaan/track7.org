@@ -93,7 +93,6 @@ class BlogTransition extends TransitionPage {
 	protected static function CheckCommentRows(): void {
 		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_comments\' limit 1');
 		if ($exists->fetch_column()) {
-
 			$missing = self::$db->query('select 1 from blog_comments as bc left join blog_entries as ob on ob.id=bc.entry left join blog as b on b.id=ob.url left join comment as c on c.post=b.post and c.instant=from_unixtime(bc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyBlogComments();
