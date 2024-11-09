@@ -8,6 +8,7 @@ const subsite = document.location.pathname.split("/")[1];
 const tagcloud = document.querySelector(".tagcloud");
 if(tagcloud)
 	createApp({
+		name: "TagCloud",
 		data() {
 			return {
 				tags: []
@@ -46,6 +47,7 @@ if(taginfo && editLink.length) {
 		tagDescription.textContent = "";
 
 	createApp({
+		name: "TagInfo",
 		data() {
 			return {
 				description: initialDescription,
