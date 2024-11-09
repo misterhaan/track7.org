@@ -22,7 +22,7 @@ class GuestbookIndex extends Page {
 				while ($select->fetch()) {
 					$any = true;
 				?>
-					<li><a href="view.php?book=<?= $book->name; ?>"><?= $book->name; ?></a></li>
+					<li><a href="view.php?book=<?= $book; ?>"><?= $book; ?></a></li>
 				<?php
 				}
 				?>
