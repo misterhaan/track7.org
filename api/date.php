@@ -24,7 +24,7 @@ class DateApi extends Api {
 	 * @param array $params String representation of a date to validate.
 	 */
 	protected static function GET_validatePast(array $params) {
-		$dateString = trim(array_shift($params));
+		$dateString = trim(implode('/', $params));
 		if (!$dateString)
 			self::NotFound('date is required.');
 		$timestamp = FormatDate::LocalToTimestamp($dateString, self::RequireUser());
