@@ -155,7 +155,7 @@ class EditBlog {
 		return null;
 	}
 
-	private static function FromPostID(mysqli $db, int $post, CurrentUser $user): ?self {
+	private static function FromPostID(mysqli $db, int $post): ?self {
 		try {
 			$select = $db->prepare('select b.id, p.title, coalesce(nullif(b.markdown, \'\'), b.html), ifnull(group_concat(pt.tag),\'\') from blog as b left join post as p on p.id=b.post left join post_tag as pt on pt.post=p.id where b.post=? group by b.id limit 1');
 			$select->bind_param('i', $post);
@@ -258,8 +258,8 @@ class EditBlog {
 		}
 	}
 
-	public static function Publish(mysqli $db, int $post, CurrentUser $user): ?self {
-		$entry = self::FromPostID($db, $post, $user);
+	public static function Publish(mysqli $db, int $post): ?self {
+		$entry = self::FromPostID($db, $post);
 		if ($entry)
 			try {
 				$update = $db->prepare('update post set published=true, instant=now() where id=? and published=false limit 1');

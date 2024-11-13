@@ -116,7 +116,7 @@ class BlogApi extends Api {
 		if (!$post)
 			self::NotFound('post id must be specified.');
 
-		$entry = EditBlog::Publish(self::RequireDatabase(), $post, self::$user);
+		$entry = EditBlog::Publish(self::RequireDatabase(), $post);
 		if (!$entry)
 			self::NotFound('unable to locate blog entry for the specified post id.');
 
