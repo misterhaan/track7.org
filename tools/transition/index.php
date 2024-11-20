@@ -1,5 +1,4 @@
 <?php
-define('TR_GUIDES', 3);
 define('TR_MESSAGES', 4);
 define('TR_LEGOS', 7);
 define('TR_STORIES', 8);
@@ -16,7 +15,6 @@ if ($ss = $db->query('select id, stepnum, status from transition_status'))
 	while ($s = $ss->fetch_object())
 		$status[$s->id] = $s;
 
-initStatus(TR_GUIDES);
 initStatus(TR_MESSAGES);
 initStatus(TR_LEGOS);
 initStatus(TR_STORIES);
@@ -36,6 +34,7 @@ $html->Open('database transitions');
 	<li><a href=blog.php>blog</a></li>
 	<li><a href=code.php>code</a></li>
 	<li><a href=forum.php>forum</a></li>
+	<li><a href=guides.php>guides</a></li>
 </ul>
 
 <table>
@@ -47,11 +46,6 @@ $html->Open('database transitions');
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td><a href="guides.php">guides</a></td>
-			<td><?php echo $status[TR_GUIDES]->stepnum; ?></td>
-			<td><?php echo $status[TR_GUIDES]->status; ?></td>
-		</tr>
 		<tr>
 			<td><a href="messages.php">messages</a></td>
 			<td><?php echo $status[TR_MESSAGES]->stepnum; ?></td>

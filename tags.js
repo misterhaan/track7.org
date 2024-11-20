@@ -10,13 +10,11 @@ $(function() {
 		computed: {
 			prefix: function() {
 				switch(this.type) {
-					case "guide": return "showing guides dealing with";
 					default: return "";
 				}
 			},
 			postfix: function() {
 				switch(this.type) {
-					case "guide": return "go back to all guides.";
 					default: return "";
 				}
 			},
@@ -34,7 +32,8 @@ $(function() {
 					case "art": return "art";
 					case "blog": return "bln";
 					case "forum": return "forum";
-					default: return '';  // not migrated yet
+					case "guide": return "guides";
+					default: return "";
 				}
 			}
 		},

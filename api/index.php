@@ -32,8 +32,8 @@ $html->Open('api');
 <h2 class=api><a href=forum.php>forum</a></h2>
 <p>the forum api manages the forums.</p>
 
-<h2 class=api><a href=guides>guides</a></h2>
-<p>the guides api manages guides.</p>
+<h2 class=api><a href=guide.php>guide</a></h2>
+<p>the guide api manages guides.</p>
 
 <h2 class=api><a href=legos>legos</a></h2>
 <p>the legos api manages lego models.</p>

@@ -48,6 +48,14 @@ abstract class Api extends Responder {
 	}
 
 	/**
+	 * Read the request body as JSON and decode it into an object.
+	 */
+	protected static function ReadRequestJsonObject(): object {
+		$json = self::ReadRequestText();
+		return json_decode($json);
+	}
+
+	/**
 	 * Sends a message to Twitter to be posted as a tweet.
 	 * @param string $message Tweet message
 	 * @param ?string $url URL to include with tweet (optional; sent through shortener)

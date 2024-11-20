@@ -1,219 +1,386 @@
 <?php
-  define('TR_GUIDES', 3);
-  define('STEP_CHECKUSERS', 1);
-  define('STEP_COPYGUIDES', 2);
-  define('STEP_COPYGUIDEPAGES', 3);
-  define('STEP_COPYTAGS', 4);
-  define('STEP_LINKTAGS', 5);
-  define('STEP_COPYCOMMENTS', 6);
-  define('STEP_COPYVOTES', 7);
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
 
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-  $html = new t7html([]);
-  $html->Open('guide migration');
-?>
-      <h1>guide migration</h1>
-<?php
-  if(isset($_GET['dostep']))
-    switch($_GET['dostep']) {
-      case 'checkusers':
-        if($us = $db->query('select u.login, count(1) as comments from track7_t7data.comments as c left join track7_t7data.users as u on u.uid=c.uid left join transition_users as t on t.olduid=c.uid where c.uid is not null and c.uid>0 and c.page like \'/guides/%\' and t.id is null group by c.uid'))
-          if($us->num_rows) {
-?>
-      <p>
-        the following users commented on guides and haven’t been migrated:
-      </p>
-      <ul>
-<?php
-            while($u = $us->fetch_object()) {
-?>
-        <li><a href="/user/<?php echo $u->login; ?>/"><?php echo $u->login; ?></a> (<?php echo $u->comments; ?> comments)</li>
-<?php
-            }
-?>
-      </ul>
-      <p>
-        visit <a href="users.php">user migration</a> and migrate these users
-        before continuing.
-      </p>
-<?php
-          } else
-            $db->real_query('update transition_status set stepnum=' . STEP_CHECKUSERS . ', status=\'commenting users migrated\' where id=' . TR_GUIDES . ' and stepnum<' . STEP_CHECKUSERS);
-        else {
-?>
-      <p class=error>error checking for unmigrated users who commented</p>
-<?php
-        }
-        break;
-      case 'copyguides':
-        if($db->query('insert into guides (url, status, title, summary, posted, updated, author, level, views) select g.id, case g.status when \'new\' then \'draft\' when \'pending\' then \'submitted\' when \'approved\' then \'published\' else g.status end as status, g.title, concat(\'<p>\',replace(replace(g.description,\'&quot;\',\'"\'),\'&nbsp;\',\' \'),\'</p>\') as description, g.dateadded, g.dateupdated, 1, g.skill, s.hits from track7_t7data.guides as g left join track7_t7data.hitdetails as s on s.value=concat(\'/guides/\', g.id, \'/\') and s.type=\'request\' and s.date=\'forever\' order by g.status desc, g.dateadded'))
-          $db->query('update transition_status set stepnum=' . STEP_COPYGUIDES . ', status=\'guide information migrated\' where id=' . TR_GUIDES . ' and stepnum<' . STEP_COPYGUIDES);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copyguidepages':
-        if($db->query('insert into guide_pages (guide, number, heading, html) select g.id, p.pagenum, replace(p.heading,\'&quot;\',\'"\'), replace(replace(replace(p.content,\'&nbsp;\',\' \'),\'<br />\n        <br />\n        \',\'</p><p>\'),\'&quot;\',\'"\') from track7_t7data.guidepages as p left join guides as g on g.url=p.guideid where p.version<1'))
-          $db->query('update transition_status set stepnum=' . STEP_COPYGUIDEPAGES . ', status=\'guide content migrated\' where id=' . TR_GUIDES . ' and stepnum<' . STEP_COPYGUIDEPAGES);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copytags':
-        if($db->query('insert into guide_tags (name, description) select name, replace(description, \'&nbsp;\', \' \') from track7_t7data.taginfo where type=\'guides\' and count>0 and name!=\'\''))
-          $db->query('update transition_status set stepnum=' . STEP_COPYTAGS . ', status=\'guide tags copied\' where id=\'' . TR_GUIDES . '\' and stepnum<' . STEP_COPYTAGS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'linktags':
-        if($tags = $db->query('select g.id, g.posted, t.tags from track7_t7data.guides as t left join guides as g on g.url=t.id where g.status=\'published\'')) {
-          $tagids = [];
-          if($taglistres = $db->query('select id, name from guide_tags'))
-            while($taglist = $taglistres->fetch_object())
-              $tagids[$taglist->name] = $taglist->id;
-          $linktags = $db->prepare('insert into guide_taglinks (tag, guide) values (?, ?)');
-          $linktags->bind_param('ii', $tagid, $guideid);
-          $tagcounts = [];
-          $lastused = [];
-          while($tag = $tags->fetch_object()) {
-            $guideid = $tag->id;
-            $tag->tags = explode(',', $tag->tags);
-            foreach($tag->tags as $tagname) {
-              $tagid = $tagids[$tagname];
-              if(!isset($tagcounts[$tagid]))
-                $tagcounts[$tagid] = 0;
-              $tagcounts[$tagid]++;
-              if(!isset($lastused[$tagid]) || $tag->posted > $lastused[$tagid])
-                $lastused[$tagid] = $tag->posted;
-              $linktags->execute();
-            }
-          }
-          $linktags->close();
-          $settagcount = $db->prepare('update guide_tags set count=?, lastused=? where id=?');
-          $settagcount->bind_param('iii', $count, $taglastused, $tagid);
-          foreach($tagcounts as $tagid => $count) {
-            $taglastused = $lastused[$tagid];
-            $settagcount->execute();
-          }
-          $settagcount->close();
-          $db->real_query('update transition_status set stepnum=' . STEP_LINKTAGS . ', status=\'guide tags linked\' where id=\'' . TR_GUIDES . '\' and stepnum<' . STEP_LINKTAGS);
-        }
-        break;
-      case 'copycomments':
-        if($db->real_query('insert into guide_comments (guide, posted, user, name, contacturl, html) select g.id, c.instant, u.id, c.name, c.url, replace(c.comments, \'&nbsp;\', \' \') from track7_t7data.comments as c left join guides as g on g.url=substr(c.page,9,length(c.page)-9) left join transition_users as u on u.olduid=c.uid where page like \'/guides/%\' order by c.instant'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYCOMMENTS . ', status=\'comments copied\' where id=\'' . TR_GUIDES . '\' and stepnum<' . STEP_COPYCOMMENTS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copyvotes':
-        if($db->real_query('insert into guide_votes (guide, voter, ip, vote, posted) select g.id, u.id, inet_aton(v.ip), case v.vote when -3 then 1 when 3 then 5 else v.vote+3 end as vote, v.time from track7_t7data.votes as v left join track7_t7data.ratings as r on r.id=v.ratingid left join guides as g on g.url=r.selector left join transition_users as u on u.olduid=v.uid where r.type=\'guide\' order by v.time'))
-          if($db->real_query('update guides, (select guide, round((sum(vote)+3)/(count(1)+1),2) as rating, count(1) as votes from guide_votes group by guide) as s set guides.rating=s.rating, guides.votes=s.votes where guides.id=s.guide'))
-            $db->real_query('update transition_status set stepnum=' . STEP_COPYVOTES . ', status=\'completed\' where id=\'' . TR_GUIDES . '\' and stepnum<' . STEP_COPYVOTES);
-          else
-            echo '<pre><code>' . $db->error . '</code></pre>';
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-  }
+class GuidesTransition extends TransitionPage {
+	public function __construct() {
+		self::$subsite = new Subsite('guides', 'guides', 'learn how i’ve done things', 'guided');
+		parent::__construct();
+	}
 
-  if($status = $db->query('select stepnum, status from transition_status where id=' . TR_GUIDES))
-    $status = $status->fetch_object();
+	protected static function CheckPostRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guides\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from guides left join post on post.subsite=\'guides\' and post.url=concat(\'/guides/\', guides.url) where post.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyGuidesToPost();
+			else {
 ?>
-      <h2>commenters</h2>
-<?php
-  if($status->stepnum < STEP_CHECKUSERS) {
-?>
-      <p>
-        before guides can be migrated, all users who have commented on a guide
-        must migrate.
-      </p>
-      <nav class=actions><a href="?dostep=checkusers">check user migration status</a></nav>
-<?php
-  } else {
-?>
-      <p>all blog commentors have been migrated.</p>
+				<p>all old guides exist in new <code>post</code> table.</p>
+			<?php
+				self::CheckGuideTable();
+			}
+		} else {
+			?>
+			<p>old guides table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
 
-      <h2>guides</h2>
-<?php
-    if($status->stepnum < STEP_COPYGUIDES) {
-?>
-      <p>
-        both published and draft guides will be copied.  any draft guides that
-        are no longer wanted can be deleted later.
-      </p>
-      <nav class=actions><a href="?dostep=copyguides">copy guides</a></nav>
-<?php
-    } else {
-?>
-      <p>all guides have been migrated.</p>
+	private static function CheckGuideTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>guide</code> table exists.</p>
+		<?php
+			self::CheckGuideRows();
+		} else
+			self::CreateTable('guide');
+	}
 
-      <h3>guide content</h3>
-<?php
-      if($status->stepnum < STEP_COPYGUIDEPAGES) {
-?>
-      <p>
-        guides have pages, and since the number of pages varies their content
-        needs to get copied separately.
-      </p>
-      <nav class=actions><a href="?dostep=copyguidepages">copy guide pages</a></nav>
-<?php
-      } else {
-?>
-      <p>all guide content has been copied.</p>
+	private static function CheckGuideRows(): void {
+		$missing = self::$db->query('select 1 from guides left join guide on guide.id=guides.url where guide.id is null limit 1');
+		if ($missing->fetch_column())
+			self::CopyGuides();
+		else {
+		?>
+			<p>all old guides exist in new <code>guide</code> table.</p>
+		<?php
+			self::CheckChapterTable();
+		}
+	}
 
-      <h2>tags</h2>
-<?php
-        if($status->stepnum < STEP_COPYTAGS) {
-?>
-      <p>
-        tags are a 2-step process, which starts with copying guide tag
-        definitions.
-      </p>
-      <nav class=actions><a href="?dostep=copytags">copy guide tags</a></nav>
-<?php
-        } elseif($status->stepnum < STEP_LINKTAGS) {
-?>
-      <p>
-        tags are a 2-step process, which finishes with linking guides to tags.
-      </p>
-      <nav class=actions><a href="?dostep=linktags">link guides to tags</a></nav>
-<?php
-        } else {
-?>
-      <p>all guide tags have been copied to the new database.</p>
+	private static function CheckChapterTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'chapter\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>chapter</code> table exists.</p>
+		<?php
+			self::CheckChapterRows();
+		} else
+			self::CreateTable('chapter');
+	}
 
-      <h2>comments</h2>
-<?php
-          if($status->stepnum < STEP_COPYCOMMENTS) {
-?>
-      <p>
-        guide comments are ready to be copied.
-      </p>
-      <nav class=actions><a href="?dostep=copycomments">copy guide comments</a></nav>
-<?php
-          } else {
-?>
-      <p>all guide comments have been copied to the new database.</p>
+	private static function CheckChapterRows(): void {
+		$missing = self::$db->query('select 1 from guide_pages as op left join guides as og on og.id=op.guide left join chapter as np on np.guide=og.url and np.number=op.number where np.number is null limit 1');
+		if ($missing->fetch_column())
+			self::CopyChapters();
+		else {
+		?>
+			<p>all old guide pages exist in new <code>chapter</code> table.</p>
+			<?php
+			self::CheckTagTable();
+		}
+	}
 
-      <h2>votes</h2>
+	protected static function CheckTagRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_tags\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from guide_tags as ot left join tag as t on t.name=ot.name and t.subsite=\'guides\' where t.name is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyGuideTags();
+			else {
+			?>
+				<p>all old guide tags exist in new <code>tag</code> table.</p>
+			<?php
+				self::CheckPostTagTable();
+			}
+		} else {
+			?>
+			<p>old guide tags table no longer exists.</p>
+			<?php
+			self::CheckOldGuides();
+		}
+	}
+
+	protected static function CheckPostTagRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_taglinks\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from guide_taglinks as gtl left join guides as og on og.id=gtl.guide left join post as p on p.url=concat(\'/guides/\', og.url) left join guide_tags as ogt on ogt.id=gtl.tag left join post_tag as npt on npt.post=p.id and npt.tag=ogt.name where npt.post is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyGuidePostTags();
+			else {
+			?>
+				<p>all old guide tagging exists in new <code>post_tag</code> table.</p>
+			<?php
+				self::CheckTagUsageView();
+			}
+		} else {
+			?>
+			<p>old guide tagging table no longer exists.</p>
+			<?php
+			self::CheckOldTags();
+		}
+	}
+
+	protected static function CheckCommentRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_comments\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from guide_comments as gc left join guides as og on og.id=gc.guide left join guide as g on g.id=og.url left join comment as c on c.post=g.post and c.instant=from_unixtime(gc.posted) where c.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyGuideComments();
+			else {
+			?>
+				<p>all old guide comments exists in new <code>comment</code> table.</p>
+			<?php
+				self::CheckVoteTable();
+			}
+		} else {
+			?>
+			<p>old guide comment table no longer exists.</p>
+			<?php
+			self::CheckOldTagLinks();
+		}
+	}
+
+	protected static function CheckVoteRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_votes\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from guide_votes as gv left join guides as og on og.id=gv.guide left join post as p on p.url=concat(\'/guides/\', og.url) left join vote as v on v.post=p.id and (gv.voter>0 and v.user=gv.voter or gv.ip>0 and v.ip=gv.ip) where v.vote is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyGuideVotes();
+			else {
+			?>
+				<p>all old guide votes exists in new <code>vote</code> table.</p>
+			<?php
+				self::CheckCommentTriggers();
+			}
+		} else {
+			?>
+			<p>old guide tags table no longer exists.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckCommentTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'guide_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteCommentTriggers();
+		else {
+		?>
+			<p>old guide comment triggers no longer exist.</p>
+		<?php
+			self::CheckGuideTriggers();
+		}
+	}
+
+	private static function CheckGuideTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'guides\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteGuideTriggers();
+		else {
+		?>
+			<p>old guide triggers no longer exist.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckContributions(): void {
+		$exists = self::$db->query('select 1 from contributions where srctbl=\'guides\' or srctbl=\'guide_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteContributions();
+		else {
+		?>
+			<p>guide contributions no longer exist.</p>
+		<?php
+			self::CheckOldVotes();
+		}
+	}
+
+	private static function CheckOldVotes(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_votes\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldVotes();
+		else {
+		?>
+			<p>old guide votes table no longer exists.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckOldComments(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldComments();
+		else {
+		?>
+			<p>old guide comments table no longer exists.</p>
+		<?php
+			self::CheckOldTagLinks();
+		}
+	}
+
+	private static function CheckOldTagLinks(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_taglinks\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldTagLinks();
+		else {
+		?>
+			<p>old guide tagging table no longer exists.</p>
+		<?php
+			self::CheckOldTags();
+		}
+	}
+
+	private static function CheckOldTags(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_tags\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldTags();
+		else {
+		?>
+			<p>old guide tags table no longer exists.</p>
+		<?php
+			self::CheckOldPages();
+		}
+	}
+
+	private static function CheckOldPages(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_pages\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldPages();
+		else {
+		?>
+			<p>old guide pages table no longer exists.</p>
+		<?php
+			self::CheckOldGuides();
+		}
+	}
+
+	private static function CheckOldGuides(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guides\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldGuides();
+		else {
+		?>
+			<p>old guides table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
+
+	private static function CopyGuidesToPost(): void {
+		self::$db->real_query('insert into post (published, instant, title, subsite, url, author, preview, hasmore) select g.status=\'published\', from_unixtime(g.posted), g.title, \'guides\', concat(\'/guides/\', g.url), 1, g.summary, true from guides as g left join post on post.subsite=\'guides\' and post.url=concat(\'/guides/\', g.url) where post.id is null');
+		?>
+		<p>copied guides into new <code>post</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyGuides(): void {
+		self::$db->real_query('insert into guide (id, post, summary, updated, level, views) select og.url, p.id, og.summary_markdown, from_unixtime(og.updated), og.level, og.views from guides as og left join post as p on p.url=concat(\'/guides/\', og.url) left join guide as g on g.id=og.url where g.id is null');
+	?>
+		<p>copied guides into new <code>guide</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyChapters(): void {
+		self::$db->real_query('insert into chapter (guide, number, title, html, markdown) select og.url, op.number, op.heading, op.html, op.markdown from guide_pages as op left join guides as og on og.id=op.guide left join chapter as np on np.guide=og.url and np.number=op.number where np.guide is null');
+	?>
+		<p>copied guide pages into new <code>chapter</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyGuideTags(): void {
+		self::$db->real_query('insert into tag (name, subsite, description) select ot.name, \'guides\', if(ot.description is null, \'\', concat(\'<p>showing guides dealing with \', ot.description, \'</p>\')) from guide_tags as ot left join tag on tag.name=ot.name and tag.subsite=\'guides\' where tag.name is null');
+	?>
+		<p>copied guide tags into new <code>tag</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyGuidePostTags(): void {
+		self::$db->real_query('insert into post_tag (post, tag) select g.post, gt.name from guide_taglinks as gtl left join guides as og on og.id=gtl.guide left join guide as g on g.id=og.url left join guide_tags as gt on gt.id=gtl.tag left join post_tag npt on npt.post=g.post and npt.tag=gt.name where npt.post is null');
+	?>
+		<p>copied guide tagging into new <code>post_tag</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyGuideComments(): void {
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(gc.posted), g.post, gc.user, gc.name, gc.contacturl, gc.html, gc.markdown from guide_comments as gc left join guides as og on og.id=gc.guide left join guide as g on g.id=og.url left join comment as c on c.post=g.post and c.instant=from_unixtime(gc.posted) where c.id is null');
+	?>
+		<p>copied guide comments into new <code>comment</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyGuideVotes(): void {
+		self::$db->query('insert into vote (post, user, ip, instant, vote) select p.id, gv.voter, gv.ip, from_unixtime(gv.posted), gv.vote from guide_votes as gv left join guides as og on og.id=gv.guide left join post as p on p.url=concat(\'/guides/\', og.url) left join vote as v on v.post=p.id and (gv.voter>0 and v.user=gv.voter or gv.ip>0 and v.ip=gv.ip) where v.vote is null');
+	?>
+		<p>copied guide votes into new <code>vote</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteCommentTriggers(): void {
+		self::$db->real_query('drop trigger if exists guide_comment_added');
+		self::$db->real_query('drop trigger if exists guide_comment_changed');
+		self::$db->real_query('drop trigger if exists guide_comment_deleted');
+	?>
+		<p>deleted old guide comment triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteGuideTriggers(): void {
+		self::$db->real_query('drop trigger if exists guide_added');
+		self::$db->real_query('drop trigger if exists guide_changed');
+		self::$db->real_query('drop trigger if exists guide_deleted');
+	?>
+		<p>deleted old guide triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteContributions(): void {
+		self::$db->real_query('delete from contributions where srctbl=\'guides\' or srctbl=\'guide_comments\'');
+	?>
+		<p>deleted old guide contributions. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldVotes(): void {
+		self::$db->real_query('drop table guide_votes');
+	?>
+		<p>deleted old guide votes table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldComments(): void {
+		self::$db->real_query('drop table guide_comments');
+	?>
+		<p>deleted old guide comments table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldTagLinks(): void {
+		self::$db->real_query('drop table guide_taglinks');
+	?>
+		<p>deleted old guide tagging table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldTags(): void {
+		self::$db->real_query('drop table guide_tags');
+	?>
+		<p>deleted old guide tag table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldPages(): void {
+		self::$db->real_query('drop table guide_pages');
+	?>
+		<p>deleted old guide pages table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldGuides(): void {
+		self::$db->real_query('drop table guides');
+	?>
+		<p>deleted old guides table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function Done(): void {
+	?>
+		<p>done migrating guides, at least for now!</p>
 <?php
-            if($status->stepnum < STEP_COPYVOTES) {
-?>
-      <p>
-        the last step is copying guide votes and recalculating ratings.
-      </p>
-      <nav class=actions><a href="?dostep=copyvotes">copy guide votes</a></nav>
-<?php
-            } else {
-?>
-      <p>
-        all guide votes have been copied and ratings recalculated.  we’re done
-        here!
-      </p>
-<?php
-            }
-          }
-        }
-      }
-    }
-  }
-  $html->Close();
-?>
+	}
+}
+new GuidesTransition();
