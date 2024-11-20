@@ -4,6 +4,10 @@ require_once 'Parsedown.php';
 class FormatText {
 	private static ?HeaderlessParsedown $parsedown = null;
 
+	public static function CleanID(string $id): string {
+		return preg_replace('/[^a-z0-9\\-_]*/g', '', preg_replace('/ /g', '-', strtolower($id)));
+	}
+
 	public static function Markdown(string $markdown): string {
 		if (!self::$parsedown) {
 			self::$parsedown = new HeaderlessParsedown();

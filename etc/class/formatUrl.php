@@ -1,6 +1,4 @@
 <?php
-require_once 'Parsedown.php';
-
 class FormatURL {
 	private static string $scheme = '';
 	private static string $host = '';

@@ -146,16 +146,25 @@ class EditScript {
 	}
 
 	public static function IdAvailable(mysqli $db, string $oldID, string $newID): ValidationResult {
-		if ($oldID == $newID)
-			return new ValidationResult('valid');
+		require_once 'formatText.php';
+		$cleanID = FormatText::CleanID($newID);
+		if ($oldID == $cleanID)
+			if ($newID == $cleanID)
+				return new ValidationResult('valid');
+			else
+				return new ValidationResult('valid', '', $cleanID);
+
 		try {
 			$select = $db->prepare('select p.title from script as s left join post as p on p.id=s.post where s.id=? limit 1');
-			$select->bind_param('s', $newID);
+			$select->bind_param('s', $cleanID);
 			$select->execute();
 			$select->bind_result($title);
 			if ($select->fetch())
-				return new ValidationResult('invalid', "“{$newID}” already in use by $title.");
-			return new ValidationResult('valid');
+				return new ValidationResult('invalid', "“{$cleanID}” already in use by $title.");
+			if ($newID == $cleanID)
+				return new ValidationResult('valid');
+			else
+				return new ValidationResult('valid', '', $cleanID);
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error checking web script id', $mse);
 		}
