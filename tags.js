@@ -1,110 +1,103 @@
-$(function() {
-	var taginfo = new Vue({
-		el: "#taginfo",
-		data: {
-			type: "",
+import "jquery";
+import { GetCurrentUser } from "user";
+import { createApp } from "vue";
+import autosize from "autosize";
+
+const user = GetCurrentUser();
+
+createApp({
+	name: "TagInfo",
+	data() {
+		return {
+			subsites: [
+				{ dir: "art", name: "art" },
+				{ dir: "bln", name: "blog entries" },
+				{ dir: "forum", name: "discussions" },
+				{ dir: "guides", name: "guides" },
+				{ dir: "album", name: "photos" }
+			],
+			subsite: "",
 			tags: [],
-			descriptionedit: false,
+			edit: false,
 			loading: false
+		};
+	},
+	created() {
+		const hashSubsite = location.hash.substring(1);
+		if(this.subsites.every(s => s.dir != hashSubsite)) {
+			const firstSubsite = this.subsites[0].dir;
+			history.pushState(null, null, "#" + firstSubsite);
+			this.LoadSubsiteTags(firstSubsite);
+		} else
+			this.LoadSubsiteTags(hashSubsite);
+	},
+	computed: {
+		canEdit() {
+			return user && user.Level >= "4-admin";
+		}
+	},
+	methods: {
+		LoadSubsiteTags(subsite) {
+			this.loading = true;
+			$.get("/api/tag.php/stats/" + subsite).done(tags => {
+				this.tags = tags;
+				this.subsite = subsite;
+			}).fail(response => {
+				alert(response.responseText);
+			}).always(() => {
+				this.loading = false;
+			});
 		},
-		computed: {
-			prefix: function() {
-				switch(this.type) {
-					default: return "";
-				}
-			},
-			postfix: function() {
-				switch(this.type) {
-					default: return "";
-				}
-			},
-			urlPrefix: function() {
-				switch(this.type) {
-					case "blog": return "/bln/";
-					case "guide": return "/guides/";
-					case "photos": return "/album/";
-					default: return "/" + this.type + "/";
-				}
-			},
-			subsite() {
-				switch(this.type) {
-					case "photos": return "album";
-					case "art": return "art";
-					case "blog": return "bln";
-					case "forum": return "forum";
-					case "guide": return "guides";
-					default: return "";
-				}
+		Edit(tag) {
+			if(this.canEdit) {
+				this.edit = { Name: tag.Name, Description: tag.Description };
+				this.$nextTick(() => {
+					this.$refs.editField.focus();
+					autosize(this.$refs.editField);
+				});
 			}
 		},
-		methods: {
-			Load: function(type) {
-				this.type = type;
-				this.loading = true;
-				this.tags = [];
-				if(this.subsite)
-					$.get("/api/tag.php/stats/" + this.subsite)
-						.done(result => {
-							this.tags = result.map(t => { return { name: t.Name, count: t.Count, lastused: { datetime: t.LastUsed.DateTime, display: t.LastUsed.Display, title: t.LastUsed.Tooltip }, description: t.Description, editing: false }; });
-						});
-				else
-					$.get("/api/tags/fullList", { type: type }, result => {
-						if(!result.fail)
-							this.tags = result.tags.map(t => $.extend(t, { editing: false }));
-						else
-							alert(result.message);
-						this.loading = false;
-					}, "json");
-			},
-			Edit: function(tag) {
-				tag.editing = true;
-				this.descriptionedit = tag.description;
-				setTimeout(() => {
-					autosize($("textarea"));
-					$("textarea").focus();
-				}, 50);
-			},
-			Cancel: function(tag) {
-				tag.editing = false;
-				this.descriptionedit = false;
-			},
-			Save: function(tag) {
-				if(this.subsite)
-					$.ajax({
-						url: "/api/tag.php/description/" + this.subsite + "/" + tag.name,
-						type: "PUT",
-						data: this.descriptionedit
-					}).done(() => {
-						tag.description = this.descriptionedit;
-						this.descriptionedit = false;
-						tag.editing = false;
-					}).fail(request => {
-						alert(request.responseText);
-					});
-				else
-					$.post("/api/tags/setdesc", { type: this.type, id: tag.id, description: this.descriptionedit }, result => {
-						if(!result.fail) {
-							tag.description = this.descriptionedit;
-							this.descriptionedit = false;
-							tag.editing = false;
-						} else
-							alert(result.message);
-					}, "json");
-			}
+		Cancel() {
+			this.edit = false;
+		},
+		Save(tag) {
+			if(this.canEdit)
+				$.ajax({
+					url: "/api/tag.php/description/" + this.subsite + "/" + tag.Name,
+					type: "PUT",
+					data: this.edit.Description
+				}).done(() => {
+					tag.Description = this.edit.Description;
+					this.edit = false;
+				}).fail(request => {
+					alert(request.responseText);
+				});
 		}
-	});
-	$("nav.tabs a").click(function() {
-		taginfo.Load($(this).attr("href").substring(1));
-	});
-	if(taginfo.type == "") {  // this needs to be after the tab click handler
-		if($("a[href$='" + location.hash + "']").length)
-			$("a[href$='" + location.hash + "']").click();
-		else {
-			$("a[href$='#blog']").click();
-			if(history.replaceState)
-				history.replaceState(null, null, "#blog");
-			else
-				location.hash = "#blog";
-		}
-	}
-});
+	},
+	template: /* html */ `
+		<nav class=tabs>
+			<a v-for="s in subsites" :class="{selected: s.dir == subsite}" :href="'#' + s.dir" :title="'tags for ' + s.name" @click=LoadSubsiteTags(s.dir)>{{s.name}}</a>
+		</nav>
+
+		<ul id=taginfo>
+			<li v-for="tag in tags">
+				<div class=tagdata>
+					<a :href="subsite + '/' + tag.Name + '/'">{{tag.Name}}</a>
+					<span class=count>{{tag.Count}} uses</span>
+					<time :datetime=tag.LastUsed.DateTime>{{tag.LastUsed.Display}} ago</time>
+				</div>
+				<div class=description>
+					<span class=editable v-html=tag.Description v-if="tag.Name != edit.Name"></span>
+					<label class=multiline v-if="tag.Name == edit.Name">
+						<span class=field><textarea v-model=edit.Description ref=editField></textarea></span>
+						<span>
+							<a href="#save" title="save tag description" class="action okay" v-on:click.prevent=Save(tag)></a>
+							<a href="#cancel" title="cancel editing" class="action cancel" v-on:click.prevent=Cancel()></a>
+						</span>
+					</label>
+					<a href="#edit" class="action edit" v-if="canEdit && tag.Name != edit.Name" v-on:click.prevent=Edit(tag)></a>
+				</div>
+			</li>
+		</ul>
+	`
+}).mount("div.tabbed");

@@ -161,23 +161,6 @@ class t7html {
 		}
 
 		/**
-		 * show a list of tags
-		 * @param string $tagType type of tags to look up from tags api
-		 * @param string $pluralName what to call multiple of the item that can be tagged
-		 */
-		public function ShowTags($tagType, $pluralName) {
-			?>
-				<nav class="tagcloud hidden" data-tagtype=<?= $tagType; ?> v-if=tags.length>
-					<header>tags</header>
-					<template v-for="tag in tags">
-						{{ }}
-						<a :href="tag.name + '/'" :title="'<?= $pluralName; ?> tagged ' + tag.name" :data-count=tag.count>{{tag.name}}</a>
-					</template>
-				</nav>
-			<?php
-		}
-
-		/**
 		 * show a 5-star voting apparatus for this thing.
 		 * @param string $type prefix of the _votes table to use
 		 * @param string $key typically the id of the thing being voted on
@@ -273,31 +256,6 @@ class t7html {
 						<button id=postcomment>post comment</button>
 					</form>
 				</section>
-			<?php
-		}
-
-		/**
-		 * show a tag entry field that suggests existing tags.  requires the page to
-		 * use vue and the vue model should include vueMixins.tagSuggest for the
-		 * behavior.  read and write either tags (array) or taglist (comma-separated).
-		 * also include newtags and deltags (both comma-separated) when saving so new
-		 * tags can get added and old tags can get removed.
-		 * @param string $type type of tags, used to look up suggestion list
-		 */
-		public function ShowTagsField($type) {
-			?>
-				<label>
-					<span class=label>tags:</span>
-					<span class="field list" data-tagtype=<?= $type; ?>>
-						<span class=chosen v-for="(tag, index) in tags"><span>{{tag}}</span><a class="action del" href="#deltag" v-on:click.prevent=DelTag(index) :title="'remove the ' + tag + ' tag'"></a></span>
-						<span class=suggestinput>
-							<input id=tags autocomplete=off v-model=tagSearch v-on:keydown.down.prevent=NextTag v-on:keydown.up.prevent=PrevTag v-on:dblclick=ShowTagSuggestions v-on:blur=HideTagSuggestions(250) v-on:keydown.esc=HideTagSuggestions v-on:keydown.enter.prevent=AddCursorTag v-on:keydown.comma.prevent=AddTypedTag v-on:keydown.tab=AddCursorTag v-on:keydown.backspace=DelLastTag v-on:keydown=TagSearchKeyPress>
-							<span class=suggestions v-if=showTagSuggestions>
-								<span v-for="tag in tagChoices" v-html=tag :class="{selected: tag.replace(/<[^>]>/g, '') == tagCursor}" :title="'add the ' + tag + ' tag'" v-on:click=AddTag(tag)></span>
-							</span>
-						</span>
-					</span>
-				</label>
 			<?php
 		}
 

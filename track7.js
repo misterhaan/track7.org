@@ -2,7 +2,6 @@ $(function() {
 	InitUserMenu();
 	InitLoginLogout();
 	autosize($("textarea"));
-	InitTags();
 	InitVoting();
 	InitComments();
 	InitTabLayout();
@@ -97,60 +96,12 @@ function Login() {
 }
 
 /**
- * initialize tag cloud or tag description edit if present
- */
-function InitTags() {
-	// tag cloud init for pages with vue
-	if(typeof Vue == "function" && $(".tagcloud[data-tagtype]").length) {
-		var tagcloud = $(".tagcloud");
-		tagcloud.removeClass("hidden");
-		var tagdata = new Vue({
-			el: ".tagcloud",
-			data: {
-				tags: []
-			}
-		});
-		$.get("/api/tags/list", {type: tagcloud.data("tagtype")}, function(result) {
-			if(result.fail)
-				alert(result.message);
-			else
-				tagdata.tags = result.tags;
-		}, "json");
-	}
-
-	// tag description edit (does nothing if not present on page) 
-	$("#editdesc").hide();
-	$("#editdesc a[href$='#cancel']").click(function(e) {
-		$("a[href$='#tagedit']").show();
-		$("#editdesc").hide();
-		e.preventDefault();
-	});
-	$("a[href$='#tagedit']").click(function(e) {
-		$("a[href$='#tagedit']").hide();
-		$("#editdesc").show();
-		$("#editdesc textarea").val($("#taginfo .editable").html()).focus();
-		e.preventDefault();
-	});
-	$("#editdesc a[href$='#save']").click(function(e) {
-		$.post("/api/tags/setdesc", {type: $("#taginfo").data("tagtype"), id: $("#taginfo").data("tagid"), description: $("#editdesc textarea").val()}, function(result) {
-			if(!result.fail) {
-				$("#taginfo .editable").html($("#editdesc textarea").val());
-				$("a[href$='#tagedit']").show();
-				$("#editdesc").hide();
-			} else
-				alert(result.message);
-		});
-		e.preventDefault();
-	});
-}
-
-/**
  * initialize voting
  */
 function InitVoting() {
 	if($("#vote").length) {
 		$("#vote, #vote span").click(function() {
-			$.post("/api/votes/cast", {type: $("#vote").data("type"), key: $("#vote").data("key"), vote: $(this).data("vote")}, result => {
+			$.post("/api/votes/cast", { type: $("#vote").data("type"), key: $("#vote").data("key"), vote: $(this).data("vote") }, result => {
 				if(!result.fail) {
 					$("#vote, #vote span").removeClass("voted");
 					$("#vote").addClass("voted");
@@ -159,7 +110,7 @@ function InitVoting() {
 							$(this).addClass("voted");
 					});
 					if(result.rating)
-						$("span.rating").attr("data-stars", Math.round(2*result.rating)/2);
+						$("span.rating").attr("data-stars", Math.round(2 * result.rating) / 2);
 					if(result.rating && result.votes)
 						$("span.rating").attr("title", "rated " + result.rating + " stars by " + (result.votes == 1 ? "1 person" : result.votes + " people"));
 				} else
@@ -189,9 +140,9 @@ function InitComments() {
 			},
 			methods: {
 				AddComment: function() {
-					var formdata = {md: $("#newcomment").val(), type: $("#addcomment").data("type"), key: $("#addcomment").data("key")};
+					var formdata = { md: $("#newcomment").val(), type: $("#addcomment").data("type"), key: $("#addcomment").data("key") };
 					if($("#authorname").length)
-						$.extend(formdata, {name: $("#authorname").val(), contact: $("#authorcontact").val()});
+						$.extend(formdata, { name: $("#authorname").val(), contact: $("#authorcontact").val() });
 					$.post("/api/comments/add", formdata, result => {
 						if(!result.fail) {
 							result.editing = false;
@@ -209,10 +160,10 @@ function InitComments() {
 						var data = {};
 					} else if(userid) {
 						endpoint = "user";
-						data = {userid: userid};
+						data = { userid: userid };
 					} else {
 						endpoint = "keyed";
-						data = {type: $("#addcomment").data("type"), key: $("#addcomment").data("key")};
+						data = { type: $("#addcomment").data("type"), key: $("#addcomment").data("key") };
 					}
 					data.oldest = this.oldest;
 					$.get("/api/comments/" + endpoint, data, result => {
@@ -242,7 +193,7 @@ function InitComments() {
 					}, 25);
 				},
 				Save: function(comment) {
-					$.post("/api/comments/save", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id, markdown: comment.markdown}, function(result) {
+					$.post("/api/comments/save", { type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id, markdown: comment.markdown }, function(result) {
 						if(!result.fail) {
 							comment.html = result.html;
 							comment.editing = false;
@@ -258,7 +209,7 @@ function InitComments() {
 				},
 				Delete: function(comment, index) {
 					if(confirm("do you really want to delete your comment?  you won’t be able to get it back."))
-						$.post("/api/comments/delete", {type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id}, function(result) {
+						$.post("/api/comments/delete", { type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id }, function(result) {
 							if(!result.fail)
 								comments.comments.splice(index, 1);
 							else
@@ -317,7 +268,7 @@ function ValidateField(field, url, name, msgchk, msgok, msgblank) {
 		valid.removeClass("checking").addClass("valid");
 		valid.attr("title", msgblank);
 	} else
-		$.get(url, {[name]: value}, function(result) {
+		$.get(url, { [name]: value }, function(result) {
 			valid.removeClass("checking");
 			if(result.fail) {
 				valid.addClass("invalid");
@@ -351,7 +302,7 @@ function ValidateInput(input, ajaxurl, id, value, msgchk, msgok, msgblank, chang
 		valid.removeClass("checking").addClass(msgblank.message ? (msgblank.valid ? "valid" : "invalid") : "invalid");
 		valid.attr("title", msgblank.message || msgblank);
 	} else
-		$.get(ajaxurl, {id: id, value: value}, result => {
+		$.get(ajaxurl, { id: id, value: value }, result => {
 			valid.removeClass("checking");
 			if(!result.fail) {
 				valid.addClass("valid");
@@ -363,135 +314,4 @@ function ValidateInput(input, ajaxurl, id, value, msgchk, msgok, msgblank, chang
 				valid.attr("title", result.message);
 			}
 		}, "json");
-}
-
-if(typeof Vue == "function") {
-	Vue.config.keyCodes.comma = 188;
-
-	vueMixins = {
-		tagSuggest: {
-			data: {
-				tags: [],
-				showTagSuggestions: false,
-				tagSearch: "",
-				tagCursor: false
-			},
-			computed: {
-				taglist: {
-					get: function() {
-						return this.tags.join(",");
-					},
-					set: function(value) {
-						this.tags = value ? value.split(",") : [];
-					}
-				},
-				tagChoices: function() {
-					if(this.tagSearch) {
-						var choices = [];
-						if(this.allTags.indexOf(this.tagSearch) < 0 && this.tags.indexOf(this.tagSearch) < 0)
-							choices.push("“" + this.tagSearch + "”");
-						for(var t = 0; t < this.allTags.length; t++)
-							if(this.allTags[t].indexOf(this.tagSearch) >= 0 && this.tags.indexOf(this.allTags[t]) < 0)
-								choices.push(this.allTags[t].replace(new RegExp(this.tagSearch.replace(/\./, "\\."), "gi"), "<em>$&</em>"));
-						return choices;
-					}
-					return this.allTags.filter(tag => { return this.tags.indexOf(tag) < 0; });
-				},
-				addtags: function() {
-					return $.grep(this.tags, tag => { return $.inArray(tag, this.originalTags) == -1; }).join(",");
-				},
-				deltags: function() {
-					return $.grep(this.originalTags, tag => { return $.inArray(tag, this.tags) == -1; }).join(",");
-				}
-			},
-			created: function() {
-				this.originalTags = [];
-				this.allTags = [];
-				$.get("/api/tags/names", {type: $("[data-tagtype]").data("tagtype")}, result => {
-					if(!result.fail)
-						this.allTags = result.names;
-					else
-						alert(result.message);
-				}, "json");
-			},
-			watch: {
-				tagSearch: function(value) {
-					this.tagSearch = value.toLowerCase().replace(/[^a-z0-9\.]/, "");
-				},
-				tagCursor: function(value) {
-					this.tagCursor = value.replace(/<[^>]>/g, "");
-				}
-			},
-			methods: {
-				ShowTagSuggestions: function() {
-					this.showTagSuggestions = true;
-				},
-				HideTagSuggestions: function(delay) {
-					setTimeout(() => {
-						this.showTagSuggestions = false;
-						this.tagCursor = "";
-					}, +delay);
-				},
-				TagSearchKeyPress: function(e) {
-					if(e.which == 8 && this.tagSearch || e.which == 46  // backspace or period
-							|| e.which >= 48 && e.which <= 57  // digit
-							|| e.which >= 65 && e.which <= 90  // capital letter
-							|| e.which >= 97 && e.which <= 122)  // lowercase letter
-						this.showTagSuggestions = true;
-				},
-				FirstTag: function() {
-					this.tagCursor = this.tagChoices[0];
-					this.showTagSuggestions = true;
-				},
-				NextTag: function() {
-					if(this.tagCursor) {
-						for(var t = 0; t < this.tagChoices.length - 1; t++)
-							if(this.tagChoices[t].replace(/<[^>]>/g, "") == this.tagCursor) {
-								this.tagCursor = this.tagChoices[t + 1];
-								this.showTagSuggestions = true;
-								return;
-							}
-					}
-					this.FirstTag();
-				},
-				PrevTag: function() {
-					if(this.tagCursor) {
-						for(var t = 1; t < this.tagChoices.length; t++)
-							if(this.tagChoices[t].replace(/<[^>]>/g, "") == this.tagCursor) {
-								this.tagCursor = this.tagChoices[t - 1];
-								this.showTagSuggestions = true;
-								return;
-							}
-					}
-					this.LastTag();
-				},
-				LastTag: function() {
-					this.tagCursor = this.tagChoices[this.tagChoices.length - 1];
-					this.showTagSuggestions = true;
-				},
-				AddCursorTag: function() {
-					if(this.tagCursor && $(".suggestions .selected").length)
-						this.AddTag(this.tagCursor);
-				},
-				AddTypedTag: function() {
-					if(this.tagSearch && (this.tagChoices[0] == "“" + this.tagSearch + "”" || this.tagChoices[0] == "<em>" + this.tagSearch + "</em>"))
-						this.AddTag(this.tagSearch);
-				},
-				AddTag: function(name) {
-					if(name) {
-						this.tagSearch = "";
-						this.HideTagSuggestions();
-						this.tags.push(name.replace(/<[^>]*>|“|”/gi, ""));
-					}
-				},
-				DelTag: function(index) {
-					this.tags.splice(index, 1);
-				},
-				DelLastTag: function() {
-					if(!this.tagSearch)
-						this.tags.splice(-1);
-				}
-			}
-		}
-	};
 }
