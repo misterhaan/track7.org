@@ -115,7 +115,6 @@ class votesApi extends t7api {
 		}
 		$oldest = isset($_GET['oldest']) && $_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
 		if ($votes = $db->query($sql . ' where unix_timestamp(v.instant)<\'' . $oldest . '\' union '
-			. 'select \'guide\' as type, v.id,' . str_replace('VOTE_COLUMN', 'guide', $extracols) . ' v.vote, v.posted, g.title, concat(\'/guides/\', g.url, \'/1\') as url from guide_votes as v' . $extrajoins . ' left join guides as g on v.guide=g.id where v.posted<\'' . $oldest . '\' union '
 			. 'select \'lego\' as type, v.id,' . str_replace('VOTE_COLUMN', 'lego', $extracols) . ' v.vote, v.posted, l.title, concat(\'/lego/\', l.url) as url from lego_votes as v' . $extrajoins . ' left join lego_models as l on v.lego=l.id where v.posted<\'' . $oldest . '\' order by posted desc limit ' . self::MAX_VOTE_GET)) {
 			$ajax->Data->votes = [];
 			$ajax->Data->oldest = 0;
@@ -124,7 +123,7 @@ class votesApi extends t7api {
 				$vote->posted = t7format::TimeTag('smart', $vote->posted, t7format::DATE_LONG);
 				$ajax->Data->votes[] = $vote;
 			}
-			if ($more = $db->query('select (select count(1) from vote where unix_timestamp(instant)<\'' . $ajax->Data->oldest . '\')+(select count(1) from guide_votes where posted<\'' . $ajax->Data->oldest . '\')+(select count(1) from lego_votes where posted<\'' . $ajax->Data->oldest . '\') as num'))
+			if ($more = $db->query('select (select count(1) from vote where unix_timestamp(instant)<\'' . $ajax->Data->oldest . '\')+(select count(1) from lego_votes where posted<\'' . $ajax->Data->oldest . '\') as num'))
 				if ($more = $more->fetch_object())
 					$ajax->Data->more = +$more->num;
 		} else
