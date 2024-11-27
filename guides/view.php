@@ -20,7 +20,9 @@ class FullGuide extends Page {
 			<span class=guidelevel title="<?= self::$guide->Level; ?> level"><?= self::$guide->Level; ?></span>
 			<span class=tags><?php self::ShowTagLinks(); ?></span>
 			<span class=views title="viewed <?= self::$guide->Views; ?> times"><?= self::$guide->Views; ?></span>
-			<span class=rating data-stars=<?= round(self::$guide->Rating * 2) / 2; ?> title="rated <?= self::$guide->Rating; ?> stars by <?= self::$guide->VoteCount == 0 ? 'nobody' : (self::$guide->VoteCount == 1 ? '1 person' : self::$guide->VoteCount . ' people'); ?>"></span>
+			<?php
+			self::ShowRating(self::$guide->Rating, self::$guide->VoteCount);
+			?>
 			<time class=posted datetime="<?= self::$guide->Instant->DateTime; ?>" title="posted <?= !self::$guide->Posted ? self::$guide->Instant->Tooltip : self::$guide->Instant->Tooltip . ' (originally ' . self::$guide->Posted . ')'; ?>"><?= self::$guide->Instant->Display; ?></time>
 			<span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
 		</p>

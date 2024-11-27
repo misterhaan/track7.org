@@ -156,9 +156,7 @@ class Artwork extends Page {
 			<?php
 			}
 			self::ShowTags(self::$art->Post);
-			?>
-			<span class=rating data-stars=<?= round(self::$art->Rating * 2) / 2; ?> title="rated <?= self::$art->Rating; ?> stars by <?= self::$art->VoteCount == 0 ? 'nobody' : (self::$art->VoteCount == 1 ? '1 person' : self::$art->VoteCount . ' people'); ?>"></span>
-			<?php
+			self::ShowRating(self::$art->Rating, self::$art->VoteCount);
 			if (self::$art->Deviation) {
 			?>
 				<a class=deviantart href="https://deviantart.com/art/<?= self::$art->Deviation; ?>" title="see <?= htmlspecialchars(self::$art->Title); ?> on deviantart">deviantart</a>

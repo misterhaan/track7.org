@@ -145,6 +145,12 @@ abstract class Page extends Responder {
 	<?php
 	}
 
+	protected static function ShowRating(float $rating, int $votes): void {
+	?>
+		<span class=rating data-stars=<?= round($rating * 2) / 2; ?> title="rated <?= $rating; ?> stars by <?= $votes == 0 ? 'nobody' : ($votes == 1 ? '1 person' : $votes . ' people'); ?>"></span>
+	<?php
+	}
+
 	/**
 	 * End the page with a not found error.
 	 * @param $title Not found error title
