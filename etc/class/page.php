@@ -317,3 +317,8 @@ abstract class Page extends Responder {
 <?php
 	}
 }
+
+class PrevNext {
+	public ?TitledLink $Prev = null;
+	public ?TitledLink $Next = null;
+}

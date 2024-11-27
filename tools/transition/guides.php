@@ -147,7 +147,7 @@ class GuidesTransition extends TransitionPage {
 			}
 		} else {
 			?>
-			<p>old guide tags table no longer exists.</p>
+			<p>old guide votes table no longer exists.</p>
 		<?php
 			self::CheckOldComments();
 		}

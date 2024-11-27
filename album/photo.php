@@ -175,8 +175,3 @@ class AlbumPhoto extends Page {
 	}
 }
 new AlbumPhoto();
-
-class PrevNext {
-	public ?TitledLink $Prev = null;
-	public ?TitledLink $Next = null;
-}

@@ -170,8 +170,3 @@ class Artwork extends Page {
 	}
 }
 new Artwork();
-
-class PrevNext {
-	public ?TitledLink $Prev = null;
-	public ?TitledLink $Next = null;
-}
