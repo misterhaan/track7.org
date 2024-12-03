@@ -5,7 +5,7 @@ class FormatText {
 	private static ?HeaderlessParsedown $parsedown = null;
 
 	public static function CleanID(string $id): string {
-		return preg_replace('/[^a-z0-9\\-_]*/g', '', preg_replace('/ /g', '-', strtolower($id)));
+		return preg_replace('/[^a-z0-9\\-_]*/', '', preg_replace('/ /', '-', strtolower($id)));
 	}
 
 	public static function Markdown(string $markdown): string {

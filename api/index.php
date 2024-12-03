@@ -35,8 +35,8 @@ $html->Open('api');
 <h2 class=api><a href=guide.php>guide</a></h2>
 <p>the guide api manages guides.</p>
 
-<h2 class=api><a href=legos>legos</a></h2>
-<p>the legos api manages lego models.</p>
+<h2 class=api><a href=lego.php>lego</a></h2>
+<p>the lego api manages lego models.</p>
 
 <h2 class=api><a href=photo.php>photo</a></h2>
 <p>the photo api manages the photo album.</p>
@@ -58,9 +58,6 @@ $html->Open('api');
 
 <h2 class=api><a href=users>users</a></h2>
 <p>the users api manages users.</p>
-
-<h2 class=api><a href=validate>validate</a></h2>
-<p>the validate api provides field-level validation for forms.</p>
 
 <h2 class=api><a href=vote.php>vote</a></h2>
 <p>the vote api manages votes.</p>

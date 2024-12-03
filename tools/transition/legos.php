@@ -1,87 +1,252 @@
 <?php
-  define('TR_LEGOS', 7);
-  define('STEP_COPYLEGOS', 1);
-  define('STEP_COPYVOTES', 2);
-  define('STEP_COPYFILES', 3);
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
 
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-  $html = new t7html([]);
-  $html->Open('lego migration');
-?>
-      <h1>lego migration</h1>
-<?php
-  if(isset($_GET['dostep']))
-    switch($_GET['dostep']) {
-      case 'copylegos':
-        if($db->real_query('insert into lego_models (url, title, posted, deschtml, pieces, mans) select id, name, adddate, concat(\'<p>\',replace(notes,\'&nbsp;\',\' \'),\'</p>\'), pieces, minifigs from track7_t7data.legos'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYLEGOS . ', status=\'lego models migrated\' where id=' . TR_LEGOS . ' and stepnum<' . STEP_COPYLEGOS);
-          else
-            echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copyvotes':
-        if($db->real_query('insert into lego_votes (lego, voter, ip, vote, posted) select l.id, u.id, inet_aton(v.ip), case v.vote when -3 then 1 when 3 then 5 else v.vote+3 end as vote, v.time from track7_t7data.votes as v left join track7_t7data.ratings as r on r.id=v.ratingid left join lego_models as l on l.url=r.selector left join transition_users as u on u.olduid=v.uid where r.type=\'lego\' order by v.time'))
-          if($db->real_query('update lego_models as l, (select lego, round((sum(vote)+3)/(count(1)+1),2) as rating, count(1) as votes from lego_votes group by lego) as s set l.rating=s.rating, l.votes=s.votes where l.id=s.lego'))
-            $db->real_query('update transition_status set stepnum=' . STEP_COPYVOTES . ', status=\'lego votes migrated\' where id=\'' . TR_LEGOS . '\' and stepnum<' . STEP_COPYVOTES);
-          else
-            echo '<pre><code>' . $db->error . '</code></pre>';
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copyfiles':
-        exec('cp ' . $_SERVER['DOCUMENT_ROOT'] . '/art/lego/*.png ' . $_SERVER['DOCUMENT_ROOT'] . '/lego/data/');
-        exec('cp ' . $_SERVER['DOCUMENT_ROOT'] . '/art/lego/*.zip ' . $_SERVER['DOCUMENT_ROOT'] . '/lego/data/');
-        $db->real_query('update transition_status set stepnum=' . STEP_COPYFILES . ', status=\'lego completed\' where id=' . TR_LEGOS . ' and stepnum<' . STEP_COPYFILES);
-        break;
-    }
+class LegoTransition extends TransitionPage {
+	public function __construct() {
+		self::$subsite = new Subsite('lego', 'lego models', 'download instructions for custom lego models', 'legoed');
+		parent::__construct();
+	}
 
-  if($status = $db->query('select stepnum, status from transition_status where id=' . TR_LEGOS))
-    $status = $status->fetch_object();
+	protected static function CheckPostRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_models\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from lego_models left join post on post.subsite=\'lego\' and post.url=concat(\'/lego/\', lego_models.url) where post.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyLegoToPost();
+			else {
 ?>
-      <h2>lego models</h2>
-<?php
-  if($status->stepnum < STEP_COPYLEGOS) {
-?>
-      <p>
-        the lego migration begins with the table of lego models.  make sure the
-        lego_models table, and triggers to update contributions (along with
-        contribution enum entries) have been created, then copy those legos!
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=copylegos">copy those legos!</a></nav>
-<?php
-  } else {
-?>
-      <p>lego models have been migrated successfully.</p>
+				<p>all old lego models exist in new <code>post</code> table.</p>
+			<?php
+				self::CheckLegoTable();
+			}
+		} else {
+			?>
+			<p>old lego models table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
 
-      <h2>lego votes</h2>
-<?php
-    if($status->stepnum < STEP_COPYVOTES) {
-?>
-      <p>
-        lego models have some votes, so bring forward their votes and
-        recalculate their ratings.
-      </p>
-      <nav class=calltoaction><a class="okay action" href="?dostep=copyvotes">copy those votes!</a></nav>
-<?php
-    } else {
-?>
-      <p>votes have been migrated successfully.</p>
+	private static function CheckLegoTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>lego</code> table exists.</p>
+		<?php
+			self::CheckLegoRows();
+		} else
+			self::CreateTable('lego');
+	}
 
-      <h2>lego files</h2>
+	private static function CheckLegoRows(): void {
+		$missing = self::$db->query('select 1 from lego_models left join lego on lego.id=lego_models.url where lego.id is null limit 1');
+		if ($missing->fetch_column())
+			self::CopyLego();
+		else {
+		?>
+			<p>all old lego models exist in new <code>lego</code> table.</p>
+			<?php
+			self::CheckTagTable();
+		}
+	}
+
+	protected static function CheckTagRows(): void {
+		self::CheckCommentRows();
+	}
+
+	protected static function CheckPostTagRows(): void {
+		self::CheckCommentRows();
+	}
+
+	protected static function CheckCommentRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_comments\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from lego_comments as lc left join lego_models as ol on ol.id=lc.lego left join lego as l on l.id=ol.url left join comment as c on c.post=l.post and c.instant=from_unixtime(lc.posted) where c.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyLegoComments();
+			else {
+			?>
+				<p>all old lego comments exists in new <code>comment</code> table.</p>
+			<?php
+				self::CheckVoteTable();
+			}
+		} else {
+			?>
+			<p>old lego comment table no longer exists.</p>
+			<?php
+			self::CheckOldLegos();
+		}
+	}
+
+	protected static function CheckVoteRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_votes\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from lego_votes as lv left join lego_models as ol on ol.id=lv.lego left join post as p on p.url=concat(\'/lego/\', ol.url) left join vote as v on v.post=p.id and (lv.voter>0 and v.user=lv.voter or lv.ip>0 and v.ip=lv.ip) where v.vote is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyLegoVotes();
+			else {
+			?>
+				<p>all old lego votes exists in new <code>vote</code> table.</p>
+			<?php
+				self::CheckCommentTriggers();
+			}
+		} else {
+			?>
+			<p>old lego votes table no longer exists.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckCommentTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'lego_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteCommentTriggers();
+		else {
+		?>
+			<p>old lego comment triggers no longer exist.</p>
+		<?php
+			self::CheckLegoTriggers();
+		}
+	}
+
+	private static function CheckLegoTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'lego_models\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteLegoTriggers();
+		else {
+		?>
+			<p>old lego triggers no longer exist.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckContributions(): void {
+		$exists = self::$db->query('select 1 from contributions where srctbl=\'lego_models\' or srctbl=\'lego_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteContributions();
+		else {
+		?>
+			<p>lego contributions no longer exist.</p>
+		<?php
+			self::CheckOldVotes();
+		}
+	}
+
+	private static function CheckOldVotes(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_votes\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldVotes();
+		else {
+		?>
+			<p>old lego votes table no longer exists.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckOldComments(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldComments();
+		else {
+		?>
+			<p>old lego comments table no longer exists.</p>
+		<?php
+			self::CheckOldLegos();
+		}
+	}
+
+	private static function CheckOldLegos(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_models\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldLegos();
+		else {
+		?>
+			<p>old legos table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
+
+	private static function CopyLegoToPost(): void {
+		self::$db->real_query('insert into post (published, instant, title, subsite, url, author, preview, hasmore) select true, from_unixtime(l.posted), l.title, \'lego\', concat(\'/lego/\', l.url), 1, concat(\'<p><img class=lego src="/lego/data/\', l.url, \'.png"></p>\'), true from lego_models as l left join post on post.subsite=\'lego\' and post.url=concat(\'/lego/\', l.url) where post.id is null');
+		?>
+		<p>copied lego models into new <code>post</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyLego(): void {
+		self::$db->real_query('insert into lego (id, post, html, markdown, pieces) select ol.url, p.id, ol.deschtml, ol.descmd, ol.pieces from lego_models as ol left join post as p on p.url=concat(\'/lego/\', ol.url) left join lego on lego.id=ol.url where lego.id is null');
+	?>
+		<p>copied lego models into new <code>lego</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyLegoComments(): void {
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(lc.posted), l.post, lc.user, lc.name, lc.contacturl, lc.html, lc.markdown from lego_comments as lc left join lego_models as ol on ol.id=lc.lego left join lego as l on l.id=ol.url left join comment as c on c.post=l.post and c.instant=from_unixtime(lc.posted) where c.id is null');
+	?>
+		<p>copied lego comments into new <code>comment</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyLegoVotes(): void {
+		self::$db->query('insert into vote (post, user, ip, instant, vote) select p.id, lv.voter, lv.ip, from_unixtime(lv.posted), lv.vote from lego_votes as lv left join lego_models as ol on ol.id=lv.lego left join post as p on p.url=concat(\'/lego/\', ol.url) left join vote as v on v.post=p.id and (lv.voter>0 and v.user=lv.voter or lv.ip>0 and v.ip=lv.ip) where v.vote is null');
+	?>
+		<p>copied lego votes into new <code>vote</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteCommentTriggers(): void {
+		self::$db->real_query('drop trigger if exists lego_comment_added');
+		self::$db->real_query('drop trigger if exists lego_comment_changed');
+		self::$db->real_query('drop trigger if exists lego_comment_deleted');
+	?>
+		<p>deleted old lego comment triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteLegoTriggers(): void {
+		self::$db->real_query('drop trigger if exists lego_model_added');
+		self::$db->real_query('drop trigger if exists lego_model_changed');
+	?>
+		<p>deleted old lego triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteContributions(): void {
+		self::$db->real_query('delete from contributions where srctbl=\'lego_models\' or srctbl=\'lego_comments\'');
+	?>
+		<p>deleted old lego contributions. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldVotes(): void {
+		self::$db->real_query('drop table lego_votes');
+	?>
+		<p>deleted old lego votes table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldComments(): void {
+		self::$db->real_query('drop table lego_comments');
+	?>
+		<p>deleted old lego comments table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldLegos(): void {
+		self::$db->real_query('drop table lego_models');
+	?>
+		<p>deleted old legos table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function Done(): void {
+	?>
+		<p>done migrating legos, at least for now!</p>
 <?php
-      if($status->stepnum < STEP_COPYFILES) {
-?>
-      <p>
-        there are 2 images and 2 archive files for each model, so let’s copy
-        them all to the new directory.
-      </p>
-      <nav class=calltoaction><a class="okay action" href="?dostep=copyfiles">copy those files!</a></nav>
-<?php
-      } else {
-?>
-      <p>files have been migrated successfully.</p>
-<?php
-      }
-    }
-  }
-  $html->Close();
-?>
+	}
+}
+new LegoTransition();

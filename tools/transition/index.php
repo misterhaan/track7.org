@@ -1,6 +1,5 @@
 <?php
 define('TR_MESSAGES', 4);
-define('TR_LEGOS', 7);
 define('TR_STORIES', 8);
 define('TR_UPDATES', 10);
 define('TR_EXT_PROFILES', 12);
@@ -16,7 +15,6 @@ if ($ss = $db->query('select id, stepnum, status from transition_status'))
 		$status[$s->id] = $s;
 
 initStatus(TR_MESSAGES);
-initStatus(TR_LEGOS);
 initStatus(TR_STORIES);
 initStatus(TR_UPDATES);
 initStatus(TR_EXT_PROFILES);
@@ -35,6 +33,7 @@ $html->Open('database transitions');
 	<li><a href=code.php>code</a></li>
 	<li><a href=forum.php>forum</a></li>
 	<li><a href=guides.php>guides</a></li>
+	<li><a href=legos.php>lego models</a></li>
 </ul>
 
 <table>
@@ -50,11 +49,6 @@ $html->Open('database transitions');
 			<td><a href="messages.php">messages</a></td>
 			<td><?php echo $status[TR_MESSAGES]->stepnum; ?></td>
 			<td><?php echo $status[TR_MESSAGES]->status; ?></td>
-		</tr>
-		<tr>
-			<td><a href="legos.php">legos</a></td>
-			<td><?php echo $status[TR_LEGOS]->stepnum; ?></td>
-			<td><?php echo $status[TR_LEGOS]->status; ?></td>
 		</tr>
 		<tr>
 			<td><a href="stories.php">stories</a></td>
