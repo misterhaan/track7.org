@@ -7,7 +7,7 @@ require_once dirname(__DIR__) . '/etc/class/t7.php';
  */
 class votesApi extends t7api {
 	const MAX_VOTE_GET = 24;
-	const VoteTypes = ['art', 'guide', 'lego'];
+	const VoteTypes = ['art', 'guide'];
 
 	/**
 	 * write out the documentation for the votes api controller.  the page is
@@ -103,19 +103,13 @@ class votesApi extends t7api {
 	protected static function listAction($ajax) {
 		global $db, $user;
 		$sql = 'select p.subsite as type, concat_ws(\';\', p.id, v.user, v.ip) as id,';
-		$extracols = $extrajoins = '';
-		if ($user->IsAdmin()) {
-			$extracols = ' u.username, u.displayname, inet_ntoa(v.ip) as ip, v.VOTE_COLUMN as item,';
+		if ($user->IsAdmin())
 			$sql .= ' u.username, u.displayname, inet_ntoa(v.ip) as ip, \'\' as item,';
-		}
 		$sql .= ' v.vote, unix_timestamp(v.instant) as posted, p.title, p.url from vote as v left join post as p on p.id=v.post';
-		if ($user->IsAdmin()) {
-			$extrajoins = ' left join users as u on u.id=v.voter';
+		if ($user->IsAdmin())
 			$sql .= ' left join user as u on u.id=v.user';
-		}
 		$oldest = isset($_GET['oldest']) && $_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
-		if ($votes = $db->query($sql . ' where unix_timestamp(v.instant)<\'' . $oldest . '\' union '
-			. 'select \'lego\' as type, v.id,' . str_replace('VOTE_COLUMN', 'lego', $extracols) . ' v.vote, v.posted, l.title, concat(\'/lego/\', l.url) as url from lego_votes as v' . $extrajoins . ' left join lego_models as l on v.lego=l.id where v.posted<\'' . $oldest . '\' order by posted desc limit ' . self::MAX_VOTE_GET)) {
+		if ($votes = $db->query($sql . ' where unix_timestamp(v.instant)<\'' . $oldest . '\' order by posted desc limit ' . self::MAX_VOTE_GET)) {
 			$ajax->Data->votes = [];
 			$ajax->Data->oldest = 0;
 			while ($vote = $votes->fetch_object()) {
@@ -123,7 +117,7 @@ class votesApi extends t7api {
 				$vote->posted = t7format::TimeTag('smart', $vote->posted, t7format::DATE_LONG);
 				$ajax->Data->votes[] = $vote;
 			}
-			if ($more = $db->query('select (select count(1) from vote where unix_timestamp(instant)<\'' . $ajax->Data->oldest . '\')+(select count(1) from lego_votes where posted<\'' . $ajax->Data->oldest . '\') as num'))
+			if ($more = $db->query('select count(1) from vote where unix_timestamp(instant)<\'' . $ajax->Data->oldest . '\' as num'))
 				if ($more = $more->fetch_object())
 					$ajax->Data->more = +$more->num;
 		} else
