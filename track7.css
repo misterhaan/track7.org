@@ -1938,9 +1938,14 @@ ul#taginfo {
 	font-size: .8em;
 }
 
+a.votepost {
+	display: flex;
+	align-items: center;
+}
+
 img.votetype {
 	height: 1.1em;
-	display: block;
+	margin-right: .2em;
 }
 
 #votes .calltoaction {

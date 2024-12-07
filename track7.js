@@ -2,7 +2,6 @@ $(function() {
 	InitUserMenu();
 	InitLoginLogout();
 	autosize($("textarea"));
-	InitVoting();
 	InitComments();
 	InitTabLayout();
 });
@@ -92,32 +91,6 @@ function Login() {
 			window.location = url;
 			return false;
 		}
-	}
-}
-
-/**
- * initialize voting
- */
-function InitVoting() {
-	if($("#vote").length) {
-		$("#vote, #vote span").click(function() {
-			$.post("/api/votes/cast", { type: $("#vote").data("type"), key: $("#vote").data("key"), vote: $(this).data("vote") }, result => {
-				if(!result.fail) {
-					$("#vote, #vote span").removeClass("voted");
-					$("#vote").addClass("voted");
-					$("#vote span").each(function() {
-						if(+$(this).data("vote") <= result.vote)
-							$(this).addClass("voted");
-					});
-					if(result.rating)
-						$("span.rating").attr("data-stars", Math.round(2 * result.rating) / 2);
-					if(result.rating && result.votes)
-						$("span.rating").attr("title", "rated " + result.rating + " stars by " + (result.votes == 1 ? "1 person" : result.votes + " people"));
-				} else
-					alert(result.message);
-			}, "json");
-			return false;
-		});
 	}
 }
 

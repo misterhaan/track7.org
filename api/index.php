@@ -62,9 +62,6 @@ $html->Open('api');
 <h2 class=api><a href=vote.php>vote</a></h2>
 <p>the vote api manages votes.</p>
 
-<h2 class=api><a href=votes>votes</a></h2>
-<p>the votes api manages votes.</p>
-
 <h2 class=api><a href=web.php>web</a></h2>
 <p>the web api manages web script code.</p>
 
