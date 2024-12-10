@@ -121,7 +121,7 @@ class GuidesTransition extends TransitionPage {
 				self::CopyGuideComments();
 			else {
 			?>
-				<p>all old guide comments exists in new <code>comment</code> table.</p>
+				<p>all old guide comments exist in new <code>comment</code> table.</p>
 			<?php
 				self::CheckVoteTable();
 			}

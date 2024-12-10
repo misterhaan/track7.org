@@ -237,7 +237,7 @@ class CodeTransition extends TransitionPage {
 				self::CopyApplicationComments();
 			else {
 			?>
-				<p>all old application comments exists in new <code>comment</code> table.</p>
+				<p>all old application comments exist in new <code>comment</code> table.</p>
 			<?php
 				self::CheckApplicationCommentTriggers();
 			}
@@ -257,7 +257,7 @@ class CodeTransition extends TransitionPage {
 				self::CopyScriptComments();
 			else {
 			?>
-				<p>all old web script comments exists in new <code>comment</code> table.</p>
+				<p>all old web script comments exist in new <code>comment</code> table.</p>
 			<?php
 				self::CheckScriptCommentTriggers();
 			}

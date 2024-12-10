@@ -66,7 +66,7 @@ class LegoTransition extends TransitionPage {
 				self::CopyLegoComments();
 			else {
 			?>
-				<p>all old lego comments exists in new <code>comment</code> table.</p>
+				<p>all old lego comments exist in new <code>comment</code> table.</p>
 			<?php
 				self::CheckVoteTable();
 			}

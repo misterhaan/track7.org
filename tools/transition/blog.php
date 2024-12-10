@@ -98,7 +98,7 @@ class BlogTransition extends TransitionPage {
 				self::CopyBlogComments();
 			else {
 			?>
-				<p>all old blog comments exists in new <code>comment</code> table.</p>
+				<p>all old blog comments exist in new <code>comment</code> table.</p>
 			<?php
 				self::CheckCommentTriggers();
 			}

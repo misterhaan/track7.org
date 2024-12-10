@@ -79,7 +79,7 @@ class ArtTransition extends TransitionPage {
 				self::CopyArtComments();
 			else {
 			?>
-				<p>all old art comments exists in new <code>comment</code> table.</p>
+				<p>all old art comments exist in new <code>comment</code> table.</p>
 			<?php
 				self::CheckVoteTable();
 			}

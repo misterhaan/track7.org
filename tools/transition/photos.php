@@ -98,7 +98,7 @@ class PhotoTransition extends TransitionPage {
 				self::CopyPhotoComments();
 			else {
 			?>
-				<p>all old photo comments exists in new <code>comment</code> table.</p>
+				<p>all old photo comments exist in new <code>comment</code> table.</p>
 			<?php
 				self::CheckOldTagLinks();
 			}
