@@ -1,189 +1,238 @@
 <?php
-  define('TR_STORIES', 8);
-  define('STEP_COPYSERIES', 1);
-  define('STEP_COPYSTORIES', 2);
-  define('STEP_COPYHTML', 3);
-  define('STEP_COPYCOMMENTS', 4);
-  define('STEP_ORDERSTORIES', 5);
-  define('STEP_COUNTSTORIES', 6);
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
 
-  define('MAX_HTML', 12);
+class StoriesTransition extends TransitionPage {
+	public function __construct() {
+		self::$subsite = new Subsite('pen', 'stories', 'read short fiction and a poem', 'storied');
+		parent::__construct();
+	}
 
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
-  $html = new t7html([]);
-  $html->Open('story migration');
+	protected static function CheckPostRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from stories left join post on post.subsite=\'pen\' and post.url=concat(\'/pen/\', stories.url) where post.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyStoriesToPost();
+			else {
 ?>
-      <h1>story migration</h1>
-<?php
-  if(isset($_GET['dostep']))
-    switch($_GET['dostep']) {
-      case 'copyseries':
-        if($db->real_query('insert into stories_series (url, title, deschtml) select id, name, replace(description,\'&nbsp;\',\' \') from track7_t7data.pensections where id in(\'pencil\', \'nancy\', \'children\')'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYSERIES . ', status=\'story series migrated\' where id=' . TR_STORIES . ' and stepnum<' . STEP_COPYSERIES);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copystories':
-        if($db->real_query('insert into stories (published, posted, series, number, url, title, deschtml) select 1, if(ps.posted is null, 0, if(char_length(ps.posted)=10, unix_timestamp(concat(right(ps.posted, 4),\'-\',left(ps.posted, 2),\'-\',mid(ps.posted, 4, 2), \' 12:00:00\')), unix_timestamp(concat(right(ps.posted, 4),\'-\',left(ps.posted, 2),\'-15 12:00:00\')))) as postedtimestamp, ss.id, ps.sort, ps.id, ps.title, concat(\'<p>\',replace(replace(ps.description, \'&nbsp;\', \'\'), \'&mdash;\', \'—\'),\'</p>\') as descr from track7_t7data.penstories as ps left join stories_series as ss on ss.url=ps.section where ps.id!=\'ready\' order by postedtimestamp')) {
-          $db->real_query('update stories set number=0 where series is null');
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYSTORIES . ', status=\'stories migrated\' where id=' . TR_STORIES . ' and stepnum<' . STEP_COPYSTORIES);
-        } else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copyhtml':
-        if($stories = $db->query('select id, url from stories where storyhtml=\'\' limit ' . MAX_HTML))
-          if($stories->num_rows) {
-            $id = false;
-            $storyhtml = false;
-            $import = $db->prepare('update stories set storyhtml=? where id=? limit 1');
-            $import->bind_param('si', $storyhtml, $id);
-            while($story = $stories->fetch_object()) {
-              $id = $story->id;
-              $storyhtml = str_replace(['&nbsp;', '&eacute;'], [' ', 'é'], file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/pen/' . $story->url . '.html'));
-              $import->execute();
-            }
-            $import->close();
-          } else
-            $db->real_query('update transition_status set stepnum=' . STEP_COPYHTML . ', status=\'stories html migrated\' where id=' . TR_STORIES . ' and stepnum<' . STEP_COPYHTML);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'copycomments':
-        if($db->real_query('insert into stories_comments (story, posted, user, name, contacturl, html) select s.id, c.instant, u.id, c.name, c.url, replace(c.comments, \'&nbsp;\', \' \') from track7_t7data.comments as c inner join stories as s on s.url=replace(substring_index(c.page,\'/\',-1),\'.php\',\'\') left join transition_users as u on u.olduid=c.uid where page like \'/pen/%\' order by c.instant'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COPYCOMMENTS . ', status=\'comments copied\' where id=\'' . TR_STORIES . '\' and stepnum<' . STEP_COPYCOMMENTS);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-      case 'orderstories':
-        if(isset($_GET['done']))
-          $db->real_query('update transition_status set stepnum=' . STEP_ORDERSTORIES . ', status=\'stories put in order\' where id=\'' . TR_STORIES . '\' and stepnum<' . STEP_ORDERSTORIES);
-        elseif(isset($_GET['next']) && +$_GET['next']) {
-          if(!$db->real_query('update stories set posted=1+(select * from (select posted from stories where posted<100 order by posted desc limit 1) as strs) where posted=0 and id=\'' . +$_GET['next'] . '\''))
-            echo '<pre><code>' . $db->error . '</code></pre>';
-        } else
-          echo '<p class=error>next story must be specified</p>';
-        break;
-      case 'countstories':
-        if($db->real_query('update stories_series as ss set ss.lastposted=(select posted from stories where series=ss.id order by posted desc limit 1), ss.numstories=(select count(1) from stories where series=ss.id)'))
-          $db->real_query('update transition_status set stepnum=' . STEP_COUNTSTORIES . ', status=\'series counted\' where id=\'' . TR_STORIES . '\' and stepnum<' . STEP_COUNTSTORIES);
-        else
-          echo '<pre><code>' . $db->error . '</code></pre>';
-        break;
-  }
-  if($status = $db->query('select stepnum, status from transition_status where id=' . TR_STORIES))
-    $status = $status->fetch_object();
-?>
-      <h2>series</h2>
-<?php
-  if($status->stepnum < STEP_COPYSERIES) {
-?>
-      <p>
-        the story migration begins with the series some of the stories belong
-        to.  make sure the stories_series table has been created, then copy all
-        the series!
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=copyseries">copy those series!</a></nav>
-<?php
-  } else {
-?>
-      <p>series have been migrated successfully.</p>
+				<p>all old stories exist in new <code>post</code> table.</p>
+			<?php
+				self::CheckSeriesTable();
+			}
+		} else {
+			?>
+			<p>old stories table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
 
-      <h2>stories</h2>
-<?php
-    if($status->stepnum < STEP_COPYSTORIES) {
-?>
-      <p>
-        on to the stories themselves, it’s time to copy the stories table to the
-        new database.  make sure the stories and stories_comments tables have
-        been created along with their triggers as well as new srctbl and
-        conttype enum values in the contributions table, then copy the stories!
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=copystories">copy those stories!</a></nav>
-<?php
-    } else {
-?>
-      <p>stories have been migrated successfully.</p>
-<?php
-      if($status->stepnum < STEP_COPYHTML) {
-?>
-      <p>
-        since the actual contents of the stories are currently stored in html
-        files, that last step didn’t get that part into the database.  this step
-        needs to happen multiple times to get all the stories in.
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=copyhtml">copy those stories!</a></nav>
-<?php
-      } else {
-?>
-      <p>story contents have been migrated successfully.</p>
+	private static function CheckSeriesTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'series\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>series</code> table exists.</p>
+		<?php
+			self::CheckSeriesRows();
+		} else
+			self::CreateTable('series');
+	}
 
-      <h2>comments</h2>
-<?php
-        if($status->stepnum < STEP_COPYCOMMENTS) {
-?>
-      <p>
-        some people commented on the stories, so let’s bring those over too.
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=copycomments">copy those comments!</a></nav>
-<?php
-        } else {
-?>
-      <p>comments have been migrated successfully.</p>
+	private static function CheckSeriesRows(): void {
+		$missing = self::$db->query('select 1 from stories_series left join series on series.id=stories_series.url where series.id is null limit 1');
+		if ($missing->fetch_column())
+			self::CopySeries();
+		else {
+		?>
+			<p>all old series exist in new <code>series</code> table.</p>
+		<?php
+			self::CheckStoryTable();
+		}
+	}
 
-      <h2>story order</h2>
-<?php
-          if($status->stepnum < STEP_ORDERSTORIES) {
-?>
-      <p>
-        most of the stories are from before i recorded date posted, so the
-        database won’t be able to sort them.  select the oldest story from the
-        list below:
-      </p>
-<?php
-            if($stories = $db->query('select s.id, s.title, ss.title as stitle, s.number from stories as s left join stories_series as ss on ss.id=s.series where posted=0 order by series, number'))
-              if($stories->num_rows) {
-?>
-      <ul>
-<?php
-                while($story = $stories->fetch_object()) {
-?>
-        <li><a href="?dostep=orderstories&amp;next=<?php echo $story->id; ?>"><?php echo $story->title; ?></a><?php if($story->stitle) echo ' (' . $story->stitle . ' #' . $story->number . ')'; ?></li>
-<?php
-                }
-?>
-      </ul>
-<?php
-              } else {
-?>
-      <nav class=calltoaction><a class="copy action" href="?dostep=orderstories&amp;done">done setting story order!</a></nav>
-<?php
-              }
-            else {
-              echo '<pre><code>' . $db->error . '</code></pre>';
-            }
-          } else {
-?>
-      <p>stories have been put in order.</p>
+	private static function CheckStoryTable(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'story\' limit 1');
+		if ($exists->fetch_column()) {
+		?>
+			<p>new <code>story</code> table exists.</p>
+		<?php
+			self::CheckStoryRows();
+		} else
+			self::CreateTable('story');
+	}
 
-      <h2>series stats</h2>
+	protected static function CheckStoryRows(): void {
+		$missing = self::$db->query('select 1 from stories left join story on story.id=stories.url where story.id is null limit 1');
+		if ($missing->fetch_column())
+			self::CopyStories();
+		else {
+		?>
+			<p>all old stories exist in new <code>story</code> table.</p>
+			<?php
+			self::CheckTagUsageView();
+		}
+	}
+
+	protected static function CheckTagRows(): void {
+		throw new DetailedException('Stories do not use tags, so CheckTagRows() is not implemented.');
+	}
+
+	protected static function CheckPostTagRows(): void {
+		throw new DetailedException('Stories do not use tags, so CheckPostTagRows() is not implemented.');
+	}
+
+	protected static function CheckCommentRows(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories_comments\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from stories_comments as sc left join stories as os on os.id=sc.story left join story as s on s.id=os.url left join comment as c on c.post=s.post and c.instant=from_unixtime(sc.posted) where c.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyStoryComments();
+			else {
+			?>
+				<p>all old story comments exist in new <code>comment</code> table.</p>
+			<?php
+				self::CheckCommentTriggers();
+			}
+		} else {
+			?>
+			<p>old story comment table no longer exists.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckCommentTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'stories_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteCommentTriggers();
+		else {
+		?>
+			<p>old story comment triggers no longer exist.</p>
+		<?php
+			self::CheckStoryTriggers();
+		}
+	}
+
+	private static function CheckStoryTriggers(): void {
+		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'stories\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteStoryTriggers();
+		else {
+		?>
+			<p>old story triggers no longer exist.</p>
+		<?php
+			self::CheckContributions();
+		}
+	}
+
+	private static function CheckContributions(): void {
+		$exists = self::$db->query('select 1 from contributions where srctbl=\'stories\' or srctbl=\'stories_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteContributions();
+		else {
+		?>
+			<p>story contributions no longer exist.</p>
+		<?php
+			self::CheckOldComments();
+		}
+	}
+
+	private static function CheckOldComments(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories_comments\' limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldComments();
+		else {
+		?>
+			<p>old story comment table no longer exists.</p>
+		<?php
+			self::CheckOldStories();
+		}
+	}
+
+	private static function CheckOldStories(): void {
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and (table_name=\'stories\' or table_name=\'stories_series\') limit 1');
+		if ($exists->fetch_column())
+			self::DeleteOldStories();
+		else {
+		?>
+			<p>old stories table no longer exists.</p>
+		<?php
+			self::Done();
+		}
+	}
+
+	private static function CopyStoriesToPost(): void {
+		self::$db->real_query('insert into post (instant, title, subsite, url, author, preview, hasmore) select from_unixtime(s.posted), s.title, \'pen\', concat(\'/pen/\', s.url), 1, s.deschtml, true from stories as s left join post on post.subsite=\'pen\' and post.url=concat(\'/pen/\', s.url) where post.id is null');
+		?>
+		<p>copied stories into new <code>post</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopySeries(): void {
+		self::$db->real_query('insert into series (id, title, markdown, html) select os.url, os.title, os.descmd, os.deschtml from stories_series as os left join series as s on s.id=os.url where s.id is null');
+	?>
+		<p>copied series into new <code>series</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyStories(): void {
+		self::$db->real_query('insert into story (id, post, series, number, description, markdown, html) select s.url, p.id, ss.url, s.number, s.descmd, s.storymd, s.storyhtml from stories as s left join post as p on p.url=concat(\'/pen/\', s.url) left join stories_series as ss on ss.id=s.series left join story as ns on ns.id=s.url where ns.id is null');
+	?>
+		<p>copied stories into new <code>story</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function CopyStoryComments(): void {
+		self::$db->real_query('insert into comment (instant, post, user, name, contact, html, markdown) select from_unixtime(sc.posted), s.post, sc.user, sc.name, sc.contacturl, sc.html, sc.markdown from stories_comments as sc left join stories as os on os.id=sc.story left join story as s on s.id=os.url left join comment as c on c.post=s.post and c.instant=from_unixtime(sc.posted) where c.id is null');
+	?>
+		<p>copied story comments into new <code>comment</code> table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteCommentTriggers(): void {
+		self::$db->real_query('drop trigger if exists story_comment_added');
+		self::$db->real_query('drop trigger if exists story_comment_changed');
+		self::$db->real_query('drop trigger if exists story_comment_deleted');
+	?>
+		<p>deleted old story comment triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteStoryTriggers(): void {
+		self::$db->real_query('drop trigger if exists story_added');
+		self::$db->real_query('drop trigger if exists story_changed');
+		self::$db->real_query('drop trigger if exists story_deleted');
+	?>
+		<p>deleted old story triggers. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteContributions(): void {
+		self::$db->real_query('delete from contributions where srctbl=\'stories\' or srctbl=\'stories_comments\'');
+	?>
+		<p>deleted old story contributions. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldComments(): void {
+		self::$db->real_query('drop table stories_comments');
+	?>
+		<p>deleted old story comments table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldStories(): void {
+		self::$db->real_query('drop table if exists stories');
+		self::$db->real_query('drop table if exists stories_series');
+	?>
+		<p>deleted old story tables. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function Done(): void {
+	?>
+		<p>done migrating stories, at least for now!</p>
 <?php
-            if($status->stepnum < STEP_COUNTSTORIES) {
-?>
-      <p>
-        the last step is to count how many stories are in each series and set
-        the last posted date for each series.
-      </p>
-      <nav class=calltoaction><a class="copy action" href="?dostep=countstories">count series stories!</a></nav>
-<?php
-            } else {
-?>
-      <p>series stats have been calculated.  we’re done here!</p>
-<?php
-            }
-          }
-        }
-      }
-    }
-  }
-  $html->Close();
-?>
+	}
+}
+new StoriesTransition();

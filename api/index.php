@@ -47,8 +47,8 @@ $html->Open('api');
 <h2 class=api><a href=settings>settings</a></h2>
 <p>the settings api manages user profiles and settings.</p>
 
-<h2 class=api><a href=stories>stories</a></h2>
-<p>the stories api manages stories and other writings.</p>
+<h2 class=api><a href=story.php>story</a></h2>
+<p>the story api manages stories and other writings.</p>
 
 <h2 class=api><a href=tag.php>tag</a></h2>
 <p>the tag api manages tags for everything that uses tags.</p>
