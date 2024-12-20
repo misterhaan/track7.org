@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Format class translates various values for display.  All functions are
  * static.
@@ -7,7 +8,7 @@
  */
 class t7format {
 	const DATE_LONG = 'g:i a \o\n l F jS Y';
-	private static $parsedown = false;  // markdown parsing object
+	private static $parsedown = null;  // markdown parsing object
 
 	/**
 	 * Get the beginning of a URL for this website, such as https://www.track7.org
@@ -21,12 +22,12 @@ class t7format {
 	 * @return string URL scheme:  either http or https
 	 */
 	private static function Scheme() {
-		if(!self::$scheme) {
-			if(isset($_SERVER['REQUEST_SCHEME']))
+		if (!self::$scheme) {
+			if (isset($_SERVER['REQUEST_SCHEME']))
 				self::$scheme = $_SERVER['REQUEST_SCHEME'];
 			else {
 				self::$scheme = 'http';
-				if(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
+				if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
 					self::$scheme .= 's';
 			}
 		}
@@ -40,10 +41,10 @@ class t7format {
 	 * @return string Web server hostname, with port if nonstandard
 	 */
 	private static function Host() {
-		if(!self::$host) {
+		if (!self::$host) {
 			self::$host = $_SERVER['SERVER_NAME'];
 			// don't include standard ports.  assumes we won't have swapped the standard ports for http and https
-			if($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
+			if ($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443)
 				self::$host .= ':' . $_SERVER['SERVER_PORT'];
 		}
 		return self::$host;
@@ -67,15 +68,15 @@ class t7format {
 	 */
 	public static function Link($link) {
 		$link = trim($link);
-		if($link == '' || substr($link, 0, 1) == '#' || substr($link, 0, 1) == '/' || substr($link, 0, 7) == 'mailto:')
+		if ($link == '' || substr($link, 0, 1) == '#' || substr($link, 0, 1) == '/' || substr($link, 0, 7) == 'mailto:')
 			return $link;
-		if(strpos($link, '://') === false)
-			if(strpos($link, '@') && strpos($link, '.', strpos($link, '@')))  // has an @ with a dot later on, so probably an e-mail address
+		if (strpos($link, '://') === false)
+			if (strpos($link, '@') && strpos($link, '.', strpos($link, '@')))  // has an @ with a dot later on, so probably an e-mail address
 				return 'mailto:' . $link;
 			else
 				return 'http://' . $link;
 		// unqualify fully-qualified links to this site
-		if(substr($link, 0, strlen(self::UrlStart()) + 1) == self::UrlStart() . '/')
+		if (substr($link, 0, strlen(self::UrlStart()) + 1) == self::UrlStart() . '/')
 			return substr($link, strlen(self::UrlStart()));
 		return $link;
 	}
@@ -86,11 +87,11 @@ class t7format {
 	 * @return boolean Whether value is (or has become) a valid URL.
 	 */
 	public static function CheckUrl(&$value) {
-		if(!stripos($value, '://'))
+		if (!stripos($value, '://'))
 			$value = 'http://' . $value;
-		if(preg_match('/^https?:\/\/[^\.\/]+(\.[^\.\/]+)+$/i', $value))
+		if (preg_match('/^https?:\/\/[^\.\/]+(\.[^\.\/]+)+$/i', $value))
 			$value .= '/';
-		if(substr($value, 0, 7) != 'http://' && substr($value, 0, 8) != 'https://')
+		if (substr($value, 0, 7) != 'http://' && substr($value, 0, 8) != 'https://')
 			return false;
 		stream_context_set_default(array('http' => array('method' => 'HEAD')));
 		$headers = @get_headers($value, 1);
@@ -108,13 +109,13 @@ class t7format {
 	public static function TimeTag($format, $timestamp, $tooltipformat = false) {
 		$datetime = new stdClass();
 		$datetime->datetime = gmdate('c', $timestamp);
-		if($format == 'ago' || $format == 'since')
+		if ($format == 'ago' || $format == 'since')
 			$datetime->display = self::HowLongAgo($timestamp);
-		elseif($format == 'smart')
+		elseif ($format == 'smart')
 			$datetime->display = self::SmartDate($timestamp);
 		else
 			$datetime->display = strtolower(self::LocalDate($format, $timestamp));
-		if($tooltipformat)
+		if ($tooltipformat)
 			$datetime->title = strtolower(self::LocalDate($tooltipformat, $timestamp));
 		return $datetime;
 	}
@@ -126,11 +127,11 @@ class t7format {
 	 */
 	public static function SmartDate($timestamp) {
 		$diff = time() - $timestamp;
-		if($diff < 86400 && date('Y-m-d') == date('Y-m-d', $timestamp))  // 86400 s == 1 day
+		if ($diff < 86400 && date('Y-m-d') == date('Y-m-d', $timestamp))  // 86400 s == 1 day
 			return strtolower(self::LocalDate('g:i a', $timestamp));
-		if($diff < 518400)  // 518400 s == 6 days
+		if ($diff < 518400)  // 518400 s == 6 days
 			return strtolower(self::LocalDate('l', $timestamp));
-		if(date('Y') == date('Y', $timestamp) || $diff < 15768000)  // 15768000 s == 6 months
+		if (date('Y') == date('Y', $timestamp) || $diff < 15768000)  // 15768000 s == 6 months
 			return strtolower(self::LocalDate('M j<\s\u\p>S</\s\u\p>', $timestamp));
 		return strtolower(self::LocalDate('M Y', $timestamp));
 	}
@@ -150,19 +151,19 @@ class t7format {
 	 * @return string Translated time with unit
 	 */
 	public static function TimeSpan($seconds) {
-		if($seconds < 120)  // 2 minutes
+		if ($seconds < 120)  // 2 minutes
 			return $seconds . ' seconds';
-		if($seconds < 7200)  // 2 hours
+		if ($seconds < 7200)  // 2 hours
 			return round($seconds / 60, 0) . ' minutes';
-		if($seconds < 172800)  // 2 days
+		if ($seconds < 172800)  // 2 days
 			return round($seconds / 3600, 0) . ' hours';
-		if($seconds < 1209600)  // 2 weeks
+		if ($seconds < 1209600)  // 2 weeks
 			return round($seconds / 86400, 0) . ' days';
-		if($seconds < 5259488)  // 2 months
+		if ($seconds < 5259488)  // 2 months
 			return round($seconds / 604800, 0) . ' weeks';
-		if($seconds < 63113818)  // 2 years
+		if ($seconds < 63113818)  // 2 years
 			return round($seconds / 2629739.52) . ' months';
-		if($seconds < 631138176)  // 20 years
+		if ($seconds < 631138176)  // 20 years
 			return round($seconds / 31556908.8) . ' years';
 		return round($seconds / 315569088) . ' decades';
 	}
@@ -175,7 +176,7 @@ class t7format {
 	 */
 	public static function LocalDate($format, $timestamp) {
 		global $user;
-		if($user->DST)
+		if ($user->DST)
 			return date($format, $timestamp + $user->tzOffset);
 		return gmdate($format, $timestamp + $user->tzOffset);
 	}
@@ -192,29 +193,12 @@ class t7format {
 	}
 
 	/**
-	 * Translate a name into a URL segment based on the name.
-	 * @param string $name Name to translate.
-	 */
-	public static function NameToUrl($name) {
-		return preg_replace('/[^a-z0-9\.\-_]*/', '', str_replace(' ', '-', strtolower(trim($name))));
-	}
-
-	/**
-	 * Check whether a URL segment uses any characters that are not allowed.
-	 * @param string $url URL segment to check.
-	 * @return boolean Whether the URL segment is valid.
-	 */
-	public static function ValidUrlPiece($url) {
-		return preg_match('/^[a-z0-9\.\-_]{3,}$/', $url);
-	}
-
-	/**
 	 * Parse markdown into HTML, ignoring headers and encoding HTML characters.
 	 * @param string $md Markdown to parse
 	 * @return string HTML parsing results
 	 */
 	public static function Markdown($md) {
-		if(!self::$parsedown) {
+		if (!self::$parsedown) {
 			self::$parsedown = new HeaderlessParsedown();
 			self::$parsedown->setMarkupEscaped(true);
 		}
@@ -227,6 +211,10 @@ class t7format {
  * @author misterhaan
  */
 class HeaderlessParsedown extends Parsedown {
-	protected function blockHeader($Line) { return; }
-	protected function blockSetextHeader($Line, array $Block = NULL) { return; }
+	protected function blockHeader($Line) {
+		return;
+	}
+	protected function blockSetextHeader($Line, array $Block = NULL) {
+		return;
+	}
 }
