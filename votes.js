@@ -58,7 +58,7 @@ createApp({
 					</a></td>
 					<td v-if=vote.Username><a :href="'/user/' + vote.Username + '/'">{{vote.DisplayName}}</a></td>
 					<td v-if=!vote.Username>{{vote.IP}}</td>
-					<td v-if=canDelete><a class="del action" href="/api/vote.php/delete" v-on:click.prevent=Delete(vote)></a></td>
+					<td v-if=canDelete><a class="del action" href="/api/vote.php/delete" @click.prevent=Delete(vote)></a></td>
 				</tr>
 			</tbody>
 		</table>

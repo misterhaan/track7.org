@@ -75,6 +75,6 @@ createApp({
 		</article>
 
 		<p class=loading v-if=loading>loading more guides . . .</p>
-		<p class="more calltoaction" v-if="hasMore && !loading"><a class="action get" href=#nextpage v-on:click.prevent=Load>load more guides</a></p>
+		<p class="more calltoaction" v-if="hasMore && !loading"><a class="action get" href=#nextpage @click.prevent=Load>load more guides</a></p>
 		`
 }).mount("#guides");

@@ -57,7 +57,7 @@ createApp({
 		}
 	},
 	template: /* html */ `
-		<form method=post enctype="" v-on:submit.prevent=Save ref=relForm>
+		<form method=post enctype="" @submit.prevent=Save ref=relForm>
 			<label>
 				<span class=label>version:</span>
 				<ValidatingField :value=release.Version :validateUrl="'/api/release.php/versionAvailable/' + this.app + '/'"

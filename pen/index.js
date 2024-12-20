@@ -46,6 +46,6 @@ createApp({
 		</article>
 
 		<p class=loading v-if=loading>loading more stories . . .</p>
-		<p class="more calltoaction" v-if="hasMore && !loading"><a class="action get" href=#nextpage v-on:click.prevent=Load>load more stories</a></p>
+		<p class="more calltoaction" v-if="hasMore && !loading"><a class="action get" href=#nextpage @click.prevent=Load>load more stories</a></p>
 	`
 }).mount("#storylist");

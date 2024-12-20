@@ -123,7 +123,7 @@ createApp({
 		}
 	},
 	template: /* html */ `
-		<form v-on:submit.prevent=Save>
+		<form @submit.prevent=Save>
 			<label title="title of the guide (for display)">
 				<span class=label>title:</span>
 				<span class=field><input maxlength=128 required v-model=guide.Title></span>
@@ -154,9 +154,9 @@ createApp({
 			</label>
 			<fieldset v-for="(chapter, index) of guide.Chapters">
 				<legend>chapter {{index + 1}}</legend>
-				<a class="action up" href="#moveup" title="move this chapter earlier" v-if=index v-on:click.prevent=MoveChapterUp(chapter)></a>
-				<a class="action down" href="#movedown" title="move this chapter later" v-if="index < guide.Chapters.length - 1" v-on:click.prevent=MoveChapterDown(chapter)></a>
-				<a class="action del" href="#del" title="remove this chapter" v-on:click.prevent=RemoveChapter(chapter)></a>
+				<a class="action up" href="#moveup" title="move this chapter earlier" v-if=index @click.prevent=MoveChapterUp(chapter)></a>
+				<a class="action down" href="#movedown" title="move this chapter later" v-if="index < guide.Chapters.length - 1" @click.prevent=MoveChapterDown(chapter)></a>
+				<a class="action del" href="#del" title="remove this chapter" @click.prevent=RemoveChapter(chapter)></a>
 				<label :title="'title for chapter ' + (index + 1)">
 					<span class=label>title:</span>
 					<span class=field><input maxlength=128 required v-model=chapter.Title></span>
@@ -168,7 +168,7 @@ createApp({
 			</fieldset>
 			<label>
 				<span class=label></span>
-				<span class=field><a class="action new" href="#addchapter" title="add a new blank chapter to the end" v-on:click.prevent=AddChapter>add chapter</a></span>
+				<span class=field><a class="action new" href="#addchapter" title="add a new blank chapter to the end" @click.prevent=AddChapter>add chapter</a></span>
 			</label>
 			<label v-if=guide.Published>
 				<span class=label></span>

@@ -44,6 +44,6 @@ createApp({
 	</ol>
 
 	<p class=loading v-if=loading>loading more legos . . .</p>
-	<p class="more calltoaction" v-if="!loading && hasMore"><a class="action get" href=#nextpage v-on:click.prevent=Load>load more legos</a></p>
+	<p class="more calltoaction" v-if="!loading && hasMore"><a class="action get" href=#nextpage @click.prevent=Load>load more legos</a></p>
 	`
 }).mount("#legomodels");

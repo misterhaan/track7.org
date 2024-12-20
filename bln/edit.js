@@ -78,7 +78,7 @@ createApp({
 		}
 	},
 	template: /* html */ `
-		<form v-on:submit.prevent=Save>
+		<form @submit.prevent=Save>
 			<label>
 				<span class=label>title:</span>
 				<span class=field><input name=title maxlength=128 required v-model=entry.Title></span>

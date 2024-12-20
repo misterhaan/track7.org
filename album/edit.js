@@ -86,7 +86,7 @@ createApp({
 		}
 	},
 	template: /* html */ `
-		<form v-on:submit.prevent=Save ref=photoForm>
+		<form @submit.prevent=Save ref=photoForm>
 			<label>
 				<span class=label>caption:</span>
 				<span class=field><input maxlength=32 required name=title v-model=photo.Title></span>

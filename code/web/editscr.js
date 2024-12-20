@@ -84,7 +84,7 @@ createApp({
 		},
 	},
 	template: /* html */ `
-		<form method=post enctype="" v-on:submit.prevent=Save ref=scriptForm>
+		<form method=post enctype="" @submit.prevent=Save ref=scriptForm>
 			<label>
 				<span class=label>name:</span>
 				<span class=field><input maxlength=32 required v-model=script.Title></span>

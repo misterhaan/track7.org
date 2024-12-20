@@ -91,11 +91,11 @@ createApp({
 					<label class=multiline v-if="tag.Name == edit.Name">
 						<span class=field><textarea v-model=edit.Description ref=editField></textarea></span>
 						<span>
-							<a href="#save" title="save tag description" class="action okay" v-on:click.prevent=Save(tag)></a>
-							<a href="#cancel" title="cancel editing" class="action cancel" v-on:click.prevent=Cancel()></a>
+							<a href="#save" title="save tag description" class="action okay" @click.prevent=Save(tag)></a>
+							<a href="#cancel" title="cancel editing" class="action cancel" @click.prevent=Cancel()></a>
 						</span>
 					</label>
-					<a href="#edit" class="action edit" v-if="canEdit && tag.Name != edit.Name" v-on:click.prevent=Edit(tag)></a>
+					<a href="#edit" class="action edit" v-if="canEdit && tag.Name != edit.Name" @click.prevent=Edit(tag)></a>
 				</div>
 			</li>
 		</ul>

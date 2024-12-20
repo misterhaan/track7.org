@@ -85,7 +85,7 @@ createApp({
 		},
 	},
 	template: /* html */ `
-		<form method=post enctype="" v-on:submit.prevent=Save ref=appForm>
+		<form method=post enctype="" @submit.prevent=Save ref=appForm>
 			<label>
 				<span class=label>name:</span>
 				<span class=field><input maxlength=32 required v-model=app.Name></span>
@@ -104,7 +104,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>icon:</span>
-				<span class=field><input type=file name=icon accept=".png, image/png" v-on:change=PreviewIcon :class="{hidden: icon}" :required=!this.id><img class="icon preview" :src=icon v-if=icon></span>
+				<span class=field><input type=file name=icon accept=".png, image/png" @change=PreviewIcon :class="{hidden: icon}" :required=!this.id><img class="icon preview" :src=icon v-if=icon></span>
 			</label>
 			<label>
 				<span class=label>github:</span>

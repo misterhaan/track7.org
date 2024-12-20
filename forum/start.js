@@ -57,7 +57,7 @@ createApp({
 		}
 	},
 	template: /* html */ `
-		<form v-on:submit.prevent=Save>
+		<form @submit.prevent=Save>
 			<label v-if=user>
 				<span class=label>name:</span>
 				<span class=field><a :href=user.URL><img class="inline avatar" :src=user.Avatar> {{user.DisplayName}}</a></span>
