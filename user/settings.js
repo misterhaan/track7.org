@@ -79,16 +79,14 @@ $(function() {
 			}, "json");
 	});
 
-	if(!$(".tabcontent:visible").length) {  // this needs to be after the tab click handlers
-		if($(location.hash).length)
-			$("a[href$='" + location.hash + "']").click();
-		else {
-			$("a[href$='#profile']").click();
-			if(history.replaceState)
-				history.replaceState(null, null, "#profile");
-			else
-				location.hash = "#profile";
-		}
+	if($(location.hash).length)
+		$("a[href$='" + location.hash + "']").click();
+	else {
+		$("a[href$='#profile']").click();
+		if(history.replaceState)
+			history.replaceState(null, null, "#profile");
+		else
+			location.hash = "#profile";
 	}
 
 	$("#username").change(function() { ValidateField(this, "/api/settings/checkUsername", "username", "validating username...", "username available."); });
@@ -121,21 +119,23 @@ $(function() {
 
 	$("#profile").submit(function() {
 		$("#profile button.save").prop("disabled", true).addClass("working");
-		$.post({url: "/api/settings/profile", data: new FormData($("#profile")[0]), cache: false, contentType: false, processData: false, success: result => {
-			$("#profile button.save").prop("disabled", false).removeClass("working");
-			if(!result.fail) {
-				$("a[href='" + $("#whodat").attr("href") + "']").attr("href", "/user/" + result.username + "/");
-				$("#whodat").contents().get(0).nodeValue = result.displayname;
-				$("#whodat img.avatar").attr("src", result.avatar);
-				var filefield = $("#avatarupload");
-				filefield.wrap("<form>").closest("form").get(0).reset();
-				filefield.unwrap();
-				filefield.siblings("img.avatar").remove();
-				filefield.show();
-				$("input[name='avatar'][value='current']").prop("checked", true).siblings("img").attr("src", result.avatar);
-			} else
-				alert(result.message);
-		}, dataType: "json"});
+		$.post({
+			url: "/api/settings/profile", data: new FormData($("#profile")[0]), cache: false, contentType: false, processData: false, success: result => {
+				$("#profile button.save").prop("disabled", false).removeClass("working");
+				if(!result.fail) {
+					$("a[href='" + $("#whodat").attr("href") + "']").attr("href", "/user/" + result.username + "/");
+					$("#whodat").contents().get(0).nodeValue = result.displayname;
+					$("#whodat img.avatar").attr("src", result.avatar);
+					var filefield = $("#avatarupload");
+					filefield.wrap("<form>").closest("form").get(0).reset();
+					filefield.unwrap();
+					filefield.siblings("img.avatar").remove();
+					filefield.show();
+					$("input[name='avatar'][value='current']").prop("checked", true).siblings("img").attr("src", result.avatar);
+				} else
+					alert(result.message);
+			}, dataType: "json"
+		});
 		return false;
 	});
 
@@ -151,7 +151,7 @@ $(function() {
 
 	$("#timezone").submit(function() {
 		$("#timezone button.save").prop("disabled", true).addClass("working");
-		$.post("/api/settings/time", {currenttime: $("#currenttime").val(), dst: $("#dst").prop("checked")}, result => {
+		$.post("/api/settings/time", { currenttime: $("#currenttime").val(), dst: $("#dst").prop("checked") }, result => {
 			$("#timezone button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				// TODO:  indicate success?
@@ -197,7 +197,7 @@ $(function() {
 
 	$("#contact").submit(function() {
 		$("#contact button.save").prop("disabled", true).addClass("working");
-		$.post("/api/settings/contact", {email: $("#email").val(), vis_email: $("#vis_email").data("value"), website: $("#website").val(), vis_website: $("#vis_website").data("value"), twitter: $("#twitter").val(), vis_twitter: $("#vis_twitter").data("value"), google: $("#google").val(), vis_google: $("#vis_google").data("value"), facebook: $("#facebook").val(), vis_facebook: $("#vis_facebook").data("value"), github: $("#github").val(), vis_github: $("#vis_github").data("value"), deviantart: $("#deviantart").val(), vis_deviantart: $("#vis_deviantart").data("value"), steam: $("#steam").val(), vis_steam: $("#vis_steam").data("value")}, result => {
+		$.post("/api/settings/contact", { email: $("#email").val(), vis_email: $("#vis_email").data("value"), website: $("#website").val(), vis_website: $("#vis_website").data("value"), twitter: $("#twitter").val(), vis_twitter: $("#vis_twitter").data("value"), google: $("#google").val(), vis_google: $("#vis_google").data("value"), facebook: $("#facebook").val(), vis_facebook: $("#vis_facebook").data("value"), github: $("#github").val(), vis_github: $("#vis_github").data("value"), deviantart: $("#deviantart").val(), vis_deviantart: $("#vis_deviantart").data("value"), steam: $("#steam").val(), vis_steam: $("#vis_steam").data("value") }, result => {
 			$("#contact button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				// TODO:  indicate success; update form?
@@ -208,7 +208,7 @@ $(function() {
 
 	$("#notification").submit(function() {
 		$("#notification button.save").prop("disabled", true).addClass("working");
-		$.post("/api/settings/notification", {notifymsg: $("#notifymsg")[0].checked ? 1 : 0}, result => {
+		$.post("/api/settings/notification", { notifymsg: $("#notifymsg")[0].checked ? 1 : 0 }, result => {
 			$("#notification button.save").prop("disabled", false).removeClass("working");
 			if(!result.fail) {
 				// TODO:  indicate success; update form?
@@ -227,7 +227,7 @@ $(function() {
 		return false;
 	});
 	$("a[href='#removeaccount']").click(function() {
-		$.post("/api/settings/removeLoginAccount", {source: $(this).data("source"), id: $(this).data("id")}, result => {
+		$.post("/api/settings/removeLoginAccount", { source: $(this).data("source"), id: $(this).data("id") }, result => {
 			if(!result.fail)
 				window.location.reload(false);
 			else

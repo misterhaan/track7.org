@@ -1,37 +1,41 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/page.php';
 
-if(!$user->IsAdmin()) {
-	header('HTTP/1.0 404 Not Found');
-	require_once $_SERVER['DOCUMENT_ROOT'] . '/404.php';
-	die;
-}
+class TweetTest extends Page {
+	public function __construct() {
+		if (!self::HasAdminSecurity())
+			self::NotFound();
+		parent::__construct('tweet test');
+	}
 
-$html = new t7html([]);
-$html->Open('tweet test');
+	protected static function MainContent(): void {
 ?>
-			<h1>tweet test</h1>
-			<p>
-				anything entered into this form gets sent to <a href="https://twitter.com/track7feed">twitter</a>,
-				so remember to delete test tweets.
-			</p>
-			<form method=post>
-				<label title="enter a message to tweet">
-					<span class=label>message:</span>
-					<span class=field><input name=message id=message></span>
-				</label>
-				<label title="enter a url to send with the tweet (optional)">
-					<span class=label>url:</span>
-					<span class=field><input name=url id=url></span>
-				</label>
-				<button>tweet</button>
-			</form>
+		<h1>tweet test</h1>
+		<p>
+			anything entered into this form gets sent to <a href="https://twitter.com/track7feed">twitter</a>,
+			so remember to delete test tweets.
+		</p>
+		<form method=post>
+			<label title="enter a message to tweet">
+				<span class=label>message:</span>
+				<span class=field><input name=message id=message></span>
+			</label>
+			<label title="enter a url to send with the tweet (optional)">
+				<span class=label>url:</span>
+				<span class=field><input name=url id=url></span>
+			</label>
+			<button>tweet</button>
+		</form>
+		<?php
+		if (isset($_POST['message'])) {
+			// TODO:  migrate t7send
+			require_once 't7send.php';
+			$tweet = t7send::Tweet(trim($_POST['message']), trim($_POST['url']));
+		?>
+			<h2>response code <?= $tweet->code; ?></h2>
+			<pre><code><?= $tweet->text; ?></code></pre>
 <?php
-if(isset($_POST['message'])) {
-	$tweet = t7send::Tweet(trim($_POST['message']), trim($_POST['url']));
-?>
-			<h2>response code <?=$tweet->code; ?></h2>
-			<pre><code><?=$tweet->text; ?></code></pre>
-<?php
+		}
+	}
 }
-$html->Close();
+new TweetTest();

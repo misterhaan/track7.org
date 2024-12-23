@@ -1,13 +1,15 @@
-$(function() {
-	var main = new Vue({
-		el: "main",
-		data: {
-			inputtype: "",
+import "jquery";
+import { createApp } from "vue";
+
+createApp({
+	name: "Timestamps",
+	data() {
+		return {
+			inputtype: "timestamp",
 			timestamp: "",
 			formatted: "",
 			zone: "local",
 
-			hasresults: false,
 			resulttimestamp: "",
 			smart: "",
 			ago: "",
@@ -16,29 +18,75 @@ $(function() {
 			day: "",
 			weekday: "",
 			time: ""
-		},
-		methods: {
-			Analyze: function() {
-				var data = {type: this.inputtype, zone: this.zone};
-				if(this.inputtype == "timestamp")
-					data.timestamp = this.timestamp;
-				if(this.inputtype == "formatted")
-					data.formatted = this.formatted;
-				$.get("?ajax=analyze", data, result => {
-					if(!result.fail) {
-						this.resulttimestamp = result.timestamp;
-						this.smart = result.smart;
-						this.ago = result.ago;
-						this.year = result.year;
-						this.month = result.month;
-						this.day = result.day;
-						this.weekday = result.weekday;
-						this.time = result.time;
-						this.hasresults = true;
-					} else
-						alert(result.message);
-				}, "json");
-			}
+		};
+	},
+	methods: {
+		Analyze() {
+			let url = "/api/tool.php/timestamp/" + this.zone;
+			if(this.inputtype == "formatted")
+				url += "/formatted";
+			$.get(url, { value: this.inputtype == "formatted" ? this.formatted : +this.timestamp }).done(result => {
+				this.resulttimestamp = result.timestamp;
+				this.smart = result.smart;
+				this.ago = result.ago;
+				this.year = result.year;
+				this.month = result.month;
+				this.day = result.day;
+				this.weekday = result.weekday;
+				this.time = result.time;
+			}).fail(request => {
+				alert(request.responseText);
+			});
 		}
-	});
-});
+	},
+	template: /* html */ `
+		<form @submit.prevent=Analyze>
+			<fieldset class=selectafield>
+				<div>
+					<label class=label><input type=radio name=inputtype value=timestamp v-model=inputtype>timestamp:</label>
+					<label class=field><input type=number v-model=timestamp maxlength=10 step=1 min=0 max=4294967295></label>
+				</div>
+				<div>
+					<label class=label><input type=radio name=inputtype value=formatted v-model=inputtype>formatted:</label>
+					<label class=field><input v-model=formatted maxlength=64></label>
+				</div>
+			</fieldset>
+			<fieldset class=checkboxes>
+				<legend>time zone:</legend>
+				<span class=field>
+					<label class=checkbox>
+						<input type=radio name=zone value=local v-model=zone>
+						local
+					</label>
+					<label class=checkbox>
+						<input type=radio name=zone value=utc v-model=zone>
+						utc
+					</label>
+				</span>
+			</fieldset>
+			<button>analyze</button>
+		</form>
+
+		<section v-if=resulttimestamp>
+			<h2>results</h2>
+			<dl id=timestampdata>
+				<dt>timestamp</dt>
+				<dd>{{resulttimestamp}}</dd>
+				<dt>smart</dt>
+				<dd v-html=smart></dd>
+				<dt>ago</dt>
+				<dd>{{ago}}</dd>
+				<dt>year</dt>
+				<dd>{{year}}</dd>
+				<dt>month</dt>
+				<dd>{{month}}</dd>
+				<dt>day</dt>
+				<dd>{{day}}</dd>
+				<dt>weekday</dt>
+				<dd>{{weekday}}</dd>
+				<dt>time</dt>
+				<dd>{{time}}</dd>
+			</dl>
+		</section>
+	`
+}).mount("#timestamps");

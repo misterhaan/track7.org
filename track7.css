@@ -144,6 +144,10 @@ fieldset.checkboxes {
 	border-left: none;
 }
 
+fieldset.selectafield:first-child {
+	margin-top: 0;
+}
+
 fieldset.checkboxes legend {
 	background: none;
 	float: none;
@@ -1282,10 +1286,6 @@ pre {
 		-webkit-flex: 1 0;
 		flex: 1 0;
 	}
-}
-
-.tabcontent {
-	display: none;
 }
 
 #vote {

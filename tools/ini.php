@@ -1,21 +1,25 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/t7.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/page.php';
 
-$access = [0, 'user', 'directory', 3, 'system', 5, 'directory or system', 'all'];
+class PhpIni extends Page {
+	public function __construct() {
+		parent::__construct('php.ini');
+	}
 
-$html = new t7html([]);
-$html->Open('php.ini');
-
-$ini = ini_get_all();
-foreach($ini as $key => $values) {
+	protected static function MainContent(): void {
+		$access = [0, 'user', 'directory', 3, 'system', 5, 'directory or system', 'all'];
+		$ini = ini_get_all();
+		foreach ($ini as $key => $values) {
 ?>
-			<h2><?=$key; ?></h2>
+			<h2><?= $key; ?></h2>
 			<p>
-				<strong>global:</strong>&nbsp; <?=htmlspecialchars($values['global_value']); ?><br />
-				<strong>local:</strong>&nbsp; <?=htmlspecialchars($values['local_value']); ?><br />
-				<strong>access:</strong>&nbsp; <?=$access[$values['access']]; ?>
+				<strong>global:</strong> <?= htmlspecialchars($values['global_value']); ?><br />
+				<strong>local:</strong> <?= htmlspecialchars($values['local_value']); ?><br />
+				<strong>access:</strong> <?= $access[$values['access']]; ?>
 			</p>
 
 <?php
+		}
+	}
 }
-$html->Close();
+new PhpIni();

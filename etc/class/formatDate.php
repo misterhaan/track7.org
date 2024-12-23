@@ -14,7 +14,7 @@ class FormatDate {
 		return $nonlocal - $user->TzOffset;
 	}
 
-	public static function Local(string $format, string $timestamp, CurrentUser $user): string {
+	public static function Local(string $format, int $timestamp, CurrentUser $user): string {
 		if ($user->DST)
 			return date($format, $timestamp + $user->TzOffset);
 		return gmdate($format, $timestamp + $user->TzOffset);
