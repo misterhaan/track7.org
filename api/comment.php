@@ -63,7 +63,7 @@ class CommentApi extends Api {
 		if (!$name && !self::IsUserLoggedIn())
 			self::DetailedError('either sign in or provide a name to post a comment');
 
-		self::Success(Comment::Create(self::$db, self::$user, $post, $markdown, $name, $contact));
+		self::Success(Comment::Create(self::RequireDatabase(), self::RequireUser(), $post, $markdown, $name, $contact));
 	}
 
 	/**

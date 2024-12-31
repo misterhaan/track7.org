@@ -112,7 +112,7 @@ class Author {
 	public bool $IsFriend;
 
 	public function __construct(?string $username, ?string $displayname, ?string $name, ?string $contact, ?string $avatar, int $level, bool $isFriend) {
-		if ($displayname)
+		if ($username && $displayname)
 			$this->Name = $displayname;
 		elseif ($username)
 			$this->Name = $username;
