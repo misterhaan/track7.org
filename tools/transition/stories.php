@@ -32,19 +32,27 @@ class StoriesTransition extends TransitionPage {
 		if ($exists->fetch_column()) {
 		?>
 			<p>new <code>series</code> table exists.</p>
-		<?php
+			<?php
 			self::CheckSeriesRows();
 		} else
 			self::CreateTable('series');
 	}
 
 	private static function CheckSeriesRows(): void {
-		$missing = self::$db->query('select 1 from stories_series left join series on series.id=stories_series.url where series.id is null limit 1');
-		if ($missing->fetch_column())
-			self::CopySeries();
-		else {
-		?>
-			<p>all old series exist in new <code>series</code> table.</p>
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories_series\' limit 1');
+		if ($exists->fetch_column()) {
+			$missing = self::$db->query('select 1 from stories_series left join series on series.id=stories_series.url where series.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopySeries();
+			else {
+			?>
+				<p>all old series exist in new <code>series</code> table.</p>
+			<?php
+				self::CheckStoryTable();
+			}
+		} else {
+			?>
+			<p>old series table no longer exists.</p>
 		<?php
 			self::CheckStoryTable();
 		}
