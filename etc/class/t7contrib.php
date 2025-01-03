@@ -53,12 +53,31 @@ class t7contrib {
 	 */
 	public static function More($before, $userid = false) {
 		global $db;
+
 		$sql = 'select 1 from contributions where posted<' . +$before;
 		if ($userid)
 			$sql .= ' and author=\'' . +$userid . '\'';
 		$sql .= ' limit 1';
 		if ($more = $db->query($sql))
-			return $more->num_rows > 0;
+			if ($more->num_rows > 0)
+				return true;
+
+		$sql = 'select 1 from post where instant<from_unixtime(' . +$before . ')';
+		if ($userid)
+			$sql .= ' and author=\'' . +$userid . '\'';
+		$sql .= ' limit 1';
+		if ($more = $db->query($sql))
+			if ($more->num_rows > 0)
+				return true;
+
+		$sql = 'select 1 from comment where instant<from_unixtime(' . +$before . ')';
+		if ($userid)
+			$sql .= ' and user=\'' . +$userid . '\'';
+		$sql .= ' limit 1';
+		if ($more = $db->query($sql))
+			if ($more->num_rows > 0)
+				return true;
+
 		return false;
 	}
 
