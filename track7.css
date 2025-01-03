@@ -1737,21 +1737,22 @@ body>footer div {
 }
 
 /*--------------------------------------------------------------[ /404.php ]--*/
-form table.gsc-search-box {
-	width: auto;
+form#googletrack7 {
+	display: flex;
+	align-items: baseline;
 }
 
-.gsc-input-box {
-	border: none;
-	border-radius: .25em;
+form#googletrack7 label {
+	flex: 1 1 auto;
+	align-items: baseline;
 }
 
-td input.gsc-search-button,
-td input.gsc-search-button:hover,
-td input.gsc-search-button:focus {
-	background-color: #abc;
-	border: 2px solid #357;
-	border-radius: .325em;
+form#googletrack7 label input {
+	margin-left: .5em;
+}
+
+form#googletrack7 button {
+	margin-left: 0;
 }
 
 /*------------------------------------------------------------[ /index.php ]--*/

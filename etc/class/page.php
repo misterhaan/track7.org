@@ -169,18 +169,14 @@ abstract class Page extends Responder {
 				search of everything on track7:
 			</p>
 
-			<script>
-				(function() {
-					$("main").append("<gcse:searchbox-only></gcse:searchbox-only>");
-					var cx = "009301861402372195375:8j9q7yqytle";
-					var gcse = document.createElement("script");
-					gcse.type = "text/javascript";
-					gcse.async = true;
-					gcse.src = (document.location.protocol == "https:" ? "https:" : "http:") + "//cse.google.com/cse.js?cx=" + cx;
-					var s = document.getElementsByTagName("script")[0];
-					s.parentNode.insertBefore(gcse, s);
-				})();
-			</script>';
+			<form id=googletrack7 action="https://www.google.com/search">
+				<label>
+					<span class=label>search:</span>
+					<span class=field><input type=search name=q placeholder="search track7 with google"></span>
+				</label>
+				<input type=hidden name=sitesearch value="track7.org">
+				<button>search</button>
+			</form>';
 		self::Send("<h1>$title</h1>$body");
 		die;
 	}
