@@ -1,6 +1,5 @@
 <?php
 define('TR_MESSAGES', 4);
-define('TR_UPDATES', 10);
 define('TR_EXT_PROFILES', 12);
 define('TR_GUESTBOOK', 13);
 
@@ -27,6 +26,7 @@ class TransitionIndex extends Page {
 			<li><a href=guides.php>guides</a></li>
 			<li><a href=legos.php>lego models</a></li>
 			<li><a href=stories.php>stories</a></li>
+			<li><a href=updates.php>updates</a></li>
 		</ul>
 
 	<?php
@@ -40,7 +40,6 @@ class TransitionIndex extends Page {
 			while ($s = $ss->fetch_object())
 				$status[$s->id] = $s;
 		initStatus(self::$db, $status, TR_MESSAGES);
-		initStatus(self::$db, $status, TR_UPDATES);
 		initStatus(self::$db, $status, TR_EXT_PROFILES);
 		initStatus(self::$db, $status, TR_GUESTBOOK);
 	?>
@@ -57,11 +56,6 @@ class TransitionIndex extends Page {
 					<td><a href="messages.php">messages</a></td>
 					<td><?php echo $status[TR_MESSAGES]->stepnum; ?></td>
 					<td><?php echo $status[TR_MESSAGES]->status; ?></td>
-				</tr>
-				<tr>
-					<td><a href="updates.php">site updates</a></td>
-					<td><?php echo $status[TR_UPDATES]->stepnum; ?></td>
-					<td><?php echo $status[TR_UPDATES]->status; ?></td>
 				</tr>
 				<tr>
 					<td><a href="extprofiles.php">external profiles</a></td>

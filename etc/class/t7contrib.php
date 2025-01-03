@@ -15,9 +15,8 @@ class t7contrib {
 	public static function GetAll($before = false, $limit = 9) {
 		global $db;
 		$sql = 'select * from ('
-			. 'select c.conttype, c.posted, c.url, u.username, u.displayname, c.authorname, c.authorurl, c.title, c.preview, c.hasmore from contributions as c left join users as u on u.id=c.author union all '
 			. 'select \'comment\' as conttype, unix_timestamp(c.instant) as posted, concat(p.url, \'#comments\') as url, u.username, u.displayname, c.name as authorname, c.contact as authorurl, p.title, left(c.html, locate(\'</p>\', c.html) + 3) as preview, length(c.html) - length(replace(c.html, \'</p>\', \'\')) < 4 as hasmore from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user union all '
-			. 'select case p.subsite when \'album\' then \'photo\' when \'bln\' then \'post\' when \'guides\' then \'guide\' else p.subsite end as conttype, unix_timestamp(p.instant) as posted, p.url, u.username, u.displayname, \'\' as authorname, \'\' as authorurl, p.title, p.preview, p.hasmore from post as p left join user as u on u.id=p.author where p.published=true and nullif(p.preview, \'\') is not null'
+			. 'select case p.subsite when \'album\' then \'photo\' when \'bln\' then \'post\' when \'guides\' then \'guide\' when \'updates\' then \'update\' else p.subsite end as conttype, unix_timestamp(p.instant) as posted, p.url, u.username, u.displayname, \'\' as authorname, \'\' as authorurl, p.title, p.preview, p.hasmore from post as p left join user as u on u.id=p.author where p.published=true and nullif(p.preview, \'\') is not null'
 			. ') as allcontributions';
 		if ($before !== false)
 			$sql .= ' where posted<' . +$before;
@@ -35,9 +34,8 @@ class t7contrib {
 	public static function GetUser($userid, $before = false, $limit = 12) {
 		global $db;
 		$sql = 'select * from ('
-			. 'select conttype, posted, url, title from contributions where author=\'' . +$userid . '\' union all '
 			. 'select \'comment\' as conttype, unix_timestamp(c.instant) as posted, concat(p.url, \'#comments\') as url, p.title from comment as c left join post as p on p.id=c.post where c.user=\'' . +$userid . '\' union all '
-			. 'select case p.subsite when \'album\' then \'photo\' when \'bln\' then \'post\' when \'guides\' then \'guide\' else p.subsite end as conttype, unix_timestamp(p.instant) as posted, p.url, p.title from post as p where p.published=true and nullif(p.preview, \'\') is not null and p.author=\'' . +$userid . '\''
+			. 'select case p.subsite when \'album\' then \'photo\' when \'bln\' then \'post\' when \'guides\' then \'guide\' when \'updates\' then \'update\' else p.subsite end as conttype, unix_timestamp(p.instant) as posted, p.url, p.title from post as p where p.published=true and nullif(p.preview, \'\') is not null and p.author=\'' . +$userid . '\''
 			. ') as allcontributions';
 		if ($before !== false)
 			$sql .= ' where posted<' . +$before;
@@ -53,14 +51,6 @@ class t7contrib {
 	 */
 	public static function More($before, $userid = false) {
 		global $db;
-
-		$sql = 'select 1 from contributions where posted<' . +$before;
-		if ($userid)
-			$sql .= ' and author=\'' . +$userid . '\'';
-		$sql .= ' limit 1';
-		if ($more = $db->query($sql))
-			if ($more->num_rows > 0)
-				return true;
 
 		$sql = 'select 1 from post where instant<from_unixtime(' . +$before . ')';
 		if ($userid)

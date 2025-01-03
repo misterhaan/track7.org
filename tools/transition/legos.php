@@ -117,18 +117,26 @@ class LegoTransition extends TransitionPage {
 		else {
 		?>
 			<p>old lego triggers no longer exist.</p>
-		<?php
+			<?php
 			self::CheckContributions();
 		}
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from contributions where srctbl=\'lego_models\' or srctbl=\'lego_comments\' limit 1');
-		if ($exists->fetch_column())
-			self::DeleteContributions();
-		else {
-		?>
-			<p>lego contributions no longer exist.</p>
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
+		if ($exists->fetch_column()) {
+			$exists = self::$db->query('select 1 from contributions where srctbl=\'lego_models\' or srctbl=\'lego_comments\' limit 1');
+			if ($exists->fetch_column())
+				self::DeleteContributions();
+			else {
+			?>
+				<p>lego contributions no longer exist.</p>
+			<?php
+				self::CheckOldVotes();
+			}
+		} else {
+			?>
+			<p>old contributions table no longer exists.</p>
 		<?php
 			self::CheckOldVotes();
 		}

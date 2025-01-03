@@ -161,10 +161,8 @@ class commentsApi extends t7api {
 	protected static function allAction($ajax) {
 		global $db, $user;
 		$oldest = +$_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
-		if ($cs = $db->prepare('select * from (select c.srctbl, c.id, c.title, c.url, c.posted, c.author as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.authorname, c.authorurl, '
-			. 'uc.markdown, uc.html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
-			'\' left join update_comments as uc on uc.id=c.id and c.srctbl=\'update_comments\' where c.conttype=\'comment\' and c.posted<? union all select \'comment\' as srctbl, c.id, p.title, concat(p.url, \'#comments\') as url, unix_timestamp(c.instant) as posted, c.user as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.name as authorname, c.contact as authorurl, c.markdown, c.html from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=\'' . +$user->ID . '\' where unix_timestamp(c.instant)<?) allcomments order by posted desc limit ' . self::MAXCOMMENTS))
-			if ($cs->bind_param('ii', $oldest, $oldest))
+		if ($cs = $db->prepare('select \'comment\' as srctbl, c.id, p.title, concat(p.url, \'#comments\') as url, unix_timestamp(c.instant) as posted, c.user as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.name as authorname, c.contact as authorurl, c.markdown, c.html from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=\'' . +$user->ID . '\' where unix_timestamp(c.instant)<? order by posted desc limit ' . self::MAXCOMMENTS))
+			if ($cs->bind_param('i', $oldest))
 				if ($cs->execute())
 					if ($cs->bind_result($srctbl, $id, $title, $url, $posted, $canchange, $username, $displayname, $avatar, $level, $friend, $authorname, $authorurl, $markdown, $html)) {
 						$ajax->Data->comments = [];
@@ -315,10 +313,8 @@ class commentsApi extends t7api {
 		global $db, $user;
 		if ($userid = +$_GET['userid']) {
 			$oldest = +$_GET['oldest'] ? +$_GET['oldest'] : time() + 43200;
-			if ($cs = $db->prepare('select * from (select c.srctbl, c.id, c.title, c.url, c.posted, c.author as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.authorname, c.authorurl, '
-				. 'uc.markdown, uc.html from contributions as c left join users as u on u.id=c.author left join users_friends as f on f.friend=c.author and f.fan=\'' . +$user->ID .
-				'\' left join update_comments as uc on uc.id=c.id and c.srctbl=\'update_comments\' where c.conttype=\'comment\' and c.posted<? and (c.author=? or ?=0) union all select \'comment\' as srctbl, c.id, p.title, concat(p.url, \'#comments\') as url, unix_timestamp(c.instant) as posted, c.user as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.name as authorname, c.contact as authorurl, c.markdown, c.html from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=\'' . +$user->ID . '\' where unix_timestamp(c.instant)<? and (c.user=? or ?=0)) allcomments order by posted desc limit ' . self::MAXCOMMENTS))
-				if ($cs->bind_param('iiiiii', $oldest, $userid, $userid, $oldest, $userid, $userid))
+			if ($cs = $db->prepare('select \'comment\' as srctbl, c.id, p.title, concat(p.url, \'#comments\') as url, unix_timestamp(c.instant) as posted, c.user as canchange, u.username, u.displayname, u.avatar, case u.level when 1 then \'new\' when 2 then \'known\' when 3 then \'trusted\' when 4 then \'admin\' else null end as level, f.fan as friend, c.name as authorname, c.contact as authorurl, c.markdown, c.html from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=\'' . +$user->ID . '\' where unix_timestamp(c.instant)<? and (c.user=? or ?=0) order by posted desc limit ' . self::MAXCOMMENTS))
+				if ($cs->bind_param('iii', $oldest, $userid, $userid))
 					if ($cs->execute())
 						if ($cs->bind_result($srctbl, $id, $title, $url, $posted, $canchange, $username, $displayname, $avatar, $level, $friend, $authorname, $authorurl, $markdown, $html)) {
 							$ajax->Data->comments = [];

@@ -56,8 +56,8 @@ $html->Open('api');
 <h2 class=api><a href=tool.php>tool</a></h2>
 <p>the tool api performs actions for managing track7.</p>
 
-<h2 class=api><a href=updates>updates</a></h2>
-<p>the updates api manages site updates.</p>
+<h2 class=api><a href=update.php>update</a></h2>
+<p>the update api manages site updates.</p>
 
 <h2 class=api><a href=users>users</a></h2>
 <p>the users api manages users.</p>

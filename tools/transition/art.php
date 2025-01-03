@@ -130,18 +130,26 @@ class ArtTransition extends TransitionPage {
 		else {
 		?>
 			<p>old art triggers no longer exist.</p>
-		<?php
+			<?php
 			self::CheckContributions();
 		}
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from contributions where srctbl=\'art\' or srctbl=\'art_comments\' limit 1');
-		if ($exists->fetch_column())
-			self::DeleteContributions();
-		else {
-		?>
-			<p>art contributions no longer exist.</p>
+		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
+		if ($exists->fetch_column()) {
+			$exists = self::$db->query('select 1 from contributions where srctbl=\'art\' or srctbl=\'art_comments\' limit 1');
+			if ($exists->fetch_column())
+				self::DeleteContributions();
+			else {
+			?>
+				<p>art contributions no longer exist.</p>
+			<?php
+				self::CheckOldVotes();
+			}
+		} else {
+			?>
+			<p>old contributions table no longer exists.</p>
 		<?php
 			self::CheckOldVotes();
 		}
