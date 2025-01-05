@@ -53,12 +53,12 @@ class User {
 	/**
 	 * Create a basic track7 user looking up by ID.
 	 * @param mysqli $db Database connection
-	 * @param int $id User ID to look up
+	 * @param int|string $id User ID or username to look up
 	 */
-	public function __construct(mysqli $db, int $id) {
+	public function __construct(mysqli $db, int|string $id) {
 		try {
-			$select = $db->prepare('select id, level, username, displayname, avatar from user where id=?');
-			$select->bind_param('i', $id);
+			$select = $db->prepare('select id, level, username, displayname, avatar from user where id=? or username=?');
+			$select->bind_param('is', $id, $id);
 			$select->execute();
 			$select->bind_result($this->ID, $this->Level, $this->Username, $this->DisplayName, $this->Avatar);
 			$select->fetch();

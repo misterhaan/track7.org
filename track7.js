@@ -2,7 +2,6 @@ $(function() {
 	InitUserMenu();
 	InitLoginLogout();
 	autosize($("textarea"));
-	InitComments();
 	InitTabLayout();
 });
 
@@ -91,106 +90,6 @@ function Login() {
 			window.location = url;
 			return false;
 		}
-	}
-}
-
-/**
- * initialize comment section and load comments
- * @returns
- */
-function InitComments() {
-	if($("#comments").length && typeof Vue === "function") {
-		var comments = new Vue({
-			el: "#comments",
-			data: {
-				comments: [],
-				loading: false,
-				hasMore: false,
-				error: ""
-			},
-			created: function() {
-				this.Load();
-			},
-			methods: {
-				AddComment: function() {
-					var formdata = { md: $("#newcomment").val(), type: $("#addcomment").data("type"), key: $("#addcomment").data("key") };
-					if($("#authorname").length)
-						$.extend(formdata, { name: $("#authorname").val(), contact: $("#authorcontact").val() });
-					$.post("/api/comments/add", formdata, result => {
-						if(!result.fail) {
-							result.editing = false;
-							this.comments.push(result);
-							$("#newcomment").val("");
-						} else
-							alert(result.message);
-					});
-				},
-				Load: function() {
-					this.loading = true;
-					var userid = $("h1").data("user");
-					if(userid == "all") {
-						var endpoint = "all";
-						var data = {};
-					} else if(userid) {
-						endpoint = "user";
-						data = { userid: userid };
-					} else {
-						endpoint = "keyed";
-						data = { type: $("#addcomment").data("type"), key: $("#addcomment").data("key") };
-					}
-					data.oldest = this.oldest;
-					$.get("/api/comments/" + endpoint, data, result => {
-						if(!result.fail) {
-							this.comments = this.comments.concat(result.comments);
-							this.oldest = result.oldest;
-							this.hasMore = result.more;
-							setTimeout(() => { Prism.highlightAll(); }, 50);
-						} else
-							this.error = result.message;
-						this.loading = false;
-					}, "json");
-				},
-				Edit: function(comment) {
-					comment.editing = true;
-					comment.savemarkdown = comment.markdown;
-					setTimeout(function() {
-						$(".content.edit textarea:visible").each(function() {
-							var ta = $(this);
-							if(ta.data("asinit"))
-								autosize.update(ta);
-							else {
-								autosize(ta);
-								ta.data("asinit", true);
-							}
-						});
-					}, 25);
-				},
-				Save: function(comment) {
-					$.post("/api/comments/save", { type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id, markdown: comment.markdown }, function(result) {
-						if(!result.fail) {
-							comment.html = result.html;
-							comment.editing = false;
-							setTimeout(() => { Prism.highlightAll(); }, 50);
-						} else
-							alert(result.message);
-					}, "json");
-				},
-				Unedit: function(comment) {
-					comment.editing = false;
-					comment.markdown = comment.savemarkdown;
-					delete comment.savemarkdown;
-				},
-				Delete: function(comment, index) {
-					if(confirm("do you really want to delete your comment?  you won’t be able to get it back."))
-						$.post("/api/comments/delete", { type: comment.srctbl ? comment.srctbl.replace("_comments", "") : $("#addcomment").data("type"), id: comment.id }, function(result) {
-							if(!result.fail)
-								comments.comments.splice(index, 1);
-							else
-								alert(result.message);
-						}, "json");
-				}
-			}
-		});
 	}
 }
 

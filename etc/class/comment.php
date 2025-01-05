@@ -29,7 +29,22 @@ class Comment {
 	}
 
 	/**
-	 * List comments for a post, most recent first.
+	 * List comments for the entire site, most recent first.
+	 */
+	public static function List(mysqli $db, CurrentUser $currentUser, int $skip = 0): CommentList {
+		$limit = self::ListLimit + 1;
+		// TODO:  migrate users_friends table
+		try {
+			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\'), p.title, p.url from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user group by c.id, f.fan, f.friend order by c.instant desc limit ? offset ?');
+			$select->bind_param('iii', $currentUser->ID, $limit, $skip);
+			return self::FetchList($select, $currentUser, true);
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up all comments', $mse);
+		}
+	}
+
+	/**
+	 * List comments for a post, most recent last.
 	 */
 	public static function ListByPost(mysqli $db, CurrentUser $currentUser, int $postID, int $skip = 0): CommentList {
 		$limit = self::ListLimit + 1;
@@ -37,18 +52,44 @@ class Comment {
 		try {
 			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\') from comment as c left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user where c.post=? group by c.id, f.fan, f.friend order by c.instant limit ? offset ?');
 			$select->bind_param('iiii', $currentUser->ID, $postID, $limit, $skip);
-			$select->execute();
-			$select->bind_result($id, $instant, $authorUserID, $username, $displayname, $avatar, $level, $friend, $name, $contact, $markdown, $html, $edits);
-			$list = new CommentList();
-			while ($select->fetch())
-				if (count($list->Comments) < self::ListLimit)
-					$list->Comments[] = new self($currentUser, $id, $instant, $html, $markdown, $authorUserID, new Author($username, $displayname, $name, $contact, $avatar, +$level, boolval($friend)), Edit::Parse($currentUser, $edits));
-				else
-					$list->HasMore = true;
-			return $list;
+			return self::FetchList($select, $currentUser);
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error looking up comments for post', $mse);
 		}
+	}
+
+	/**
+	 * List comments by a user, most recent first.
+	 */
+	public static function ListByUser(mysqli $db, CurrentUser $currentUser, int $userID, int $skip = 0): CommentList {
+		$limit = self::ListLimit + 1;
+		// TODO:  migrate users_friends table
+		try {
+			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\'), p.title, p.url from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user where c.user=? group by c.id, f.fan, f.friend order by c.instant desc limit ? offset ?');
+			$select->bind_param('iiii', $currentUser->ID, $userID, $limit, $skip);
+			return self::FetchList($select, $currentUser, true);
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up comments for user', $mse);
+		}
+	}
+
+	private static function FetchList(mysqli_stmt $select, CurrentUser $currentUser, bool $includePost = false): CommentList {
+		$select->execute();
+		if ($includePost)
+			$select->bind_result($id, $instant, $authorUserID, $username, $displayname, $avatar, $level, $friend, $name, $contact, $markdown, $html, $edits, $title, $url);
+		else
+			$select->bind_result($id, $instant, $authorUserID, $username, $displayname, $avatar, $level, $friend, $name, $contact, $markdown, $html, $edits);
+		$list = new CommentList();
+		while ($select->fetch())
+			if (count($list->Comments) < self::ListLimit) {
+				$list->Comments[] = $comment = new self($currentUser, $id, $instant, $html, $markdown, $authorUserID, new Author($username, $displayname, $name, $contact, $avatar, +$level, boolval($friend)), Edit::Parse($currentUser, $edits));
+				if ($includePost) {
+					$comment->Title = $title;
+					$comment->URL = "$url#comments";
+				}
+			} else
+				$list->HasMore = true;
+		return $list;
 	}
 
 	public static function Create(mysqli $db, CurrentUser $currentUser, int $post, string $markdown, string $name, string $contact): Comment {

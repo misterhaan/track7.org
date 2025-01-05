@@ -13,8 +13,15 @@ class CommentApi extends Api {
 	public static function GetEndpointDocumentation(): array {
 		$endpoints = [];
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'bypost', 'get the latest comments for the specified post with most recent first.');
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'all', 'get the latest comments for the entire site with most recent first.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('skip', 'integer', 'specify a number of comments to skip, which is usually the number of comments currently loaded.');
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'bypost', 'get the latest comments for the specified post with most recent last.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('postID', 'integer', 'specify the post by its id.', true);
+		$endpoint->PathParameters[] = new ParameterDocumentation('skip', 'integer', 'specify a number of comments to skip, which is usually the number of comments currently loaded.');
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'byuser', 'get the latest comments by the specified user with most recent first.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('userID', 'integer', 'specify the user by their id.', true);
 		$endpoint->PathParameters[] = new ParameterDocumentation('skip', 'integer', 'specify a number of comments to skip, which is usually the number of comments currently loaded.');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'new', 'post a new comment.', 'POST data', 'fields from the comment form.  for signed-in users, the name and contact fields do not appear.');
@@ -34,6 +41,16 @@ class CommentApi extends Api {
 	}
 
 	/**
+	 * Get the latest comments for the entire site with most recent first.
+	 * @param array $params number of comments to skip.
+	 */
+	protected static function GET_all(array $params): void {
+		$skip = +array_shift($params);
+		self::RequireUser();
+		self::Success(Comment::List(self::$db, self::$user, $skip));
+	}
+
+	/**
 	 * Get the latest comments for the specified post with most recent first.
 	 * @param array $params ID of the post, then number of comments to skip.
 	 */
@@ -44,6 +61,19 @@ class CommentApi extends Api {
 		$skip = +array_shift($params);
 		self::RequireUser();
 		self::Success(Comment::ListByPost(self::$db, self::$user, $post, $skip));
+	}
+
+	/**
+	 * Get the latest comments by the specified user with most recent first.
+	 * @param array $params ID of the user, then number of comments to skip.
+	 */
+	protected static function GET_byuser(array $params): void {
+		$userID = +array_shift($params);
+		if (!$userID)
+			self::NotFound('user id must be specified.');
+		$skip = +array_shift($params);
+		self::RequireUser();
+		self::Success(Comment::ListByUser(self::$db, self::$user, $userID, $skip));
 	}
 
 	/**
