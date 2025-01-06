@@ -144,7 +144,7 @@ class GitPullResult {
 			curl_setopt($c, CURLOPT_POSTFIELDS, json_encode($data));
 			$text = curl_exec($c);
 			$code = curl_getinfo($c, CURLINFO_HTTP_CODE);
-			$this->CloudFlare = new CloudFlareResult($code, $text);
+			$this->Cloudflare = new CloudflareResult($code, $text);
 			curl_close($c);
 		}
 	}
