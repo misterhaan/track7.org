@@ -1,3 +1,79 @@
+const userSuggest = {
+	data: {
+		usermatch: "",
+		findingusers: false,
+		matchingusers: [],
+		cursor: false
+	},
+	watch: {
+		usermatch: function(match) {
+			if(this.waitUserSuggest)
+				clearTimeout(this.waitUserSuggest);
+			delete this.waitUserSuggest;
+			if(match.length < 3) {
+				this.matchingusers = [];
+				this.findingusers = false;
+			} else {
+				this.waitUserSuggest = setTimeout(() => {
+					this.findingusers = true;
+					$.get("/api/users/suggest", { match: match }, result => {
+						if(!result.fail)
+							this.matchingusers = result.users;
+						else
+							alert(result.message);
+						this.findingusers = false;
+					}, "json");
+				}, 250);
+			}
+		}
+	},
+	methods: {
+		SelectHashUser: function() {
+			if(location.hash.substring(0, 5) == "#!to=")
+				$.get("/api/users/info", { username: location.hash.substring(5) }, result => {
+					if(!result.fail && typeof this.SelectUser == "function")
+						this.SelectUser(result.user);
+					else
+						this.usermatch = location.hash.substring(5);
+				}, "json");
+		},
+		HideUserSuggestions: function(delay) {
+			setTimeout(() => {
+				this.usermatch = "";
+				this.cursor = false;
+			}, +delay);
+		},
+		NextUser: function() {
+			if(this.cursor) {
+				for(var u = 0; u < this.matchingusers.length - 1; u++)
+					if(this.matchingusers[u] == this.cursor) {
+						this.cursor = this.matchingusers[u + 1];
+						return;
+					}
+			}
+			this.cursor = this.matchingusers[0];
+		},
+		PrevUser: function() {
+			if(this.cursor) {
+				for(var u = 1; u < this.matchingusers.length; u++)
+					if(this.matchingusers[u] == this.cursor) {
+						this.cursor = this.matchingusers[u - 1];
+						return;
+					}
+			}
+			this.cursor = this.matchingusers[this.matchingusers.length - 1];
+		},
+		SelectCursorUser: function() {
+			if(this.cursor && typeof this.SelectUser == "function")
+				for(var u = 0; u < this.matchingusers.length; u++)
+					if(this.matchingusers[u] == this.cursor) {
+						this.SelectUser(this.cursor);
+						return;
+					}
+		}
+	}
+};
+
 $(function() {
 	if($("#conversations").length)
 		var conversations = new Vue({
@@ -38,14 +114,14 @@ $(function() {
 					else if(replying)
 						setTimeout(() => {
 							$("form.reply:visible textarea").focus();
-							$("html, body").animate({scrollTop: $("form.reply:visible").offset().top}, 750);
+							$("html, body").animate({ scrollTop: $("form.reply:visible").offset().top }, 750);
 							autosize($("textarea"));
 						}, 50);
 					else {
 						var id = conversation.messages[conversation.messages.length - 1].id;
 						setTimeout(() => {
 							id = $("#pm" + id).is(":hidden") ? "#m" + id : "#pm" + id;
-							$("html, body").animate({scrollTop: $(id).offset().top}, 750);
+							$("html, body").animate({ scrollTop: $(id).offset().top }, 750);
 							autosize($("textarea"));
 						}, 50);
 					}
@@ -53,7 +129,7 @@ $(function() {
 				LoadMessages: function(conversation, replying) {
 					if(conversation.id) {
 						conversation.loading = true;
-						$.get("/api/conversations/messages", {conversation: conversation.id, before: conversation.oldest}, result => {
+						$.get("/api/conversations/messages", { conversation: conversation.id, before: conversation.oldest }, result => {
 							if(!result.fail) {
 								var id = 0;
 								if(conversation.messages.length)
@@ -62,9 +138,9 @@ $(function() {
 								conversation.hasmore = result.hasmore;
 								conversation.oldest = result.oldest;
 								if(replying)
-									setTimeout(()=> {
+									setTimeout(() => {
 										$("form.reply:visible textarea").focus();
-										$("html, body").animate({scrollTop: $("form.reply:visible").offset().top}, 750);
+										$("html, body").animate({ scrollTop: $("form.reply:visible").offset().top }, 750);
 										Prism.highlightAll();
 										autosize($("textarea"));
 									}, 50);
@@ -73,7 +149,7 @@ $(function() {
 										id = conversation.messages[conversation.messages.length - 1].id;
 									setTimeout(() => {
 										id = $("#pm" + id).is(":hidden") ? "#m" + id : "#pm" + id;
-										$("html, body").animate({scrollTop: $(id).offset().top}, 750);
+										$("html, body").animate({ scrollTop: $(id).offset().top }, 750);
 										Prism.highlightAll();
 										autosize($("textarea"));
 									}, 50);
@@ -83,13 +159,13 @@ $(function() {
 							conversation.loading = false;
 						}, "json");
 					} else if(replying)
-						setTimeout(()=> {
+						setTimeout(() => {
 							$("form.reply:visible textarea").focus();
-							$("body").animate({scrollTop: $("form.reply:visible").offset().top}, 750);
+							$("body").animate({ scrollTop: $("form.reply:visible").offset().top }, 750);
 						}, 50);
 				},
 				Reply: function(conversation) {
-					$.post("/api/conversations/sendMessage", {to: conversation.thatuser, markdown: conversation.response}, result => {
+					$.post("/api/conversations/sendMessage", { to: conversation.thatuser, markdown: conversation.response }, result => {
 						if(!result.fail) {
 							conversation.messages.push(result.message);
 							if(!conversation.oldest)
@@ -122,7 +198,7 @@ $(function() {
 						displayname: user.displayname || user.username,
 						username: user.username,
 						avatar: user.avatar,
-						sent: {datetime: "", display: "0 seconds", tooltip: ""},
+						sent: { datetime: "", display: "0 seconds", tooltip: "" },
 						issender: 1,
 						hasread: 0,
 						messages: [],
@@ -160,7 +236,7 @@ $(function() {
 					$("#usermatch").focus();
 				},
 				Send: function() {
-					$.post("/api/conversations/sendMessage", {to: this.chosenuser.id, fromname: $("#fromname").val(), fromcontact: $("#fromcontact").val(), markdown: $("#markdown").val()}, result => {
+					$.post("/api/conversations/sendMessage", { to: this.chosenuser.id, fromname: $("#fromname").val(), fromcontact: $("#fromcontact").val(), markdown: $("#markdown").val() }, result => {
 						if(!result.fail) {
 							this.sentmessages.push(result.message);
 							this.chosenuser = false;
@@ -174,81 +250,3 @@ $(function() {
 			}
 		});
 });
-
-if(typeof Vue == "function") {
-	userSuggest = {
-		data: {
-			usermatch: "",
-			findingusers: false,
-			matchingusers: [],
-			cursor: false
-		},
-		watch: {
-			usermatch: function(match) {
-				if(this.waitUserSuggest)
-					clearTimeout(this.waitUserSuggest);
-				delete this.waitUserSuggest;
-				if(match.length < 3) {
-					this.matchingusers = [];
-					this.findingusers = false;
-				} else {
-					this.waitUserSuggest = setTimeout(() => {
-						this.findingusers = true;
-						$.get("/api/users/suggest", {match: match}, result => {
-							if(!result.fail)
-								this.matchingusers = result.users;
-							else
-								alert(result.message);
-							this.findingusers = false;
-						}, "json");
-					}, 250);
-				}
-			}
-		},
-		methods: {
-			SelectHashUser: function() {
-				if(location.hash.substring(0, 5) == "#!to=")
-					$.get("/api/users/info", {username: location.hash.substring(5)}, result => {
-						if(!result.fail && typeof this.SelectUser == "function")
-							this.SelectUser(result.user);
-						else
-							this.usermatch = location.hash.substring(5);
-					}, "json");
-			},
-			HideUserSuggestions: function(delay) {
-				setTimeout(() => {
-					this.usermatch = "";
-					this.cursor = false;
-				}, +delay);
-			},
-			NextUser: function() {
-				if(this.cursor) {
-					for(var u = 0; u < this.matchingusers.length - 1; u++)
-						if(this.matchingusers[u] == this.cursor) {
-							this.cursor = this.matchingusers[u + 1];
-							return;
-						}
-				}
-				this.cursor = this.matchingusers[0];
-			},
-			PrevUser: function() {
-				if(this.cursor) {
-					for(var u = 1; u < this.matchingusers.length; u++)
-						if(this.matchingusers[u] == this.cursor) {
-							this.cursor = this.matchingusers[u - 1];
-							return;
-						}
-				}
-				this.cursor = this.matchingusers[this.matchingusers.length - 1];
-			},
-			SelectCursorUser: function() {
-				if(this.cursor && typeof this.SelectUser == "function")
-					for(var u = 0; u < this.matchingusers.length; u++)
-						if(this.matchingusers[u] == this.cursor) {
-							this.SelectUser(this.cursor);
-							return;
-						}
-			}
-		}
-	};
-}
