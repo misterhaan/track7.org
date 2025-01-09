@@ -77,8 +77,8 @@ class usersApi extends t7api {
 		global $db, $user;
 		if ($user->IsLoggedIn())
 			if (isset($_GET['friend']) && $friendid = +$_GET['friend'])
-				if ($db->real_query('insert into users_friends (fan, friend) values (\'' . +$user->ID . '\', \'' . $friendid . '\')'))
-					$db->real_query('update users_stats set fans=(select count(1) from users_friends where friend=\'' . $friendid . '\') where id=\'' . $friendid . '\'');
+				if ($db->real_query('insert into friend (fan, friend) values (\'' . +$user->ID . '\', \'' . $friendid . '\')'))
+					$db->real_query('update users_stats set fans=(select count(1) from friend where friend=\'' . $friendid . '\') where id=\'' . $friendid . '\'');
 				else
 					$ajax->Fail('database error adding friend', $db->errno . ' ' . $db->error);
 			else
@@ -111,7 +111,7 @@ class usersApi extends t7api {
 	 */
 	protected static function listAction($ajax) {
 		global $db, $user;
-		if ($us = $db->query('select u.username, coalesce(nullif(u.displayname, \'\'), u.username) as displayname, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.level, s.lastlogin, s.registered, s.fans, s.comments, s.replies, f.fan as friend from users as u left join users_stats as s on s.id=u.id left join users_friends as f on f.friend=u.id and f.fan=\'' . +$user->ID . '\' order by s.lastlogin desc')) {
+		if ($us = $db->query('select u.username, coalesce(nullif(u.displayname, \'\'), u.username) as displayname, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.level, s.lastlogin, s.registered, s.fans, s.comments, s.replies, f.fan as friend from users as u left join users_stats as s on s.id=u.id left join friend as f on f.friend=u.id and f.fan=\'' . +$user->ID . '\' order by s.lastlogin desc')) {
 			$ajax->Data->hasMore = false;  // no limit so always false
 			$ajax->Data->users = [];
 			while ($u = $us->fetch_object()) {
@@ -215,8 +215,8 @@ class usersApi extends t7api {
 		global $db, $user;
 		if ($user->IsLoggedIn())
 			if (isset($_GET['friend']) && $friendid = +$_GET['friend'])
-				if ($db->real_query('delete from users_friends where fan=\'' . +$user->ID . '\' and friend=\'' . $friendid . '\''))
-					$db->real_query('update users_stats set fans=(select count(1) from users_friends where friend=\'' . $friendid . '\') where id=\'' . $friendid . '\'');
+				if ($db->real_query('delete from friend where fan=\'' . +$user->ID . '\' and friend=\'' . $friendid . '\''))
+					$db->real_query('update users_stats set fans=(select count(1) from friend where friend=\'' . $friendid . '\') where id=\'' . $friendid . '\'');
 				else
 					$ajax->Fail('database error removing friend', $db->errno . ' ' . $db->error);
 			else
@@ -235,7 +235,7 @@ class usersApi extends t7api {
 			$matchsql = $db->escape_string(trim($_GET['match']));
 			$matchlike = $db->escape_string(str_replace(['_', '%'], ['\\_', '\\%'], trim($_GET['match'])));
 			// some columns aren't needed except to make the order by use unique columns
-			if ($us = $db->query('select u.id, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.displayname, u.username, f.fan as isfriend, u.username=\'' . $matchsql . '\' or u.displayname=\'' . $matchsql . '\' as exact, u.username like \'' . $matchlike . '%\' or u.displayname like \'' . $matchlike . '%\' as start from users as u left join users_friends as f on f.fan=\'' . +$user->ID . '\' and f.friend=u.id where u.id!=\'' . +$user->ID . '\' and (u.username like \'%' . $matchlike . '%\' or u.displayname like \'%' . $matchlike . '%\') order by isfriend desc, exact desc, start desc, coalesce(nullif(u.displayname, \'\'), u.username) limit 8')) {
+			if ($us = $db->query('select u.id, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.displayname, u.username, f.fan as isfriend, u.username=\'' . $matchsql . '\' or u.displayname=\'' . $matchsql . '\' as exact, u.username like \'' . $matchlike . '%\' or u.displayname like \'' . $matchlike . '%\' as start from users as u left join friend as f on f.fan=\'' . +$user->ID . '\' and f.friend=u.id where u.id!=\'' . +$user->ID . '\' and (u.username like \'%' . $matchlike . '%\' or u.displayname like \'%' . $matchlike . '%\') order by isfriend desc, exact desc, start desc, coalesce(nullif(u.displayname, \'\'), u.username) limit 8')) {
 				$ajax->Data->users = [];
 				while ($u = $us->fetch_object()) {
 					// remove ordering columns

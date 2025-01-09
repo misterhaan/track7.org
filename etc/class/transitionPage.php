@@ -49,7 +49,7 @@ abstract class TransitionPage extends Page {
 
 	protected static function Done(): void {
 	?>
-		<p>done migrating <?= self::$thing ?>, at least for now!</p>
+		<p>done migrating <?= self::$thing; ?>, at least for now!</p>
 <?php
 	}
 }

@@ -33,9 +33,8 @@ class Comment {
 	 */
 	public static function List(mysqli $db, CurrentUser $currentUser, int $skip = 0): CommentList {
 		$limit = self::ListLimit + 1;
-		// TODO:  migrate users_friends table
 		try {
-			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\'), p.title, p.url from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user group by c.id, f.fan, f.friend order by c.instant desc limit ? offset ?');
+			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\'), p.title, p.url from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join friend as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user group by c.id, f.fan, f.friend order by c.instant desc limit ? offset ?');
 			$select->bind_param('iii', $currentUser->ID, $limit, $skip);
 			return self::FetchList($select, $currentUser, true);
 		} catch (mysqli_sql_exception $mse) {
@@ -48,9 +47,8 @@ class Comment {
 	 */
 	public static function ListByPost(mysqli $db, CurrentUser $currentUser, int $postID, int $skip = 0): CommentList {
 		$limit = self::ListLimit + 1;
-		// TODO:  migrate users_friends table
 		try {
-			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\') from comment as c left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user where c.post=? group by c.id, f.fan, f.friend order by c.instant limit ? offset ?');
+			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\') from comment as c left join user as u on u.id=c.user left join friend as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user where c.post=? group by c.id, f.fan, f.friend order by c.instant limit ? offset ?');
 			$select->bind_param('iiii', $currentUser->ID, $postID, $limit, $skip);
 			return self::FetchList($select, $currentUser);
 		} catch (mysqli_sql_exception $mse) {
@@ -63,9 +61,8 @@ class Comment {
 	 */
 	public static function ListByUser(mysqli $db, CurrentUser $currentUser, int $userID, int $skip = 0): CommentList {
 		$limit = self::ListLimit + 1;
-		// TODO:  migrate users_friends table
 		try {
-			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\'), p.title, p.url from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join users_friends as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user where c.user=? group by c.id, f.fan, f.friend order by c.instant desc limit ? offset ?');
+			$select = $db->prepare('select c.id, unix_timestamp(c.instant), c.user, u.username, u.displayname, u.avatar, u.level, f.fan as friend, c.name, c.contact, c.markdown, c.html, group_concat(concat(unix_timestamp(e.instant), \'\t\', eu.username, \'\t\', eu.displayname) order by e.instant separator \'\n\'), p.title, p.url from comment as c left join post as p on p.id=c.post left join user as u on u.id=c.user left join friend as f on f.friend=c.user and f.fan=? left join edit as e on e.comment=c.id left join user as eu on eu.id=e.user where c.user=? group by c.id, f.fan, f.friend order by c.instant desc limit ? offset ?');
 			$select->bind_param('iiii', $currentUser->ID, $userID, $limit, $skip);
 			return self::FetchList($select, $currentUser, true);
 		} catch (mysqli_sql_exception $mse) {

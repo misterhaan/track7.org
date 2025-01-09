@@ -43,14 +43,6 @@ create table users_profiles (
 	foreign key(id) references users(id) on delete cascade on update cascade
 );
 
-create table users_friends (
-	fan smallint unsigned not null,
-	friend smallint unsigned not null,
-	primary key(fan, friend),
-	foreign key(fan) references users(id) on delete cascade on update cascade,
-	foreign key(friend) references users(id) on delete cascade on update cascade
-);
-
 create table users_stats (
 	id smallint unsigned primary key,
 	registered int not null,
