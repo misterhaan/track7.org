@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class PhotoTransition extends TransitionPage {
+class PhotoTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('album', 'photo album', 'see my photos', 'photoed');
 		parent::__construct();
@@ -286,12 +286,6 @@ class PhotoTransition extends TransitionPage {
 		self::$db->real_query('drop table photos');
 	?>
 		<p>deleted old photos table. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating photos, at least for now!</p>
 <?php
 	}
 }

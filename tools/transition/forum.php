@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class ForumTransition extends TransitionPage {
+class ForumTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('forum', 'forum', 'join or start conversations', 'forumed');
 		parent::__construct();
@@ -325,12 +325,6 @@ class ForumTransition extends TransitionPage {
 		self::$db->real_query('drop table forum_discussions');
 	?>
 		<p>deleted old forum discussions table. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating forum, at least for now!</p>
 <?php
 	}
 }

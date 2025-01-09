@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class StoriesTransition extends TransitionPage {
+class StoriesTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('pen', 'stories', 'read short fiction and a poem', 'storied');
 		parent::__construct();
@@ -242,12 +242,6 @@ class StoriesTransition extends TransitionPage {
 		self::$db->real_query('drop table if exists stories_series');
 	?>
 		<p>deleted old story tables. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating stories, at least for now!</p>
 <?php
 	}
 }

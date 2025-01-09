@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class LegoTransition extends TransitionPage {
+class LegoTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('lego', 'lego models', 'download instructions for custom lego models', 'legoed');
 		parent::__construct();
@@ -248,12 +248,6 @@ class LegoTransition extends TransitionPage {
 		self::$db->real_query('drop table lego_models');
 	?>
 		<p>deleted old legos table. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating legos, at least for now!</p>
 <?php
 	}
 }

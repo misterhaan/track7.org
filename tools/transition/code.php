@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class CodeTransition extends TransitionPage {
+class CodeTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('code', 'software', 'download free software with source code', 'coded');
 		parent::__construct();
@@ -581,12 +581,6 @@ class CodeTransition extends TransitionPage {
 		self::$db->real_query('delete from contributions where srctbl in(\'code_vs_releases\', \'code_web_scripts\', \'code_web_comments\')');
 	?>
 		<p>deleted old code contributions. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating code, at least for now!</p>
 <?php
 	}
 }

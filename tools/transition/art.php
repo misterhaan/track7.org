@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class ArtTransition extends TransitionPage {
+class ArtTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('art', 'visual art', 'see sketches and digital artwork', 'arted');
 		parent::__construct();
@@ -374,12 +374,6 @@ class ArtTransition extends TransitionPage {
 		self::$db->real_query('drop table image_formats');
 	?>
 		<p>deleted old image format table. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating art, at least for now!</p>
 <?php
 	}
 }

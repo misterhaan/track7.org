@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class UpdatesTransition extends TransitionPage {
+class UpdatesTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('updates', '', '', 'updated');
 		parent::__construct();
@@ -196,12 +196,6 @@ class UpdatesTransition extends TransitionPage {
 		self::$db->real_query('drop table update_messages');
 	?>
 		<p>deleted old updates table. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating updates, at least for now!</p>
 <?php
 	}
 }

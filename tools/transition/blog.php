@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/transitionPage.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
-class BlogTransition extends TransitionPage {
+class BlogTransition extends SubsiteTransitionPage {
 	public function __construct() {
 		self::$subsite = new Subsite('bln', 'blog', 'read the blog', 'blogged');
 		parent::__construct();
@@ -287,12 +287,6 @@ class BlogTransition extends TransitionPage {
 		self::$db->real_query('drop table blog_entries');
 	?>
 		<p>deleted old blog table. refresh the page to take the next step.</p>
-	<?php
-	}
-
-	private static function Done(): void {
-	?>
-		<p>done migrating blog, at least for now!</p>
 <?php
 	}
 }
