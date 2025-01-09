@@ -67,16 +67,6 @@ class t7html {
 			<link rel=icon type="image/png" sizes="96x96" href="/favicon-96x96.png">
 			<link rel=icon type="image/png" sizes="16x16" href="/favicon-16x16.png">
 			<link rel=icon type="image/png" sizes="32x32" href="/favicon-32x32.png">
-			<?php
-			if (isset($this->params['rss'])) {
-				$rss = $this->params['rss'];
-				if (isset($rss['title']) && isset($rss['url'])) {
-			?>
-					<link rel=alternate type=application/rss+xml title="<?= $rss['title']; ?>" href="<?= $rss['url']; ?>">
-			<?php
-				}
-			}
-			?>
 			<meta name="msapplication-TileColor" content="#335577">
 			<meta name="msapplication-TileImage" content="/mstile-144x144.png">
 		</head>
@@ -149,7 +139,6 @@ class t7html {
 			?>
 			</main>
 			<footer>
-				<a href="/feed.rss" title="add track7 activity to your feed reader">rss</a>
 				<a href="https://twitter.com/track7feed" title="follow track7 on twitter">twitter</a>
 				<a href="https://github.com/misterhaan/track7.org/blob/master<?= $_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
 				<a href="/privacy.php" title="view the privacy policy">privacy</a>

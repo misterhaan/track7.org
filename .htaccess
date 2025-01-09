@@ -18,18 +18,6 @@ RewriteRule \.snapshot/ - [F]
 RewriteRule etc/ - [F]
 RedirectMatch /(.+)\.shtml$ /$1\.php
 
-RewriteCond %{REQUEST_URI} ^/?feeds/
-RewriteRule ^feeds/unifeed.rss /feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^/?feeds/
-RewriteRule ^feeds/entries.rss /bln/feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^/?feeds/
-RewriteRule ^feeds/guides.rss /guides/feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^/?feeds/
-RewriteRule ^feeds/posts.rss /forum/feed.rss [R=301]
-RewriteCond %{REQUEST_URI} ^/?feeds/
-RewriteRule ^feeds/updates.rss /updates/feed.rss [R=301]
-RewriteRule %{REQUEST_URI} ^/?feeds/
-RewriteRule ^feeds/comments.rss /comments.rss [R=301]
 RewriteCond %{REQUEST_URI} ^/?output/
 RewriteRule ^output/pen/bln/(.*) /bln/$1 [R=301]
 RewriteCond %{REQUEST_URI} ^/?pen/

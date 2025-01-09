@@ -597,22 +597,6 @@ h1 {
 	}
 }
 
-h1 .feed:after {
-	display: inline-block;
-	font-family: fontawesome;
-	font-weight: normal;
-	font-size: .5em;
-	content: "\f09e";
-	color: #fff;
-	background-color: #fa3;
-	border-radius: .125em;
-	padding: .125em .0625em 0;
-	margin: -.25em 0 .25em .5em;
-	line-height: 1em;
-	width: 1em;
-	text-align: center;
-}
-
 .floatbgstop {
 	display: -webkit-flex;
 	display: flex;
@@ -2297,37 +2281,6 @@ img.icon.preview {
 	#editscr button {
 		margin: .75em 1em .75em 7em;
 	}
-}
-
-/*------------------------------------------------------[ /feeds/index.php ]--*/
-ul.twitter,
-ul.feeds {
-	list-style-type: none;
-}
-
-ul.twitter a:before,
-ul.feeds a:before {
-	font-family: fontawesome;
-	font-weight: normal;
-	margin-right: .5em;
-	display: inline-block;
-	vertical-align: middle;
-}
-
-ul.twitter a:before {
-	content: "\f099";
-	color: #1da1f2;
-	margin-right: .4em;
-}
-
-ul.feeds a:before {
-	font-size: .8em;
-	content: "\f09e";
-	color: #fff;
-	background-color: #fa3;
-	border-radius: .125em;
-	padding: .15em .19em 0 .15em;
-	margin-top: -.1em;
 }
 
 /*-------------------------------------------------[ /forum/discussion.php ]--*/
