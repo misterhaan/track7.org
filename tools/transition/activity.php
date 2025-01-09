@@ -64,7 +64,7 @@ class ActivityTransition extends TransitionPage {
 		self::$db->real_query('update subsite set type=case id when \'album\' then \'photo\' when \'bln\' then \'entry\' when \'forum\' then \'post\' when \'guides\' then \'guide\' when \'pen\' then \'story\' when \'updates\' then \'update\' else id end');
 		self::$db->commit();
 	?>
-		<p>added new <code>type</type> column to <code>subsite</code> table. refresh the page to take the next step.</p>
+		<p>added new <code>type</code> column to <code>subsite</code> table. refresh the page to take the next step.</p>
 <?php
 	}
 }
