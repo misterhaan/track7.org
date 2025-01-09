@@ -27,6 +27,7 @@ class TransitionIndex extends Page {
 			<li><a href=legos.php>lego models</a></li>
 			<li><a href=stories.php>stories</a></li>
 			<li><a href=updates.php>updates</a></li>
+			<li><a href=activity.php>activity</a></li>
 		</ul>
 
 	<?php

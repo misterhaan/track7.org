@@ -10,7 +10,7 @@ class ApiIndexPage extends Page {
 ?>
 		<h1>track7 api</h1>
 
-		<h2 class=api><a href=activity>activity</a></h2>
+		<h2 class=api><a href=activity.php>activity</a></h2>
 		<p>the activity api retrieves latest activity.</p>
 
 		<h2 class=api><a href=application.php>application</a></h2>

@@ -32,9 +32,6 @@ spl_autoload_register(function ($class) {
 		case 't7authGithub':
 			require_once 't7auth.php';
 			break;
-		case 't7contrib':
-			require_once 't7contrib.php';
-			break;
 		case 't7feed':
 			require_once 't7feed.php';
 			break;

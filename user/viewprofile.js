@@ -4,7 +4,8 @@ $(function() {
 		data: {
 			activity: [],
 			loading: false,
-			more: false
+			hasMore: false,
+			error: ""
 		},
 		created: function() {
 			this.user = $("h1").data("userid");
@@ -13,15 +14,14 @@ $(function() {
 		methods: {
 			Load: function() {
 				this.loading = true;
-				$.get("/api/activity/user", {before: this.latest, user: this.user}, result => {
-					if(!result.fail) {
-						this.activity = this.activity.concat(result.acts);
-						this.latest = result.latest;
-						this.more = result.more;
-					} else
-						alert(result.message);
+				$.get("/api/activity.php/byuser/" + this.user + "/" + this.activity.length).done(result => {
+					this.activity = this.activity.concat(result.Activity);
+					this.hasMore = result.HasMore;
+				}).fail(request => {
+					this.error = request.responseText;
+				}).always(() => {
 					this.loading = false;
-				}, "json");
+				});
 			}
 		}
 	});

@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
 class ArtTransition extends SubsiteTransitionPage {
 	public function __construct() {
-		self::$subsite = new Subsite('art', 'visual art', 'see sketches and digital artwork', 'arted');
+		self::$subsite = new Subsite('art', 5, 'art', 'visual art', 'see sketches and digital artwork', 'arted');
 		parent::__construct();
 	}
 

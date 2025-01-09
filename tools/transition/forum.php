@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
 class ForumTransition extends SubsiteTransitionPage {
 	public function __construct() {
-		self::$subsite = new Subsite('forum', 'forum', 'join or start conversations', 'forumed');
+		self::$subsite = new Subsite('forum', 8, 'forum', 'forum', 'join or start conversations', 'forumed');
 		parent::__construct();
 	}
 

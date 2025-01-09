@@ -40,7 +40,7 @@ createApp({
 		</article>
 
 		<p class=error v-if=error>{{error}}</p>
-		<nav class="showmore calltoaction" v-if="hasmore && !loading"><a class="action get" href="#loadmore" v-on:click=Load>load older updates</a></nav>
+		<nav class="showmore calltoaction" v-if="hasmore && !loading"><a class="action get" href="#loadmore" @click.prevent=Load>load older updates</a></nav>
 		<p class=loading v-if=loading>loading . . .</p>
 	`
 }).mount("#recentupdates");

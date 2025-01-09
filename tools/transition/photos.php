@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
 class PhotoTransition extends SubsiteTransitionPage {
 	public function __construct() {
-		self::$subsite = new Subsite('album', 'photo album', 'see my photos', 'photoed');
+		self::$subsite = new Subsite('album', 2, 'photo', 'photo album', 'see my photos', 'photoed');
 		parent::__construct();
 	}
 

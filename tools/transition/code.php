@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
 class CodeTransition extends SubsiteTransitionPage {
 	public function __construct() {
-		self::$subsite = new Subsite('code', 'software', 'download free software with source code', 'coded');
+		self::$subsite = new Subsite('code', 7, 'code', 'software', 'download free software with source code', 'coded');
 		parent::__construct();
 	}
 

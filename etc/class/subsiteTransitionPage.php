@@ -165,8 +165,8 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	}
 
 	private static function CreateSubsiteRow(): void {
-		$insert = self::$db->prepare('insert into subsite (id, name, calltoaction, verb) values (?, ?, ?, ?)');
-		$insert->bind_param('ssss', self::$subsite->id, self::$subsite->name, self::$subsite->calltoaction, self::$subsite->verb);
+		$insert = self::$db->prepare('insert into subsite (id, feature, type, name, calltoaction, verb) values (?, ?, ?, ?, ?, ?)');
+		$insert->bind_param('sissss', self::$subsite->id, self::$subsite->feature, self::$subsite->type, self::$subsite->name, self::$subsite->calltoaction, self::$subsite->verb);
 		$insert->execute();
 		$insert->close();
 	?>

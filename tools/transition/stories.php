@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
 class StoriesTransition extends SubsiteTransitionPage {
 	public function __construct() {
-		self::$subsite = new Subsite('pen', 'stories', 'read short fiction and a poem', 'storied');
+		self::$subsite = new Subsite('pen', 6, 'pen', 'stories', 'read short fiction and a poem', 'storied');
 		parent::__construct();
 	}
 

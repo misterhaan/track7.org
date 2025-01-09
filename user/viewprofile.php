@@ -83,16 +83,17 @@ if (isset($_GET['login'])) {
 		?>
 		<section id=activity>
 			<p v-if="!loading && activity.length < 1"><?= $u->DisplayName; ?> hasn’t posted anything to track7 yet.</p>
-			<ol data-bind="foreach: activity">
-				<li v-for="act in activity" :class=act.conttype>
-					<span class=action data-bind="text: action">{{act.action}}</span>
-					<a :href=act.url>{{act.title}}</a>
-					<time :datetime=act.posted.datetime :title=act.posted.title>{{act.posted.display}}</time>
+			<ol>
+				<li v-for="act in activity" :class=act.Type>
+					<span class=action>{{act.Verb}}</span>
+					<a :href=act.URL>{{act.Title}}</a>
+					<time :datetime=act.Instant.DateTime :title=act.Instant.Tooltip>{{act.Instant.Display}}</time>
 					ago
 				</li>
 			</ol>
 			<p class=loading v-if=loading>loading more activity...</p>
-			<p class="more calltoaction" v-if="!loading && more"><a href=#activity class="action get" v-on:click=Load>show more activity from <?= $u->DisplayName; ?></a></p>
+			<p class=error v-if=error>{{error}}</p>
+			<p class="more calltoaction" v-if="!loading && hasMore"><a href=#activity class="action get" v-on:click=Load>show more activity from <?= $u->DisplayName; ?></a></p>
 		</section>
 <?php
 		$html->Close();

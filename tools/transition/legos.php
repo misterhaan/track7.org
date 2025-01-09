@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/subsiteTransitionPage.php';
 
 class LegoTransition extends SubsiteTransitionPage {
 	public function __construct() {
-		self::$subsite = new Subsite('lego', 'lego models', 'download instructions for custom lego models', 'legoed');
+		self::$subsite = new Subsite('lego', 4, 'lego', 'lego models', 'download instructions for custom lego models', 'legoed');
 		parent::__construct();
 	}
 
