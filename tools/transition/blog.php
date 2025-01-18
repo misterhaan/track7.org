@@ -8,8 +8,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entries\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('blog_entries')) {
 			$missing = self::$db->query('select 1 from blog_entries left join post on post.subsite=\'bln\' and post.url=concat(\'/bln/\', blog_entries.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyBlogToPost();
@@ -28,8 +27,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckBlogTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('blog')) {
 		?>
 			<p>new <code>blog</code> table exists.</p>
 		<?php
@@ -51,8 +49,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_tags\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('blog_tags')) {
 			$missing = self::$db->query('select 1 from blog_tags as ot left join tag as t on t.name=ot.name and t.subsite=\'bln\' where t.name is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyBlogTags();
@@ -71,8 +68,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entrytags\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('blog_entrytags')) {
 			$missing = self::$db->query('select 1 from blog_entrytags as bet left join blog_entries as ob on ob.id=bet.entry left join post as p on p.url=concat(\'/bln/\', ob.url) left join blog_tags as obt on obt.id=bet.tag left join post_tag as npt on npt.post=p.id and npt.tag=obt.name where npt.post is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyBlogPostTags();
@@ -91,8 +87,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('blog_comments')) {
 			$missing = self::$db->query('select 1 from blog_comments as bc left join blog_entries as ob on ob.id=bc.entry left join blog as b on b.id=ob.url left join comment as c on c.post=b.post and c.instant=from_unixtime(bc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyBlogComments();
@@ -111,8 +106,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'blog_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('blog_comments'))
 			self::DeleteCommentTriggers();
 		else {
 		?>
@@ -123,8 +117,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckEntryTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'blog_entries\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('blog_entries'))
 			self::DeleteEntryTriggers();
 		else {
 		?>
@@ -135,8 +128,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'blog_entries\' or srctbl=\'blog_comments\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -155,8 +147,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldComments(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('blog_comments'))
 			self::DeleteOldComments();
 		else {
 		?>
@@ -167,8 +158,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTagLinks(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entrytags\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('blog_entrytags'))
 			self::DeleteOldTagLinks();
 		else {
 		?>
@@ -179,8 +169,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTags(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_tags\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('blog_tags'))
 			self::DeleteOldTags();
 		else {
 		?>
@@ -191,8 +180,7 @@ class BlogTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldBlog(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'blog_entries\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('blog_entries'))
 			self::DeleteOldBlog();
 		else {
 		?>

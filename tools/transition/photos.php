@@ -8,8 +8,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('photos')) {
 			$missing = self::$db->query('select 1 from photos left join post on post.subsite=\'album\' and post.url=concat(\'/album/\', photos.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyPhotosToPost();
@@ -28,8 +27,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckPhotoTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photo\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('photo')) {
 		?>
 			<p>new <code>photo</code> table exists.</p>
 		<?php
@@ -51,8 +49,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_tags\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('photos_tags')) {
 			$missing = self::$db->query('select 1 from photos_tags as pt left join tag as t on t.name=pt.name and t.subsite=\'album\' where t.name is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyPhotoTags();
@@ -71,8 +68,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_taglinks\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('photos_taglinks')) {
 			$missing = self::$db->query('select 1 from photos_taglinks as pl left join photos as op on op.id=pl.photo left join photo as ph on ph.id=op.url left join photos_tags as pt on pt.id=pl.tag left join post_tag as npt on npt.post=ph.post and npt.tag=pt.name where npt.post is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyPhotoPostTags();
@@ -91,8 +87,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('photos_comments')) {
 			$missing = self::$db->query('select 1 from photos_comments as pc left join photos as op on op.id=pc.photo left join photo as ph on ph.id=op.url left join comment as c on c.post=ph.post and c.instant=from_unixtime(pc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyPhotoComments();
@@ -111,8 +106,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTagLinks(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_taglinks\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('photos_taglinks'))
 			self::DeleteOldTagLinks();
 		else {
 		?>
@@ -123,8 +117,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTags(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_tags\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('photos_tags'))
 			self::DeleteOldTags();
 		else {
 		?>
@@ -135,8 +128,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'photos_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('photos_comments'))
 			self::DeleteCommentTriggers();
 		else {
 		?>
@@ -147,8 +139,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckPhotoTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'photos\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('photos'))
 			self::DeletePhotoTriggers();
 		else {
 		?>
@@ -159,8 +150,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'photos\' or srctbl=\'photos_comments\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -179,8 +169,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldComments(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('photos_comments'))
 			self::DeleteOldComments();
 		else {
 		?>
@@ -191,8 +180,7 @@ class PhotoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldPhotos(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'photos\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('photos'))
 			self::DeleteOldPhotos();
 		else {
 		?>

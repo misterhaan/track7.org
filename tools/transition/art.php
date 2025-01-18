@@ -8,8 +8,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('art')) {
 			$hasNewColumn = self::$db->query('show columns from art like \'post\'');
 			if ($hasNewColumn->num_rows) {
 ?>
@@ -32,8 +31,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_tags\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('art_tags')) {
 			$missing = self::$db->query('select 1 from art_tags as ot left join tag as t on t.name=ot.name and t.subsite=\'art\' where t.name is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyArtTags();
@@ -52,8 +50,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_taglinks\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('art_taglinks')) {
 			$missing = self::$db->query('select 1 from art_taglinks as atl left join art as oa on oa.id=atl.art left join post as p on p.url=concat(\'/art/\', oa.url) left join art_tags as oat on oat.id=atl.tag left join post_tag as npt on npt.post=p.id and npt.tag=oat.name where npt.post is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyArtPostTags();
@@ -72,8 +69,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('art_comments')) {
 			$missing = self::$db->query('select 1 from art_comments as ac left join art as oa on oa.id=ac.art left join post as p on p.url=concat(\'/art/\', oa.url) left join comment as c on c.post=p.id and c.instant=from_unixtime(ac.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyArtComments();
@@ -92,8 +88,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckVoteRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_votes\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('art_votes')) {
 			$missing = self::$db->query('select 1 from art_votes as av left join art as oa on oa.id=av.art left join post as p on p.url=concat(\'/art/\', oa.url) left join vote as v on v.post=p.id and (av.voter>0 and v.user=av.voter or av.ip>0 and v.ip=av.ip) where v.vote is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyArtVotes();
@@ -112,8 +107,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'art_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('art_comments'))
 			self::DeleteCommentTriggers();
 		else {
 		?>
@@ -124,8 +118,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckArtTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'art\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('art'))
 			self::DeleteArtTriggers();
 		else {
 		?>
@@ -136,8 +129,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'art\' or srctbl=\'art_comments\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -156,8 +148,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldVotes(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_votes\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('art_votes'))
 			self::DeleteOldVotes();
 		else {
 		?>
@@ -168,8 +159,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldComments(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('art_comments'))
 			self::DeleteOldComments();
 		else {
 		?>
@@ -180,8 +170,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTagLinks(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_taglinks\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('art_taglinks'))
 			self::DeleteOldTagLinks();
 		else {
 		?>
@@ -192,8 +181,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTags(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art_tags\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('art_tags'))
 			self::DeleteOldTags();
 		else {
 		?>
@@ -204,8 +192,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckArtTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'art\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('art')) {
 			$hasNewColumn = self::$db->query('show columns from art like \'post\'');
 			if ($hasNewColumn->num_rows) {
 			?>
@@ -219,8 +206,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckArtRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'oldart\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('oldart')) {
 			$missing = self::$db->query('select 1 from oldart as oa left join art as a on a.id=oa.url where a.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyArt();
@@ -239,8 +225,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldArtTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'oldart\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('oldart'))
 			self::DeleteOldArtTable();
 		else {
 		?>
@@ -251,8 +236,7 @@ class ArtTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckImageFormatTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'image_formats\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('image_formats'))
 			self::DeleteImageFormatTable();
 		else {
 		?>

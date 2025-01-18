@@ -12,8 +12,7 @@ class UserTransition extends TransitionPage {
 	}
 
 	private static function CheckUserTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'user\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('user')) {
 ?>
 			<p>new <code>user</code> table exists.</p>
 		<?php
@@ -35,8 +34,7 @@ class UserTransition extends TransitionPage {
 	}
 
 	private static function CheckFriendTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'friend\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('friend')) {
 		?>
 			<p>new <code>friend</code> table exists.</p>
 			<?php
@@ -46,7 +44,7 @@ class UserTransition extends TransitionPage {
 	}
 
 	private static function CheckFriendRows(): void {
-		if (self::OldFriendsTableExists()) {
+		if (self::CheckTableExists('users_friends')) {
 			$missing = self::$db->query('select 1 from users_friends left join friend on friend.fan=users_friends.fan and friend.friend=users_friends.friend where friend.fan is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyFriends();
@@ -65,7 +63,7 @@ class UserTransition extends TransitionPage {
 	}
 
 	private static function CheckOldFriendsTable(): void {
-		if (self::OldFriendsTableExists())
+		if (self::CheckTableExists('users_friends'))
 			self::DeleteOldFriendsTable();
 		else {
 		?>
@@ -73,11 +71,6 @@ class UserTransition extends TransitionPage {
 		<?php
 			self::Done();
 		}
-	}
-
-	private static function OldFriendsTableExists(): bool {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'users_friends\' limit 1');
-		return $exists->fetch_column();
 	}
 
 	private static function CopyUsers(): void {

@@ -15,8 +15,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	}
 
 	private static function CheckUserTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'user\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('user')) {
 ?>
 			<p>new <code>user</code> table exists.</p>
 		<?php
@@ -59,8 +58,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	}
 
 	private static function CheckPostTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'post\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('post')) {
 		?>
 			<p>new <code>post</code> table exists.</p>
 		<?php
@@ -83,8 +81,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	protected abstract static function CheckPostRows(): void;
 
 	protected static function CheckTagTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'tag\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('tag')) {
 		?>
 			<p>new <code>tag</code> table exists.</p>
 		<?php
@@ -96,8 +93,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	protected abstract static function CheckTagRows(): void;
 
 	protected static function CheckPostTagTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'post_tag\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('post_tag')) {
 		?>
 			<p>new <code>post_tag</code> table exists.</p>
 		<?php
@@ -109,8 +105,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	protected abstract static function CheckPostTagRows(): void;
 
 	protected static function CheckTagUsageView(): void {
-		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'tagusage\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckViewExists('tagusage')) {
 		?>
 			<p>new <code>tagusage</code> view exists.</p>
 		<?php
@@ -120,8 +115,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	}
 
 	private static function CheckCommentTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'comment\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('comment')) {
 		?>
 			<p>new <code>comment</code> table exists.</p>
 		<?php
@@ -133,8 +127,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	protected abstract static function CheckCommentRows(): void;
 
 	protected static function CheckVoteTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'vote\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('vote')) {
 		?>
 			<p>new <code>vote</code> table exists.</p>
 		<?php
@@ -144,8 +137,7 @@ abstract class SubsiteTransitionPage extends TransitionPage {
 	}
 
 	protected static function CheckRatingView(): void {
-		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'rating\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckViewExists('rating')) {
 		?>
 			<p>new <code>rating</code> view exists.</p>
 		<?php

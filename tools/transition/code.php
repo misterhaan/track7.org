@@ -12,8 +12,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCalcPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_calc_progs\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('code_calc_progs')) {
 			$missing = self::$db->query('select 1 from code_calc_progs left join post on post.subsite=\'code\' and post.url=concat(\'/code/calc/#\', code_calc_progs.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyCalcToPost();
@@ -32,8 +31,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckGameworldPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_game_worlds\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('code_game_worlds')) {
 			$missing = self::$db->query('select 1 from code_game_worlds left join post on post.subsite=\'code\' and post.url=concat(\'/code/games/#\', code_game_worlds.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyGameworldsToPost();
@@ -52,8 +50,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckApplicationPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_vs_applications\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('code_vs_applications')) {
 			$missing = self::$db->query('select 1 from code_vs_applications left join post on post.subsite=\'code\' and post.url=concat(\'/code/vs/\', code_vs_applications.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyApplicationsToPost();
@@ -72,8 +69,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckScriptPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_web_scripts\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('code_web_scripts')) {
 			$missing = self::$db->query('select 1 from code_web_scripts left join post on post.subsite=\'code\' and post.url=concat(\'/code/web/\', code_web_scripts.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyScriptsToPost();
@@ -92,8 +88,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCalcTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'calcprog\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('calcprog')) {
 		?>
 			<p>new <code>calcprog</code> table exists.</p>
 		<?php
@@ -103,8 +98,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckGameworldTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'gameworld\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('gameworld')) {
 		?>
 			<p>new <code>gameworld</code> table exists.</p>
 		<?php
@@ -114,8 +108,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckApplicationTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'application\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('application')) {
 		?>
 			<p>new <code>application</code> table exists.</p>
 		<?php
@@ -125,8 +118,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckReleaseTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'release\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('release')) {
 		?>
 			<p>new <code>release</code> table exists.</p>
 		<?php
@@ -136,8 +128,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckLatestApplicationView(): void {
-		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'latestapplication\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckViewExists('latestapplication')) {
 		?>
 			<p>new <code>latestapplication</code> view exists.</p>
 		<?php
@@ -147,8 +138,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckScriptTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'script\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('script')) {
 		?>
 			<p>new <code>script</code> table exists.</p>
 		<?php
@@ -230,8 +220,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckApplicationCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_vs_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('code_vs_comments')) {
 			$missing = self::$db->query('select 1 from code_vs_comments as ac left join code_vs_applications as oa on oa.id=ac.application left join application as a on a.id=oa.url left join comment as c on c.post=a.post and c.instant=from_unixtime(ac.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyApplicationComments();
@@ -250,8 +239,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckScriptCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'code_web_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('code_web_comments')) {
 			$missing = self::$db->query('select 1 from code_web_comments as sc left join code_web_scripts as os on os.id=sc.script left join script as s on s.id=os.url left join comment as c on c.post=s.post and c.instant=from_unixtime(sc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyScriptComments();
@@ -270,8 +258,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckApplicationCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'code_vs_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('code_vs_comments'))
 			self::DeleteApplicationCommentTriggers();
 		else {
 		?>
@@ -282,8 +269,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckApplicationTrigger(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'code_vs_applications\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('code_vs_applications'))
 			self::DeleteApplicationTrigger();
 		else {
 		?>
@@ -294,8 +280,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckReleaseTrigger(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'code_vs_releases\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('code_vs_releases'))
 			self::DeleteReleaseTrigger();
 		else {
 		?>
@@ -318,8 +303,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckScriptCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'code_web_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('code_web_comments'))
 			self::DeleteScriptCommentTriggers();
 		else {
 		?>
@@ -330,8 +314,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckScriptTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'code_web_scripts\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('code_web_scripts'))
 			self::DeleteScriptTriggers();
 		else {
 		?>
@@ -390,8 +373,7 @@ class CodeTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl in (\'code_vs_releases\', \'code_web_scripts\', \'code_web_comments\') limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();

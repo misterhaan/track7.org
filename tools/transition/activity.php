@@ -38,8 +38,7 @@ class ActivityTransition extends TransitionPage {
 	}
 
 	private static function CheckActivityView(): void {
-		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'activity\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckViewExists('activity')) {
 		?>
 			<p>new <code>activity</code> view exists.</p>
 		<?php

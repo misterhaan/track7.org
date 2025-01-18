@@ -17,8 +17,7 @@ abstract class TransitionPage extends Page {
 	}
 
 	protected static function CheckSubsiteTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'subsite\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('subsite')) {
 		?>
 			<p>new <code>subsite</code> table exists.</p>
 		<?php
@@ -29,6 +28,27 @@ abstract class TransitionPage extends Page {
 
 	protected static function SubsiteTableExists(): void {
 		throw new DetailedException('SubsiteTableExists() not implemented');
+	}
+
+	protected static function CheckTableExists(string $name): bool {
+		$exists = self::$db->prepare('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=? limit 1');
+		$exists->bind_param('s', $name);
+		$exists->execute();
+		return $exists->fetch() ? true : false;
+	}
+
+	protected static function CheckViewExists(string $name): bool {
+		$exists = self::$db->prepare('select 1 from information_schema.views where table_schema=\'track7\' and table_name=? limit 1');
+		$exists->bind_param('s', $name);
+		$exists->execute();
+		return $exists->fetch() ? true : false;
+	}
+
+	protected static function CheckTriggersExist(string $tableName): bool {
+		$exists = self::$db->prepare('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=? limit 1');
+		$exists->bind_param('s', $tableName);
+		$exists->execute();
+		return $exists->fetch() ? true : false;
 	}
 
 	protected static function CreateTable(string $name): void {

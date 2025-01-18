@@ -8,8 +8,7 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'update_messages\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('update_messages')) {
 			$missing = self::$db->query('select 1 from update_messages left join post on post.subsite=\'updates\' and post.instant=from_unixtime(update_messages.posted) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyUpdatesToPost();
@@ -36,8 +35,7 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'update_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('update_comments')) {
 			$missing = self::$db->query('select 1 from update_comments as uc left join update_messages as ou on ou.id=uc.message left join post as p on p.subsite=\'updates\' and p.instant=from_unixtime(ou.posted) left join comment as c on c.post=p.id and c.instant=from_unixtime(uc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyUpdateComments();
@@ -56,8 +54,7 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'update_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('update_comments'))
 			self::DeleteCommentTriggers();
 		else {
 		?>
@@ -68,8 +65,7 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckUpdateTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'update_messages\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('update_messages'))
 			self::DeleteUpdateTriggers();
 		else {
 		?>
@@ -80,8 +76,7 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'update_messages\' or srctbl=\'update_comments\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -100,9 +95,8 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributionTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
-			$exists =			self::$db->query('select 1 from contributions limit 1');
+		if (self::CheckTableExists('contributions')) {
+			$exists = self::$db->query('select 1 from contributions limit 1');
 			if ($exists->fetch_column()) {
 			?>
 				<p>old contributions table still has data — not dropping.</p>
@@ -119,8 +113,7 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldComments(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'update_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('update_comments'))
 			self::DeleteOldComments();
 		else {
 		?>
@@ -131,8 +124,7 @@ class UpdatesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldUpdates(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'update_messages\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('update_messages'))
 			self::DeleteOldUpdates();
 		else {
 		?>

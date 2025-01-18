@@ -8,8 +8,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_discussions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('forum_discussions')) {
 			$missing = self::$db->query('select 1 from forum_discussions as d left join post as p on p.subsite=\'forum\' and p.title=d.title where p.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyForumToPost();
@@ -28,8 +27,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_tags\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('forum_tags')) {
 			$missing = self::$db->query('select 1 from forum_tags as ot left join tag as t on t.name=ot.name and t.subsite=\'forum\' where t.name is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyForumTags();
@@ -48,8 +46,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_discussion_tags\'  limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('forum_discussion_tags')) {
 			$missing = self::$db->query('select 1 from forum_discussion_tags as fdt left join forum_discussions as fd on fd.id=fdt.discussion left join post as p on p.subsite=\'forum\' and p.title=fd.title left join forum_tags as ft on ft.id=fdt.tag left join post_tag as pt on pt.post=p.id and pt.tag=ft.name where pt.post is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyForumPostTags();
@@ -68,9 +65,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_replies\' limit 1');
-		if ($exists->fetch_column()) {
-
+		if (self::CheckTableExists('forum_replies')) {
 			$missing = self::$db->query('select 1 from forum_replies as fr left join forum_discussions as fd on fd.id=fr.discussion left join post as p on p.subsite=\'forum\' and p.title=fd.title left join comment as c on c.post=p.id and c.instant=from_unixtime(fr.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyForumComments();
@@ -89,8 +84,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckDiscussionView(): void {
-		$exists = self::$db->query('select 1 from information_schema.views where table_schema=\'track7\' and table_name=\'discussion\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckViewExists('discussion')) {
 		?>
 			<p>new <code>discussion</code> view exists.</p>
 		<?php
@@ -100,8 +94,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckEditTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'edit\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('edit')) {
 		?>
 			<p>new <code>edit</code> table exists.</p>
 			<?php
@@ -111,8 +104,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckEditRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_edits\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('forum_edits')) {
 			$missing = self::$db->query('select 1 from forum_edits as fe left join edit as e on e.instant=from_unixtime(fe.posted) and e.user=fe.editor where e.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyEdits();
@@ -131,8 +123,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'forum_replies\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('forum_replies'))
 			self::DeleteReplyTriggers();
 		else {
 		?>
@@ -143,8 +134,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckDiscussionTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'forum_discussions\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('forum_discussions'))
 			self::DeleteDiscussionTriggers();
 		else {
 		?>
@@ -155,8 +145,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'forum_replies\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -175,8 +164,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldEdits(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_edits\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('forum_edits'))
 			self::DeleteOldEdits();
 		else {
 		?>
@@ -187,8 +175,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldReplies(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_replies\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('forum_replies'))
 			self::DeleteOldForumReplies();
 		else {
 		?>
@@ -199,8 +186,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTagLinks(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_discussion_tags\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('forum_discussion_tags'))
 			self::DeleteOldTagLinks();
 		else {
 		?>
@@ -211,8 +197,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTags(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_tags\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('forum_tags'))
 			self::DeleteOldTags();
 		else {
 		?>
@@ -223,8 +208,7 @@ class ForumTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldDiscussions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'forum_discussions\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('forum_discussions'))
 			self::DeleteOldDiscussions();
 		else {
 		?>

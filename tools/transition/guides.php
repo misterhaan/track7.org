@@ -8,8 +8,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guides\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('guides')) {
 			$missing = self::$db->query('select 1 from guides left join post on post.subsite=\'guides\' and post.url=concat(\'/guides/\', guides.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyGuidesToPost();
@@ -28,8 +27,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckGuideTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('guide')) {
 		?>
 			<p>new <code>guide</code> table exists.</p>
 		<?php
@@ -51,8 +49,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckChapterTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'chapter\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('chapter')) {
 		?>
 			<p>new <code>chapter</code> table exists.</p>
 		<?php
@@ -74,8 +71,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_tags\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('guide_tags')) {
 			$missing = self::$db->query('select 1 from guide_tags as ot left join tag as t on t.name=ot.name and t.subsite=\'guides\' where t.name is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyGuideTags();
@@ -94,8 +90,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostTagRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_taglinks\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('guide_taglinks')) {
 			$missing = self::$db->query('select 1 from guide_taglinks as gtl left join guides as og on og.id=gtl.guide left join post as p on p.url=concat(\'/guides/\', og.url) left join guide_tags as ogt on ogt.id=gtl.tag left join post_tag as npt on npt.post=p.id and npt.tag=ogt.name where npt.post is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyGuidePostTags();
@@ -114,8 +109,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('guide_comments')) {
 			$missing = self::$db->query('select 1 from guide_comments as gc left join guides as og on og.id=gc.guide left join guide as g on g.id=og.url left join comment as c on c.post=g.post and c.instant=from_unixtime(gc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyGuideComments();
@@ -134,8 +128,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckVoteRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_votes\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('guide_votes')) {
 			$missing = self::$db->query('select 1 from guide_votes as gv left join guides as og on og.id=gv.guide left join post as p on p.url=concat(\'/guides/\', og.url) left join vote as v on v.post=p.id and (gv.voter>0 and v.user=gv.voter or gv.ip>0 and v.ip=gv.ip) where v.vote is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyGuideVotes();
@@ -154,8 +147,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'guide_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('guide_comments'))
 			self::DeleteCommentTriggers();
 		else {
 		?>
@@ -166,8 +158,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckGuideTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'guides\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('guides'))
 			self::DeleteGuideTriggers();
 		else {
 		?>
@@ -178,8 +169,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'guides\' or srctbl=\'guide_comments\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -198,8 +188,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldVotes(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_votes\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('guide_votes'))
 			self::DeleteOldVotes();
 		else {
 		?>
@@ -210,8 +199,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldComments(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('guide_comments'))
 			self::DeleteOldComments();
 		else {
 		?>
@@ -222,8 +210,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTagLinks(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_taglinks\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('guide_taglinks'))
 			self::DeleteOldTagLinks();
 		else {
 		?>
@@ -234,8 +221,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldTags(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_tags\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('guide_tags'))
 			self::DeleteOldTags();
 		else {
 		?>
@@ -246,8 +232,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldPages(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guide_pages\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('guide_pages'))
 			self::DeleteOldPages();
 		else {
 		?>
@@ -258,8 +243,7 @@ class GuidesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldGuides(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'guides\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('guides'))
 			self::DeleteOldGuides();
 		else {
 		?>

@@ -8,8 +8,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('stories')) {
 			$missing = self::$db->query('select 1 from stories left join post on post.subsite=\'pen\' and post.url=concat(\'/pen/\', stories.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyStoriesToPost();
@@ -28,8 +27,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckSeriesTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'series\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('series')) {
 		?>
 			<p>new <code>series</code> table exists.</p>
 			<?php
@@ -39,8 +37,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckSeriesRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories_series\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('stories_series')) {
 			$missing = self::$db->query('select 1 from stories_series left join series on series.id=stories_series.url where series.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopySeries();
@@ -59,8 +56,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckStoryTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'story\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('story')) {
 		?>
 			<p>new <code>story</code> table exists.</p>
 		<?php
@@ -90,8 +86,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('stories_comments')) {
 			$missing = self::$db->query('select 1 from stories_comments as sc left join stories as os on os.id=sc.story left join story as s on s.id=os.url left join comment as c on c.post=s.post and c.instant=from_unixtime(sc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyStoryComments();
@@ -110,8 +105,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'stories_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('stories_comments'))
 			self::DeleteCommentTriggers();
 		else {
 		?>
@@ -122,8 +116,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckStoryTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'stories\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('stories'))
 			self::DeleteStoryTriggers();
 		else {
 		?>
@@ -134,8 +127,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'stories\' or srctbl=\'stories_comments\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -154,8 +146,7 @@ class StoriesTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldComments(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'stories_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('stories_comments'))
 			self::DeleteOldComments();
 		else {
 		?>

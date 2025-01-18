@@ -8,8 +8,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckPostRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_models\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('lego_models')) {
 			$missing = self::$db->query('select 1 from lego_models left join post on post.subsite=\'lego\' and post.url=concat(\'/lego/\', lego_models.url) where post.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyLegoToPost();
@@ -28,8 +27,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckLegoTable(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('lego')) {
 		?>
 			<p>new <code>lego</code> table exists.</p>
 		<?php
@@ -59,8 +57,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckCommentRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_comments\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('lego_comments')) {
 			$missing = self::$db->query('select 1 from lego_comments as lc left join lego_models as ol on ol.id=lc.lego left join lego as l on l.id=ol.url left join comment as c on c.post=l.post and c.instant=from_unixtime(lc.posted) where c.id is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyLegoComments();
@@ -79,8 +76,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	protected static function CheckVoteRows(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_votes\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('lego_votes')) {
 			$missing = self::$db->query('select 1 from lego_votes as lv left join lego_models as ol on ol.id=lv.lego left join post as p on p.url=concat(\'/lego/\', ol.url) left join vote as v on v.post=p.id and (lv.voter>0 and v.user=lv.voter or lv.ip>0 and v.ip=lv.ip) where v.vote is null limit 1');
 			if ($missing->fetch_column())
 				self::CopyLegoVotes();
@@ -99,8 +95,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckCommentTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'lego_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('lego_comments'))
 			self::DeleteCommentTriggers();
 		else {
 		?>
@@ -111,8 +106,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckLegoTriggers(): void {
-		$exists = self::$db->query('select 1 from information_schema.triggers where trigger_schema=\'track7\' and event_object_table=\'lego_models\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTriggersExist('lego_models'))
 			self::DeleteLegoTriggers();
 		else {
 		?>
@@ -123,8 +117,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckContributions(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'contributions\' limit 1');
-		if ($exists->fetch_column()) {
+		if (self::CheckTableExists('contributions')) {
 			$exists = self::$db->query('select 1 from contributions where srctbl=\'lego_models\' or srctbl=\'lego_comments\' limit 1');
 			if ($exists->fetch_column())
 				self::DeleteContributions();
@@ -143,8 +136,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldVotes(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_votes\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('lego_votes'))
 			self::DeleteOldVotes();
 		else {
 		?>
@@ -155,8 +147,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldComments(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_comments\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('lego_comments'))
 			self::DeleteOldComments();
 		else {
 		?>
@@ -167,8 +158,7 @@ class LegoTransition extends SubsiteTransitionPage {
 	}
 
 	private static function CheckOldLegos(): void {
-		$exists = self::$db->query('select 1 from information_schema.tables where table_schema=\'track7\' and table_name=\'lego_models\' limit 1');
-		if ($exists->fetch_column())
+		if (self::CheckTableExists('lego_models'))
 			self::DeleteOldLegos();
 		else {
 		?>
