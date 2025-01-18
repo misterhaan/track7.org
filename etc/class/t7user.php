@@ -453,19 +453,6 @@ class t7user {
 	}
 
 	/**
-	 * Look up the user's ID from the old database (false if user wasn't in the old database)
-	 */
-	public function OldID() {
-		if (!$this->olduid) {
-			global $db;
-			if ($this->olduid = $db->query('select olduid from transition_users where id=\'' . +$this->ID . '\' limit 1'))
-				if ($this->olduid = $this->olduid->fetch_object())
-					$this->olduid = $this->olduid->olduid;
-		}
-		return $this->olduid;
-	}
-
-	/**
 	 * clear any tokens for the current autologin series.  should only be used
 	 * when user chooses to log out.
 	 * @param string $series random number assigned when logging in with remember me checked

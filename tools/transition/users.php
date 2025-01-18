@@ -69,6 +69,17 @@ class UserTransition extends TransitionPage {
 		?>
 			<p>old friends table no longer exists.</p>
 		<?php
+			self::CheckOldTransitionTable();
+		}
+	}
+
+	private static function CheckOldTransitionTable(): void {
+		if (self::CheckTableExists('transition_users'))
+			self::DeleteOldTransitionTable();
+		else {
+		?>
+			<p>old transition users table no longer exists.</p>
+		<?php
 			self::Done();
 		}
 	}
@@ -91,6 +102,13 @@ class UserTransition extends TransitionPage {
 		self::$db->real_query('drop table users_friends');
 	?>
 		<p>deleted old friends table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldTransitionTable(): void {
+		self::$db->real_query('drop table transition_users');
+	?>
+		<p>deleted old transition users table. refresh the page to take the next step.</p>
 <?php
 	}
 }
