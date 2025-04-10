@@ -26,7 +26,6 @@ spl_autoload_register(function ($class) {
 		case 't7auth':
 		case 't7authGoogle':
 		case 't7authTwitter':
-		case 't7authFacebook':
 		case 't7authSteam':
 		case 't7authTrack7':
 		case 't7authGithub':

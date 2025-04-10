@@ -72,20 +72,6 @@ class t7keysTwitter {
 	const OAUTH_TOKEN_SECRET = '';
 }
 
-class t7keysFacebook {
-	/**
-	 * app id from facebook app basic settings
-	 * @var string
-	 */
-	const ID = '';
-
-	/**
-	 * client secret from facebook app basic settings
-	 * @var string
-	 */
-	const SECRET = '';
-}
-
 class t7keysGithub {
 	/**
 	 * client id from https://github.com/settings/developers after selecting your app

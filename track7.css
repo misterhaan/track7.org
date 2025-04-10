@@ -3110,12 +3110,6 @@ main a.droptrigger {
 	background-color: #1da1f2;
 }
 
-.linkedaccount.facebook:before,
-#authchoices .facebook:before {
-	content: "\f09a";
-	background-color: #466ca6;
-}
-
 .linkedaccount.github:before,
 #authchoices .github:before {
 	content: "\f09b";

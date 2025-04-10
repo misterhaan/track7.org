@@ -5,7 +5,7 @@ class t7auth {
 	 * @return string random 32-character hexadecimal
 	 */
 	public static function GetCSRF() {
-		if(!isset($_SESSION['CSRF']))
+		if (!isset($_SESSION['CSRF']))
 			$_SESSION['CSRF'] = bin2hex(openssl_random_pseudo_bytes(16));
 		return $_SESSION['CSRF'];
 	}
@@ -17,7 +17,7 @@ class t7auth {
 	 * @return boolean whether the returned value matches the stored value
 	 */
 	public static function CheckCSRF($csrf) {
-		if(!isset($_SESSION['CSRF']))
+		if (!isset($_SESSION['CSRF']))
 			return false;
 		$stored = $_SESSION['CSRF'];
 		unset($_SESSION['CSRF']);
@@ -32,7 +32,6 @@ class t7auth {
 		return [
 			t7authGoogle::SOURCE,
 			t7authTwitter::SOURCE,
-			t7authFacebook::SOURCE,
 			t7authGithub::SOURCE,
 			t7authDeviantart::SOURCE,
 			t7authSteam::SOURCE
@@ -59,11 +58,10 @@ class t7auth {
 		$links = [];
 		$links['google'] = t7authGoogle::GetAuthURL($continue, $csrf);
 		$links['twitter'] = t7authTwitter::GetAuthURL($continue);
-		$links['facebook'] = t7authFacebook::GetAuthUrl($continue, $csrf);
 		$links['github'] = t7authGithub::GetAuthUrl($continue, $csrf);
 		$links['deviantart'] = t7authDeviantart::GetAuthUrl($continue, $csrf);
 		$links['steam'] = t7authSteam::GetAuthUrl($continue, $csrf);
-		if(!$adding)
+		if (!$adding)
 			$links['track7'] = t7authTrack7::GetAuthURL($continue, $csrf);
 		return $links;
 	}
@@ -77,7 +75,6 @@ class t7auth {
 		return [
 			t7authGoogle::SOURCE => t7authGoogle::FIELD,
 			t7authTwitter::SOURCE => t7authTwitter::FIELD,
-			t7authFacebook::SOURCE => t7authFacebook::FIELD,
 			t7authGithub::SOURCE => t7authGithub::FIELD,
 			t7authDeviantart::SOURCE => t7authDeviantart::FIELD,
 			t7authSteam::SOURCE => t7authSteam::FIELD
@@ -89,13 +86,17 @@ class t7auth {
 	 * @param string $source SOURCE constant value matching a t7auth class.
 	 */
 	public static function MakeExternalAuth($source) {
-		switch($source) {
-			case t7authGoogle::SOURCE: return new t7authGoogle();
-			case t7authTwitter::SOURCE: return new t7authTwitter();
-			case t7authFacebook::SOURCE: return new t7authFacebook();
-			case t7authGithub::SOURCE: return new t7authGithub();
-			case t7authDeviantart::SOURCE: return new t7authDeviantart();
-			case t7authSteam::SOURCE: return new t7authSteam();
+		switch ($source) {
+			case t7authGoogle::SOURCE:
+				return new t7authGoogle();
+			case t7authTwitter::SOURCE:
+				return new t7authTwitter();
+			case t7authGithub::SOURCE:
+				return new t7authGithub();
+			case t7authDeviantart::SOURCE:
+				return new t7authDeviantart();
+			case t7authSteam::SOURCE:
+				return new t7authSteam();
 		}
 		return false;
 	}
@@ -106,47 +107,47 @@ class t7auth {
 	 */
 	public static function LoginRegister(t7authRegisterable $auth) {
 		global $db, $html, $user;
-		if($auth->HasData)
-			if($auth->IsValid)
-				if($auth->ID)
-					if($finduser = $db->query('select user from login_' . $auth::SOURCE . ' where ' . $auth::FIELD . '=\'' . $db->escape_string($auth->ID) . '\' limit 1'))
-						if($finduser = $finduser->fetch_object())
-							if($user->IsLoggedIn()) // adding a known login
-								if($user->ID == $finduser->user) { // adding a login that was already added
+		if ($auth->HasData)
+			if ($auth->IsValid)
+				if ($auth->ID)
+					if ($finduser = $db->query('select user from login_' . $auth::SOURCE . ' where ' . $auth::FIELD . '=\'' . $db->escape_string($auth->ID) . '\' limit 1'))
+						if ($finduser = $finduser->fetch_object())
+							if ($user->IsLoggedIn()) // adding a known login
+								if ($user->ID == $finduser->user) { // adding a login that was already added
 									self::OpenPage($auth::SOURCE);
 ?>
 			<p>
-				this <?=$auth::SOURCE; ?> account is already linked to your
-				track7 account.  maybe you meant to <a href="/user/settings.php#linkedaccounts">link
-				a different <?=$auth::SOURCE; ?> account</a>?
+				this <?= $auth::SOURCE; ?> account is already linked to your
+				track7 account. maybe you meant to <a href="/user/settings.php#linkedaccounts">link
+					a different <?= $auth::SOURCE; ?> account</a>?
 			</p>
-<?php
+		<?php
 								} else { // adding a login that's already linked to a different account
 									self::OpenPage($auth::SOURCE);
-?>
+		?>
 			<p>
-				this <?=$auth::SOURCE; ?> account is linked to track7, but not
-				for who you’re currently signed in as.  if you want to link this <?=$auth::SOURCE; ?>
-				account to <?=htmlspecialchars($user->DisplayName); ?> then
+				this <?= $auth::SOURCE; ?> account is linked to track7, but not
+				for who you’re currently signed in as. if you want to link this <?= $auth::SOURCE; ?>
+				account to <?= htmlspecialchars($user->DisplayName); ?> then
 				things are a bit complicated — you probably want to ask <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>
-				to merge things on the track7 side.  if you’re trying to sign in with
-				this <?=$auth::SOURCE; ?> account not as <?=htmlspecialchars($user->DisplayName); ?>
+				to merge things on the track7 side. if you’re trying to sign in with
+				this <?= $auth::SOURCE; ?> account not as <?= htmlspecialchars($user->DisplayName); ?>
 				then you’ll need to sign out first (from the menu in the upper right).
 			</p>
-<?php
+		<?php
 								}
 							else { // logging in
 								$user->Login($auth::SOURCE, $auth);
 								die;
 							}
 						else // account not linked to track7
-							if($auth->GetUserInfo())
-								if($user->IsLoggedIn()) { // link new account to user
+							if ($auth->GetUserInfo())
+								if ($user->IsLoggedIn()) { // link new account to user
 									$db->autocommit(false);  // don't create external profile or login unless both get created
-									if($db->real_query('insert into external_profiles (name, url, avatar) values (\'' . $db->escape_string($auth->DisplayName) . '\', \'' . $db->escape_string($auth->ProfileFull) . '\', \'' . $db->escape_string($auth->Avatar) . '\')')) {
+									if ($db->real_query('insert into external_profiles (name, url, avatar) values (\'' . $db->escape_string($auth->DisplayName) . '\', \'' . $db->escape_string($auth->ProfileFull) . '\', \'' . $db->escape_string($auth->Avatar) . '\')')) {
 										$pid = $db->insert_id;
-										if($db->real_query('insert into login_' . $auth::SOURCE . ' (user, ' . $auth::FIELD . ', profile) values (\'' . +$user->ID . '\', \'' . $db->escape_string($auth->ID) . '\', \'' . +$pid . '\')')) {
-											if($auth->ProfileShort)
+										if ($db->real_query('insert into login_' . $auth::SOURCE . ' (user, ' . $auth::FIELD . ', profile) values (\'' . +$user->ID . '\', \'' . $db->escape_string($auth->ID) . '\', \'' . +$pid . '\')')) {
+											if ($auth->ProfileShort)
 												$db->real_query('update users_profiles set ' . $auth::SOURCE . '=\'' . $db->escape_string($auth->ProfileShort) . '\' where id=\'' . +$user->ID . '\' and ' . $auth::SOURCE . '=\'\'');
 											$db->commit();
 											header('Location: ' . t7format::FullUrl($auth->Continue));
@@ -156,88 +157,88 @@ class t7auth {
 									$db->autocommit(true);
 									// error linking account
 									self::OpenPage($auth::SOURCE);
-?>
+		?>
 			<p>
-				oops, we couldn’t link your <?=$auth::SOURCE; ?> account for
-				signing into track7.  generally if you see this you should tell
+				oops, we couldn’t link your <?= $auth::SOURCE; ?> account for
+				signing into track7. generally if you see this you should tell
 				<a href="/user/misterhaan" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 			</p>
-<?php
+		<?php
 								} else { // show registration form
 									// TODO: check if e-mail is already linked (might be handled by javascript later instead)
 									$_SESSION['registering'] = $auth::SOURCE;
 									$_SESSION[$auth::SOURCE] = [$auth::FIELD => $auth->ID, 'name' => $auth->DisplayName, 'avatar' => $auth->Avatar, 'profile' => $auth->ProfileFull, 'remember' => $auth->Remember, 'continue' => $auth->Continue];
 									self::OpenPage($auth::SOURCE);
-?>
+		?>
 			<p>
-				welcome to track7!  according to our records, you haven’t signed in with
-				this <?=$auth::SOURCE; ?> account before.  if you <em>have</em>
+				welcome to track7! according to our records, you haven’t signed in with
+				this <?= $auth::SOURCE; ?> account before. if you <em>have</em>
 				signed in to track7 before, maybe you used a different account — you can
-				try signing in again with that account and then add this <?=$auth::SOURCE; ?>
-				account as another sign-in option.  if you are new, we’ve filled in some
-				information based on your <?=$auth::SOURCE; ?> profile.  change
+				try signing in again with that account and then add this <?= $auth::SOURCE; ?>
+				account as another sign-in option. if you are new, we’ve filled in some
+				information based on your <?= $auth::SOURCE; ?> profile. change
 				it if you like, then enjoy track7 as a signed-in actual person!
 			</p>
 
 			<h2>profile information</h2>
 			<form id=newuser>
-				<input type=hidden id=csrf value="<?=t7auth::GetCSRF(); ?>">
+				<input type=hidden id=csrf value="<?= t7auth::GetCSRF(); ?>">
 				<label>
 					<span class=label>username:</span>
-					<span class=field><input id=username maxlength=32 required value="<?=htmlspecialchars($auth->Username); ?>"></span>
+					<span class=field><input id=username maxlength=32 required value="<?= htmlspecialchars($auth->Username); ?>"></span>
 					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>display name:</span>
-					<span class=field><input id=displayname maxlength=32 value="<?=htmlspecialchars($auth->DisplayName); ?>"></span>
+					<span class=field><input id=displayname maxlength=32 value="<?= htmlspecialchars($auth->DisplayName); ?>"></span>
 					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>e-mail:</span>
-					<span class=field><input id=email maxlength=64 value="<?=htmlspecialchars($auth->Email); ?>"></span>
+					<span class=field><input id=email maxlength=64 value="<?= htmlspecialchars($auth->Email); ?>"></span>
 					<span class=validation></span>
 				</label>
 				<label>
 					<span class=label>website:</span>
-					<span class=field><input id=website maxlength=64 value="<?=htmlspecialchars($auth->Website); ?>"></span>
+					<span class=field><input id=website maxlength=64 value="<?= htmlspecialchars($auth->Website); ?>"></span>
 					<span class=validation></span>
 				</label>
-<?php
-									if($auth->ProfileShort) {
-?>
-				<label>
-					<span class=checkbox><input type=checkbox checked id=linkprofile> link <a href="<?=htmlspecialchars($auth->ProfileFull); ?>">this profile</a> as your <?=$auth::SOURCE; ?> profile</span>
-				</label>
-<?php
+				<?php
+									if ($auth->ProfileShort) {
+				?>
+					<label>
+						<span class=checkbox><input type=checkbox checked id=linkprofile> link <a href="<?= htmlspecialchars($auth->ProfileFull); ?>">this profile</a> as your <?= $auth::SOURCE; ?> profile</span>
+					</label>
+				<?php
 									}
-?>
+				?>
 				<label>
-					<span class=checkbox><input type=checkbox checked id=useavatar> use this profile picture: <img class=avatar src="<?=htmlspecialchars($auth->Avatar); ?>"></span>
+					<span class=checkbox><input type=checkbox checked id=useavatar> use this profile picture: <img class=avatar src="<?= htmlspecialchars($auth->Avatar); ?>"></span>
 				</label>
 				<button>confirm</button>
 			</form>
-<?php
+		<?php
 								}
 							else { // couldn't get user info from account
 								self::OpenPage($auth::SOURCE);
-?>
+		?>
 			<p>
-				oops, we couldn’t get any information about that <?=$auth::SOURCE; ?>
-				account.  this generally shouldn’t happen unless <?=$auth::SOURCE; ?>
+				oops, we couldn’t get any information about that <?= $auth::SOURCE; ?>
+				account. this generally shouldn’t happen unless <?= $auth::SOURCE; ?>
 				goes down between logging in and looking up account information.
 				generally if you see this you should tell <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 			</p>
-<?php
+		<?php
 							}
 					else { // error checking if login is known
 						self::OpenPage($auth::SOURCE);
-?>
+		?>
 			<p>
-				hey, so <?=$auth::SOURCE; ?> told us who you are, but when we
+				hey, so <?= $auth::SOURCE; ?> told us who you are, but when we
 				tried to check if you’d been here before something went wrong.
 				generally if you see this you should tell <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 			</p>
-<?php
+		<?php
 					}
 				else { // didn't get a subscriber ID, so they probably changed their mind.  go back to the previous page
 					header('Location: ' . t7format::FullUrl($auth->Continue));
@@ -245,35 +246,35 @@ class t7auth {
 				}
 			else { // continuity data didn't match up
 				self::OpenPage($auth::SOURCE);
-?>
+		?>
 			<p>
-				oops, there's something wrong with your authentication data.  sometimes
+				oops, there's something wrong with your authentication data. sometimes
 				that happens if you leave track7 open for a while without clicking any
-				links and then try to sign in, or if you wait too long on the <?=$auth::SOURCE; ?>
-				sign in page.  if that sounds like you, just try again.
+				links and then try to sign in, or if you wait too long on the <?= $auth::SOURCE; ?>
+				sign in page. if that sounds like you, just try again.
 			</p>
-<?php
+		<?php
 			}
 		else { // state data missing
 			self::OpenPage($auth::SOURCE);
-?>
+		?>
 			<p>
 				no authentication data found!&nbsp; maybe you need to
-				<a href="<?=$auth::GetAuthURL('/', self::GetCSRF()); ?>">sign in with <?=$auth::SOURCE; ?></a>?
+				<a href="<?= $auth::GetAuthURL('/', self::GetCSRF()); ?>">sign in with <?= $auth::SOURCE; ?></a>?
 			</p>
-<?php
+		<?php
 		}
 		$html->Close();
 	}
 
 	private static function OpenPage($source) {
 		global $html;
-		if(isset($html))
+		if (isset($html))
 			return;
 		$html = new t7html(['vue' => true]);
 		$html->Open($source . ' sign-in');
-?>
-			<h1><?=$source; ?> sign-in results</h1>
+		?>
+		<h1><?= $source; ?> sign-in results</h1>
 <?php
 	}
 }
@@ -387,11 +388,11 @@ class t7authGoogle extends t7authRegisterable {
 	 * expected to be set by google after a login attempt.
 	 */
 	public function __construct() {
-		if($this->HasData = isset($_GET['state'])) {
+		if ($this->HasData = isset($_GET['state'])) {
 			parse_str($_GET['state'], $state);
-			if(isset($state['continue']))
+			if (isset($state['continue']))
 				$this->Continue = $state['continue'];
-			if($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
+			if ($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
 				$this->Remember = isset($state['remember']);
 				$this->GetTokens($_GET['code']);
 			}
@@ -423,7 +424,7 @@ class t7authGoogle extends t7authRegisterable {
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);
-		if(isset($response->access_token) && isset($response->id_token)) {
+		if (isset($response->access_token) && isset($response->id_token)) {
 			$this->access = $response->access_token;
 			$id = explode('.', $response->id_token);
 			$id = json_decode(base64_decode($id[1]));
@@ -437,18 +438,18 @@ class t7authGoogle extends t7authRegisterable {
 	 * @return boolean true if able to retrieve.
 	 */
 	public function GetUserInfo() {
-		if($this->id_token) {
-			if(isset($this->id_token->profile)) {
+		if ($this->id_token) {
+			if (isset($this->id_token->profile)) {
 				$this->ProfileFull = $this->id_token->profile;
 				$this->ProfileShort = t7user::CollapseProfileLink($this->id_token->profile, self::SOURCE);
 			}
-			if(isset($this->id_token->picture))
+			if (isset($this->id_token->picture))
 				$this->Avatar = $this->id_token->picture . '?sz=64';
-			if(isset($this->id_token->email)) {
+			if (isset($this->id_token->email)) {
 				$this->Username = explode('@', $this->id_token->email)[0];
 				$this->Email = $this->id_token->email;
 			}
-			if(isset($this->id_token->name))
+			if (isset($this->id_token->name))
 				$this->DisplayName = $this->id_token->name;
 			// unused:  gender
 			return true;
@@ -489,14 +490,14 @@ class t7authTwitter extends t7authRegisterable {
 	 * account link.
 	 */
 	public function __construct() {
-		if(isset($_GET['startauth'])) {
-			if(isset($_GET['continue']))
+		if (isset($_GET['startauth'])) {
+			if (isset($_GET['continue']))
 				$_SESSION['twitter_continue'] = $_GET['continue'];
 			$_SESSION['twitter_remember'] = isset($_GET['remember']);
 			$this->Authenticate();
 		}
-		if($this->HasData = (isset($_GET['oauth_token']) && isset($_GET['oauth_verifier'])))
-			if($this->IsValid = (isset($_SESSION['twitter_pre_token']) && $_SESSION['twitter_pre_token'] == $_GET['oauth_token'])) {
+		if ($this->HasData = (isset($_GET['oauth_token']) && isset($_GET['oauth_verifier'])))
+			if ($this->IsValid = (isset($_SESSION['twitter_pre_token']) && $_SESSION['twitter_pre_token'] == $_GET['oauth_token'])) {
 				$this->Continue = $_SESSION['twitter_continue'];
 				unset($_SESSION['twitter_continue']);
 				$this->Remember = $_SESSION['twitter_remember'];
@@ -511,11 +512,13 @@ class t7authTwitter extends t7authRegisterable {
 	private function Authenticate() {
 		// collect and sign oauth data
 		// twitter documentation says i need to include oauth_callback set to %-encoded fully-qualified callback url, but i get an error if i include it
-		$oauth = ['oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,
-				'oauth_nonce' => md5(microtime() . mt_rand()),
-				'oauth_signature_method' => 'HMAC-SHA1',
-				'oauth_timestamp' => time(),
-				'oauth_version' => '1.0'];
+		$oauth = [
+			'oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,
+			'oauth_nonce' => md5(microtime() . mt_rand()),
+			'oauth_signature_method' => 'HMAC-SHA1',
+			'oauth_timestamp' => time(),
+			'oauth_version' => '1.0'
+		];
 		ksort($oauth);
 		$sig = 'POST&' . rawurlencode(self::REQUEST) . '&' . rawurlencode(http_build_query($oauth, null, '&', PHP_QUERY_RFC3986));
 		$oauth['oauth_signature'] = rawurlencode(base64_encode(hash_hmac('sha1', $sig, t7keysTwitter::CONSUMER_SECRET . '&', true)));
@@ -523,7 +526,7 @@ class t7authTwitter extends t7authRegisterable {
 
 		// quote all oauth variables for the authorization header
 		$header = array();
-		foreach($oauth as $var => $val)
+		foreach ($oauth as $var => $val)
 			$header[] = $var . '="' . $val . '"';
 
 		// send the request
@@ -541,7 +544,7 @@ class t7authTwitter extends t7authRegisterable {
 		curl_close($c);
 
 		parse_str($response, $tokens);  // should set oauth_token, oauth_token_secret, and oauth_callback_confirmed
-		if(isset($tokens['oauth_callback_confirmed']) && $tokens['oauth_callback_confirmed'] == 'true') {
+		if (isset($tokens['oauth_callback_confirmed']) && $tokens['oauth_callback_confirmed'] == 'true') {
 			$_SESSION['twitter_pre_token'] = $tokens['oauth_token'];
 			$_SESSION['twitter_pre_token_secret'] = $tokens['oauth_token_secret'];
 			header('Location: ' . self::AUTHENTICATE . '?oauth_token=' . $tokens['oauth_token']);
@@ -556,12 +559,14 @@ class t7authTwitter extends t7authRegisterable {
 	 */
 	private function GetTokens($verifier) {
 		// collect and sign oauth data
-		$oauth = ['oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,
-				'oauth_nonce' => md5(microtime() . mt_rand()),
-				'oauth_signature_method' => 'HMAC-SHA1',
-				'oauth_timestamp' => time(),
-				'oauth_token' => $_SESSION['twitter_pre_token'],
-				'oauth_version' => '1.0'];
+		$oauth = [
+			'oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,
+			'oauth_nonce' => md5(microtime() . mt_rand()),
+			'oauth_signature_method' => 'HMAC-SHA1',
+			'oauth_timestamp' => time(),
+			'oauth_token' => $_SESSION['twitter_pre_token'],
+			'oauth_version' => '1.0'
+		];
 		$post = ['oauth_verifier' => $verifier];
 		$sig = array_merge($oauth, $post);
 		ksort($sig);
@@ -571,7 +576,7 @@ class t7authTwitter extends t7authRegisterable {
 
 		// quote all oauth variables for the authorization header
 		$header = array();
-		foreach($oauth as $var => $val)
+		foreach ($oauth as $var => $val)
 			$header[] = $var . '="' . $val . '"';
 
 		// send the request
@@ -597,14 +602,16 @@ class t7authTwitter extends t7authRegisterable {
 	 * @return boolean true if able to retrieve.
 	 */
 	public function GetUserInfo() {
-		if($this->access) {
+		if ($this->access) {
 			// collect and sign oauth data
-			$oauth = ['oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,
-					'oauth_nonce' => md5(microtime() . mt_rand()),
-					'oauth_signature_method' => 'HMAC-SHA1',
-					'oauth_timestamp' => time(),
-					'oauth_token' => $this->access['oauth_token'],
-					'oauth_version' => '1.0'];
+			$oauth = [
+				'oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,
+				'oauth_nonce' => md5(microtime() . mt_rand()),
+				'oauth_signature_method' => 'HMAC-SHA1',
+				'oauth_timestamp' => time(),
+				'oauth_token' => $this->access['oauth_token'],
+				'oauth_version' => '1.0'
+			];
 			$get = ['skip_status' => true];
 			$sig = array_merge($oauth, $get);
 			ksort($sig);
@@ -614,7 +621,7 @@ class t7authTwitter extends t7authRegisterable {
 
 			// quote all oauth variables for the authorization header
 			$header = array();
-			foreach($oauth as $var => $val)
+			foreach ($oauth as $var => $val)
 				$header[] = $var . '="' . $val . '"';
 
 			// send the request
@@ -630,142 +637,18 @@ class t7authTwitter extends t7authRegisterable {
 			$response = curl_exec($c);
 			curl_close($c);
 			$response = json_decode($response);
-			if(isset($response->id) && $response->id == $this->ID) {
+			if (isset($response->id) && $response->id == $this->ID) {
 				$this->ProfileFull = t7user::ExpandProfileLink($response->screen_name, self::SOURCE);
 				$this->ProfileShort = $response->screen_name;
 				$this->Avatar = $response->profile_image_url_https;
 				$this->Username = $response->screen_name;
 				$this->DisplayName = $response->name;
-				if(isset($response->entities) && isset($response->entities->url) && isset($response->entities->url->urls) && isset($response->entities->url->urls[0]) && isset($response->entities->url->urls[0]->expanded_url))
+				if (isset($response->entities) && isset($response->entities->url) && isset($response->entities->url->urls) && isset($response->entities->url->urls[0]) && isset($response->entities->url->urls[0]->expanded_url))
 					$this->Website = $response->entities->url->urls[0]->expanded_url;
 				else
 					$this->Website = '';
 				return true;
 			}
-		}
-		return false;
-	}
-}
-
-/**
- * authorization using facebook oauth
- * @author misterhaan
- */
-class t7authFacebook extends t7authRegisterable {
-	const SOURCE = 'facebook';
-	const FIELD = 'extid';
-	const REDIRECT = '/user/via/facebook.php';
-	const REQUEST = 'https://www.facebook.com/dialog/oauth';
-	const SCOPE = 'public_profile,email';
-	const VERIFY = 'https://graph.facebook.com/v2.3/oauth/access_token';
-	const ID = 'https://graph.facebook.com/me';
-	const INFO = 'https://graph.facebook.com/v2.6/me';
-	const PICURL = 'https://graph.facebook.com/v2.10/{ID}/picture';
-
-	private $access = false;
-
-	public static function GetAuthUrl($continue, $csrf) {
-		return self::REQUEST . '?' . http_build_query([
-				'client_id' => t7keysFacebook::ID,
-				'redirect_uri' => t7format::FullUrl(self::REDIRECT),
-				'response_type' => 'code',
-				'scope' => self::SCOPE,
-				'state' => 'remember&' . http_build_query(array('continue' => $continue, 'csrf' => $csrf))
-		]);
-	}
-
-	/**
-	 * handle authentication from facebook.  this class should only be
-	 * instantiated by the page specified in self::REDIRECT.  the querystring is
-	 * expected to be set by facebook after a login attempt.
-	 */
-	public function __construct() {
-		if($this->HasData = isset($_GET['state'])) {
-			parse_str($_GET['state'], $state);
-			if(isset($state['continue']))
-				$this->Continue = $state['continue'];
-			if($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
-				$this->Remember = isset($state['remember']);
-				$this->GetToken($_GET['code']);
-			}
-		}
-	}
-
-	/**
-	 * pass the code from facebook login back to facebook over a trusted
-	 * connection to retrieve the access token.
-	 * @param string $code value returned by facebook login
-	 */
-	private function GetToken($code) {
-		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::VERIFY . '?' . http_build_query([
-				'code' => $code,
-				'client_id' => t7keysFacebook::ID,
-				'client_secret' => t7keysFacebook::SECRET,
-				'redirect_uri' => t7format::FullUrl(self::REDIRECT)
-		]));
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		$response = curl_exec($c);
-		curl_close($c);
-		$response = json_decode($response);
-		if(isset($response->access_token)) {
-			$this->access = $response->access_token;
-			$this->GetID();
-		}
-	}
-
-	/**
-	 * get the user id the access token is for
-	 */
-	private function GetID() {
-		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::ID . '?' . http_build_query(['access_token' => $this->access, 'fields' => 'id']));
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		$response = curl_exec($c);
-		curl_close($c);
-		$response = json_decode($response);
-		if(isset($response->id))
-			$this->ID = $response->id;
-	}
-
-	/**
-	 * get more user info to register this user here.
-	 * @return boolean true if able to retrieve.
-	 */
-	public function GetUserInfo() {
-		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::INFO . '?' . http_build_query([
-				'access_token' => $this->access,
-				'fields' => 'id,email,link,name,website'
-		]));
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		$response = curl_exec($c);
-		curl_close($c);
-		$response = json_decode($response);
-		if(isset($response->id) && $response->id == $this->ID) {
-			$this->ProfileFull = $response->link;
-			$this->Avatar = str_replace('{ID}', $this->ID, self::PICURL);
-			$this->Username = explode('@', $response->email)[0];
-			$this->DisplayName = $response->name;
-			$this->Email = $response->email;
-			if(isset($response->website))
-				$this->Website = $response->website;
-			return true;
 		}
 		return false;
 	}
@@ -810,11 +693,11 @@ class t7authGithub extends t7authRegisterable {
 	 * set by github after a login attempt.
 	 */
 	public function __construct() {
-		if($this->HasData = isset($_GET['state'])) {
+		if ($this->HasData = isset($_GET['state'])) {
 			parse_str($_GET['state'], $state);
-			if(isset($state['continue']))
+			if (isset($state['continue']))
 				$this->Continue = $state['continue'];
-			if($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
+			if ($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
 				$this->Remember = isset($state['remember']);
 				$this->GetToken($_GET['code'], $_GET['state']);
 			}
@@ -846,7 +729,7 @@ class t7authGithub extends t7authRegisterable {
 		$response = curl_exec($c);
 		curl_close($c);
 		parse_str($response, $tokens);
-		if(isset($tokens['access_token'])) {
+		if (isset($tokens['access_token'])) {
 			$this->access = $tokens['access_token'];
 			$this->GetUserInfo();  // need to get all the info now because that's the only way to find the id
 		}
@@ -856,7 +739,7 @@ class t7authGithub extends t7authRegisterable {
 	 * get the user id the access token is for
 	 */
 	public function GetUserInfo() {
-		if($this->gotinfo)
+		if ($this->gotinfo)
 			return true;
 		$c = curl_init();
 		curl_setopt($c, CURLOPT_URL, self::USER);
@@ -870,21 +753,21 @@ class t7authGithub extends t7authRegisterable {
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);
-		if(isset($response->id)) {
-				$this->ID = $response->id;
-			if(isset($response->login)) {
+		if (isset($response->id)) {
+			$this->ID = $response->id;
+			if (isset($response->login)) {
 				$this->Username = $response->login;
 				$this->ProfileShort = $response->login;
 			}
-			if(isset($response->name))
+			if (isset($response->name))
 				$this->DisplayName = $response->name;
-			if(isset($response->avatar_url))
+			if (isset($response->avatar_url))
 				$this->Avatar = $response->avatar_url;
-			if(isset($response->html_url))
+			if (isset($response->html_url))
 				$this->ProfileFull = $response->html_url;
-			if(isset($response->email))
+			if (isset($response->email))
 				$this->Email = $response->email;
-			if(isset($response->blog))
+			if (isset($response->blog))
 				$this->Website = $response->blog;
 			$this->gotinfo = true;
 			return true;
@@ -924,11 +807,11 @@ class t7authDeviantart extends t7authRegisterable {
 	}
 
 	public function __construct() {
-		if($this->HasData = isset($_GET['code'])) {
+		if ($this->HasData = isset($_GET['code'])) {
 			parse_str($_GET['state'], $state);
-			if(isset($state['continue']))
+			if (isset($state['continue']))
 				$this->Continue = $state['continue'];
-			if($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
+			if ($this->IsValid = (isset($state['csrf']) && t7auth::CheckCSRF($state['csrf']))) {
 				$this->Remember = isset($state['remember']);
 				$this->GetToken($_GET['code']);
 			}
@@ -953,7 +836,7 @@ class t7authDeviantart extends t7authRegisterable {
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);
-		if(isset($response->access_token))
+		if (isset($response->access_token))
 			$this->GetUserInfoFromToken($response->access_token);
 	}
 
@@ -969,13 +852,13 @@ class t7authDeviantart extends t7authRegisterable {
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);
-		if(isset($response->userid)) {
+		if (isset($response->userid)) {
 			$this->ID = $response->userid;
 			$this->Username = $response->username;
 			$this->ProfileShort = $response->username;
 			$this->ProfileFull = t7user::ExpandProfileLink($response->username, self::SOURCE);
 			$this->Avatar = $response->usericon;  // 50px
-			if(isset($response->profile)) {
+			if (isset($response->profile)) {
 				$this->DisplayName = $response->profile->real_name;
 				$this->Website = $response->profile->website;
 			}
@@ -1011,7 +894,7 @@ class t7authSteam extends t7authRegisterable {
 	 * @param string $csrf random string for antiforgery (should be saved for comparison against response)
 	 * @return string url for logging in with steam
 	 */
-	 public static function GetAuthUrl($continue, $csrf) {
+	public static function GetAuthUrl($continue, $csrf) {
 		return self::REQUEST . '?' . http_build_query([
 			'openid.ns' => self::OPENID_NS,
 			'openid.mode' => 'checkid_setup',
@@ -1028,10 +911,10 @@ class t7authSteam extends t7authRegisterable {
 	 * set by steam after a login attempt.
 	 */
 	public function __construct() {
-		if($this->HasData = isset($_GET['openid_claimed_id'])) {
-			if(isset($_GET['continue']))
+		if ($this->HasData = isset($_GET['openid_claimed_id'])) {
+			if (isset($_GET['continue']))
 				$this->Continue = $_GET['continue'];
-			if($this->IsValid = (isset($_GET['csrf']) && t7auth::CheckCSRF($_GET['csrf']) && $this->Validate())) {
+			if ($this->IsValid = (isset($_GET['csrf']) && t7auth::CheckCSRF($_GET['csrf']) && $this->Validate())) {
 				$this->ID = explode('/', $_GET['openid_claimed_id']);
 				$this->ID = $this->ID[count($this->ID) - 1];
 				$this->Remember = isset($_GET['remember']);
@@ -1050,7 +933,7 @@ class t7authSteam extends t7authRegisterable {
 			'openid.ns' => self::OPENID_NS,
 			'openid.mode' => 'check_authentication'
 		];
-		foreach(explode(',', $_GET['openid_signed']) as $var)
+		foreach (explode(',', $_GET['openid_signed']) as $var)
 			$data['openid.' . $var] = $_GET['openid_' . str_replace('.', '_', $var)];
 		$c = curl_init();
 		curl_setopt($c, CURLOPT_URL, self::REQUEST);
@@ -1065,9 +948,9 @@ class t7authSteam extends t7authRegisterable {
 		$response = curl_exec($c);
 		curl_close($c);
 		$resarr = [];
-		foreach(explode("\n", $response) as $line) {
+		foreach (explode("\n", $response) as $line) {
 			$varval = explode(':', $line, 2);
-			if(count($varval) == 2)
+			if (count($varval) == 2)
 				$resarr[trim($varval[0])] = trim($varval[1]);
 		}
 		// verification result should contain the same NS we sent, plus an is_valid value which should be true
@@ -1091,10 +974,10 @@ class t7authSteam extends t7authRegisterable {
 		$response = curl_exec($c);
 		$code = curl_getinfo($c, CURLINFO_HTTP_CODE);
 		curl_close($c);
-		if($code == 200 && $xml = simplexml_load_string($response))
-			if(!isset($xml->error)) {
+		if ($code == 200 && $xml = simplexml_load_string($response))
+			if (!isset($xml->error)) {
 				$this->DisplayName = html_entity_decode((string)$xml->steamID);  // should use UTF-8
-				if(isset($xml->customURL)) {
+				if (isset($xml->customURL)) {
 					$this->Username = (string)$xml->customURL;
 					$this->ProfileShort = (string)$xml->customURL;
 				} else
@@ -1143,16 +1026,16 @@ class t7authTrack7 {
 	 * through the querystring.
 	 */
 	public function __construct() {
-		if($this->HasData = (isset($_POST['username']) && isset($_POST['password']))) {
-			if(isset($_GET['continue']))
+		if ($this->HasData = (isset($_POST['username']) && isset($_POST['password']))) {
+			if (isset($_GET['continue']))
 				$this->Continue = $_GET['continue'];
-			if($this->IsValid = (isset($_GET['csrf']) && t7auth::CheckCSRF($_GET['csrf']))) {
+			if ($this->IsValid = (isset($_GET['csrf']) && t7auth::CheckCSRF($_GET['csrf']))) {
 				$this->Remember = isset($_POST['remember']);
 				$this->DBError = false;
 				global $db;
-				if($chk = $db->query('select id, pass from transition_login where login=\'' . $db->real_escape_string(trim($_POST['username'])) . '\' limit 1')) {
-					if($chk = $chk->fetch_object())
-						if($this->CheckPassword(trim($_POST['password']), $chk->pass))
+				if ($chk = $db->query('select id, pass from transition_login where login=\'' . $db->real_escape_string(trim($_POST['username'])) . '\' limit 1')) {
+					if ($chk = $chk->fetch_object())
+						if ($this->CheckPassword(trim($_POST['password']), $chk->pass))
 							$this->ID = $chk->id;
 				} else
 					$this->DBError = true;
@@ -1170,11 +1053,11 @@ class t7authTrack7 {
 	private function CheckPassword($password, $hash) {
 		$len = strlen($hash);
 		$saltpass = $password . substr($hash, 0, 8);
-		if($len == 96)  // currently auUser uses base64 SHA512 with 8-character base64 salt for 96 characters total
+		if ($len == 96)  // currently auUser uses base64 SHA512 with 8-character base64 salt for 96 characters total
 			return base64_encode(hash('sha512', $saltpass, true)) == substr($hash, 8);
-		if($len == 48)  // until version 0.4.0, auUser used hexadecimal SHA1 with 8-character hexadecimal salt for 48 characters total
+		if ($len == 48)  // until version 0.4.0, auUser used hexadecimal SHA1 with 8-character hexadecimal salt for 48 characters total
 			return sha1($saltpass) == substr($hash, 8);
-		if($len == 32)  // this should not happen except for old track7 users, since auUser never used MD5
+		if ($len == 32)  // this should not happen except for old track7 users, since auUser never used MD5
 			return md5($pass) == $hash;
 		return false;
 	}
