@@ -177,7 +177,7 @@ class CurrentUser extends User {
 	 * @return int user id or zero if unable to remember.
 	 */
 	private function GetRememberUserID(mysqli $db, string $series, string $token): int {
-		// TODO:  migrate this table
+		// TODO:  migrate remembered logins table
 		$select = $db->prepare('select tokenhash, expires, user from login_remembered where series=? limit 1');
 		$select->bind_param('s', $series);
 		$select->execute();
@@ -185,10 +185,39 @@ class CurrentUser extends User {
 		if ($select->fetch() && $expires >= time())
 			if ($tokenhash == base64_encode(hash('sha512', base64_decode($token), true)))
 				return $id;
-			else {
-				// TODO:  delete all remembered logins for this user due to token mismatch
-			}
+			else
+				$this->ClearAllUserRememberSeries($db);
 		return 0;
 	}
-	// TODO:  delete expired login_remembered rows at some point
+
+	private function ClearAllUserRememberSeries(mysqli $db): void {
+		// TODO:  migrate remembered logins table
+		try {
+			$delete = $db->prepare('delete from login_remembered where user=? or expires>?');
+			$delete->bind_param('ii', $this->ID, time());
+			$delete->execute();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error clearing all user remembered login series', $mse);
+		}
+	}
+
+	private function ClearRememberSeries(mysqli $db, string $series): void {
+		// TODO:  migrate remembered logins table
+		try {
+			$delete = $db->prepare('delete from login_remembered where series=? or expires>?');
+			$delete->bind_param('si', $series, time());
+			$delete->execute();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error clearing remembered login series', $mse);
+		}
+	}
+
+	public function Logout(mysqli $db): void {
+		unset($_SESSION['loginsource']);
+		unset($_SESSION[self::SessionKey]);
+		if (isset($_COOKIE[self::CookieName])) {
+			$this->ClearRememberSeries($db, explode(':', $_COOKIE[self::CookieName])[0]);
+			setcookie(self::CookieName, '', time() - 60, '/');
+		}
+	}
 }

@@ -84,15 +84,6 @@ class t7user {
 				$this->GetProfileInfo($id);
 			return;
 		}
-		if (isset($_POST['logout'])) {
-			unset($_SESSION['loginsource']);
-			unset($_SESSION['user']);
-			if (isset($_COOKIE[self::COOKIE_NAME])) {
-				$this->ClearRememberSeries(explode(':', $_COOKIE[self::COOKIE_NAME])[0]);
-				setcookie(self::COOKIE_NAME, '', time() - 60, '/');
-			}
-			die;
-		}
 		if (isset($_SESSION['user'])) {
 			if ($this->GetBasic($_SESSION['user'])) {
 				$this->GetSettings();

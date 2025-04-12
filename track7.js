@@ -43,9 +43,11 @@ function InitLoginLogout() {
 		$("#signinform").submit(Login);
 		UpdateLoginType();
 	}
-	$("#logoutlink").click(function() {
-		$.post("/", { logout: true }, function() {
+	$("#logoutlink").click(() => {
+		$.post("/api/user.php/logout").done(() => {
 			window.location.reload(false);
+		}).fail(request => {
+			alert(request.responseText);
 		});
 		return false;
 	});

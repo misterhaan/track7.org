@@ -61,6 +61,9 @@ class ApiIndexPage extends Page {
 		<h2 class=api><a href=update.php>update</a></h2>
 		<p>the update api manages site updates.</p>
 
+		<h2 class=api><a href=user.php>user</a></h2>
+		<p>the user api manages users.</p>
+
 		<h2 class=api><a href=users>users</a></h2>
 		<p>the users api manages users.</p>
 
