@@ -19,11 +19,11 @@ class UserActivity {
 		$this->Verb = $verb;
 	}
 
-	public static function List(mysqli $db, CurrentUser $user, int $userID, int $skip): ActivityList {
+	public static function List(mysqli $db, CurrentUser $user, string $username, int $skip): ActivityList {
 		$limit = self::ListLimit + 1;
 		try {
-			$select = $db->prepare('select type, unix_timestamp(instant), url, title, verb from activity where author=? order by instant desc limit ? offset ?');
-			$select->bind_param('iii', $userID, $limit, $skip);
+			$select = $db->prepare('select a.type, unix_timestamp(a.instant), a.url, a.title, a.verb from activity as a left join user as u on u.id=a.author where u.username=? order by instant desc limit ? offset ?');
+			$select->bind_param('sii', $username, $limit, $skip);
 			$select->execute();
 			$select->bind_result($type, $instant, $url, $title, $verb);
 			$result = new ActivityList();

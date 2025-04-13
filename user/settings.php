@@ -47,7 +47,7 @@ if (!$user->IsLoggedIn()) {
 				<span class=field><input name=avatar value=none type=radio><img src="<?= t7user::DEFAULT_AVATAR; ?>" class=avatar>default anonymous picture</span>
 			</label>
 			<?php
-			if ($email = $db->query('select email from users_email where id=' . +$user->ID))
+			if ($email = $db->query('select contact as email from contact where user=' . +$user->ID . ' and type=\'email\' limit 1'))
 				if ($email = $email->fetch_object())
 					if ($email->email) {
 			?>

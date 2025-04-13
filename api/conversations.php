@@ -12,15 +12,15 @@ class conversationsApi extends t7api {
 	 * completes.
 	 */
 	protected static function ShowDocumentation() {
-		?>
-			<h2 id=getlist>get list</h2>
-			<p>retrieves the list of conversations the logged-in user is involved in.</p>
+?>
+		<h2 id=getlist>get list</h2>
+		<p>retrieves the list of conversations the logged-in user is involved in.</p>
 
-			<h2 id=getmessages>get messages</h2>
-			<p>retrieves messages from the requested conversation.</p>
+		<h2 id=getmessages>get messages</h2>
+		<p>retrieves messages from the requested conversation.</p>
 
-			<h2 id=postsendMessage>post sendMessage</h2>
-			<p>sends a message to a user.</p>
+		<h2 id=postsendMessage>post sendMessage</h2>
+		<p>sends a message to a user.</p>
 <?php
 	}
 
@@ -30,10 +30,10 @@ class conversationsApi extends t7api {
 	 */
 	protected static function listAction($ajax) {
 		global $db, $user;
-		if($user->IsLoggedIn())
-			if($cs = $db->query('select c.id, c.thatuser, coalesce(nullif(u.displayname, \'\'), u.username, \'(various unknown)\') as displayname, u.username, coalesce(nullif(u.avatar, \'\'), \'/images/user.jpg\') as avatar, m.sent, m.author=\'' . +$user->ID . '\' as issender, m.hasread from users_conversations as c left join users as u on u.id=c.thatuser left join users_messages as m on m.id=c.latestmessage where c.thisuser=\'' . +$user->ID . '\' and c.latestmessage is not null order by m.sent desc')) {
+		if ($user->IsLoggedIn())
+			if ($cs = $db->query('select c.id, c.thatuser, coalesce(nullif(u.displayname, \'\'), u.username, \'(various unknown)\') as displayname, u.username, coalesce(nullif(u.avatar, \'\'), \'/images/user.jpg\') as avatar, m.sent, m.author=\'' . +$user->ID . '\' as issender, m.hasread from users_conversations as c left join users as u on u.id=c.thatuser left join users_messages as m on m.id=c.latestmessage where c.thisuser=\'' . +$user->ID . '\' and c.latestmessage is not null order by m.sent desc')) {
 				$ajax->Data->conversations = [];
-				while($c = $cs->fetch_object()) {
+				while ($c = $cs->fetch_object()) {
 					$c->sent = t7format::TimeTag('ago', $c->sent, t7format::DATE_LONG);
 					$ajax->Data->conversations[] = $c;
 				}
@@ -49,25 +49,25 @@ class conversationsApi extends t7api {
 	 */
 	protected static function messagesAction($ajax) {
 		global $db, $user;
-		if($user->IsLoggedIn())
-			if(isset($_GET['conversation']) && $_GET['conversation'] == ($conv = +$_GET['conversation'])) {
+		if ($user->IsLoggedIn())
+			if (isset($_GET['conversation']) && $_GET['conversation'] == ($conv = +$_GET['conversation'])) {
 				$ms = 'select * from (select id, sent, author=\'' . +$user->ID . '\' as outgoing, name, contacturl, hasread, html from users_messages as m where m.conversation=\'' . $conv;
-				if(isset($_GET['before']) && +$_GET['before'])
+				if (isset($_GET['before']) && +$_GET['before'])
 					$ms .= '\' and sent<\'' . +$_GET['before'];
 				$ms .= '\' order by m.sent desc limit 4) as m order by sent';
 				$ajax->Data->sql = $ms;
-				if($ms = $db->query($ms)) {
+				if ($ms = $db->query($ms)) {
 					$ajax->Data->messages = [];
-					while($m = $ms->fetch_object()) {
-						if(!isset($ajax->Data->oldest))
+					while ($m = $ms->fetch_object()) {
+						if (!isset($ajax->Data->oldest))
 							$ajax->Data->oldest = $m->sent;
 						$m->sent = t7format::TimeTag(t7format::DATE_LONG, $m->sent);
 						$ajax->Data->messages[] = $m;
 					}
 					$db->query('update users_messages set hasread=true where conversation=\'' . $conv . '\' and (author!=\'' . +$user->ID . '\' or author is null) and sent>=\'' . +$ajax->Data->oldest . '\'');
-					if($db->affected_rows)
+					if ($db->affected_rows)
 						self::UpdateUnreadCount();
-					if($ajax->Data->hasmore = $db->query('select 1 from users_messages where conversation=\'' . $conv . '\' and sent<\'' . +$ajax->Data->oldest . '\' limit 1'))
+					if ($ajax->Data->hasmore = $db->query('select 1 from users_messages where conversation=\'' . $conv . '\' and sent<\'' . +$ajax->Data->oldest . '\' limit 1'))
 						$ajax->Data->hasmore = $ajax->Data->hasmore->num_rows > 0;
 					else
 						$ajax->Data->hasmore = false;
@@ -85,11 +85,11 @@ class conversationsApi extends t7api {
 	 */
 	protected static function sendMessageAction($ajax) {
 		global $db, $user;
-		if($user->IsLoggedIn() || isset($_POST['fromname']) && isset($_POST['fromcontact']))
-			if(isset($_POST['to']) && +isset($_POST['to']))
-				if(isset($_POST['markdown']) && trim($_POST['markdown']))
-					if($to = $db->query('select id from users where id=\'' . +$_POST['to'] . '\' limit 1'))
-						if($to = $to->fetch_object()) {
+		if ($user->IsLoggedIn() || isset($_POST['fromname']) && isset($_POST['fromcontact']))
+			if (isset($_POST['to']) && +isset($_POST['to']))
+				if (isset($_POST['markdown']) && trim($_POST['markdown']))
+					if ($to = $db->query('select id from users where id=\'' . +$_POST['to'] . '\' limit 1'))
+						if ($to = $to->fetch_object()) {
 							$to = +$to->id;
 							$msg = new stdClass();
 							$msg->sent = new stdClass();
@@ -100,18 +100,18 @@ class conversationsApi extends t7api {
 							$msg->name = '';
 							$msg->contacturl = '';
 							$msg->html = t7format::Markdown(trim($_POST['markdown']));
-							if($db->query('insert into users_messages (sent, conversation, ' . ($user->IsLoggedIn() ? 'author' : 'name, contacturl') . ', html, markdown) values (\'' . $timesent . '\', GetConversationID(\'' . $to . '\', \'' . +$user->ID . '\'), \'' . ($user->IsLoggedIn() ? +$user->ID : (trim($_POST['fromname']) ? $db->escape_string(trim($_POST['fromname'])) : 'anonymous') . '\', \'' . $db->escape_string(t7format::Link(trim($_POST['fromcontact'])))) . '\', \'' . $db->escape_string($msg->html) . '\', \'' . $db->escape_string(trim($_POST['markdown'])) . '\')')) {
+							if ($db->query('insert into users_messages (sent, conversation, ' . ($user->IsLoggedIn() ? 'author' : 'name, contacturl') . ', html, markdown) values (\'' . $timesent . '\', GetConversationID(\'' . $to . '\', \'' . +$user->ID . '\'), \'' . ($user->IsLoggedIn() ? +$user->ID : (trim($_POST['fromname']) ? $db->escape_string(trim($_POST['fromname'])) : 'anonymous') . '\', \'' . $db->escape_string(t7format::Link(trim($_POST['fromcontact'])))) . '\', \'' . $db->escape_string($msg->html) . '\', \'' . $db->escape_string(trim($_POST['markdown'])) . '\')')) {
 								$msg->id = $db->insert_id;
 								$db->query('update users_conversations set latestmessage=\'' . +$msg->id . '\' where id=GetConversationID(\'' . $to . '\', \'' . +$user->ID . '\') limit 2');
 								self::UpdateUnreadCount($to);
-								if($user->IsLoggedIn())
+								if ($user->IsLoggedIn())
 									$db->query('update users_messages set hasreplied=1 where conversation=GetConversationID(\'' . $to . '\', \'' . +$user->ID . '\') and author!=\'' . $user->ID . '\'');
-								if($email = $db->query('select emailnewmsg from users_settings where id=\'' . $to . '\' limit 1'))
-									if($email = $email->fetch_object())
-										if($email->emailnewmsg)
-											if($toemail = $db->query('select email from users_email where id=\'' . $to . '\' limit 1'))
-												if($toemail = $toemail->fetch_object())
-													if($toemail = $toemail->email)
+								if ($email = $db->query('select emailnewmsg from users_settings where id=\'' . $to . '\' limit 1'))
+									if ($email = $email->fetch_object())
+										if ($email->emailnewmsg)
+											if ($toemail = $db->query('select contact from contact where user=\'' . $to . '\' and type=\'email\' limit 1'))
+												if ($toemail = $toemail->fetch_object())
+													if ($toemail = $toemail->email)
 														t7send::Email('new message from ' . $user->DisplayName, 'visit ' . t7format::FullUrl('/user/messages.php') . ' to read it and reply.' . "\r\n\r\n" . 'to change your e-mail settings, visit ' . t7format::FullUrl('/user/settings.php#notification'), 'messages@track7.org', $toemail, 'track7 messenger');
 								$ajax->Data->message = $msg;
 								$ajax->Data->timesent = $timesent;
@@ -135,7 +135,7 @@ class conversationsApi extends t7api {
 	 */
 	private static function UpdateUnreadCount($uid = false) {
 		global $user, $db;
-		if(!$uid)
+		if (!$uid)
 			$uid = $user->ID;
 		$db->query('update users_settings as us set unreadmsgs=(select count(1) from users_conversations as uc left join users_messages as um on um.id=uc.latestmessage where uc.thisuser=\'' . +$uid . '\' and (um.author!=\'' . +$uid . '\' or um.author is null) and um.hasread=0) where id=\'' . +$uid . '\'');
 	}

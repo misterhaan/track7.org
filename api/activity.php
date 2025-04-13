@@ -37,9 +37,9 @@ class ActivityApi extends Api {
 	 * @param array $params id of user to look up and may contain number of activities to skip
 	 */
 	protected static function GET_byuser(array $params): void {
-		$userID = +array_shift($params);
+		$username = trim(array_shift($params));
 		$skip = +array_shift($params);
-		self::Success(UserActivity::List(self::RequireDatabase(), self::RequireUser(), $userID, $skip));
+		self::Success(UserActivity::List(self::RequireDatabase(), self::RequireUser(), $username, $skip));
 	}
 }
 ActivityApi::Respond();

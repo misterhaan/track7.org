@@ -2648,8 +2648,8 @@ h1 .sortoption .droplist a {
 	content: "\f0e6";
 }
 
-#userlist .userstats .forum:before {
-	content: "\f27b";
+#userlist .userstats .posts:before {
+	content: "\f0a1";
 }
 
 
@@ -3290,7 +3290,7 @@ section#contact a.email:before {
 	content: "\f2b7";
 }
 
-section#contact a.www:before {
+section#contact a.website:before {
 	content: "\f0ac";
 }
 

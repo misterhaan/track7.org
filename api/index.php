@@ -25,6 +25,9 @@ class ApiIndexPage extends Page {
 		<h2 class=api><a href=comment.php>comment</a></h2>
 		<p>the comment api manages comments.</p>
 
+		<h2 class=api><a href=contact.php>contact</a></h2>
+		<p>the contact api manages contact links.</p>
+
 		<h2 class=api><a href=conversations>conversations</a></h2>
 		<p>the conversations api manages user messages.</p>
 

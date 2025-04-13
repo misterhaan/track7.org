@@ -148,7 +148,7 @@ class t7auth {
 										$pid = $db->insert_id;
 										if ($db->real_query('insert into login_' . $auth::SOURCE . ' (user, ' . $auth::FIELD . ', profile) values (\'' . +$user->ID . '\', \'' . $db->escape_string($auth->ID) . '\', \'' . +$pid . '\')')) {
 											if ($auth->ProfileShort)
-												$db->real_query('update users_profiles set ' . $auth::SOURCE . '=\'' . $db->escape_string($auth->ProfileShort) . '\' where id=\'' . +$user->ID . '\' and ' . $auth::SOURCE . '=\'\'');
+												$db->real_query('replace into contact (user, type, contact) values (\'' . +$user->ID . '\', \'' . $auth::SOURCE . '\', \'' . $db->escape_string($auth->ProfileShort) . '\')');
 											$db->commit();
 											header('Location: ' . t7format::FullUrl($auth->Continue));
 											die;
@@ -165,7 +165,7 @@ class t7auth {
 			</p>
 		<?php
 								} else { // show registration form
-									// TODO: check if e-mail is already linked (might be handled by javascript later instead)
+									// TODO:  check if e-mail is already linked (might be handled by javascript later instead)
 									$_SESSION['registering'] = $auth::SOURCE;
 									$_SESSION[$auth::SOURCE] = [$auth::FIELD => $auth->ID, 'name' => $auth->DisplayName, 'avatar' => $auth->Avatar, 'profile' => $auth->ProfileFull, 'remember' => $auth->Remember, 'continue' => $auth->Continue];
 									self::OpenPage($auth::SOURCE);

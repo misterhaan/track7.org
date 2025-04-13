@@ -16,48 +16,6 @@ create table users_settings (
 	foreign key(id) references users(id) on delete cascade on update cascade
 );
 
-create table users_email (
-	id smallint unsigned primary key,
-	email varchar(64) not null default '',
-	vis_email enum('none', 'friends', 'users', 'all') not null default 'none' comment 'who can see the email address',
-	key(email),
-	foreign key(id) references users(id) on delete cascade on update cascade
-);
-
-create table users_profiles (
-	id smallint unsigned primary key,
-	website varchar(64) not null default '' comment 'url to personal website',
-	vis_website enum('friends', 'all') not null default 'all',
-	twitter varchar(16) not null default '',
-	vis_twitter enum('friends', 'all') not null default 'friends',
-	google varchar(64) not null default '',
-	vis_google enum('friends', 'all') not null default 'friends',
-	facebook varchar(32) not null default '',
-	vis_facebook enum('friends', 'all') not null default 'friends',
-	github varchar(40) not null default '',
-	vis_github enum('friends', 'all') not null default 'friends',
-	deviantart varchar(20) not null default '',
-	vis_deviantart enum('friends', 'all') not null default 'friends',
-	steam varchar(32) not null default '',
-	vis_steam enum('friends', 'all') not null default 'friends',
-	foreign key(id) references users(id) on delete cascade on update cascade
-);
-
-create table users_stats (
-	id smallint unsigned primary key,
-	registered int not null,
-	key(registered),
-	lastlogin int not null,
-	key(lastlogin),
-	fans smallint unsigned not null default 0,
-	key(fans),
-	comments smallint unsigned not null default 0,
-	key(comments),
-	replies smallint unsigned not null default 0,
-	key(replies),
-	foreign key(id) references users(id) on delete cascade on update cascade
-);
-
 create table users_messages (
 	id smallint unsigned primary key auto_increment,
 	sent int not null comment 'timestamp when the message was sent',

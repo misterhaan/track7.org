@@ -13,18 +13,8 @@ class usersApi extends t7api {
 	 */
 	protected static function ShowDocumentation() {
 ?>
-		<h2 id=postaddFriend>post addFriend</h2>
-		<p>marks a user as a friend of the signed-in user.</p>
-		<dl class=parameters>
-			<dt>friend</dt>
-			<dd>id of user to add as a friend of the signed-in user. required.</dd>
-		</dl>
-
 		<h2 id=getinfo>get info</h2>
 		<p>retrieves basic information on a user by username.</p>
-
-		<h2 id=getlist>get list</h2>
-		<p>retrieves a list of users.</p>
 
 		<h2 id=postregister>post register</h2>
 		<p>
@@ -54,37 +44,10 @@ class usersApi extends t7api {
 			</dd>
 		</dl>
 
-		<h2 id=postremoveFriend>post removeFriend</h2>
-		<p>unmarks a user as a friend of the signed-in user.</p>
-		<dl class=parameters>
-			<dt>friend</dt>
-			<dd>
-				id of user to remove as a friend of the signed-in user. required.
-			</dd>
-		</dl>
-
 		<h2 id=getsuggest>get suggest</h2>
 		<p>retrieves a simple list of users that match the supplied search text.</p>
 
 <?php
-	}
-
-	/**
-	 * add another user as a friend.
-	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
-	 */
-	protected static function addFriendAction($ajax) {
-		global $db, $user;
-		if ($user->IsLoggedIn())
-			if (isset($_GET['friend']) && $friendid = +$_GET['friend'])
-				if ($db->real_query('insert into friend (fan, friend) values (\'' . +$user->ID . '\', \'' . $friendid . '\')'))
-					$db->real_query('update users_stats set fans=(select count(1) from friend where friend=\'' . $friendid . '\') where id=\'' . $friendid . '\'');
-				else
-					$ajax->Fail('database error adding friend', $db->errno . ' ' . $db->error);
-			else
-				$ajax->Fail('cannot add friend because there is no friend specified.');
-		else
-			$ajax->Fail('cannot add friend when not signed in.  if you thought you were signed in, you may have timed out and need to sign in again.');
 	}
 
 	/**
@@ -103,25 +66,6 @@ class usersApi extends t7api {
 				$ajax->Fail('error looking up user', $db->errno . ' ' . $db->error);
 		else
 			$ajax->Fail('required field missing.');
-	}
-
-	/**
-	 * get users list.
-	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
-	 */
-	protected static function listAction($ajax) {
-		global $db, $user;
-		if ($us = $db->query('select u.username, coalesce(nullif(u.displayname, \'\'), u.username) as displayname, coalesce(nullif(u.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar, u.level, s.lastlogin, s.registered, s.fans, s.comments, s.replies, f.fan as friend from users as u left join users_stats as s on s.id=u.id left join friend as f on f.friend=u.id and f.fan=\'' . +$user->ID . '\' order by s.lastlogin desc')) {
-			$ajax->Data->hasMore = false;  // no limit so always false
-			$ajax->Data->users = [];
-			while ($u = $us->fetch_object()) {
-				$u->levelname = t7user::LevelNameFromNumber($u->level);
-				$u->lastlogin = t7format::TimeTag('ago', $u->lastlogin, t7format::DATE_LONG);
-				$u->registered = t7format::TimeTag('ago', $u->registered, t7format::DATE_LONG);
-				$ajax->Data->users[] = $u;
-			}
-		} else
-			$ajax->Fail('error looking up user list', $db->errno . ' ' . $db->error);
 	}
 
 	/**
@@ -170,21 +114,11 @@ class usersApi extends t7api {
 										$db->commit();
 										$db->autocommit(true);
 										if (isset($_POST['email']) && t7user::CheckEmail($_POST['email'] = trim($_POST['email'])))
-											$db->real_query('insert into users_email (id, email) values (\'' . $db->escape_string($uid) . '\', \'' . $db->escape_string($_POST['email']) . '\')');
-										if (isset($_POST['website']) || isset($_POST['linkprofile'])) {
-											$ins = 'insert into users_profiles (id';
-											if (isset($_POST['website']) && $_POST['website'])
-												$ins .= ', website';
-											if (isset($_POST['linkprofile']))
-												$ins .= ', ' . $_SESSION['registering'];
-											$ins .= ') values (\'' . $db->escape_string($uid);
-											if (isset($_POST['website']) && $_POST['website'])
-												$ins .= '\', \'' . $db->escape_string($_POST['website']);
-											if (isset($_POST['linkprofile']))
-												$ins .= '\', \'' . $db->escape_string(t7user::CollapseProfileLink($_SESSION[$_SESSION['registering']]['profile'], $_SESSION['registering']));
-											$db->real_query($ins . '\')');
-										}
-										$db->real_query('insert into users_stats (id, registered) values (\'' . $db->escape_string($uid) . '\', \'' . time() . '\')');
+											$db->real_query('insert into contact (user, type, contact, visibility) values (\'' . $db->escape_string($uid) . '\', \'email\', \'' . $db->escape_string($_POST['email']) . '\', \'none\')');
+										if (isset($_POST['website']))
+											$db->real_query('insert into contact (user, type, contact, visibility) values (\'' . $db->escape_string($uid) . '\', \'website\', \'' . $db->escape_string($_POST['website']) . '\', \'all\')');
+										if (isset($_POST['linkprofile']))
+											$db->real_query('insert into contact (user, type, contact) values (\'' . $db->escape_string($uid) . '\', \'' . $db->escape_string($_SESSION['registering']) . '\', \'' . $db->escape_string(t7user::CollapseProfileLink($_SESSION[$_SESSION['registering']]['profile'], $_SESSION['registering'])) . '\')');
 										$user->Login('register', $uid, $_SESSION[$_SESSION['registering']]['remember']);
 										$ajax->Data->continue = $_SESSION[$_SESSION['registering']]['continue'];
 										unset($_SESSION[$_SESSION['registering']]);
@@ -205,24 +139,6 @@ class usersApi extends t7api {
 				$ajax->Fail('there was a problem with the verification data.  this can happen if you wait too long on the registration form, so if that could be what happened just try again.');
 		else
 			$ajax->Fail('verification data missing.');
-	}
-
-	/**
-	 * remove another user as a friend.
-	 * @param t7ajax $ajax ajax object for returning data or reporting an error.
-	 */
-	protected static function removeFriendAction($ajax) {
-		global $db, $user;
-		if ($user->IsLoggedIn())
-			if (isset($_GET['friend']) && $friendid = +$_GET['friend'])
-				if ($db->real_query('delete from friend where fan=\'' . +$user->ID . '\' and friend=\'' . $friendid . '\''))
-					$db->real_query('update users_stats set fans=(select count(1) from friend where friend=\'' . $friendid . '\') where id=\'' . $friendid . '\'');
-				else
-					$ajax->Fail('database error removing friend', $db->errno . ' ' . $db->error);
-			else
-				$ajax->Fail('cannot remove friend because there is no friend specified.');
-		else
-			$ajax->Fail('cannot remove friend when not signed in.  if you thought you were signed in, you may have timed out and need to sign in again.');
 	}
 
 	/**

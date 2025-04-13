@@ -4,5 +4,9 @@ create table user (
 	username varchar(32) not null comment 'limited to certain characters since it will be used in a url',
 	unique(username),
 	displayname varchar(32) not null default '' comment 'display name in case people want something like John Smith',
-	avatar varchar(255) not null default '' comment 'url to avatar (may be offsite)'
+	avatar varchar(255) not null default '' comment 'url to avatar (may be offsite)',
+	registered datetime not null default now() comment 'when the user first regisetered',
+	key(registered),
+	lastlogin datetime not null default now() comment 'when the user last logged in',
+	key(lastlogin)
 );

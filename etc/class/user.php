@@ -70,6 +70,90 @@ class User {
 	}
 }
 
+class DetailedUser extends User {
+	public string $LevelName;
+	public TimeTagData $Registered;
+	public TimeTagData $LastLogin;
+	public bool $Friend;
+	public Rank $Posts;
+	public Rank $Comments;
+	public Rank $Fans;
+	public Rank $Friends;
+	public Rank $Votes;
+
+	private function __construct(CurrentUser $user, int $id, int $level, string $username, string $displayname, string $avatar, int $registered, int $lastlogin, bool $friend, ?int $posts, ?int $postrank, ?int $comments, ?int $commentrank, ?int $fans, ?int $fanrank, ?int $friends, ?int $friendrank, ?int $votes, ?int $voterank) {
+		require_once 'formatDate.php';
+		$this->ID = $id;
+		$this->Level = $level;
+		$this->LevelName = UserLevel::Name($level);
+		$this->Username = $username;
+		$this->DisplayName = $displayname ? $displayname : $username;
+		$this->Avatar = $avatar ? $avatar : self::DefaultAvatar;
+		$this->Registered = new TimeTagData($user, 'ago', $registered, FormatDate::Long);
+		$this->LastLogin = new TimeTagData($user, 'ago', $lastlogin, FormatDate::Long);
+		$this->Friend = $friend;
+		$this->Posts = new Rank($posts, $postrank);
+		$this->Comments = new Rank($comments, $commentrank);
+		$this->Fans = new Rank($fans, $fanrank);
+		$this->Friends = new Rank($friends, $friendrank);
+		$this->Votes = new Rank($votes, $voterank);
+	}
+
+	public static function FromQueryString(mysqli $db, CurrentUser $user): ?self {
+		if (!isset($_GET['login']) || !$_GET['login'])
+			return null;
+		$username = trim($_GET['login']);
+		try {
+			$select = $db->prepare('select u.id, u.level, u.username, u.displayname, u.avatar, unix_timestamp(u.registered), unix_timestamp(u.lastlogin), not isnull(f.fan), r.posts, r.postrank, r.comments, r.commentrank, r.fans, r.fanrank, r.friends, r.friendrank, r.votes, r.voterank from user as u left join friend as f on f.friend=u.id and f.fan=? left join ranking as r on r.user=u.id where u.username=? limit 1');
+			$select->bind_param('is', $user->ID, $username);
+			$select->execute();
+			$select->bind_result($id, $level, $username, $displayname, $avatar, $registered, $lastlogin, $friend, $posts, $postrank, $comments, $commentrank, $fans, $fanrank, $friends, $friendrank, $votes, $voterank);
+			if ($select->fetch())
+				return new self($user, $id, $level, $username, $displayname, $avatar, $registered, $lastlogin, $friend, $posts, $postrank, $comments, $commentrank, $fans, $fanrank, $friends, $friendrank, $votes, $voterank);
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up user', $mse);
+		}
+		return null;
+	}
+
+	public static function List(mysqli $db, CurrentUser $user): UserList {
+		try {
+			$select = $db->prepare('select u.id, u.level, u.username, u.displayname, u.avatar, unix_timestamp(u.registered), unix_timestamp(u.lastlogin), not isnull(f.fan), r.posts, r.postrank, r.comments, r.commentrank, r.fans, r.fanrank, r.friends, r.friendrank, r.votes, r.voterank from user as u left join friend as f on f.friend=u.id and f.fan=? left join ranking as r on r.user=u.id order by u.lastlogin desc');
+			$select->bind_param('i', $user->ID);
+			$select->execute();
+			$select->bind_result($id, $level, $username, $displayname, $avatar, $registered, $lastlogin, $friend, $posts, $postrank, $comments, $commentrank, $fans, $fanrank, $friends, $friendrank, $votes, $voterank);
+			$result = new UserList();
+			while ($select->fetch())
+				$result->Users[] = new self($user, $id, $level, $username, $displayname, $avatar, $registered, $lastlogin, $friend, $posts, $postrank, $comments, $commentrank, $fans, $fanrank, $friends, $friendrank, $votes, $voterank);
+			return $result;
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up users', $mse);
+		}
+	}
+}
+
+class Rank {
+	public int $Count;
+	public int $Rank;
+
+	public function __construct(?int $count, ?int $rank) {
+		$this->Count = +$count;
+		$this->Rank = $count ? +$rank : 0;
+	}
+}
+
+class UserList {
+	/**
+	 * @var DetailedUser[] Group of users loaded
+	 */
+	public array $Users = [];
+	/**
+	 * Whether there are more users to load
+	 */
+	public bool $HasMore = false;
+}
+
+
 /**
  * The track7 user currently logged in
  */
@@ -122,7 +206,7 @@ class CurrentUser extends User {
 		}
 		if ($this->IsLoggedIn()) {
 			try {
-				// TODO:  move to new tables / views
+				// TODO:  move settings and login to new tables / views
 				$select = $db->prepare('select us.timebase != \'gmt\', us.timeoffset, us.unreadmsgs, tl.id is not null from users_settings as us left join transition_login as tl on tl.id=us.id where us.id=? limit 1');
 				$select->bind_param('i', $this->ID);
 				$select->execute();
@@ -161,11 +245,13 @@ class CurrentUser extends User {
 	 * @param integer $id user id who just logged in
 	 */
 	private function UpdateLastLogin(mysqli $db, int $id) {
-		// TODO:  migrate this table
-		$now = time();
-		$insert = $db->prepare('update users_stats set lastlogin=? where id=? limit 1');
-		$insert->bind_param('ii', $now, $id);
-		$insert->execute();
+		try {
+			$insert = $db->prepare('update user set lastlogin=now() where id=? limit 1');
+			$insert->bind_param('i', $id);
+			$insert->execute();
+		} catch (mysqli_sql_exception) {
+			// this should only fail if user table doesn't have the lastlogin column yet
+		}
 	}
 
 	/**
@@ -218,6 +304,28 @@ class CurrentUser extends User {
 		if (isset($_COOKIE[self::CookieName])) {
 			$this->ClearRememberSeries($db, explode(':', $_COOKIE[self::CookieName])[0]);
 			setcookie(self::CookieName, '', time() - 60, '/');
+		}
+	}
+}
+
+class Friend {
+	public static function Add(mysqli $db, CurrentUser $user, int $friend): void {
+		try {
+			$insert = $db->prepare('replace into friend (fan, friend) values (?, ?)');
+			$insert->bind_param('ii', $user->ID, $friend);
+			$insert->execute();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error adding friend', $mse);
+		}
+	}
+
+	public static function Remove(mysqli $db, CurrentUser $user, int $friend): void {
+		try {
+			$delete = $db->prepare('delete from friend where fan=? and friend=? limit 1');
+			$delete->bind_param('ii', $user->ID, $friend);
+			$delete->execute();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error removing friend', $mse);
 		}
 	}
 }

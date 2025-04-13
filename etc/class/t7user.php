@@ -231,23 +231,6 @@ class t7user {
 		return 'anonymous';
 	}
 
-	public static function LevelNameFromNumber($level) {
-		switch ($level) {
-			case self::LEVEL_ADMIN:
-				return 'admin';
-			case self::LEVEL_TRUSTED:
-				return 'trusted';
-			case self::LEVEL_KNOWN:
-				return 'known';
-			case self::LEVEL_NEW:
-				return 'new';
-			case self::LEVEL_ANONYMOUS:
-				return 'anonymous';
-			default:
-				return 'unknown';
-		}
-	}
-
 	/**
 	 * list of external profile types supported by CollapseProfileLink() and ExpandProfileLink().
 	 * @return string[] array of source names for external profiles.
@@ -341,7 +324,7 @@ class t7user {
 	 */
 	private function UpdateLastLogin($id) {
 		global $db;
-		$db->real_query('insert into users_stats (id, lastlogin) values (\'' . $db->real_escape_string($id) . '\', \'' . +time() . '\') on duplicate key update lastlogin=\'' . +time() . '\'');
+		$db->real_query('update user set lastlogin=now() where id=\'' . +$id . '\' limit 1');
 	}
 
 	/**
@@ -401,46 +384,6 @@ class t7user {
 				return true;
 			}
 		return false;
-	}
-
-	/**
-	 * Look up the user's statistics.
-	 * @return object Statistics object, or false in unable to retrieve
-	 */
-	public function GetStats() {
-		global $db;
-		if ($s = $db->query('select registered, fans, comments, replies from users_stats where id=\'' . +$this->ID . '\' limit 1'))
-			if ($s = $s->fetch_object())
-				return $s;
-		return (object)['registered' => 0, 'fans' => 0, 'comments' => 0, 'replies' => 0];
-	}
-
-	/**
-	 * Look up the user's contact links.
-	 * @return array List of contact links with type, url, and title subscripts
-	 */
-	public function GetContactLinks() {
-		global $db, $user;
-		$friend = $this->Friend || $this->ID == $user->ID;  // friend view is also visible to self
-		$links = [];
-		if ($c = $db->query('select email, vis_email from users_email where id=\'' . +$this->ID . '\' limit 1'))
-			if ($c = $c->fetch_object())
-				if ($c->email && ($c->vis_email == 'all' || $c->vis_email == 'friends' && $friend || $c->vis_email == 'users' && $user->IsLoggedIn() || $c->vis_email == 'none' && $user->IsAdmin()))
-					$links[] = ['type' => 'email', 'url' => 'mailto:' . $c->email, 'title' => 'send ' . $this->DisplayName . ' an e-mail'];
-		$c = [];
-		foreach (self::GetProfileTypes() as $source)
-			$c[] = $source . ', vis_' . $source;
-		if ($c = $db->query('select website, vis_website, ' . implode(', ', $c) . ' from users_profiles where id=\'' . +$this->ID . '\' limit 1'))
-			if ($c = $c->fetch_object()) {
-				if ($c->website && ($c->vis_website == 'all' || $friend))
-					$links[] = ['type' => 'www', 'url' => $c->website, 'title' => 'visit ' . $this->DisplayName . '’s website'];
-				foreach (self::GetProfileTypes() as $source) {
-					$vis = 'vis_' . $source;
-					if ($c->$source && ($c->$vis == 'all' || $friend))
-						$links[] = ['type' => $source, 'url' => self::ExpandProfileLink($c->$source, $source), 'title' => 'view ' . $this->DisplayName . '’s ' . $source . ' profile'];
-				}
-			}
-		return $links;
 	}
 
 	/**
