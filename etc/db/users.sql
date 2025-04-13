@@ -44,9 +44,3 @@ create table users_conversations (
 	latestmessage smallint unsigned,
 	foreign key(latestmessage) references users_messages(id) on delete set null on update cascade
 );
-
-create table transition_users (
-	id smallint unsigned primary key,
-	olduid smallint unsigned not null,
-	foreign key(id) references users(id) on delete cascade on update cascade
-);

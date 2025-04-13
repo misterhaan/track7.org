@@ -1,7 +1,6 @@
 <?php
 define('TR_MESSAGES', 4);
 define('TR_EXT_PROFILES', 12);
-define('TR_GUESTBOOK', 13);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/etc/class/page.php';
 
@@ -42,7 +41,6 @@ class TransitionIndex extends Page {
 				$status[$s->id] = $s;
 		initStatus(self::$db, $status, TR_MESSAGES);
 		initStatus(self::$db, $status, TR_EXT_PROFILES);
-		initStatus(self::$db, $status, TR_GUESTBOOK);
 	?>
 		<table>
 			<thead>
@@ -62,11 +60,6 @@ class TransitionIndex extends Page {
 					<td><a href="extprofiles.php">external profiles</a></td>
 					<td><?php echo $status[TR_EXT_PROFILES]->stepnum; ?></td>
 					<td><?php echo $status[TR_EXT_PROFILES]->status; ?></td>
-				</tr>
-				<tr>
-					<td><a href="guestbook.php">guestbook</a></td>
-					<td><?= $status[TR_GUESTBOOK]->stepnum; ?></td>
-					<td><?= $status[TR_GUESTBOOK]->status; ?></td>
 				</tr>
 			</tbody>
 		</table>
