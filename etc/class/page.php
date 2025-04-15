@@ -186,7 +186,7 @@ abstract class Page extends Responder {
 	 * @param DetailedException|string $error Exception with details or non-detailed error message
 	 * @param ?string $detail Extra detail for administrators.  Not used when $error is a DetailedException
 	 */
-	protected static function DetailedError(mixed $error, string $detail = null): void {
+	protected static function DetailedError(mixed $error, ?string $detail = null): void {
 		if (self::HasAdminSecurity())
 			if ($error instanceof DetailedException)
 				self::Error($error->getDetailedMessage());
