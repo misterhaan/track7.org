@@ -14,7 +14,7 @@ createApp({
 		};
 	},
 	created: function() {
-		this.tagid = document.location.pathname.split("/")[2];
+		this.tagid = window.location.pathname.split("/")[2];
 		this.Load();
 	},
 	methods: {

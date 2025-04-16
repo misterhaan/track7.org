@@ -14,7 +14,7 @@ createApp({
 		};
 	},
 	created: function() {
-		this.id = document.location.pathname.split("/")[2];
+		this.id = window.location.pathname.split("/")[2];
 		const summaryDiv = $("#summary");
 		this.summary = summaryDiv.html();
 		summaryDiv.remove();

@@ -1,7 +1,7 @@
 import "jquery";
 import { createApp } from "vue";
 
-const username = document.location.pathname.split("/").filter(n => n).pop();
+const username = window.location.pathname.split("/").filter(n => n).pop();
 const displayname = $("h1").text();
 
 createApp({

@@ -2,7 +2,7 @@ import "jquery";
 import { createApp } from "vue";
 import autosize from "autosize";
 
-const subsite = document.location.pathname.split("/")[1];
+const subsite = window.location.pathname.split("/")[1];
 
 
 const tagcloud = document.querySelector(".tagcloud");
