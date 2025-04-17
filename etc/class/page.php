@@ -10,7 +10,16 @@ abstract class Page extends Responder {
 
 	protected static string $title = self::siteTitle;
 	protected static string $bodytype = 'text';
-	protected static array $importmap = [];
+	protected static array $importmap = [
+		'jquery' => '/jquery-3.7.1.min.js',
+		'autosize' => '/autosize.esm.js',
+		'popup' => '/popup.js',
+		'user' => '/user.js',
+		'comment' => '/comment.js',
+		'tag' => '/tag.js',
+		'vote' => '/vote.js',
+		'validate' => '/validate.js'
+	];
 	protected static array $params = [];
 
 	/**
@@ -19,14 +28,7 @@ abstract class Page extends Responder {
 	 */
 	public function __construct(string $title) {
 		self::SetTitle($title);
-		self::$importmap['jquery'] = '/jquery-3.7.1.min.js';
 		self::$importmap['vue'] = file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.esm-browser.js') ? '/vue.esm-browser.js' : '/vue.esm-browser.prod.js';
-		self::$importmap['autosize'] = '/autosize.esm.js';
-		self::$importmap['comment'] = '/comment.js';
-		self::$importmap['tag'] = '/tag.js';
-		self::$importmap['user'] = '/user.js';
-		self::$importmap['vote'] = '/vote.js';
-		self::$importmap['validate'] = '/validate.js';
 		self::Send();
 	}
 

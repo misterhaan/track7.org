@@ -1,7 +1,6 @@
 import "jquery";
+import { popup } from "popup";
 import { createApp } from "vue";
-
-document.popup = [];
 
 const sortoptions = [
 	{ key: "lastlogin", display: "latest sign-in" },
@@ -61,20 +60,12 @@ createApp({
 		},
 		ShowSortOptions(e) {
 			const visdrop = $(e.target).siblings(".droplist");
-			if(document.popup.length && document.popup[0][0] == visdrop[0]) {
-				document.popup.shift().hide();
-			} else {
-				if(document.popup.length)
-					document.popup[0].hide();
-				document.popup.unshift(visdrop);
-				document.popup[0].show();
-			}
+			popup.toggle(visdrop);
 		},
 		Sort(option) {
 			this.sort = option;
 			this.users.sort(sortfunction[this.sort.key]);
-			if(document.popup.length)
-				document.popup.shift().hide();
+			popup.hide();
 		}
 	},
 	template: /* html */ `

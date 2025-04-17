@@ -1,6 +1,6 @@
 import "jquery";
+import { popup } from "popup";
 
-document.popup = [];
 InitUserMenu();
 InitLoginLogout();
 
@@ -8,26 +8,9 @@ InitLoginLogout();
  * initialize the user menu or login menu
  */
 function InitUserMenu() {
-	$("#signin, #whodat").click(event => {
-		const menu = $("#usermenu, #loginmenu");
-		if(document.popup.length && document.popup[0][0] == menu[0]) {
-			document.popup.shift().hide();
-		} else {
-			if(document.popup.length)
-				document.popup[0].hide();
-			document.popup.unshift(menu);
-			document.popup[0].show();
-		}
-		event.preventDefault();
-		event.stopPropagation();
-	});
-	$("#usermenu, #loginmenu").click(event => {
-		event.stopPropagation();  // so document click doesn't close the menu
-	});
-	$(document).click(() => {
-		if(document.popup.length)
-			document.popup.shift().hide();
-	});
+	popup.register("#loginMenu", "#signin");
+	popup.register("#usermenu", "#whodat");
+
 }
 
 /**
