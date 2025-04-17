@@ -43,7 +43,7 @@ class ToolApi extends Api {
 
 	public static function POST_regexmatch(array $params): void {
 		$all = array_shift($params) == 'all';
-		if (!isset($_POST['pattern']) || !isset($_POST['subject']))
+		if (!isset($_POST['pattern'], $_POST['subject']))
 			self::NotFound('pattern and subject must be specified.');
 		$pattern = trim($_POST['pattern']);
 		$subject = trim($_POST['subject']);
@@ -56,7 +56,7 @@ class ToolApi extends Api {
 	}
 
 	public static function POST_regexreplace(): void {
-		if (!isset($_POST['pattern']) || !isset($_POST['subject']))
+		if (!isset($_POST['pattern'], $_POST['subject']))
 			self::NotFound('pattern, and subject must be specified.');
 		$pattern = trim($_POST['pattern']);
 		$replacement = isset($_POST['replacement']) ? trim($_POST['replacement']) : '';
