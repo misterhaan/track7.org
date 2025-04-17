@@ -1,11 +1,8 @@
 import "jquery";
-import { GetCurrentUser } from "user";
+import { currentUser } from "user";
 import { createApp } from "vue";
 import { ExistingTagsField } from "tag";
 import autosize from "autosize";
-
-const user = GetCurrentUser();
-
 
 createApp({
 	name: "StartDiscussion",
@@ -24,7 +21,7 @@ createApp({
 			return !this.saving && this.title.trim() && this.tags.trim() && this.message.trim();
 		},
 		user: function() {
-			return user;
+			return currentUser;
 		}
 	},
 	created() {
@@ -43,7 +40,7 @@ createApp({
 				tags: this.tags,
 				message: this.message
 			};
-			if(!user) {
+			if(!currentUser) {
 				data.name = this.name;
 				data.contact = this.contact;
 			}

@@ -1,9 +1,8 @@
 import "jquery";
-import { GetCurrentUser } from "user";
+import { currentUser } from "user";
 import { createApp } from "vue";
 import autosize from "autosize";
 
-const user = GetCurrentUser();
 const subsite = window.location.pathname.split("/")[1];
 
 export const Comment = {
@@ -18,7 +17,7 @@ export const Comment = {
 	},
 	computed: {
 		trusted: function() {
-			return user && user.Level >= "3-trusted";
+			return currentUser?.Level >= "3-trusted";
 		},
 		canSave: function() {
 			return !this.saving && this.comment.Markdown && this.oldMarkdown != this.comment.Markdown.trim();
@@ -53,7 +52,7 @@ export const Comment = {
 					this.editing = false;
 					this.comment.HTML = html;
 					if(leaveANote)
-						this.comment.Edits.push({ Instant: { Display: "just now" }, DisplayName: user.DisplayName, Username: user.URL.split("/")[1] });
+						this.comment.Edits.push({ Instant: { Display: "just now" }, DisplayName: currentUser.DisplayName, Username: currentUser.URL.split("/")[1] });
 					this.$nextTick(() => {
 						Prism.highlightAll();
 					});
@@ -127,7 +126,7 @@ if(comments) {
 		},
 		computed: {
 			user: function() {
-				return user;
+				return currentUser;
 			},
 			canSave: function() {
 				return !this.saving && this.newComment.markdown.trim() && (this.user || this.newComment.name.trim());

@@ -1,9 +1,7 @@
 import "jquery";
-import { GetCurrentUser } from "user";
+import { currentUser } from "user";
 import { createApp } from "vue";
 import autosize from "autosize";
-
-const user = GetCurrentUser();
 
 createApp({
 	name: "TagInfo",
@@ -33,7 +31,7 @@ createApp({
 	},
 	computed: {
 		canEdit() {
-			return user && user.Level >= "4-admin";
+			return currentUser?.Level >= "4-admin";
 		}
 	},
 	methods: {

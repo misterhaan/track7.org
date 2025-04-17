@@ -1,8 +1,7 @@
 import "jquery";
 import { createApp } from "vue";
-import { GetCurrentUser } from "user";
+import { currentUser } from "user";
 
-const user = GetCurrentUser();
 
 createApp({
 	name: "Votes",
@@ -16,7 +15,7 @@ createApp({
 	},
 	computed: {
 		canDelete() {
-			return user && user.Level >= "4-admin";
+			return currentUser?.Level >= "4-admin";
 		}
 	},
 	created: function() {
