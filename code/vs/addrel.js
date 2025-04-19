@@ -60,15 +60,15 @@ createApp({
 		<form method=post enctype="" @submit.prevent=Save ref=relForm>
 			<label>
 				<span class=label>version:</span>
-				<ValidatingField :value=release.Version :validateUrl="'/api/release.php/versionAvailable/' + this.app + '/'"
+				<ValidatingField :value=release.Version :validateUrl="'/api/release.php/versionAvailable/' + this.app"
 					msgChecking="checking if version is already released..." msgValid="can release this version" msgBlank="version is required"
-					inputAttributes="{maxlength: 10, pattern: '[0-9]+(\.[0-9]+){0,2}'}"
+					inputAttributes="{maxlength: 10, pattern: '[0-9]+(\.[0-9]+){0,2}', required: true}"
 					@validated="(isValid, newValue) => OnValidated('Version', isValid, newValue)"
 				></ValidatingField>
 			</label>
 			<label>
 				<span class=label>date:</span>
-				<ValidatingField :value=release.Instant validateUrl="/api/date.php/validatePast/"
+				<ValidatingField :value=release.Instant validateUrl="/api/date.php/validatePast"
 				msgChecking="validating date / time..." msgValid="valid date / time"
 					msgBlank="will use current date / time" :isBlankValid=true
 					@validated="(isValid, newValue) => OnValidated('Instant', isValid, newValue)"

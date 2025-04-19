@@ -22,6 +22,9 @@ class LegoApi extends Api {
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'edit', 'retrieves details of a lego model for editing. only available to admin.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'lego model id to load for editing', true);
 
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'idAvailable', 'checks if a lego model id is available.  this means not in use or already used by the specified lego model.', 'plain text', 'send the proposed new id for the lego model as the request body.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('oldId', 'string', 'current id of the lego model that might be changing its id.');
+
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'save', 'save edits to a lego model or add a new lego model. only available to admin.', 'multipart/form-data');
 		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'id of the lego model to update.  if not specified, adds a new lego model.');
 		$endpoint->BodyParameters[] = new ParameterDocumentation('id', 'string', 'new lego model id (unique part of the url to the lego model).', true);
@@ -49,7 +52,7 @@ class LegoApi extends Api {
 	 * @param array $params ID of lego model to edit
 	 */
 	protected static function GET_edit(array $params): void {
-		$id = array_shift($params);
+		$id = trim(array_shift($params));
 		if (!$id)
 			self::NotFound('id must be specified.');
 		if ($lego = EditLego::FromID(self::RequireDatabase(), $id))
@@ -60,20 +63,11 @@ class LegoApi extends Api {
 
 	/**
 	 * Check if a lego model ID is available.
-	 * @param array $params Current ID followed by an equal sign followed by the new ID to check.  Current ID may be blank.
+	 * @param array $params Current ID, if any.
 	 */
-	protected static function GET_idAvailable($params): void {
-		$oldNewID = array_shift($params);
-		if (!$oldNewID)
-			self::NotFound('id must be specified.');
-		$oldNewID = explode('=', $oldNewID);
-		if (count($oldNewID) == 1) {
-			$oldID = '';
-			$newID = $oldNewID[0];
-		} else {
-			$oldID = array_shift($oldNewID);
-			$newID = implode('=', $oldNewID);
-		}
+	protected static function POST_idAvailable($params): void {
+		$oldID = trim(array_shift($params));
+		$newID = self::ReadRequestText();
 		self::Success(EditLego::IdAvailable(self::RequireDatabase(), $oldID, $newID));
 	}
 

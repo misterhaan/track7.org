@@ -19,8 +19,8 @@ class ScriptApi extends Api {
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'edit', 'retrieves a web script for editing.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'specify the id of the web script to edit.', true);
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'idAvailable', 'checks if a web script id is available.  this means not in use or already used by the specified web script.');
-		$endpoint->PathParameters[] = new ParameterDocumentation('oldId=newId', 'string', 'oldId is the id of the web script that might be changing its id, or just start with the equal sign for a new script.  newId is the proposed new id for the script.', true);
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'idAvailable', 'checks if a web script id is available.  this means not in use or already used by the specified web script.', 'plain text', 'send the proposed new id for the web script as the request body.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('oldId', 'string', 'current id of the web script that might be changing its id.');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'save', 'saves edits to an existing web script or adds a new web script.  must be logged in as the administrator.', 'multipart', 'fields from the form.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'id of the web script to update.  if not specified, adds a new web script.');
@@ -67,20 +67,11 @@ class ScriptApi extends Api {
 
 	/**
 	 * Check if a web script ID is available.
-	 * @param array $params Current ID followed by an equal sign followed by the new ID to check.  Current ID may be blank.
+	 * @param array $params Current ID, if any.
 	 */
-	protected static function GET_idAvailable($params): void {
-		$oldNewID = array_shift($params);
-		if (!$oldNewID)
-			self::NotFound('id must be specified.');
-		$oldNewID = explode('=', $oldNewID);
-		if (count($oldNewID) == 1) {
-			$oldID = '';
-			$newID = $oldNewID[0];
-		} else {
-			$oldID = array_shift($oldNewID);
-			$newID = implode('=', $oldNewID);
-		}
+	protected static function POST_idAvailable($params): void {
+		$oldID = trim(array_shift($params));
+		$newID = self::ReadRequestText();
 		self::Success(EditScript::IdAvailable(self::RequireDatabase(), $oldID, $newID));
 	}
 

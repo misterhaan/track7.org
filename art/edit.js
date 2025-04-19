@@ -93,9 +93,9 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=art.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/art.php/idAvailable/' + this.id + '='"
+				<ValidatingField :value=art.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/art.php/idAvailable/' + this.id"
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
-					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+'}"
+					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"
 				></ValidatingField>
 			</label>

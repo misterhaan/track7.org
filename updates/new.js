@@ -51,7 +51,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>date:</span>
-				<ValidatingField :value=date validateUrl="/api/date.php/validatePast/"
+				<ValidatingField :value=date validateUrl="/api/date.php/validatePast"
 					msgChecking="validating date / time..." msgValid="valid date / time"
 					msgBlank="will use current date / time" :isBlankValid=true
 					@validated="(isValid, newValue) => OnValidated('date', isValid, newValue)"

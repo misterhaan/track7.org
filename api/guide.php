@@ -23,8 +23,8 @@ class GuideApi extends Api {
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'edit', 'retreives guide content for editing.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'specify the id of the guide to retrieve.', true);
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'idAvailable', 'checks if a guide id is available.  this means not in use or already used by the specified guide.');
-		$endpoint->PathParameters[] = new ParameterDocumentation('oldId=newId', 'string', 'oldId is the id of the guide that might be changing its id, or just start with the equal sign for a new guide.  newId is the proposed new id for the guide.', true);
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'idAvailable', 'checks if a guide id is available.  this means not in use or already used by the specified guide.', 'plain text', 'send the proposed new id for the guide as the request body.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('oldId', 'string', 'current id of the guide that might be changing its id.');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'save', 'save changes to a guide.', 'json', 'form content formatted as json because of multiple chapters.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'id of guide to save edits.  if blank, saves a new guide.');
@@ -93,20 +93,11 @@ class GuideApi extends Api {
 
 	/**
 	 * Check if a guide ID is available.
-	 * @param array $params Current ID followed by an equal sign followed by the new ID to check.  Current ID may be blank.
+	 * @param array $params Current ID, if any.
 	 */
-	protected static function GET_idAvailable(array $params): void {
-		$oldNewID = array_shift($params);
-		if (!$oldNewID)
-			self::NotFound('id must be specified.');
-		$oldNewID = explode('=', $oldNewID);
-		if (count($oldNewID) == 1) {
-			$oldID = '';
-			$newID = $oldNewID[0];
-		} else {
-			$oldID = array_shift($oldNewID);
-			$newID = implode('=', $oldNewID);
-		}
+	protected static function POST_idAvailable(array $params): void {
+		$oldID = trim(array_shift($params));
+		$newID = self::ReadRequestText();
 		self::Success(EditGuide::IdAvailable(self::RequireDatabase(), $oldID, $newID));
 	}
 

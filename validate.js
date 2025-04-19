@@ -83,7 +83,12 @@ export const ValidatingField = {
 				this.state = this.isBlankValid ? Status.Valid : Status.Invalid;
 				this.$emit("validated", this.isBlankValid, "");
 			} else
-				$.get(this.validateUrl + this.effectiveValue).done(result => {
+				$.ajax({
+					method: "POST",
+					url: this.validateUrl,
+					contentType: "text/plain; charset=utf-8",
+					data: this.effectiveValue
+				}).done(result => {
 					this.state = result.State;
 					this.lastMessage = result.Message;
 					this.$emit("validated", this.state == Status.Valid, this.localValue = result.NewValue || this.localValue);
@@ -99,7 +104,7 @@ export const ValidatingField = {
 			:maxlength=this.inputAttributes?.maxlength
 			:required=this.inputAttributes?.required
 			:pattern=this.inputAttributes?.pattern
-			v-model=this.localValue
+			v-model.trim=this.localValue
 			:placeholder=this.default
 			@change=Validate
 		></span>

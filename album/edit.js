@@ -93,9 +93,9 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=photo.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/photo.php/idAvailable/' + this.id + '='"
+				<ValidatingField :value=photo.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/photo.php/idAvailable/' + this.id"
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
-					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+'}"
+					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"
 				></ValidatingField>
 			</label>
@@ -116,7 +116,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>taken:</span>
-				<ValidatingField :value=photo.TakenFormatted validateUrl="/api/date.php/validatePast/"
+				<ValidatingField :value=photo.TakenFormatted validateUrl="/api/date.php/validatePast"
 				msgChecking="validating date / time..." msgValid="valid date / time"
 					msgBlank="will attempt to look up from photo exif data" :isBlankValid=true
 					@validated="(isValid, newValue) => OnValidated('TakenFormatted', isValid, newValue)"

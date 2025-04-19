@@ -17,9 +17,8 @@ class ReleaseApi extends Api {
 		$endpoint->PathParameters[] = new ParameterDocumentation('application', 'string', 'id of application whose releases to look up.', true);
 		$endpoint->PathParameters[] = new ParameterDocumentation('skip', 'integer', 'specify a number of releases to skip. usually the number of releases currently loaded.');
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'versionAvailable', 'checks if a version is available to release for an application.');
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'versionAvailable', 'checks if a version is available to release for an application.', 'plain text', 'send the version to check as the request body in x.x.x format.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('application', 'string', 'id of application to check version.', true);
-		$endpoint->PathParameters[] = new ParameterDocumentation('version', 'string', 'version to check in x.x.x format.', true);
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'add', 'saves a new release of an application.  must be logged in as the administrator.', 'post', 'fields from the form');
 		$endpoint->PathParameters[] = new ParameterDocumentation('application', 'string', 'id of the application to release.', true);
@@ -41,14 +40,14 @@ class ReleaseApi extends Api {
 	 * @param array $params ID of application whose releases to look up.  May also contain number of applications to skip
 	 */
 	protected static function GET_list(array $params): void {
-		$application = array_shift($params);
+		$application = trim(array_shift($params));
 		$skip = +array_shift($params);
 		self::Success(Release::List(self::RequireDatabase(), self::RequireUser(), $application, $skip));
 	}
 
-	protected static function GET_versionAvailable(array $params): void {
-		$application = array_shift($params);
-		$version = array_shift($params);
+	protected static function POST_versionAvailable(array $params): void {
+		$application = trim(array_shift($params));
+		$version = self::ReadRequestText();
 		if (!$application || !$version)
 			self::NotFound('application and version must be specified.');
 

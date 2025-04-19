@@ -130,9 +130,9 @@ createApp({
 			</label>
 			<label>
 				<span class=label title="unique portion of guide url (alphanumeric with dots, dashes, and underscores)">url:</span>
-				<ValidatingField :value=guide.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/guide.php/idAvailable/' + this.id + '='"
+				<ValidatingField :value=guide.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/guide.php/idAvailable/' + this.id"
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
-					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+'}"
+					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"
 				></ValidatingField>
 			</label>

@@ -13,8 +13,7 @@ class DateApi extends Api {
 	public static function GetEndpointDocumentation(): array {
 		$endpoints = [];
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'validatePast', 'checks whether the provided date string is valid and in the past.');
-		$endpoint->PathParameters[] = new ParameterDocumentation('date', 'string', 'provide a date string to validate.');
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'validatePast', 'checks whether the provided date string is valid and in the past.', 'plain text', 'send the date string to validate as the request body.');
 
 		return $endpoints;
 	}
@@ -23,8 +22,8 @@ class DateApi extends Api {
 	 * Validate that a date is in the past.
 	 * @param array $params String representation of a date to validate.
 	 */
-	protected static function GET_validatePast(array $params) {
-		$dateString = trim(implode('/', $params));
+	protected static function POST_validatePast(array $params) {
+		$dateString = self::ReadRequestText();
 		if (!$dateString)
 			self::NotFound('date is required.');
 		$timestamp = FormatDate::LocalToTimestamp($dateString, self::RequireUser());
