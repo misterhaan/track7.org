@@ -64,8 +64,33 @@ class User {
 			$select->fetch();
 			if (!$this->DisplayName)
 				$this->DisplayName = $this->Username;
+			if (!$this->Avatar)
+				$this->Avatar = self::DefaultAvatar;
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error looking up basic user information', $mse);
+		}
+	}
+
+	public static function IdAvailable(mysqli $db, CurrentUser $user, string $newID): ValidationResult {
+		if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $newID))
+			return new ValidationResult('invalid', 'username can only contain alphanumeric, dash, and underscore characters.');
+		return self::NameAvailable($db, $user, $newID);
+	}
+
+	public static function NameAvailable(mysqli $db, CurrentUser $user, string $newID): ValidationResult {
+		if (mb_strlen($newID) < 4)
+			return new ValidationResult('invalid', 'names must be at least four characters long.');
+		if (strlen($newID) > 32)
+			return new ValidationResult('invalid', 'names must be no longer than 32 bytes (most characters are one byte).');
+		try {
+			$select = $db->prepare('select 1 from user where (username=? or displayname=?) and id!=? limit 1');
+			$select->bind_param('ssi', $newID, $newID, $user->ID);
+			$select->execute();
+			if ($select->fetch())
+				return new ValidationResult('invalid', 'name is already in use.');
+			return new ValidationResult('valid');
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error checking if name is available', $mse);
 		}
 	}
 }
@@ -167,17 +192,9 @@ class CurrentUser extends User {
 	 */
 	public int $TzOffset = 0;
 	/**
-	 * Total number of notifications for the user
-	 */
-	public int $NotifyCount = 0;
-	/**
 	 * Total number of unread messages for the user
 	 */
 	public int $UnreadMsgs = 0;
-	/**
-	 * Whether the user still has a transitional login
-	 */
-	public bool $HasTransitionLogin = false;
 
 	protected const SessionKey = 'user';
 	protected const CookieName = 'guy';
@@ -198,25 +215,59 @@ class CurrentUser extends User {
 			if (count($cookie) == 2)
 				if ($id = $this->GetRememberUserID($db, $cookie[0], $cookie[1])) {
 					parent::__construct($db, $id);
-					$this->UpdateLastLogin($db, $id);
-					// TODO:  create new login cookie token (old code didn't do this)
+					$this->UpdateLastLogin($db);
+					$this->UpdateRememberSeries($db, $cookie[0]);
 					$_SESSION[self::SessionKey] = $id;
 					$_SESSION['loginsource'] = 'cookie';
 				}
 		}
 		if ($this->IsLoggedIn()) {
 			try {
-				// TODO:  move settings and login to new tables / views
-				$select = $db->prepare('select us.timebase != \'gmt\', us.timeoffset, us.unreadmsgs, tl.id is not null from users_settings as us left join transition_login as tl on tl.id=us.id where us.id=? limit 1');
+				// TODO:  move settings to new table / view
+				$select = $db->prepare('select timebase!=\'gmt\', timeoffset, unreadmsgs from users_settings where id=? limit 1');
 				$select->bind_param('i', $this->ID);
 				$select->execute();
-				$select->bind_result($this->DST, $this->TzOffset, $this->UnreadMsgs, $this->HasTransitionLogin);
+				$select->bind_result($this->DST, $this->TzOffset, $this->UnreadMsgs);
 				$select->fetch();
-				$this->NotifyCount = $this->UnreadMsgs + $this->HasTransitionLogin;
 			} catch (mysqli_sql_exception $mse) {
 				throw DetailedException::FromMysqliException('error looking up user settings', $mse);
 			}
 		}
+	}
+
+	public static function PasswordLogin(mysqli $db, bool $remember): self {
+		if (!isset($_POST['username'], $_POST['password']))
+			throw new DetailedException('username and password must be provided');
+		$username = trim($_POST['username']);
+		$password = trim($_POST['password']);
+		if (!$username || !$password)
+			throw new DetailedException('username and password must be provided');
+		try {
+			$select = $db->prepare('select id, passwordhash from user where username=? and passwordhash is not null limit 1');
+			$select->bind_param('s', $username);
+			$select->execute();
+			$select->bind_result($id, $hash);
+			if ($select->fetch() && self::CheckPassword($password, $hash))
+				return self::Login($db, 'password', $id, $remember);
+			else
+				return new self($db);  // anonymous
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error logging in user', $mse);
+		}
+	}
+
+	public static function Login(mysqli $db, string $source, int $id, bool $remember): self {
+		$_SESSION[self::SessionKey] = $id;
+		$_SESSION['loginsource'] = $source;
+
+		$user = new self($db);
+		if ($user->IsLoggedIn()) {
+			$user->UpdateLastLogin($db);
+			if ($remember)
+				$user->StartRememberSeries($db);
+		}
+
+		return $user;
 	}
 
 	/**
@@ -240,17 +291,99 @@ class CurrentUser extends User {
 		return $this->Level >= UserLevel::Admin;
 	}
 
+	public function AddLogin(mysqli $db, string $site, string $id, ?string $name, ?string $url, ?string $avatar): void {
+		// link this login's avatar if user doesn't currently have an avatar
+		$linkAvatar = $avatar && ($this->Avatar == self::DefaultAvatar || !$this->Avatar);
+		try {
+			$insert = $db->prepare('insert into login (site, id, user, name, url, avatar, linkavatar) values (?, ?, ?, ?, ?, ?, ?)');
+			$insert->bind_param('ssisssi', $site, $id, $this->ID, $name, $url, $avatar, $linkAvatar);
+			$insert->execute();
+			if ($linkAvatar)
+				$this->UpdateAvatar($db, $avatar);
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error adding login profile', $mse);
+		}
+	}
+
+	public function UpdateLogin(mysqli $db, string $site, string $id, ?string $name, ?string $url, ?string $avatar): void {
+		try {
+			$update = $db->prepare('update login set name=?, url=?, avatar=? where site=? and id=? and user=? limit 1');
+			$update->bind_param('ssisss', $name, $url, $avatar, $site, $id, $this->ID);
+			$update->execute();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error updating login profile', $mse);
+		}
+	}
+
+	public function UpdateAvatar(mysqli $db, string $avatar): void {
+		try {
+			$update = $db->prepare('update user set avatar=? where id=? limit 1');
+			$update->bind_param('si', $avatar, $this->ID);
+			$update->execute();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error updating avatar', $mse);
+		}
+	}
+
 	/**
 	 * update the last time the user logged in.
 	 * @param integer $id user id who just logged in
 	 */
-	private function UpdateLastLogin(mysqli $db, int $id) {
+	private function UpdateLastLogin(mysqli $db) {
 		try {
 			$insert = $db->prepare('update user set lastlogin=now() where id=? limit 1');
-			$insert->bind_param('i', $id);
+			$insert->bind_param('i', $this->ID);
 			$insert->execute();
 		} catch (mysqli_sql_exception) {
-			// this should only fail if user table doesn't have the lastlogin column yet
+			// don't fail a login for this reason
+		}
+	}
+
+	/**
+	 * Checks a plain-text password against an encrypted password.
+	 *
+	 * @param string $password Plain-text password.
+	 * @param string $hash Encrypted password.
+	 * @return bool True if passwords match.
+	 */
+	private static function CheckPassword($password, $hash) {
+		$len = strlen($hash);
+		$saltpass = $password . substr($hash, 0, 8);
+		if ($len == 96)  // currently using base64 SHA512 with 8-character base64 salt for 96 characters total
+			return base64_encode(hash('sha512', $saltpass, true)) == substr($hash, 8);
+		// TODO:  convert less secure passwords to new format
+		if ($len == 48)  // previously used hexadecimal SHA1 with 8-character hexadecimal salt for 48 characters total
+			return sha1($saltpass) == substr($hash, 8);
+		if ($len == 32)  // originally used unsalted MD5
+			return md5($password) == $hash;
+		return false;
+	}
+
+	private function StartRememberSeries(mysqli $db): void {
+		try {
+			do {
+				$series = base64_encode(openssl_random_pseudo_bytes(12));
+				if ($chk = $db->query('select 1 from remember where series=\'' . $db->real_escape_string($series) . '\' limit 1'))
+					$chk = $chk->fetch_object();
+			} while ($chk);
+			$this->UpdateRememberSeries($db, $series);
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error starting remembered login series', $mse);
+		}
+	}
+
+	private function UpdateRememberSeries(mysqli $db, string $series): void {
+		try {
+			$token = openssl_random_pseudo_bytes(32);
+			$tokenhash = base64_encode(hash('sha512', $token, true));
+			$cookieLife = self::CookieLife;
+			$replace = $db->prepare('replace into remember (series, tokenhash, expires, user) values (?, ?, date_add(now(), interval ? second), ?)');
+			$replace->bind_param('ssii', $series, $tokenhash, $cookieLife, $this->ID);
+			$replace->execute();
+			$token = base64_encode($token);
+			setcookie(self::CookieName, "$series:$token", time() + self::CookieLife, '/');
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error updating remembered login series', $mse);
 		}
 	}
 
@@ -263,24 +396,33 @@ class CurrentUser extends User {
 	 * @return int user id or zero if unable to remember.
 	 */
 	private function GetRememberUserID(mysqli $db, string $series, string $token): int {
-		// TODO:  migrate remembered logins table
-		$select = $db->prepare('select tokenhash, expires, user from login_remembered where series=? limit 1');
+		$select = $db->prepare('select tokenhash, unix_timestamp(expires), user from remember where series=? limit 1');
 		$select->bind_param('s', $series);
 		$select->execute();
 		$select->bind_result($tokenhash, $expires, $id);
 		if ($select->fetch() && $expires >= time())
 			if ($tokenhash == base64_encode(hash('sha512', base64_decode($token), true)))
 				return $id;
-			else
+			else  // token doesn't match
 				$this->ClearAllUserRememberSeries($db);
+		else  // expired
+			self::ClearExpiredRememberSeries($db);
 		return 0;
 	}
 
-	private function ClearAllUserRememberSeries(mysqli $db): void {
-		// TODO:  migrate remembered logins table
+	private static function ClearExpiredRememberSeries(mysqli $db): void {
 		try {
-			$delete = $db->prepare('delete from login_remembered where user=? or expires>?');
-			$delete->bind_param('ii', $this->ID, time());
+			$delete = $db->prepare('delete from remember where expires<now()');
+			$delete->execute();
+		} catch (mysqli_sql_exception $mse) {
+			// not important enough to stop what we're doing
+		}
+	}
+
+	private function ClearAllUserRememberSeries(mysqli $db): void {
+		try {
+			$delete = $db->prepare('delete from remember where user=? or expires>now()');
+			$delete->bind_param('i', $this->ID);
 			$delete->execute();
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error clearing all user remembered login series', $mse);
@@ -288,10 +430,9 @@ class CurrentUser extends User {
 	}
 
 	private function ClearRememberSeries(mysqli $db, string $series): void {
-		// TODO:  migrate remembered logins table
 		try {
-			$delete = $db->prepare('delete from login_remembered where series=? or expires>?');
-			$delete->bind_param('si', $series, time());
+			$delete = $db->prepare('delete from remember where series=? or expires>now()');
+			$delete->bind_param('s', $series);
 			$delete->execute();
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error clearing remembered login series', $mse);

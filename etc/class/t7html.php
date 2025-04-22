@@ -115,6 +115,7 @@ class t7html {
 							<?php
 							}
 							?>
+							<label class="track7" title="sign in with your track7 account"><input type="radio" name="login_url" value="/api/user.php/login"></label>
 						</div>
 						<div id=oldlogin>
 							note:&nbsp; this is only for users who have already set up a password.

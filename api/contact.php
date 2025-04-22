@@ -14,20 +14,36 @@ class ContactApi extends Api {
 		$endpoints = [];
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'list', 'retrieves contact links for the specified user.  results can vary based on who’s asking.');
-		$endpoint->PathParameters[] = new ParameterDocumentation('username', 'string', 'username whose contact links to look up.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('username', 'string', 'username whose contact links to look up.', true);
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'validate', 'validates a contact link.', 'plain text', 'send the value to validate as the request body.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('type', 'string', 'type of contact link to validate.', true);
 
 		return $endpoints;
 	}
 
 	/**
 	 * get contact links for a user.
-	 * @param array $params may contain number of activities to skip
+	 * @param array $params username whose contacts to look up
 	 */
 	protected static function GET_list(array $params): void {
 		$username = trim(array_shift($params));
 		if (!$username)
 			self::NotFound('username must be specified.');
 		self::Success(ContactLink::List(self::RequireDatabase(), self::RequireUser(), $username));
+	}
+
+	/**
+	 * validate a contact link.
+	 * @param array $params type of contact link to validate
+	 */
+	protected static function POST_validate(array $params): void {
+		$type = trim(array_shift($params));
+		if (!$type)
+			self::NotFound('contact type must be specified.');
+		$value = self::ReadRequestText();
+
+		self::Success(ContactLink::Validate($type, $value));
 	}
 }
 ContactApi::Respond();

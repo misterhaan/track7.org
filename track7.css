@@ -491,7 +491,6 @@ body>header a {
 
 #oldlogin {
 	padding-top: .5em;
-	display: none;
 }
 
 #oldlogin label {
@@ -509,7 +508,7 @@ body>header a {
 	padding: 0 .25em .1em;
 }
 
-#signinform label[for=rememberlogin] {
+#signinform label.checkbox {
 	width: 13em;
 	margin: .5em auto;
 }

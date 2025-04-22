@@ -41,11 +41,13 @@ abstract class Page extends Responder {
 
 	/**
 	 * Redirect somewhere within the subdirectory of the current script.  Must be called from constructor to work.  Halts the script.
-	 * @param $relativePath Relative path (no starting slash) the redirect should target.  Default is the index page.
+	 * @param $relativePath Relative path the redirect should target.  Default is the index page.
 	 */
 	protected static function Redirect(string $relativePath = ''): void {
 		require_once 'formatUrl.php';
-		header('Location: ' . FormatURL::FullUrl(dirname($_SERVER['SCRIPT_NAME']) . '/' . $relativePath));
+		if (substr($relativePath, 0, 1) != '/')
+			$relativePath = dirname($_SERVER['SCRIPT_NAME']) . '/' . $relativePath;
+		header('Location: ' . FormatURL::FullUrl($relativePath));
 		die;
 	}
 
@@ -236,13 +238,9 @@ abstract class Page extends Responder {
 		}
 		?>
 		<script src="/prism.js" type="text/javascript"></script>
-		<script src="/usermenu.js" type=module></script>
+		<script src="/user.js" type=module></script>
 		<?php
-		if (substr($_SERVER['SCRIPT_NAME'], 0, 10) == '/user/via/') {
-		?>
-			<script src=" /user/via/register.js" type="text/javascript"></script>
-		<?php
-		} elseif (file_exists(str_replace('.php', '.js', $_SERVER['SCRIPT_FILENAME']))) {
+		if (file_exists(str_replace('.php', '.js', $_SERVER['SCRIPT_FILENAME']))) {
 		?>
 			<script src="<?= str_replace('.php', '.js', $_SERVER['SCRIPT_NAME']); ?>" type=module></script>
 		<?php
@@ -277,7 +275,7 @@ abstract class Page extends Responder {
 				<?php
 				if (self::IsUserLoggedIn()) {
 				?>
-					<a id=whodat href="/user/<?= self::$user->Username; ?>/" data-level=<?= self::$user->Level . '-' . UserLevel::Name(self::$user->Level); ?>><?= htmlspecialchars(self::$user->DisplayName); ?><?php if (self::$user->NotifyCount) echo '<span class=notifycount>' . self::$user->NotifyCount . '</span>'; ?><img class=avatar src="<?= self::$user->Avatar; ?>" alt=""></a>
+					<a id=whodat href="/user/<?= self::$user->Username; ?>/" data-level=<?= self::$user->Level . '-' . UserLevel::Name(self::$user->Level); ?>><?= htmlspecialchars(self::$user->DisplayName); ?><?php if (self::$user->UnreadMsgs) echo '<span class=notifycount>' . self::$user->UnreadMsgs . '</span>'; ?><img class=avatar src="<?= self::$user->Avatar; ?>" alt=""></a>
 				<?php
 				} else {
 				?>
@@ -293,41 +291,15 @@ abstract class Page extends Responder {
 			<div id=usermenu>
 				<nav id=useractions>
 					<a class=profile href="/user/<?= self::$user->Username; ?>/">profile</a>
-					<a class=settings href="/user/settings.php">settings<?php if (self::$user->HasTransitionLogin) echo '<span class=notifycount>1</span>'; ?></a>
+					<a class=settings href="/user/settings.php">settings</a>
 					<a class=messages href="/user/messages.php">messages<?php if (self::$user->UnreadMsgs) echo '<span class=notifycount>' . self::$user->UnreadMsgs . '</span>'; ?></a>
-					<a id=logoutlink href="?logout">sign out</a>
+					<a id=logoutlink href="/api/user.php/logout">sign out</a>
 				</nav>
 			</div>
 		<?php
 		} else {
 		?>
-			<div id=loginmenu>
-				<form id=signinform>
-					sign in securely with your account from one of these sites:
-					<div id=authchoices>
-						<?php
-						// TODO:  handle different continue and move t7auth to new class
-						//$continue = isset($this->params['continue']) ? $this->params['continue'] : $_SERVER['REQUEST_URI'];
-						$continue = $_SERVER['REQUEST_URI'];
-						require_once 't7auth.php';
-						require_once 'Parsedown.php';
-						require_once 't7format.php';
-						foreach (t7auth::GetAuthLinks($continue) as $name => $authurl) {
-						?>
-							<label class="<?= $name; ?>" title="sign in with your <?= $name; ?> account"><input type=radio name=login_url value="<?= htmlspecialchars($authurl); ?>"></label>
-						<?php
-						}
-						?>
-					</div>
-					<div id=oldlogin>
-						note:&nbsp; this is only for users who have already set up a password.
-						<label>username: <input name=username maxlength=32></label>
-						<label>password: <input name=password type=password></label>
-					</div>
-					<label for=rememberlogin><input type=checkbox id=rememberlogin name=remember> remember me</label>
-					<button id=dologin disabled>choose site to sign in through</button>
-				</form>
-			</div>
+			<div id=loginmenu></div>
 		<?php
 		}
 	}

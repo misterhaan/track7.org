@@ -73,6 +73,7 @@ function UpdateLoginType() {
 		}
 	} else {
 		button.html("choose site to sign in through");
+		$("#oldlogin").hide();
 	}
 }
 
@@ -84,15 +85,18 @@ function Login() {
 	if(sel.length) {
 		var url = sel.val();
 		if(url.indexOf("/") == 0) {
-			$("input[name=login_url]").prop("disabled", true);
-			$("#signinform").attr("action", url).attr("method", "post");
+			$.post("/api/user.php/login/" + $("#rememberlogin").is(":checked"), { username: $("input[name=username]").val(), password: $("input[name=password]").val() }).done(() => {
+				window.location.reload();
+			}).fail(request => {
+				alert(request.responseText);
+			});
 		} else {
 			if(!$("#rememberlogin").is(":checked"))
 				url = url.replace("remember%26", "");
 			window.location = url;
-			return false;
 		}
 	}
+	return false;
 }
 
 /**

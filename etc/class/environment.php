@@ -12,7 +12,7 @@ session_start();
 /**
  * Base class for sending a response to an HTTP request.
  */
-abstract class Responder {
+abstract class Responder extends KeyMaster {
 	protected static ?mysqli $db = null;
 	protected static ?CurrentUser $user = null;
 
@@ -95,7 +95,12 @@ abstract class Responder {
 		if (!class_exists('t7keysDB') || !defined('t7keysDB::HOST') || !defined('t7keysDB::NAME') || !defined('t7keysDB::USER') || !defined('t7keysDB::PASS'))
 			self::DetailedError('database connection details not specified or incomplete');
 	}
+}
 
+/**
+ * Base class for classes that need access to a service protected by keys.
+ */
+class KeyMaster {
 	/**
 	 * Ensures the keys file exists and can be loaded.
 	 **/

@@ -283,26 +283,14 @@ class usersApi extends t7api {
 	 */
 	protected static function removeLoginAccountAction($ajax) {
 		global $db, $user;
+		$ajax->Fail(print_r($_POST, true));
 		if ($user->IsLoggedIn())
 			if ($user->SecureLoginCount() > 1)
-				if (isset($_POST['source']) && isset($_POST['id']) && t7auth::IsKnown($_POST['source'])) {
-					$db->autocommit(false);
-					if ($profile = $db->query('select profile from login_' . $_POST['source'] . ' where id=\'' . +$_POST['id'] . '\' and user=\'' . +$user->ID . '\'')) {
-						$profile = $profile->fetch_object();
-						if ($db->real_query('delete from login_' . $_POST['source'] . ' where id=\'' . +$_POST['id'] . '\' and user=\'' . +$user->ID . '\''))
-							if ($profile)
-								if ($db->real_query('delete from external_profiles where id=\'' . +$profile->profile . '\''))
-									$db->commit();
-								else
-									$ajax->Fail('unable to remove external profile because something went wrong with the database.');
-							else
-								$db->commit();
-						else
-							$ajax->Fail('unable to remove sign-in account because something went wrong with the database.');
-					} else
-						$ajax->Fail('unable to return external profile because there was an error looking it up.');
-					$db->autocommit(true);
-				} else
+				if (isset($_POST['source']) && isset($_POST['id']) && t7auth::IsKnown($_POST['source']))
+					if ($db->real_query('delete from login where site=\'' . $_POST['source'] . '\' and id=\'' . $db->escape_string($_POST['id']) . '\' and user=\'' . +$user->ID . '\'')); // success
+					else
+						$ajax->Fail('unable to remove sign-in account because something went wrong with the database.');
+				else
 					$ajax->Fail('invalid or missing account type and id.');
 			else
 				$ajax->Fail('unable to remove sign-in account because it is your only secure way of signing in.  link another account for sign in and try again.');
@@ -318,12 +306,12 @@ class usersApi extends t7api {
 		global $db, $user;
 		if ($user->IsLoggedIn())
 			if ($user->SecureLoginCount()) {
-				if (!$db->real_query('delete from transition_login where id=\'' . +$user->ID . '\''))
-					$ajax->Fail('unable to remove old login because something went wrong with the database.');
+				if (!$db->real_query('update user set passwordhash=null where id=\'' . +$user->ID . '\''))
+					$ajax->Fail('unable to remove password because something went wrong with the database.');
 			} else
-				$ajax->Fail('unable to remove old login because it is your only way of signing in.  link another account for sign in and try again.');
+				$ajax->Fail('unable to remove password because it is your only way of signing in.  link another account for sign in and try again.');
 		else
-			$ajax->Fail('unable to remove old login because you are not signed in.  most likely your session has expired because it’s been too long since you’ve done anything, in which case you need to sign in again.');
+			$ajax->Fail('unable to remove password because you are not signed in.  most likely your session has expired because it’s been too long since you’ve done anything, in which case you need to sign in again.');
 	}
 
 	/**
@@ -567,14 +555,11 @@ class usersApi extends t7api {
 			else
 				$ajax->Fail('unable to use profile picture from gravatar due to a database error looking up e-mail address.');
 		} elseif (substr($_POST['avatar'], 0, 7) == 'profile') {
-			if ($profile = +substr($_POST['avatar'], 7))
-				if ($avatar = $db->query('select avatar from external_profiles where id=\'' . $profile . '\''))
+			if (list($source, $id) = explode('/', substr($_POST['avatar'], 7)))
+				if ($avatar = $db->query('select avatar from login where source=\'' . $source . '\' and id=\'' . $id . '\''))
 					if ($avatar = $avatar->fetch_object()) {
 						$ajax->Data->avatar = $avatar->avatar;
-						$q = [];
-						foreach (t7auth::GetAuthList() as $source)
-							$q[] = 'select profile from login_' . $source . ' where user=\'' . +$user->ID . '\'';
-						$db->real_query('update external_profiles set useavatar=if(id=\'' . $profile . '\', 1, 0) where id in (' . implode(' union ', $q) . ')');
+						$db->real_query('update login set useavatar=if(site=\'' . $source . '\' and id=\'' . $id . '\', true, false) where user=\'' . +$user->ID . '\'');
 						self::DeleteUploadedAvatars();
 					} else
 						$ajax->Fail('unable to set profile picture because profile was not found.');
@@ -611,10 +596,7 @@ class usersApi extends t7api {
 
 	private static function UnlinkProfileAvatars() {
 		global $db, $user;
-		$q = [];
-		foreach (t7auth::GetAuthList() as $source)
-			$q[] = 'select profile from login_' . $source . ' where user=\'' . +$user->ID . '\'';
-		$db->real_query('update external_profiles set useavatar=0 where id in (' . implode(' union ', $q) . ') and useavatar=1');
+		$db->real_query('update login set linkavatar=false where user=\'' . +$user->ID . '\' and useavatar=1');
 	}
 
 	private static function DeleteUploadedAvatars() {

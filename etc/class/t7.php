@@ -24,11 +24,6 @@ spl_autoload_register(function ($class) {
 			require_once 't7api.php';
 			break;
 		case 't7auth':
-		case 't7authGoogle':
-		case 't7authTwitter':
-		case 't7authSteam':
-		case 't7authTrack7':
-		case 't7authGithub':
 			require_once 't7auth.php';
 			break;
 		case 't7file':

@@ -1,4 +1,6 @@
 <?php
+require_once 'environment.php';
+
 class FormatURL {
 	private static string $scheme = '';
 	private static string $host = '';
@@ -10,6 +12,19 @@ class FormatURL {
 	 */
 	public static function FullUrl(string $rootUrl): string {
 		return self::UrlStart() . $rootUrl;
+	}
+
+	/**
+	 * Make a URL relative to the root of this website.  URL may already be relative or may be fully-qualified.
+	 */
+	public static function RelativeRootUrl(?string $url): string {
+		if (!$url)
+			return '/';
+		if ($url[0] == '/')
+			return $url;
+		if (substr($url, 0, strlen(self::UrlStart())) == self::UrlStart())
+			return substr($url, strlen(self::UrlStart()));
+		throw new DetailedException("url $url does not belong to this website.");
 	}
 
 	/**

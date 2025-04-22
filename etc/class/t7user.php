@@ -18,9 +18,7 @@ class t7user {
 	public $Username = false;  // username of the current user for profile link
 	public $DisplayName = self::DEFAULT_NAME;  // display name of the current user
 	public $Avatar = false;  // avatar url for the current user
-	private $Friend = false;  // whether this user considers the logged-in user a friend (additional profile information may be available)
 	public $Fan = false;  // whether the logged-in user considers this user a friend
-	private $olduid = false;  // uid from the old user system
 	private $level = self::LEVEL_ANONYMOUS;  // access level of the current user (see LEVEL_* constants)
 
 	public $DST = true;  // true for server time (which observes daylight saving time)
@@ -74,16 +72,8 @@ class t7user {
 	/**
 	 * create a user object either from the specified id or looking for an id
 	 * stored in the session or a cookie.
-	 * @param integer $id user to look up, if not the logged-in user
 	 */
-	public function __construct($id = false) {
-		if ($id) {  // when not the currently logged-in user
-			if (is_numeric($id))  // numeric id, need info for post
-				$this->GetBasic($id);
-			else
-				$this->GetProfileInfo($id);
-			return;
-		}
+	public function __construct() {
 		if (isset($_SESSION['user'])) {
 			if ($this->GetBasic($_SESSION['user'])) {
 				$this->GetSettings();
@@ -105,47 +95,6 @@ class t7user {
 	}
 
 	/**
-	 * attempt to log in with the method specified.  redirects to $continue if
-	 * successful.
-	 * @param string $type who authenticated the user (transition, google)
-	 * @param string|t7authRegisterable $id user id, or external authorization object
-	 * @param boolean $remember whether an autologin should be set up
-	 * @param string $continue local url to redirect to after login is completed
-	 */
-	public function Login($type, $id, $remember = false, $continue = false) {
-		global $db;
-		$uid = false;
-		if ($type == 'transition' || $type == 'register')
-			$uid = $id;
-		elseif (t7auth::IsKnown($type)) {
-			if ($login = $db->query('select l.user, l.profile, p.useavatar from login_' . $type . ' as l left join external_profiles as p on p.id=l.profile where l.' . t7auth::GetField($type) . '=\'' . $db->escape_string($id->ID) . '\' limit 1'))
-				if ($login = $login->fetch_object()) {
-					$uid = $login->user;
-					$remember = $id->Remember;
-					$continue = $id->Continue;
-					if ($id->GetUserInfo()) {
-						$db->real_query('update external_profiles set name=\'' . $db->escape_string($id->DisplayName) . '\', url=\'' . $db->escape_string($id->ProfileFull) . '\', avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$login->profile);
-						if (+$login->useavatar && $id->Avatar)
-							$db->real_query('update users set avatar=\'' . $db->escape_string($id->Avatar) . '\' where id=' . +$uid);
-					}
-				}
-		}
-		if ($uid) {
-			$_SESSION['user'] = $uid;
-			$_SESSION['loginsource'] = $type;
-			self::UpdateLastLogin($uid);
-			if ($type != 'register') {
-				if ($remember)
-					$this->CreateRememberToken($uid, $this->StartRememberSeries());
-				if (!$continue)
-					$continue = '/';
-				header('Location: ' . t7format::FullUrl($continue));
-				die;
-			}
-		}
-	}
-
-	/**
 	 * whether the user is logged in (vs. anonymous).
 	 * @return boolean true if a user is logged in
 	 */
@@ -159,14 +108,6 @@ class t7user {
 	 */
 	public function IsKnown() {
 		return $this->level >= self::LEVEL_KNOWN;
-	}
-
-	/**
-	 * whether the user is trusted.
-	 * @return boolean
-	 */
-	public function IsTrusted() {
-		return $this->level >= self::LEVEL_TRUSTED;
 	}
 
 	/**
@@ -184,7 +125,7 @@ class t7user {
 	public function HasTransitionLogin() {
 		if ($this->hasTransitionLogin === 0) {
 			global $db;
-			if ($login = $db->query('select id from transition_login where id=\'' . +$this->ID . '\''))
+			if ($login = $db->query('select id from user where passwordhash is not null and id=\'' . +$this->ID . '\''))
 				$this->hasTransitionLogin =  $login->num_rows > 0;
 		}
 		return $this->hasTransitionLogin;
@@ -201,10 +142,8 @@ class t7user {
 	public function SecureLoginCount() {
 		if ($this->secureLoginCount === false) {
 			global $db;
-			$logins = [];
-			foreach (t7auth::GetAuthList() as $source)
-				$logins[] = '(select count(1) from login_' . $source . ' where user=\'' . +$this->ID . '\')';
-			if ($logins = $db->query('select ' . implode(' + ', $logins) . ' as num'))
+			$logins = 'select count(1) as num from login where user=\'' . +$this->ID . '\'';
+			if ($logins = $db->query($logins))
 				if ($logins = $logins->fetch_object())
 					$this->secureLoginCount = $logins->num;
 		}
@@ -214,22 +153,6 @@ class t7user {
 	 * @var int cached value of SecureLoginCount()
 	 */
 	private $secureLoginCount = false;
-
-	/**
-	 * get the name for the logged-in user's access level.
-	 * @return string name for the logged-in user's access level
-	 */
-	public function GetLevelName() {
-		if ($this->IsAdmin())
-			return 'admin';
-		if ($this->IsTrusted())
-			return 'trusted';
-		if ($this->IsKnown())
-			return 'known';
-		if ($this->IsLoggedIn())
-			return 'new';
-		return 'anonymous';
-	}
 
 	/**
 	 * list of external profile types supported by CollapseProfileLink() and ExpandProfileLink().
@@ -257,11 +180,6 @@ class t7user {
 			case 'github':
 				if (preg_match('/^https?:\/\/github\.com\/([A-Za-z0-9\-]{1,39})\/?$/', $url, $match))
 					return $match[1];
-			case 'google':
-				if (substr($url, 0, 25) == 'https://plus.google.com/+')
-					return substr($url, 24);
-				if (substr($url, 0, 28) == 'https://profiles.google.com/')
-					return substr($url, 28);
 			case 'steam':
 				if (substr($url, 0, 36) == 'https://steamcommunity.com/profiles/')
 					return substr($url, 36);
@@ -275,46 +193,6 @@ class t7user {
 				if (preg_match('/^(https?:\/\/twitter\.com\/|@)([A-Za-z0-9_]{1,15})$/', $url, $match))
 					return $match[2];
 		}
-		return $url;
-	}
-
-	/**
-	 * form the unique portion of a profile url back into the full url for a
-	 * given site.
-	 * @param string $url unique portion of a profile url
-	 * @param string $source one of the sites with known profile url formats
-	 * @param string $html true if the url is going to be used directly in html
-	 * @return string full profile url
-	 */
-	public static function ExpandProfileLink($url, $source, $html = false) {
-		switch ($source) {
-			case 'deviantart':
-				$url = 'https://' . $url . '.deviantart.com/';
-				break;
-			case 'facebook':
-				$url = 'https://www.facebook.com/' . $url;
-				break;
-			case 'github':
-				$url = 'https://github.com/' . $url;
-				break;
-			case 'google':
-				if ($url[0] == '+')
-					$url = 'https://plus.google.com/' . $url;
-				else
-					$url = 'https://profiles.google.com/' . $url;
-				break;
-			case 'steam':
-				if (preg_match('/^[0-9]+$/', $url))
-					$url = 'https://steamcommunity.com/profiles/' . $url;
-				else
-					$url = 'https://steamcommunity.com/id/' . $url;
-				break;
-			case 'twitter':
-				$url = 'https://twitter.com/' . $url;
-				break;
-		}
-		if ($html)
-			$url = htmlspecialchars($url);
 		return $url;
 	}
 
@@ -366,70 +244,6 @@ class t7user {
 	}
 
 	/**
-	 * Look up the user's basic information along with profile information.
-	 * @param string $username Username to look up
-	 * @return boolean true if successful
-	 */
-	private function GetProfileInfo($username) {
-		global $db, $user;
-		if ($u = $db->query('select u.id, u.level, u.username, u.displayname, u.avatar, fr.friend, fa.fan from users as u left join friend as fr on fr.fan=u.id and fr.friend=\'' . +$user->ID . '\' left join friend as fa on fa.friend=u.id and fa.fan=\'' . +$user->ID . '\' where u.username=\'' . $db->escape_string($username) . '\' limit 1'))
-			if ($u = $u->fetch_object()) {
-				$this->ID = $u->id;
-				$this->level = $u->level;
-				$this->Username = $u->username;
-				$this->DisplayName = $u->displayname ? $u->displayname : $u->username;
-				$this->Avatar = $u->avatar ? $u->avatar : self::DEFAULT_AVATAR;
-				$this->Friend = $u->friend;
-				$this->Fan = $u->fan;
-				return true;
-			}
-		return false;
-	}
-
-	/**
-	 * clear any tokens for the current autologin series.  should only be used
-	 * when user chooses to log out.
-	 * @param string $series random number assigned when logging in with remember me checked
-	 */
-	private function ClearRememberSeries($series) {
-		global $db;
-		$db->real_query('delete from login_remembered where series=\'' . $db->real_escape_string($series) . '\' or expires>\'' . +time() . '\'');
-	}
-
-	/**
-	 * generate a new series number.  should only be used when logging in with
-	 * remember me checked.  series number is guaranteed to be unique.
-	 * @return string new series number, or false if unable to generate one
-	 */
-	private function StartRememberSeries() {
-		global $db;
-		do {
-			$series = base64_encode(openssl_random_pseudo_bytes(12));
-			if ($chk = $db->query('select 1 from login_remembered where series=\'' . $db->real_escape_string($series) . '\' limit 1'))
-				$chk = $chk->fetch_object();
-		} while ($chk);
-		return $series;
-	}
-
-	/**
-	 * create a new automatic login token and save it to the database and / or a
-	 * cookie.
-	 * @param integer $id user id to remember
-	 * @param string $series random number assigned when logging in with remember me checked
-	 * @param boolean $saveToDB whether the new token should be saved to the database
-	 * @param boolean $sendCookie whether the new token should be saved in a cookie
-	 */
-	private function CreateRememberToken($id, $series, $saveToDB = true, $sendCookie = true) {
-		$token = openssl_random_pseudo_bytes(32);
-		if ($saveToDB) {
-			global $db;
-			$db->real_query('replace into login_remembered (series, tokenhash, expires, user) values (\'' . $db->real_escape_string($series) . '\', \'' . $db->real_escape_string(base64_encode(hash('sha512', $token, true))) . '\', \'' . (time() + self::COOKIE_LIFE) . '\', \'' . $db->real_escape_string($id) . '\')');
-		}
-		if ($sendCookie)
-			setcookie(self::COOKIE_NAME, $series . ':' . base64_encode($token), time() + self::COOKIE_LIFE, '/');
-	}
-
-	/**
 	 * check the automatic login cookie values against what's remembered in the
 	 * database.  can fail if cookie is used past expiration or if cookie has
 	 * already been used (neither should happen).
@@ -439,12 +253,12 @@ class t7user {
 	 */
 	private function Remember($series, $token) {
 		global $db;
-		if ($u = $db->query('select tokenhash, expires, user from login_remembered where series=\'' . $db->real_escape_string($series) . '\' limit 1'))
+		if ($u = $db->query('select tokenhash, unix_timestamp(expires), user from remember where series=\'' . $db->real_escape_string($series) . '\' limit 1'))
 			if ($u = $u->fetch_object())
 				if ($u->expires >= time() && $u->tokenhash == base64_encode(hash('sha512', base64_decode($token), true)))
 					return $u->user;
 				else {
-					// TODO:  token doesn't match, so somebody else stole this login probably!
+					// token doesn't match, so somebody else stole this login probably!
 				}
 		return false;
 	}

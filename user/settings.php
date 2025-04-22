@@ -54,23 +54,22 @@ if (!$user->IsLoggedIn()) {
 				<label>
 					<span class=field><input name=avatar value=gravatar type=radio><img src="https://www.gravatar.com/avatar/<?= md5(strtolower(trim($email->email))); ?>?s=128&d=robohash" class=avatar><span><a href="https://gravatar.com/">gravatar</a> for <?= $email->email; ?></span></span>
 				</label>
-			<?php
+				<?php
 					}
 			$extlogins = [];
-			$logins = [];
-			foreach (t7auth::GetAuthList() as $source)
-				$logins[] = 'select \'' . $source . '\' as source, l.id, l.profile, p.name, p.url, ifnull(nullif(p.avatar, \'\'), \'' . t7user::DEFAULT_AVATAR . '\') as avatar from login_' . $source . ' as l left join external_profiles as p on p.id=l.profile where l.user=\'' . +$user->ID . '\'';
-			if ($logins = $db->query(implode(' union ', $logins)))
+			if ($logins = $db->query('select site, id, name, url, avatar from login where user=\'' . +$user->ID . '\''))
 				while ($login = $logins->fetch_object()) {
 					$extlogins[] = $login;
-			?>
-				<label>
-					<span class=field><input name=avatar value=profile<?= $login->profile; ?> type=radio><img src="<?= htmlspecialchars($login->avatar); ?>" class=avatar>link to <?= $login->source; ?> account <?= htmlspecialchars($login->name); ?></span>
-				</label>
-			<?php
+					if ($login->avatar) {
+				?>
+					<label>
+						<span class=field><input name=avatar value=profile<?= $login->url; ?> type=radio><img src="<?= htmlspecialchars($login->avatar); ?>" class=avatar>link to <?= $login->site; ?> account <?= htmlspecialchars($login->name); ?></span>
+					</label>
+				<?php
+					}
 				}
 			if ($user->IsKnown()) {  // only known users can upload an avatar
-			?>
+				?>
 				<label>
 					<span class=field><input name=avatar value=upload type=radio disabled>upload new image<input id=avatarupload name=avatarfile type=file accept=".jpg, .jpeg, .png, image/jpeg, image/jpg, image/png"></span>
 				</label>
@@ -168,7 +167,7 @@ if (!$user->IsLoggedIn()) {
 
 	<form class=tabcontent id=linkedaccounts>
 		<?php
-		if ($transition = $db->query('select login from transition_login where id=\'' . +$user->ID . '\' limit 1'))
+		if ($transition = $db->query('select password from user where id=\'' . +$user->ID . '\' and password is not null limit 1'))
 			$transition = $transition->fetch_object();
 		if ($transition) {
 		?>
@@ -213,15 +212,15 @@ if (!$user->IsLoggedIn()) {
 			<?php
 			foreach ($extlogins as $login) {
 			?>
-				<div class="linkedaccount <?= $login->source; ?>">
+				<div class="linkedaccount <?= $login->site; ?>">
 					<?php
 					if ($login->url) {
 					?>
-						<a href="<?= htmlspecialchars($login->url); ?>" title="view the <?= $login->name; ?> profile on <?= $login->source; ?>"><img src="<?= $login->avatar; ?>"></a>
+						<a href="<?= htmlspecialchars($login->url); ?>" title="view the <?= $login->name; ?> profile on <?= $login->site; ?>"><img src="<?= $login->avatar; ?>"></a>
 					<?php
 					} else {
 					?>
-						<img src="<?= $login->avatar; ?>" title="<?= $login->source; ?> profiles don’t have pages">
+						<img src="<?= $login->avatar; ?>" title="<?= $login->site; ?> profiles don’t have pages">
 					<?php
 					}
 					?>
@@ -229,7 +228,7 @@ if (!$user->IsLoggedIn()) {
 						<?php
 						if (count($extlogins) > 1) {
 						?>
-							<a class=unlink href="#removeaccount" data-source=<?= $login->source; ?> data-id=<?= $login->id; ?> title="unlink this account so it can no longer be used to sign in to track7"></a>
+							<a class=unlink href="#removeaccount" data-source=<?= $login->site; ?> data-id=<?= $login->id; ?> title="unlink this account so it can no longer be used to sign in to track7"></a>
 						<?php
 						}
 						?>
