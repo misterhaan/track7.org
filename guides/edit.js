@@ -19,7 +19,7 @@ createApp({
 				}]
 			},
 			correctionsOnly: false,
-			invalidFields: [],
+			invalidFields: new Set(),
 			saving: false
 		};
 	},
@@ -31,7 +31,7 @@ createApp({
 			return this.guide.ID || this.defaultUrl;
 		},
 		canSave: function() {
-			return !this.saving && this.guide.Title && this.guide.Summary && this.invalidFields.length <= 0 && this.guide.Chapters.every(p => p.Title && p.Markdown);
+			return !this.saving && this.guide.Title && this.guide.Summary && this.invalidFields.size <= 0 && this.guide.Chapters.every(p => p.Title && p.Markdown);
 		}
 	},
 	created() {
@@ -63,9 +63,9 @@ createApp({
 		},
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
-				this.invalidFields = this.invalidFields.filter(field => field != fieldName);
+				this.invalidFields.delete(fieldName);
 			else
-				this.invalidFields.push(fieldName);
+				this.invalidFields.add(fieldName);
 			this.guide[fieldName] = newValue;
 		},
 		TagsChanged(value) {

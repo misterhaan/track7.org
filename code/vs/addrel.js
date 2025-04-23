@@ -7,13 +7,13 @@ createApp({
 	data() {
 		return {
 			release: {},
-			invalidFields: [],
+			invalidFields: new Set(),
 			saving: false
 		};
 	},
 	computed: {
 		canSave: function() {
-			return !this.saving && this.release.Version && this.release.BinURL && this.invalidFields.length <= 0;
+			return !this.saving && this.release.Version && this.release.BinURL && this.invalidFields.size <= 0;
 		}
 	},
 	created() {
@@ -29,9 +29,9 @@ createApp({
 		},
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
-				this.invalidFields = this.invalidFields.filter(field => field != fieldName);
+				this.invalidFields.delete(fieldName);
 			else
-				this.invalidFields.push(fieldName);
+				this.invalidFields.add(fieldName);
 			this.release[fieldName] = newValue;
 		},
 		Save() {

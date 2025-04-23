@@ -8,7 +8,7 @@ createApp({
 		return {
 			lego: {},
 			image: null,
-			invalidFields: [],
+			invalidFields: new Set(),
 			saving: false
 		};
 	},
@@ -20,7 +20,7 @@ createApp({
 			return this.lego.ID || this.defaultUrl;
 		},
 		canSave: function() {
-			return !this.saving && this.lego.Title && this.invalidFields.length <= 0 && this.lego.Description && (this.id || this.image && this.$refs.ldrawField.files.length && this.$refs.pdfField.files.length);
+			return !this.saving && this.lego.Title && this.invalidFields.size <= 0 && this.lego.Description && (this.id || this.image && this.$refs.ldrawField.files.length && this.$refs.pdfField.files.length);
 		}
 	},
 	created() {
@@ -46,9 +46,9 @@ createApp({
 		},
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
-				this.invalidFields = this.invalidFields.filter(field => field != fieldName);
+				this.invalidFields.delete(fieldName);
 			else
-				this.invalidFields.push(fieldName);
+				this.invalidFields.add(fieldName);
 			this.lego[fieldName] = newValue;
 		},
 		PreviewImage(event) {

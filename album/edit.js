@@ -10,7 +10,7 @@ createApp({
 		return {
 			photo: {},
 			image: null,
-			invalidFields: [],
+			invalidFields: new Set(),
 			saving: false
 		};
 	},
@@ -22,7 +22,7 @@ createApp({
 			return this.photo.ID || this.defaultUrl;
 		},
 		canSave: function() {
-			return !this.saving && this.photo.Title && this.invalidFields.length <= 0 && this.photo.StoryMarkdown && (this.image || this.id);
+			return !this.saving && this.photo.Title && this.invalidFields.size <= 0 && this.photo.StoryMarkdown && (this.image || this.id);
 		}
 	},
 	created: function() {
@@ -49,9 +49,9 @@ createApp({
 		},
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
-				this.invalidFields = this.invalidFields.filter(field => field != fieldName);
+				this.invalidFields.delete(fieldName);
 			else
-				this.invalidFields.push(fieldName);
+				this.invalidFields.add(fieldName);
 			this.photo[fieldName] = newValue;
 		},
 		PreviewPhoto(event) {
