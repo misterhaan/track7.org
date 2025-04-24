@@ -101,7 +101,8 @@ class SteamAuth extends Auth {
 					$user->Username = (string)$xml->customURL;
 				require_once 'contact.php';
 				$user->ProfileURL = ContactLink::ExpandURL($this->Name, isset($xml->customURL) ? (string)$xml->customURL : (string)$xml->steamID64);
-				$user->Avatar = preg_replace('/^http:\/\/[^\/]+\/(.+)$/', self::AvatarPrefixHTTPS . '$1', (string)$xml->avatarMedium);  // 64px
+				if ($xml->avatarMedium)
+					$user->Avatar = (string)$xml->avatarMedium[0];  // 64px
 				return $user;
 			}
 		return null;

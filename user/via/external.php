@@ -4,7 +4,7 @@ require_once 'auth.php';
 
 class ExternalSignIn extends Page {
 	protected static ?Auth $auth;
-	protected static ?AuthResult $result;
+	protected static ?AuthResult $result = null;
 	protected static ?DetailedException $error = null;
 
 	public function __construct() {
@@ -20,7 +20,7 @@ class ExternalSignIn extends Page {
 			self::$result = self::$auth->Process(self::RequireDatabase());
 			self::HandleRedirect();
 		} catch (DetailedException $e) {
-			self::$unknownError = $e;
+			self::$error = $e;
 		}
 
 		parent::__construct(self::$auth->Name . ' sign-in');  // to show either registration form or a problem
@@ -29,9 +29,11 @@ class ExternalSignIn extends Page {
 	protected static function MainContent(): void {
 ?>
 		<h1><?= self::$auth->Name; ?> sign-in results</h1>
-	<?php
-		if (self::$error)
+		<?php
+		if (self::$error) {
 			self::ShowError();
+			return;
+		}
 		if (!self::$result)
 			self::ShowNoAuthResult();
 		if (!self::$result->IsValid)
@@ -54,8 +56,6 @@ class ExternalSignIn extends Page {
 				self::AddLoginAndRedirect();  // successful addition of login method
 		}
 		if (self::$result && self::$result->IsValid && !self::$result->User) {
-			print_r(self::$result);
-			die;
 			self::Redirect(self::$result->Continue);  // canceled login
 		}
 	}
@@ -64,7 +64,8 @@ class ExternalSignIn extends Page {
 		require_once 'user.php';
 		$user = CurrentUser::Login(self::RequireDatabase(), self::$auth->Name, self::$result->LoginMatch->UserID, self::$result->Remember);
 		if ($user->IsLoggedIn()) {  // should be true after previous line
-			if (self::$result->LoginMatch->Name != self::$result->User->DisplayName || self::$result->LoginMatch->URL != self::$result->User->ProfileURL || $avatarChanged = self::$result->LoginMatch->Avatar != self::$result->User->Avatar) {
+			$avatarChanged = self::$result->LoginMatch->Avatar != self::$result->User->Avatar;
+			if (self::$result->LoginMatch->Name != self::$result->User->DisplayName || self::$result->LoginMatch->URL != self::$result->User->ProfileURL || $avatarChanged) {
 				$user->UpdateLogin(self::RequireDatabase(), self::$auth->Name, self::$result->LoginMatch->ID, self::$result->User->DisplayName, self::$result->User->ProfileURL, self::$result->User->Avatar);
 				if (self::$result->LoginMatch->LinkAvatar && $avatarChanged && self::$result->User->Avatar)
 					$user->UpdateAvatar(self::RequireDatabase(), self::$result->User->Avatar);
@@ -83,7 +84,7 @@ class ExternalSignIn extends Page {
 	}
 
 	private static function ShowError(): void {
-	?>
+		?>
 		<p>
 			oops, <?= self::$auth->Name; ?> told us something, but either we couldn’t
 			understand it or we ran into an error trying to figure out if you’ve been
@@ -92,7 +93,7 @@ class ExternalSignIn extends Page {
 			different site that might be working. if none of that works, you should
 			tell <a href="/user/misterhaan/" title="go to misterhaan’s profile for contact information">misterhaan</a>.
 		</p>
-		<p class=error><?= self::$error->Message; ?></p>
+		<p class=error><?= self::$error->getMessage(); ?></p>
 	<?php
 	}
 
