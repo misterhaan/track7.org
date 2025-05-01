@@ -80,7 +80,7 @@ class ExternalSignIn extends Page {
 			require_once 'contact.php';
 			ContactLink::Add(self::RequireDatabase(), self::$user->ID, self::$auth->Name, self::$result->User->ProfileURL);
 		}
-		self::Redirect(self::$result->Continue);
+		self::Redirect('/user/settings.php#linkedaccounts');
 	}
 
 	private static function ShowError(): void {

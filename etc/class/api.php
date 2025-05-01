@@ -50,7 +50,7 @@ abstract class Api extends Responder {
 	/**
 	 * Read the request body as JSON and decode it into an object.
 	 */
-	protected static function ReadRequestJsonObject(): object {
+	protected static function ReadRequestJsonObject(): object|array {
 		$json = self::ReadRequestText();
 		return json_decode($json);
 	}
@@ -86,7 +86,7 @@ abstract class Api extends Responder {
 	 * @param DetailedException|string $error Exception with details or non-detailed error message
 	 * @param ?string $detail Extra detail for administrators.  Not used when $error is a DetailedException
 	 */
-	protected static function DetailedError(mixed $error, string $detail = null): void {
+	protected static function DetailedError(mixed $error, ?string $detail = null): void {
 		http_response_code(500);
 		header('Content-Type: text/plain');
 		if (self::HasAdminSecurity())

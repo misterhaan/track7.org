@@ -49,7 +49,7 @@ class ApiIndexPage extends Page {
 		<h2 class=api><a href=release.php>release</a></h2>
 		<p>the release api manages application releases.</p>
 
-		<h2 class=api><a href=settings>settings</a></h2>
+		<h2 class=api><a href=settings.php>settings</a></h2>
 		<p>the settings api manages user profiles and settings.</p>
 
 		<h2 class=api><a href=story.php>story</a></h2>

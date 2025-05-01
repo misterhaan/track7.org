@@ -65,8 +65,6 @@ class conversationsApi extends t7api {
 						$ajax->Data->messages[] = $m;
 					}
 					$db->query('update users_messages set hasread=true where conversation=\'' . $conv . '\' and (author!=\'' . +$user->ID . '\' or author is null) and sent>=\'' . +$ajax->Data->oldest . '\'');
-					if ($db->affected_rows)
-						self::UpdateUnreadCount();
 					if ($ajax->Data->hasmore = $db->query('select 1 from users_messages where conversation=\'' . $conv . '\' and sent<\'' . +$ajax->Data->oldest . '\' limit 1'))
 						$ajax->Data->hasmore = $ajax->Data->hasmore->num_rows > 0;
 					else
@@ -103,12 +101,11 @@ class conversationsApi extends t7api {
 							if ($db->query('insert into users_messages (sent, conversation, ' . ($user->IsLoggedIn() ? 'author' : 'name, contacturl') . ', html, markdown) values (\'' . $timesent . '\', GetConversationID(\'' . $to . '\', \'' . +$user->ID . '\'), \'' . ($user->IsLoggedIn() ? +$user->ID : (trim($_POST['fromname']) ? $db->escape_string(trim($_POST['fromname'])) : 'anonymous') . '\', \'' . $db->escape_string(t7format::Link(trim($_POST['fromcontact'])))) . '\', \'' . $db->escape_string($msg->html) . '\', \'' . $db->escape_string(trim($_POST['markdown'])) . '\')')) {
 								$msg->id = $db->insert_id;
 								$db->query('update users_conversations set latestmessage=\'' . +$msg->id . '\' where id=GetConversationID(\'' . $to . '\', \'' . +$user->ID . '\') limit 2');
-								self::UpdateUnreadCount($to);
 								if ($user->IsLoggedIn())
 									$db->query('update users_messages set hasreplied=1 where conversation=GetConversationID(\'' . $to . '\', \'' . +$user->ID . '\') and author!=\'' . $user->ID . '\'');
-								if ($email = $db->query('select emailnewmsg from users_settings where id=\'' . $to . '\' limit 1'))
+								if ($email = $db->query('select emailnewmessage from settings where user=\'' . $to . '\' limit 1'))
 									if ($email = $email->fetch_object())
-										if ($email->emailnewmsg)
+										if ($email->emailnewmessage)
 											if ($toemail = $db->query('select contact from contact where user=\'' . $to . '\' and type=\'email\' limit 1'))
 												if ($toemail = $toemail->fetch_object())
 													if ($toemail = $toemail->email)
@@ -127,17 +124,6 @@ class conversationsApi extends t7api {
 				$ajax->Fail('recipient id missing or non-numeric.');
 		else
 			$ajax->Fail('nobody’s logged in and we didn’t ask your name.  this can happen if the messages page has been left open a long time, and should probably be fixed my signing back in using a new tab so you don’t lose the message you just wrote.');
-	}
-
-	/**
-	 * update unread message count.
-	 * @param int|string $uid id of the user to update, otherwise the current user
-	 */
-	private static function UpdateUnreadCount($uid = false) {
-		global $user, $db;
-		if (!$uid)
-			$uid = $user->ID;
-		$db->query('update users_settings as us set unreadmsgs=(select count(1) from users_conversations as uc left join users_messages as um on um.id=uc.latestmessage where uc.thisuser=\'' . +$uid . '\' and (um.author!=\'' . +$uid . '\' or um.author is null) and um.hasread=0) where id=\'' . +$uid . '\'');
 	}
 }
 conversationsApi::Respond();

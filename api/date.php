@@ -15,6 +15,8 @@ class DateApi extends Api {
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'validatePast', 'checks whether the provided date string is valid and in the past.', 'plain text', 'send the date string to validate as the request body.');
 
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'validateTime', 'checks whether the provided time string is valid.', 'plain text', 'send the time string to validate as the request body.');
+
 		return $endpoints;
 	}
 
@@ -32,6 +34,16 @@ class DateApi extends Api {
 		if ($timestamp > time())
 			self::Success(new ValidationResult('invalid', 'future values are not allowed'));
 		self::Success(new ValidationResult('valid', '', FormatDate::Local('Y-m-d g:i:s a', $timestamp, self::$user)));
+	}
+
+	protected static function POST_validateTime(array $params) {
+		$timeString = self::ReadRequestText();
+		if (!$timeString)
+			self::NotFound('time is required.');
+		$timestamp = strtotime($timeString);
+		if ($timestamp === false)
+			self::Success(new ValidationResult('invalid', 'can’t make sense of that as a date / time'));
+		self::Success(new ValidationResult('valid', '', date('g:i a', $timestamp)));
 	}
 }
 DateApi::Respond();

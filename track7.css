@@ -260,6 +260,15 @@ button:disabled {
 	}
 }
 
+.fadeout-leave-active {
+	transition: all 2s ease;
+}
+
+.fadeout-leave-to {
+	transform: translateX(10em);
+	opacity: 0;
+}
+
 .error {
 	color: #b64;
 }
@@ -270,6 +279,15 @@ button:disabled {
 	margin-right: .5em;
 	display: inline-block;
 	content: "\f06a";
+}
+
+.success:before {
+	font-family: fontawesome;
+	font-size: .8em;
+	margin-right: .5em;
+	display: inline-block;
+	content: "\f00c";
+	color: #7b4;
 }
 
 main input,
@@ -2883,10 +2901,6 @@ ol.messages .outgoing header {
 		-webkit-flex: 0 0 6.5em;
 		flex: 0 0 6.5em;
 	}
-
-	#profile button {
-		margin: .75em 1em .75em 7.5em;
-	}
 }
 
 fieldset.avatar input[type="radio"] {
@@ -2904,8 +2918,8 @@ fieldset.avatar input:checked+img.avatar {
 	box-shadow: 0 0 0 .25em #357;
 }
 
-#avatarupload {
-	margin-left: .5em;
+.submit {
+	display: flex;
 }
 
 #currenttime {
@@ -2927,12 +2941,18 @@ main #detecttime {
 
 @media (min-width: 40em) {
 	#contact span.label {
-		-webkit-flex: 0 0 5.25em;
-		flex: 0 0 5.25em;
+		-webkit-flex: 0 0 6.75em;
+		flex: 0 0 6.75em;
+		display: flex;
+		margin-right: .15em;
+	}
+
+	#contact span.label select {
+		flex-grow: 1;
 	}
 
 	#contact button {
-		margin: .75em 1em .75em 6.25em;
+		margin: .75em 1em .75em 7.75em;
 	}
 }
 
@@ -3017,36 +3037,6 @@ main a.droptrigger {
 
 	#notification button {
 		margin: .75em 1em .75em 6em;
-	}
-}
-
-#emaillabel {
-	margin-right: .25em;
-}
-
-.transitionlogin {
-	text-align: center;
-}
-
-.transitionlogin .securitynote {
-	margin-top: 0;
-	text-align: left;
-}
-
-@media (min-width: 25em) {
-	.transitionlogin {
-		margin-left: .5em;
-	}
-
-	.transitionlogin .linkedaccount {
-		float: left;
-		margin-top: 0;
-		margin-right: 1em;
-	}
-
-	.transitionlogin .securitynote {
-		margin-top: .75em;
-		margin-left: .5em;
 	}
 }
 

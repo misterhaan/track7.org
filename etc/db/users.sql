@@ -7,15 +7,6 @@ create table users (
 	avatar varchar(255) not null default '' comment 'url to avatar (may be offsite)'
 );
 
-create table users_settings (
-	id smallint unsigned primary key,
-	timebase enum('server', 'gmt') not null default 'server' comment 'whether times should be based off server time (dst) or gmt',
-	timeoffset smallint not null default 0 comment 'seconds to add to the timebase to get to local time for the user',
-	emailnewmsg bool not null default 1 comment 'whether the user should be e-mailed when sent a message',
-	unreadmsgs tinyint unsigned not null default 0 comment 'number of conversations with unread messages',
-	foreign key(id) references users(id) on delete cascade on update cascade
-);
-
 create table users_messages (
 	id smallint unsigned primary key auto_increment,
 	sent int not null comment 'timestamp when the message was sent',

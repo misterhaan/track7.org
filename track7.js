@@ -2,7 +2,6 @@ $(function() {
 	InitUserMenu();
 	InitLoginLogout();
 	autosize($("textarea"));
-	InitTabLayout();
 });
 
 /**
@@ -97,90 +96,4 @@ function Login() {
 		}
 	}
 	return false;
-}
-
-/**
- * initialize tabbed layout
- */
-function InitTabLayout() {
-	$(".tabs a").click(function() {
-		var hash = $(this).prop("hash");
-		$(".tabcontent:visible").hide();
-		$(".tabs a.selected").removeClass("selected");
-		$(hash).show();
-		$(this).addClass("selected");
-		if(hash != location.hash)
-			if(history.replaceState)
-				history.replaceState(null, null, hash);
-			else
-				location.hash = hash;
-		return false;
-	});
-}
-
-/**
- * Validate a form field via ajax.  Usually called when the field changes.
- * @param field form field to validate
- * @param url ajax url to request (HTTP GET) for validation
- * @param name parameter name for sending field value to server
- * @param msgchk tooltip message while the field is being validated
- * @param msgok tooltip message when the field successfully validated
- * @param msgblank tooltip message when the field is blank (blank value will be sent to )
- */
-function ValidateField(field, url, name, msgchk, msgok, msgblank) {
-	field = $(field);
-	var valid = field.parent().siblings(".validation");
-	valid.removeClass().addClass("validation").addClass("checking");
-	valid.attr("title", msgchk);
-	var value = $.trim(field.val()) || $.trim(field.attr("placeholder"));
-	if(msgblank && value == "") {
-		valid.removeClass("checking").addClass("valid");
-		valid.attr("title", msgblank);
-	} else
-		$.get(url, { [name]: value }, function(result) {
-			valid.removeClass("checking");
-			if(result.fail) {
-				valid.addClass("invalid");
-				valid.attr("title", result.message);
-			} else {
-				valid.addClass("valid");
-				valid.attr("title", msgok);
-			}
-		}, "json");
-}
-
-/**
- * validate an input via ajax.  usually called when the field changes.
- * @param input form field to validate.  used as a jquery selector.
- * @param ajaxurl url for the validation ajax request.
- * @param id id of the item the input belongs to.  only used for uniqueness validations.
- * @param value value to validate.
- * @param msgchk message to display while waiting for validation.
- * @param msgok message to display when validation is successful.
- * @param msgblank message to display when value is blank.  pass an object with .valid=true and message in .message otherwise blank is considered invalid.
- * @param changevalue function for changing the value if validation says it should change.
- */
-function ValidateInput(input, ajaxurl, id, value, msgchk, msgok, msgblank, changevalue) {
-	input = $(input);
-	var valid = input.parent().siblings(".validation");
-	if(!valid.length)
-		valid = $("<span class=validation></span>").appendTo(input.parent().parent());
-	valid.removeClass().addClass("validation").addClass("checking");
-	valid.attr("title", msgchk);
-	if(msgblank && value == "") {
-		valid.removeClass("checking").addClass(msgblank.message ? (msgblank.valid ? "valid" : "invalid") : "invalid");
-		valid.attr("title", msgblank.message || msgblank);
-	} else
-		$.get(ajaxurl, { id: id, value: value }, result => {
-			valid.removeClass("checking");
-			if(!result.fail) {
-				valid.addClass("valid");
-				valid.attr("title", result.message || msgok);
-				if(result.newvalue && changevalue)
-					changevalue(result.newvalue);
-			} else {
-				valid.addClass("invalid");
-				valid.attr("title", result.message);
-			}
-		}, "json");
 }

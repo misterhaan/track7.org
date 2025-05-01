@@ -69,6 +69,56 @@ class ContactLink {
 					else
 						return new ValidationResult('valid');
 				return new ValidationResult('invalid', 'unable to reach website ' . $value . '.');
+
+			case 'twitter':
+				$original = $value;
+				$value = self::CollapseURL('twitter', $value);
+				if (preg_match('/^[A-Za-z0-9_]{1,15}$/', $value))
+					if ($original != $value)
+						return new ValidationResult('valid', '', $value);
+					else
+						return new ValidationResult('valid');
+				return new ValidationResult('invalid', 'invalid twitter username.  please enter your twitter username or the url to your twitter profile.');
+
+			case 'facebook':
+				$original = $value;
+				$value = self::CollapseURL('facebook', $value);
+				if (preg_match('/^[A-Za-z0-9\.]{5,}$/', $value))
+					if ($original != $value)
+						return new ValidationResult('valid', '', $value);
+					else
+						return new ValidationResult('valid');
+				return new ValidationResult('invalid', 'invalid facebook username.  please enter your facebook username or the url to your facebook profile.');
+
+			case 'github':
+				$original = $value;
+				$value = self::CollapseURL('github', $value);
+				if (preg_match('/^[A-Za-z0-9\-]{1,39}$/', $value))
+					if ($original != $value)
+						return new ValidationResult('valid', '', $value);
+					else
+						return new ValidationResult('valid');
+				return new ValidationResult('invalid', 'invalid github username.  please enter your github username or the url to your github profile.');
+
+			case 'deviantart':
+				$original = $value;
+				$value = self::CollapseURL('deviantart', $value);
+				if (preg_match('/^[A-Za-z\-]{3,20}$/', $value))
+					if ($original != $value)
+						return new ValidationResult('valid', '', $value);
+					else
+						return new ValidationResult('valid');
+				return new ValidationResult('invalid', 'invalid deviantart username.  please enter your deviantart username or the url to your deviantart profile.');
+
+			case 'steam':
+				$original = $value;
+				$value = self::CollapseURL('steam', $value);
+				if (preg_match('/^[0-9]+$/', $value) || preg_match('/^[A-Za-z0-9_]{1,32}$/', $value))
+					if ($original != $value)
+						return new ValidationResult('valid', '', $value);
+					else
+						return new ValidationResult('valid');
+				return new ValidationResult('invalid', 'invalid steam username.  please enter your steam username or the url to your steam profile.');
 		}
 		throw new DetailedException('unsupported contact type “' . $type . '”');
 	}
@@ -127,8 +177,10 @@ class ContactLink {
 					return substr($url, 29);
 				break;
 			case 'twitter':
-				if (preg_match('/^(https?:\/\/twitter\.com\/|@)([A-Za-z0-9_]{1,15})$/', $url, $match))
-					return $match[2];
+				if (preg_match('/^(https?:\/\/(twitter|x)\.com\/|@)([A-Za-z0-9_]{1,15})$/', $url, $match))
+					return $match[3];
+				if (substr($url, 0, 1) == '@')
+					return substr($url, 1);
 				break;
 		}
 		return $url;
