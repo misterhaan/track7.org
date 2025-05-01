@@ -15,15 +15,15 @@ const Status = {
 
 export const ValidatingField = {
 	props: [
-		'value',
-		'default',
-		'urlCharsOnly',
-		'validateUrl',
-		'msgChecking',
-		'msgValid',
-		'msgBlank',
-		'isBlankValid',
-		'inputAttributes'
+		"value",
+		"default",
+		"urlCharsOnly",
+		"validateUrl",
+		"msgChecking",
+		"msgValid",
+		"msgBlank",
+		"isBlankValid",
+		"inputAttributes"
 	],
 	emits: [
 		"validated"
