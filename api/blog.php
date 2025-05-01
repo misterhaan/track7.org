@@ -23,6 +23,14 @@ class BlogApi extends Api {
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'idAvailable', 'checks if a blog entry id is available.  this means not in use or already used by the specified entry.', 'plain text', 'send the proposed new id for the blog entry as the request body.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('oldId', 'string', 'curent id of the entry that might be changing its id.');
 
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'save', 'saves a blog entry.  must be logged in as the administrator.', 'multipart');
+		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'id of the entry that’s being saved, or blank to save a new entry.');
+		$endpoint->BodyParameters[] = new ParameterDocumentation('id', 'string', 'new id of the blog entry.', true);
+		$endpoint->BodyParameters[] = new ParameterDocumentation('title', 'string', 'title of the blog entry.', true);
+		$endpoint->BodyParameters[] = new ParameterDocumentation('markdown', 'string', 'blog entry content in markdown format.', true);
+		$endpoint->BodyParameters[] = new ParameterDocumentation('addtags', 'string', 'comma-separated list of tags to add to the blog entry.');
+		$endpoint->BodyParameters[] = new ParameterDocumentation('deltags', 'string', 'comma-separated list of tags to remove from the blog entry.');
+
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'publish', 'publishes a blog entry.  must be logged in as the administrator.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('post', 'integer', 'specify the post id of the blog entry to publish.', true);
 
@@ -82,7 +90,7 @@ class BlogApi extends Api {
 		if (!self::HasAdminSecurity())
 			self::Forbidden('only the administrator can edit a blog entry.  you might need to log in again.');
 
-		$id = array_shift($params);
+		$id = trim(array_shift($params));
 		$entry = EditBlog::FromPOST();
 		$result = EditBlog::IdAvailable(self::$db, $id, $entry->ID);
 		if ($result->State == 'invalid')
