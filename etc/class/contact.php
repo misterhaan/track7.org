@@ -50,7 +50,7 @@ class ContactLink {
 				if (strtolower(substr($value, -12)) == '@example.com')
 					return new ValidationResult('invalid', 'e-mail address is not required.  please don’t enter a fake one.');
 				if (preg_match('/^[^@\s]+@[^\.@\s]+\.[^@\s]*[^\.@\s]$/', $value))
-					return new ValidationResult('valid', $value);
+					return new ValidationResult('valid', '', $value);
 				return new ValidationResult('invalid', 'doesn’t look like an e-mail address.');
 
 			case 'website':
@@ -103,6 +103,7 @@ class ContactLink {
 			case 'deviantart':
 				if (preg_match('/^https?:\/\/([A-Za-z\-]{3,20})\.deviantart\.com/', $url, $match))
 					return $match[1];
+				break;
 			case 'email':
 				if (substr($url, 0, 7) == 'mailto:')
 					return substr($url, 7);
@@ -110,9 +111,11 @@ class ContactLink {
 			case 'facebook':
 				if (preg_match('/^https?:\/\/www\.facebook\.com\/([A-Za-z0-9\.]{5,})(\?.*)?$/', $url, $match))
 					return $match[1];
+				break;
 			case 'github':
 				if (preg_match('/^https?:\/\/github\.com\/([A-Za-z0-9\-]{1,39})\/?$/', $url, $match))
 					return $match[1];
+				break;
 			case 'steam':
 				if (substr($url, 0, 36) == 'https://steamcommunity.com/profiles/')
 					return substr($url, 36);
@@ -122,9 +125,11 @@ class ContactLink {
 					return substr($url, 35);
 				if (substr($url, 0, 29) == 'http://steamcommunity.com/id/')
 					return substr($url, 29);
+				break;
 			case 'twitter':
 				if (preg_match('/^(https?:\/\/twitter\.com\/|@)([A-Za-z0-9_]{1,15})$/', $url, $match))
 					return $match[2];
+				break;
 		}
 		return $url;
 	}
