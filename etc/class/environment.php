@@ -34,7 +34,7 @@ abstract class Responder extends KeyMaster {
 	/**
 	 * Check if the current user has trusted (or better) security.
 	 */
-	protected static function IsUSerTrusted(): bool {
+	protected static function IsUserTrusted(): bool {
 		self::RequireUser();
 		return self::$user->IsTrusted();
 	}

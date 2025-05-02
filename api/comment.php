@@ -111,7 +111,7 @@ class CommentApi extends Api {
 			self::DetailedError('cannot save empty comment.  if you meant to remove it, use “delete” instead.');
 		if (!self::IsUserLoggedIn())
 			self::Forbidden('must be signed in to update comment.  if you’ve had this page open a while you might need to open a new tab to sign back in and then try saving again.');
-		if ($stealth && !self::IsUSerTrusted())
+		if ($stealth && !self::IsUserTrusted())
 			self::Forbidden('must be trusted in order to stealth save.  if you’re seeing this, there’s mismatched logic somewhere and you should report it so i can fix it.');
 		self::Success(Comment::Update(self::$db, self::$user, $id, $markdown, $stealth));
 	}
