@@ -223,14 +223,14 @@ class CurrentUser extends User {
 		}
 		if ($this->IsLoggedIn()) {
 			try {
-				$select = $db->prepare('select timebase!=\'gmt\', timeoffset from settings where id=? limit 1');
+				$select = $db->prepare('select timebase!=\'gmt\', timeoffset from settings where user=? limit 1');
 				$select->bind_param('i', $this->ID);
 				$select->execute();
 				$select->bind_result($this->DST, $this->TzOffset);
 				$select->fetch();
+				$select->close();
 			} catch (mysqli_sql_exception $mse) {
-				// TODO:  re-enable after settings table has finished migrating
-				//throw DetailedException::FromMysqliException('error looking up user settings', $mse);
+				throw DetailedException::FromMysqliException('error looking up user settings', $mse);
 			}
 			try {
 				// TODO:  migrate messages table
@@ -239,6 +239,7 @@ class CurrentUser extends User {
 				$select->execute();
 				$select->bind_result($this->UnreadMsgs);
 				$select->fetch();
+				$select->close();
 			} catch (mysqli_sql_exception $mse) {
 				throw DetailedException::FromMysqliException('error counting unread messages', $mse);
 			}
