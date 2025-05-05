@@ -74,7 +74,7 @@ createApp({
 		</ol>
 		<p class=loading v-if=loading>loading more activity...</p>
 		<p class=error v-if=error>{{error}}</p>
-		<p class="more calltoaction" v-if="!loading && hasMore"><a href=#activity class="action get" v-on:click=Load>show more activity from ${displayname}</a></p>
+		<p class="more calltoaction" v-if="!loading && hasMore"><a href=#activity class="action get" @click=Load>show more activity from ${displayname}</a></p>
 	`,
 	compilerOptions: {
 		whitespace: "preserve"  // otherwise, whitespace between elements in the activity line is removed

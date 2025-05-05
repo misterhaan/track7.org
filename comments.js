@@ -54,7 +54,7 @@ createApp({
 
 		<p class=error v-if="error">{{error}}</p>
 		<p class=loading v-if=loading>loading comments . . .</p>
-		<p class=calltoaction v-if=hasMore><a class="get action" href="/api/comment.php/recent" v-on:click.prevent=Load>load more comments</a></p>
+		<p class=calltoaction v-if=hasMore><a class="get action" href="/api/comment.php/recent" @click.prevent=Load>load more comments</a></p>
 		`
 }).component("Comment", Comment)
 	.mount("#recentcomments");
