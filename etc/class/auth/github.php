@@ -56,7 +56,7 @@ class GithubAuth extends Auth {
 			'client_id' => t7keysGithub::CLIENT_ID,
 			'client_secret' => t7keysGithub::CLIENT_SECRET,
 			// without this it uses the one in the application defined in github
-			//'redirect_uri' => t7format::FullUrl(self::REDIRECT),
+			//'redirect_uri' => $this->GetRedirectURL(),
 			'state' => $state
 		]));
 		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
