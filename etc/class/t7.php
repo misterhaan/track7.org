@@ -26,9 +26,6 @@ spl_autoload_register(function ($class) {
 		case 't7auth':
 			require_once 't7auth.php';
 			break;
-		case 't7file':
-			require_once 't7file.php';
-			break;
 		case 't7format':
 			require_once 't7format.php';
 			break;
