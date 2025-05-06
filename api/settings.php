@@ -51,13 +51,13 @@ class SettingsApi extends Api {
 
 	protected static function GET_profile(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to get your profile settings.');
+			self::Forbidden('you must be signed in to get your profile settings.');
 		self::Success(self::$user->GetProfileSettings(self::RequireDatabase()));
 	}
 
 	protected static function POST_profile(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to change your profile settings.');
+			self::Forbidden('you must be signed in to change your profile settings.');
 		if (!isset($_POST['username']))
 			self::NotFound('username is required.');
 		$username = trim($_POST['username']);
@@ -68,13 +68,13 @@ class SettingsApi extends Api {
 
 	protected static function GET_time(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to get your time settings.');
+			self::Forbidden('you must be signed in to get your time settings.');
 		self::Success(self::$user->GetTimeSettings());
 	}
 
 	protected static function POST_time(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to change your time settings.');
+			self::Forbidden('you must be signed in to change your time settings.');
 		if (!isset($_POST['currenttime']))
 			self::NotFound('current time is required.');
 		$currenttime = trim($_POST['currenttime']);
@@ -84,39 +84,39 @@ class SettingsApi extends Api {
 
 	protected static function GET_contacts(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to get your contact methods.');
+			self::Forbidden('you must be signed in to get your contact methods.');
 		self::Success(self::$user->GetContactMethods(self::RequireDatabase()));
 	}
 
 	protected static function POST_contacts(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to change your contact methods.');
+			self::Forbidden('you must be signed in to change your contact methods.');
 		$contacts = self::ReadRequestJsonObject();
 		self::Success(self::$user->SaveContactMethods(self::RequireDatabase(), $contacts));
 	}
 
 	protected static function GET_notification(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to get your notification settings.');
+			self::Forbidden('you must be signed in to get your notification settings.');
 		self::Success(self::$user->GetNotificationSettings(self::RequireDatabase()));
 	}
 
 	protected static function POST_notification(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to change your notification settings.');
+			self::Forbidden('you must be signed in to change your notification settings.');
 		$sendemail = isset($_POST['emailnewmessage']) ? boolval(trim($_POST['emailnewmessage'])) && strtolower(trim($_POST['emailnewmessage'])) != 'false' : false;
 		self::Success(self::$user->SaveNotificationSettings(self::RequireDatabase(), $sendemail));
 	}
 
 	protected static function GET_logins(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to get your login settings.');
+			self::Forbidden('you must be signed in to get your login settings.');
 		self::Success(self::$user->GetLoginSettings(self::RequireDatabase()));
 	}
 
 	protected static function DELETE_login(array $params): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to remove a login account.');
+			self::Forbidden('you must be signed in to remove a login account.');
 		$provider = trim(array_shift($params));
 		$id = trim(array_shift($params));
 		if (!$provider || !$id)
@@ -126,7 +126,7 @@ class SettingsApi extends Api {
 
 	protected static function DELETE_password(): void {
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to remove your password.');
+			self::Forbidden('you must be signed in to remove your password.');
 		self::Success(self::$user->RemovePassword(self::RequireDatabase()));
 	}
 }

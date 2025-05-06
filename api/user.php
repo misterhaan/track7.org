@@ -127,7 +127,7 @@ class UserApi extends Api {
 		if (!$friend)
 			self::NotFound('friend id must be specified.');
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to add a friend.');
+			self::Forbidden('you must be signed in to add a friend.');
 		if (self::$user->ID == $friend)
 			self::Forbidden('you cannot add yourself as a friend.');
 		self::Success(Friend::Add(self::RequireDatabase(), self::RequireUser(), $friend));
@@ -138,7 +138,7 @@ class UserApi extends Api {
 		if (!$friend)
 			self::NotFound('friend id must be specified.');
 		if (!self::IsUserLoggedIn())
-			self::Forbidden('you must be logged in to remove a friend.');
+			self::Forbidden('you must be signed in to remove a friend.');
 		self::Success(Friend::Remove(self::RequireDatabase(), self::RequireUser(), $friend));
 	}
 
