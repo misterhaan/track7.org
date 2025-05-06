@@ -47,7 +47,8 @@ body {
 	padding: 0;
 	margin: 0;
 	-moz-text-size-adjust: none;
-	-webkit-text-size-adjust: 100%;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 	font-family: rosario;
 	font-size: 1.1em;
 }
@@ -75,16 +76,6 @@ h4,
 h5 {
 	font-family: monda;
 	line-height: 1.125em;
-}
-
-@-moz-document url-prefix() {
-
-	h1,
-	h2,
-	h3 {
-		/* prevent firefox double-bolding */
-		font-weight: normal;
-	}
 }
 
 header,
@@ -166,15 +157,6 @@ label * {
 	vertical-align: baseline;
 }
 
-/* fix for 10-year-old ie bug where img tags inside labels don't work */
-@media (-ms-high-contrast: none),
-(-ms-high-contrast: active) {
-	label img {
-		pointer-events: none;
-		position: relative;
-	}
-}
-
 input,
 select,
 textarea,
@@ -222,7 +204,6 @@ button:disabled {
 	margin-left: .5em;
 	display: inline-block;
 	content: "\f110";
-	-webkit-animation: fa-spin 1s infinite steps(8);
 	animation: fa-spin 1s infinite steps(8);
 }
 
@@ -232,30 +213,15 @@ button:disabled {
 	margin-right: .5em;
 	display: inline-block;
 	content: "\f110";
-	-webkit-animation: fa-spin 1s infinite steps(8);
 	animation: fa-spin 1s infinite steps(8);
 }
 
-@-webkit-keyframes fa-spin {
-	0% {
-		-webkit-transform: rotate(0deg);
-		transform: rotate(0deg);
-	}
-
-	100% {
-		-webkit-transform: rotate(359deg);
-		transform: rotate(359deg);
-	}
-}
-
 @keyframes fa-spin {
-	0% {
-		-webkit-transform: rotate(0deg);
+	from {
 		transform: rotate(0deg);
 	}
 
-	100% {
-		-webkit-transform: rotate(359deg);
+	to {
 		transform: rotate(359deg);
 	}
 }
@@ -339,7 +305,6 @@ body>header {
 	background-image: linear-gradient(to bottom, #357 30%, #234);
 	color: #ccc;
 	height: 42px;
-	display: -webkit-flex;
 	display: flex;
 }
 
@@ -477,13 +442,9 @@ body>header a {
 }
 
 #authchoices {
-	display: -webkit-flex;
 	display: flex;
-	-webkit-justify-content: center;
 	justify-content: center;
-	-webkit-align-content: middle;
 	align-content: middle;
-	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 	width: auto;
 }
@@ -577,7 +538,6 @@ a.messages:before {
 
 a#logoutlink:before {
 	content: "\f08b";
-	-webkit-transform: rotate(180deg);
 	transform: rotate(180deg);
 }
 
@@ -615,9 +575,7 @@ h1 {
 }
 
 .floatbgstop {
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-direction: column;
 	flex-direction: column;
 }
 
@@ -1272,7 +1230,6 @@ pre {
 	}
 
 	.tabs {
-		-webkit-flex: none;
 		flex: none;
 		margin: .5em;
 		line-height: 125%;
@@ -1284,7 +1241,6 @@ pre {
 	}
 
 	.tabcontent {
-		-webkit-flex: 1 0;
 		flex: 1 0;
 	}
 }
@@ -1354,7 +1310,6 @@ ol.messages li {
 	section.comment,
 	ol.messages li {
 		margin: .75em 1em 1.25em;
-		display: -webkit-flex;
 		display: flex;
 		overflow-x: auto;
 	}
@@ -1365,7 +1320,6 @@ section.comment .userinfo,
 ol.messages li .userinfo {
 	padding: 0 .25em 0 .5em;
 	background-color: #abc;
-	-webkit-flex: none;
 	flex: none;
 }
 
@@ -1433,7 +1387,6 @@ section.comment .userinfo .userlevel {
 	section.comment .comment,
 	ol.messages li .message,
 	ol.messages li .message .content {
-		-webkit-flex: 1 0;
 		flex: 1 0;
 		/* stop code blocks from widening the whole post */
 		overflow-x: auto;
@@ -1476,13 +1429,11 @@ ol.messages li .message .content p:last-child {
 }
 
 section.comment .comment .content.edit {
-	display: -webkit-flex;
 	display: flex;
 	padding: .25em 0;
 }
 
 section.comment .comment .content.edit textarea {
-	-webkit-flex: 1 0;
 	flex: 1 0;
 }
 
@@ -1520,17 +1471,13 @@ main label span.checkbox * {
 main .field,
 fieldset.selectafield label.field {
 	display: block;
-	display: -webkit-flex;
 	display: flex;
 	margin: .1em 0;
-	-webkit-flex: 1 0;
 	flex: 1 0;
-	-webkit-align-items: center;
 	align-items: center;
 }
 
 main .field.list {
-	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 	background-color: #eed;
 	border-radius: .25em;
@@ -1541,14 +1488,12 @@ main .field.suggest {
 }
 
 fieldset.checkboxes .field {
-	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 }
 
 .field label.checkbox {
 	display: inline-flex;
 	margin: 0;
-	-webkit-align-items: center;
 	align-items: center;
 	margin-right: 1em;
 }
@@ -1563,7 +1508,6 @@ main .field input:not([type="checkbox"]):not([type="radio"]),
 main .field select,
 main .field textarea,
 main .field .suggestinput {
-	-webkit-flex: 1 0;
 	flex: 1 0;
 	margin: 0;
 	width: 100%;
@@ -1586,22 +1530,12 @@ main .field.list:focus-within {
 	outline: medium auto currentColor;
 }
 
-/* draw the active input outline for chrome on desktop */
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-	main .field.list.focused {
-		box-shadow: 0 0 1px 2px #9dbfee;
-		border-radius: .0625em;
-	}
-}
-
 main .field .suggestinput {
-	display: -webkit-flex;
 	display: flex;
 	position: relative;
 }
 
 main .field .suggestinput input:not([type="checkbox"]):not([type="radio"]) {
-	-webkit-flex: 1 0 2em;
 	flex: 1 0 2em;
 }
 
@@ -1643,7 +1577,6 @@ main .field .suggestinput input:not([type="checkbox"]):not([type="radio"]) {
 
 .validation.checking:before {
 	content: "\f110";
-	-webkit-animation: fa-spin 1s infinite steps(8);
 	animation: fa-spin 1s infinite steps(8);
 }
 
@@ -1683,7 +1616,6 @@ main span.checkbox {
 	main label,
 	fieldset.selectafield div,
 	fieldset.checkboxes {
-		display: -webkit-flex;
 		display: flex;
 		align-items: center;
 	}
@@ -1693,7 +1625,6 @@ main span.checkbox {
 	}
 
 	#addcomment span.label {
-		-webkit-flex: 0 0 5em;
 		flex: 0 0 5em;
 	}
 
@@ -1707,9 +1638,7 @@ body>footer {
 	font-size: .9em;
 	color: #fff;
 	margin: .25em 0;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 }
 
@@ -1731,12 +1660,10 @@ body>footer a {
 
 body>footer>* {
 	margin: .25em .5em;
-	-webkit-flex: 0 0 auto;
 	flex: 0 0 auto;
 }
 
 body>footer div {
-	-webkit-flex: 1 0 auto;
 	flex: 1 0 auto;
 	text-align: right;
 }
@@ -1778,9 +1705,7 @@ h1 img {
 }
 
 #features nav {
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 }
 
@@ -1791,7 +1716,6 @@ h1 img {
 }
 
 #features nav a {
-	display: -webkit-flex;
 	display: flex;
 	background-color: #ddc;
 	border-radius: .25em;
@@ -1817,12 +1741,10 @@ h1 img {
 }
 
 article.activity {
-	display: -webkit-flex;
 	display: flex;
 }
 
 article.activity .whatwhen {
-	-webkit-flex: none;
 	flex: none;
 	font-size: .9em;
 	margin: 1.5em 0 .75em .5em;
@@ -1899,7 +1821,6 @@ ul#taginfo {
 }
 
 #taginfo li {
-	display: -webkit-flex;
 	display: flex;
 	margin: .75em .5em;
 }
@@ -1914,7 +1835,6 @@ ul#taginfo {
 	background-color: #ddc;
 	padding: .25em .5em;
 	border-radius: .25em 0 0 .25em;
-	-webkit-flex: 0 0 auto;
 	flex: 0 0 auto;
 }
 
@@ -1929,7 +1849,6 @@ ul#taginfo {
 
 #taginfo .description {
 	padding: .25em .5em;
-	-webkit-flex: 1 1 auto;
 	flex: 1 1 auto;
 }
 
@@ -1963,9 +1882,7 @@ ol.gallery {
 	list-style-type: none;
 	margin: .75em 0;
 	padding: 0;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
@@ -2003,7 +1920,6 @@ ol.gallery a.photo.thumb img {
 
 ol.gallery a.art.thumb img,
 ol.gallery a.lego.thumb img {
-	-webkit-filter: drop-shadow(2px 2px 1px #777);
 	filter: drop-shadow(2px 2px 1px #777);
 }
 
@@ -2062,7 +1978,6 @@ nav.tagprevnext a.next:before {
 /*-------------------------------------------------------[ /album/edit.php ]--*/
 @media (min-width: 40em) {
 	#editphoto span.label {
-		-webkit-flex: 0 0 4.5em;
 		flex: 0 0 4.5em;
 	}
 
@@ -2091,7 +2006,6 @@ img.art {
 /*---------------------------------------------------------[ /art/edit.php ]--*/
 @media (min-width: 40em) {
 	#editart span.label {
-		-webkit-flex: 0 0 5.5em;
 		flex: 0 0 5.5em;
 	}
 
@@ -2107,7 +2021,6 @@ img.art.preview {
 /*---------------------------------------------------------[ /bln/edit.php ]--*/
 @media (min-width: 40em) {
 	#editentry span.label {
-		-webkit-flex: 0 0 3em;
 		flex: 0 0 3em;
 	}
 
@@ -2175,11 +2088,8 @@ section#codemzx h2:after {
 
 @media (min-width: 40em) {
 	nav#codetypes {
-		display: -webkit-flex;
 		display: flex;
-		-webkit-flex-wrap: wrap;
 		flex-wrap: wrap;
-		-webkit-justify-content: center;
 		justify-content: center;
 		margin: 0 .5em 1em;
 	}
@@ -2205,7 +2115,6 @@ section#codemzx h2:after {
 /*-----------------------------------------------[ /code/calc/editprog.php ]--*/
 @media (min-width: 40em) {
 	#editprog span.label {
-		-webkit-flex: 0 0 5.5em;
 		flex: 0 0 5.5em;
 	}
 
@@ -2230,7 +2139,6 @@ section#codemzx h2:after {
 /*-----------------------------------------------[ /code/games/editwld.php ]--*/
 @media (min-width: 40em) {
 	#editwld span.label {
-		-webkit-flex: 0 0 5.5em;
 		flex: 0 0 5.5em;
 	}
 
@@ -2246,7 +2154,6 @@ section#codemzx h2:after {
 /*---------------------------------------------------[ /code/vs/addrel.php ]--*/
 @media (min-width: 40em) {
 	#addrel span.label {
-		-webkit-flex: 0 0 4.75em;
 		flex: 0 0 4.75em;
 	}
 
@@ -2274,7 +2181,6 @@ img.icon {
 /*--------------------------------------------------[ /code/vs/editapp.php ]--*/
 @media (min-width: 40em) {
 	#editapp span.label {
-		-webkit-flex: 0 0 5.5em;
 		flex: 0 0 5.5em;
 	}
 
@@ -2291,7 +2197,6 @@ img.icon.preview {
 /*-------------------------------------------------[ /code/web/editscr.php ]--*/
 @media (min-width: 40em) {
 	#editscr .label {
-		-webkit-flex: 0 0 6em;
 		flex: 0 0 6em;
 	}
 
@@ -2307,7 +2212,6 @@ img.icon.preview {
 /*-------------------------------------------------[ /forum/discussion.php ]--*/
 @media (min-width: 40em) {
 	#addreply span.label {
-		-webkit-flex: 0 0 3.75em;
 		flex: 0 0 3.75em;
 	}
 
@@ -2319,7 +2223,6 @@ img.icon.preview {
 /*------------------------------------------------------[ /forum/start.php ]--*/
 @media (min-width: 40em) {
 	#editdiscussion .label {
-		-webkit-flex: 0 0 4.5em;
 		flex: 0 0 4.5em;
 	}
 
@@ -2335,7 +2238,6 @@ img.icon.preview {
 /*------------------------------------------------------[ /guides/edit.php ]--*/
 @media (min-width: 40em) {
 	#editguide span.label {
-		-webkit-flex: 0 0 4.75em;
 		flex: 0 0 4.75em;
 	}
 
@@ -2399,7 +2301,6 @@ img.icon.preview {
 /*--------------------------------------------------------[ /lego/edit.php ]--*/
 @media (min-width: 40em) {
 	#editlego span.label {
-		-webkit-flex: 0 0 6em;
 		flex: 0 0 6em;
 	}
 
@@ -2414,7 +2315,6 @@ img.lego {
 	border-radius: .25em;
 	display: block;
 	margin: 0 auto;
-	-webkit-filter: drop-shadow(4px 4px 2px #777);
 	filter: drop-shadow(4px 4px 2px #777);
 }
 
@@ -2452,7 +2352,6 @@ p.story {
 /*------------------------------------------------------[ /tools/regex.php ]--*/
 @media (min-width: 40em) {
 	.regextest .label {
-		-webkit-flex: 0 0 4em;
 		flex: 0 0 4em;
 	}
 
@@ -2507,7 +2406,6 @@ ol.matches li:before {
 
 @media (min-width: 40em) {
 	#timestamps .label {
-		-webkit-flex: 0 0 6.5em;
 		flex: 0 0 6.5em;
 	}
 
@@ -2527,7 +2425,6 @@ ol.matches li:before {
 /*------------------------------------------------------[ /updates/new.php ]--*/
 @media (min-width: 40em) {
 	#editupdate span.label {
-		-webkit-flex: 0 0 4em;
 		flex: 0 0 4em;
 	}
 
@@ -2588,7 +2485,6 @@ h1 .sortoption .droplist a {
 }
 
 #userlist header {
-	display: -webkit-flex;
 	display: flex;
 	background-color: #abc;
 	border-radius: .25em .25em 0 0;
@@ -2601,12 +2497,10 @@ h1 .sortoption .droplist a {
 
 #userlist header .userlevel {
 	text-align: right;
-	-webkit-flex: 1 1 auto;
 	flex: 1 1 auto;
 }
 
 #userlist li>div {
-	display: -webkit-flex;
 	display: flex;
 	background-color: #ddc;
 	border-radius: 0 0 .25em .25em;
@@ -2626,7 +2520,6 @@ h1 .sortoption .droplist a {
 
 #userlist .userstats {
 	padding: .25em .5em 0 0;
-	-webkit-flex: 1 1 auto;
 	flex: 1 1 auto;
 }
 
@@ -2677,7 +2570,6 @@ h1 .sortoption .droplist a {
 /*----------------------------------------------------[ /user/messages.php ]--*/
 @media (min-width: 40em) {
 	#sendmessage span.label {
-		-webkit-flex: 0 0 4.5em;
 		flex: 0 0 4.5em;
 	}
 
@@ -2710,9 +2602,7 @@ ol.usersuggest li {
 	padding: .25em;
 	border-radius: 0;
 	cursor: pointer;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-align-items: center;
 	align-items: center;
 }
 
@@ -2726,7 +2616,6 @@ ol.usersuggest li.suggesteduser img.avatar {
 }
 
 ol.usersuggest li.suggesteduser span {
-	-webkit-flex: 1 0 auto;
 	flex: 1 0 auto;
 	padding: 0 .5em;
 }
@@ -2756,7 +2645,6 @@ ol.conversations>li {
 
 #conversations ol li>header {
 	line-height: 2em;
-	display: -webkit-flex;
 	display: flex;
 	align-items: center;
 	cursor: pointer;
@@ -2767,7 +2655,6 @@ ol.conversations>li {
 }
 
 #conversations ol header span {
-	-webkit-flex: 1 0 auto;
 	flex: 1 0 auto;
 }
 
@@ -2829,7 +2716,6 @@ ol.messages li.loading {
 
 ol.messages li.reply .message {
 	padding-left: 2px;
-	-webkit-flex: 1 0;
 	flex: 1 0;
 }
 
@@ -2853,7 +2739,6 @@ ol.messages .outgoing header {
 
 @media (min-width: 25em) {
 	ol.messages .outgoing {
-		-webkit-flex-direction: row-reverse;
 		flex-direction: row-reverse;
 	}
 
@@ -2873,13 +2758,11 @@ ol.messages .outgoing header {
 
 @media (min-width: 50em) {
 	#messages {
-		display: -webkit-flex;
 		display: flex;
 	}
 
 	#conversations {
 		width: 22em;
-		-webkit-flex: 0 0 auto;
 		flex: 0 0 auto;
 	}
 
@@ -2895,7 +2778,6 @@ ol.messages .outgoing header {
 /*----------------------------------------------------[ /user/settings.php ]--*/
 @media (min-width: 40em) {
 	#profile span.label {
-		-webkit-flex: 0 0 6.5em;
 		flex: 0 0 6.5em;
 	}
 }
@@ -2931,14 +2813,12 @@ main #detecttime {
 
 @media (min-width: 40em) {
 	#timezone span.label {
-		-webkit-flex: 0 0 6em;
 		flex: 0 0 6em;
 	}
 }
 
 @media (min-width: 40em) {
 	#contact span.label {
-		-webkit-flex: 0 0 6.75em;
 		flex: 0 0 6.75em;
 		display: flex;
 		margin-right: .15em;
@@ -3015,7 +2895,6 @@ main a.droptrigger {
 	background-color: #eed;
 	padding: .125em 0;
 	border-radius: .25em 0 .25em .25em;
-	-webkit-filter: drop-shadow(2px 2px 1px #777);
 	filter: drop-shadow(2px 2px 1px #777);
 	/* on top of the down arrow from .droptrigger:after */
 	z-index: 1;
@@ -3028,7 +2907,6 @@ main a.droptrigger {
 
 @media (min-width: 40em) {
 	#notification span.label {
-		-webkit-flex: 0 0 5em;
 		flex: 0 0 5em;
 	}
 
@@ -3050,7 +2928,6 @@ main a.droptrigger {
 
 .linkedaccount {
 	display: inline-block;
-	display: -webkit-inline-flex;
 	display: inline-flex;
 	align-items: stretch;
 	margin: .75em .5em;
@@ -3154,7 +3031,6 @@ main a.droptrigger {
 @media (min-width: 25em) {
 	main #authchoices {
 		margin: 0 .5em;
-		-webkit-justify-content: left;
 		justify-content: left;
 	}
 }
@@ -3167,7 +3043,6 @@ main a.droptrigger {
 
 @media (min-width: 40em) {
 	#newuser span.label {
-		-webkit-flex: 0 0 6.5em;
 		flex: 0 0 6.5em;
 	}
 
@@ -3182,7 +3057,6 @@ main a.droptrigger {
 
 /*-------------------------------------------------[ /user/viewprofile.php ]--*/
 header.profile {
-	display: -webkit-flex;
 	display: flex;
 }
 
@@ -3194,13 +3068,11 @@ header.profile {
 
 header.profile img.avatar {
 	height: 64px;
-	-webkit-flex: none;
 	flex: none;
 	margin-left: .5em;
 }
 
 header.profile div {
-	-webkit-flex: 1 0;
 	flex: 1 0;
 }
 
@@ -3227,11 +3099,8 @@ header.profile p {
 }
 
 section#contact {
-	display: -webkit-flex;
 	display: flex;
-	-webkit-justify-content: center;
 	justify-content: center;
-	-webkit-flex-flow: wrap;
 	flex-flow: wrap;
 }
 
@@ -3240,7 +3109,6 @@ section#contact {
 		position: absolute;
 		top: .75em;
 		right: .5em;
-		-webkit-justify-content: flex-end;
 		justify-content: flex-end;
 		max-width: calc(100% - 64px - 13.5em);
 	}
