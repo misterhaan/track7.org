@@ -15,6 +15,11 @@ class UserApi extends Api {
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'list', 'retrieves all site users.');
 
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'suggest', 'retrieves a list of users that match the supplied search text.', 'plain text', 'send the search text as the request body.');
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'info', 'retrieves information about a user by username.');
+		$endpoint->PathParameters[] = new ParameterDocumentation('username', 'string', 'username to look up.', true);
+
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'registration', 'retrieves registration information validated by an external authentication provider.');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'register', 'registers a new user.  requires previous authentication through an external login provider.', 'form data', 'send the registration information as form data in the request body.');
@@ -56,6 +61,20 @@ class UserApi extends Api {
 	 */
 	protected static function GET_list(): void {
 		self::Success(DetailedUser::List(self::RequireDatabase(), self::RequireUser()));
+	}
+
+	protected static function POST_suggest(): void {
+		$match = trim(self::ReadRequestText());
+		if (strlen($match) < 3)
+			self::NotFound('at least 3 characters are required to suggest users.');
+		self::Success(MatchingUser::Suggest(self::RequireDatabase(), self::RequireUser(), $match));
+	}
+
+	protected static function GET_info(array $params): void {
+		$username = trim(array_shift($params));
+		if (!$username)
+			self::NotFound('username must be specified.');
+		self::Success(new User(self::RequireDatabase(), $username));
 	}
 
 	protected static function GET_registration(): void {

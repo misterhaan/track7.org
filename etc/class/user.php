@@ -27,7 +27,7 @@ class UserLevel {
  */
 class User {
 	public const DefaultName = 'random internet person';
-	protected const DefaultAvatar = '/images/user.jpg';
+	public const DefaultAvatar = '/images/user.jpg';
 
 	/**
 	 * ID of the user, or zero for anonymous user
@@ -91,6 +91,49 @@ class User {
 			return new ValidationResult('valid');
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error checking if name is available', $mse);
+		}
+	}
+
+	public function GetNotificationSettings(mysqli $db): NotificationSettings {
+		try {
+			$select = $db->prepare('select e.contact, s.emailnewmessage from settings as s left join contact as e on e.user=s.user and e.type=\'email\' where s.user=? limit 1');
+			$select->bind_param('i', $this->ID);
+			$select->execute();
+			$select->bind_result($email, $emailnewmessage);
+			$select->fetch();
+			return new NotificationSettings($email, $emailnewmessage);
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up notification settings', $mse);
+		}
+	}
+}
+
+class MatchingUser extends User {
+	public bool $Friend;
+
+	private function __construct(int $id, string $username, ?string $displayname, ?string $avatar, bool $friend) {
+		$this->ID = $id;
+		$this->Username = $username;
+		$this->DisplayName = $displayname ? $displayname : $username;
+		$this->Avatar = $avatar ? $avatar : self::DefaultAvatar;
+		$this->Friend = $friend;
+	}
+
+	public static function Suggest(mysqli $db, CurrentUser $user, string $match): array {
+		$matchLike = str_replace(['_', '%'], ['\\_', '\\%'], $match);
+		$startsMatch = $matchLike . '%';
+		$containsMatch = '%' . $matchLike . '%';
+		try {
+			$select = $db->prepare('select u.id, u.avatar, u.displayname, u.username, not isnull(f.fan) as isfriend, u.username=? or u.displayname=? as exact, u.username like ? or u.displayname like ? as start from user as u left join friend as f on f.fan=? and f.friend=u.id where u.id!=? and (u.username like ? or u.displayname like ?) order by isfriend desc, exact desc, start desc, coalesce(nullif(u.displayname, \'\'), u.username) limit 8');
+			$select->bind_param('ssssiiss', $match, $match, $startsMatch, $startsMatch, $user->ID, $user->ID, $containsMatch, $containsMatch);
+			$select->execute();
+			$select->bind_result($id, $avatar, $displayname, $username, $friend, $exact, $start);
+			$matches = [];
+			while ($select->fetch())
+				$matches[] = new self($id, $username, $displayname, $avatar, $friend);
+			return $matches;
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error looking up user suggestions', $mse);
 		}
 	}
 }
@@ -233,15 +276,15 @@ class CurrentUser extends User {
 				throw DetailedException::FromMysqliException('error looking up user settings', $mse);
 			}
 			try {
-				// TODO:  migrate messages table
-				$select = $db->prepare('select count(1) from users_messages as m left join users_conversations as c on c.id=m.conversation where (c.thisuser=? or c.thatuser=?) and m.author!=? and m.hasread=false');
-				$select->bind_param('iii', $this->ID, $this->ID, $this->ID);
+				$select = $db->prepare('select count(1) from message where recipient=? and unread=true limit 1');
+				$select->bind_param('i', $this->ID);
 				$select->execute();
 				$select->bind_result($this->UnreadMsgs);
 				$select->fetch();
 				$select->close();
 			} catch (mysqli_sql_exception $mse) {
-				throw DetailedException::FromMysqliException('error counting unread messages', $mse);
+				// TODO:  put error in place after message migration complete
+				//throw DetailedException::FromMysqliException('error counting unread messages', $mse);
 			}
 		}
 	}
@@ -481,19 +524,6 @@ class CurrentUser extends User {
 			$db->commit();
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error saving contact methods', $mse);
-		}
-	}
-
-	public function GetNotificationSettings(mysqli $db): NotificationSettings {
-		try {
-			$select = $db->prepare('select e.contact, s.emailnewmessage from settings as s left join contact as e on e.user=s.user and e.type=\'email\' where s.user=? limit 1');
-			$select->bind_param('i', $this->ID);
-			$select->execute();
-			$select->bind_result($email, $emailnewmessage);
-			$select->fetch();
-			return new NotificationSettings($email, $emailnewmessage);
-		} catch (mysqli_sql_exception $mse) {
-			throw DetailedException::FromMysqliException('error looking up notification settings', $mse);
 		}
 	}
 

@@ -28,6 +28,27 @@ class FormatURL {
 	}
 
 	/**
+	 * Format a contact address (website / web page / e-mail) and forms it into
+	 * a valid URL as best as possible.  Nothing is flat-out rejected.
+	 * @param string $link User-entered contact address
+	 * @return string Probably valid URL from $link
+	 */
+	public static function ContactLink($link) {
+		$link = trim($link);
+		if ($link == '' || substr($link, 0, 1) == '#' || substr($link, 0, 1) == '/' || substr($link, 0, 7) == 'mailto:')
+			return $link;
+		if (strpos($link, '://') === false)
+			if (strpos($link, '@') && strpos($link, '.', strpos($link, '@')))  // has an @ with a dot later on, so probably an e-mail address
+				return 'mailto:' . $link;
+			else
+				return 'https://' . $link;
+		// unqualify fully-qualified links to this site
+		if (substr($link, 0, strlen(self::UrlStart()) + 1) == self::UrlStart() . '/')
+			return substr($link, strlen(self::UrlStart()));
+		return $link;
+	}
+
+	/**
 	 * Get the beginning of a URL for this website, such as https://www.track7.org
 	 * @return string URL scheme and host
 	 */

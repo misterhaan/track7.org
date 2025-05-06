@@ -1536,6 +1536,10 @@ main .field.list {
 	border-radius: .25em;
 }
 
+main .field.suggest {
+	position: relative;
+}
+
 fieldset.checkboxes .field {
 	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
@@ -2686,26 +2690,18 @@ h1 .sortoption .droplist a {
 	height: 1.25em;
 }
 
+#sendmessage .suggest a.user {
+	margin: 0 .25em;
+}
+
 ol.usersuggest {
 	position: absolute;
 	list-style-type: none;
-	margin: -.75em 0 0 .75em;
 	padding: 0 3px 3px;
 	background-color: #ace;
 	border-radius: 0 0 3px 3px;
-}
-
-@media (min-width: 25em) {
-	ol.usersuggest {
-		margin-top: -.8em;
-		margin-left: 1.5em;
-	}
-}
-
-@media (min-width: 40em) {
-	#sendmessage ol.usersuggest {
-		margin-left: 5.75em;
-	}
+	top: .45em;
+	left: .25em;
 }
 
 ol.usersuggest li {
@@ -2832,6 +2828,7 @@ ol.messages li.loading {
 }
 
 ol.messages li.reply .message {
+	padding-left: 2px;
 	-webkit-flex: 1 0;
 	flex: 1 0;
 }

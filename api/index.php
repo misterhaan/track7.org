@@ -28,9 +28,6 @@ class ApiIndexPage extends Page {
 		<h2 class=api><a href=contact.php>contact</a></h2>
 		<p>the contact api manages contact links.</p>
 
-		<h2 class=api><a href=conversations>conversations</a></h2>
-		<p>the conversations api manages user messages.</p>
-
 		<h2 class=api><a href=date.php>date</a></h2>
 		<p>the date api manages dates.</p>
 
@@ -42,6 +39,9 @@ class ApiIndexPage extends Page {
 
 		<h2 class=api><a href=lego.php>lego</a></h2>
 		<p>the lego api manages lego models.</p>
+
+		<h2 class=api><a href=message.php>message</a></h2>
+		<p>the message api manages messages to track7 users.</p>
 
 		<h2 class=api><a href=photo.php>photo</a></h2>
 		<p>the photo api manages the photo album.</p>
@@ -66,9 +66,6 @@ class ApiIndexPage extends Page {
 
 		<h2 class=api><a href=user.php>user</a></h2>
 		<p>the user api manages users.</p>
-
-		<h2 class=api><a href=users>users</a></h2>
-		<p>the users api manages users.</p>
 
 		<h2 class=api><a href=vote.php>vote</a></h2>
 		<p>the vote api manages votes.</p>

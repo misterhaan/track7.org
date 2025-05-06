@@ -15,21 +15,28 @@ class UserTransition extends TransitionPage {
 		if (self::CheckTableExists('user')) {
 ?>
 			<p>new <code>user</code> table exists.</p>
-		<?php
+			<?php
 			self::CheckUserRows();
 		} else
 			self::CreateTable('user');
 	}
 
 	private static function CheckUserRows(): void {
-		$missing = self::$db->query('select 1 from users left join user on user.id=users.id where user.id is null limit 1');
-		if ($missing->fetch_column())
-			self::CopyUsers();
-		else {
-		?>
-			<p>all old users exist in new <code>user</code> table.</p>
+		if (self::CheckTableExists('users')) {
+			$missing = self::$db->query('select 1 from users left join user on user.id=users.id where user.id is null limit 1');
+			if ($missing->fetch_column())
+				self::CopyUsers();
+			else {
+			?>
+				<p>all old users exist in new <code>user</code> table.</p>
+			<?php
+				self::CheckUserDateColumns();
+			}
+		} else {
+			?>
+			<p>old users table no longer exists.</p>
 		<?php
-			self::CheckUserDateColumns();
+			self::Done();
 		}
 	}
 
@@ -214,8 +221,29 @@ class UserTransition extends TransitionPage {
 		?>
 			<p>old transition users table no longer exists.</p>
 		<?php
+			self::CheckOldUsersTable();
+		}
+	}
+
+	private static function CheckOldUsersTable(): void {
+		if (self::CheckTableExists('users'))
+			self::CheckUsersForeignKeys();
+		else {
+		?>
+			<p>old users table no longer exists.</p>
+		<?php
 			self::Done();
 		}
+	}
+
+	private static function CheckUsersForeignKeys(): void {
+		$keys = self::$db->query('select group_concat(substring(for_name from 8) separator \', \') from information_schema.innodb_foreign where ref_name=\'track7/users\'');
+		if ($keys = $keys->fetch_column()) {
+		?>
+			<p>old users table used for foreign key constraints from the following tables: <?= $keys; ?>. complete their transitions and then come back and refresh this page to continue.</p>
+		<?php
+		} else
+			self::DeleteOldUsersTable();
 	}
 
 	private static function CopyUsers(): void {
@@ -302,6 +330,13 @@ class UserTransition extends TransitionPage {
 		self::$db->real_query('drop table transition_users');
 	?>
 		<p>deleted old transition users table. refresh the page to take the next step.</p>
+	<?php
+	}
+
+	private static function DeleteOldUsersTable(): void {
+		self::$db->real_query('drop table users');
+	?>
+		<p>deleted old users table. refresh the page to take the next step.</p>
 <?php
 	}
 }
