@@ -283,8 +283,7 @@ class CurrentUser extends User {
 				$select->fetch();
 				$select->close();
 			} catch (mysqli_sql_exception $mse) {
-				// TODO:  put error in place after message migration complete
-				//throw DetailedException::FromMysqliException('error counting unread messages', $mse);
+				throw DetailedException::FromMysqliException('error counting unread messages', $mse);
 			}
 		}
 	}
