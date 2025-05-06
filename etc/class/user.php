@@ -300,7 +300,7 @@ class CurrentUser extends User {
 			$select->bind_param('s', $username);
 			$select->execute();
 			$select->bind_result($id, $hash);
-			if ($select->fetch() && self::CheckPassword($password, $hash))
+			if ($select->fetch() && self::CheckPassword($db, $password, $hash, $id))
 				return self::Login($db, 'password', $id, $remember);
 			else
 				return new self($db);  // anonymous
@@ -654,8 +654,8 @@ class CurrentUser extends User {
 	}
 
 	/**
-	 * update the last time the user logged in.
-	 * @param integer $id user id who just logged in
+	 * Update the last time the user logged in.
+	 * @param mysqli $db database connection
 	 */
 	private function UpdateLastLogin(mysqli $db) {
 		try {
@@ -669,22 +669,62 @@ class CurrentUser extends User {
 
 	/**
 	 * Checks a plain-text password against an encrypted password.
-	 *
-	 * @param string $password Plain-text password.
-	 * @param string $hash Encrypted password.
-	 * @return bool True if passwords match.
+	 * @param mysqli $db Database connection
+	 * @param string $password Plain-text password
+	 * @param string $hash Encrypted password
+	 * @param int $id ID of user whose password is being checked
+	 * @return bool True if passwords match
 	 */
-	private static function CheckPassword($password, $hash) {
-		$len = strlen($hash);
-		$saltpass = $password . substr($hash, 0, 8);
-		if ($len == 96)  // currently using base64 SHA512 with 8-character base64 salt for 96 characters total
-			return base64_encode(hash('sha512', $saltpass, true)) == substr($hash, 8);
-		// TODO:  convert less secure passwords to new format
-		if ($len == 48)  // previously used hexadecimal SHA1 with 8-character hexadecimal salt for 48 characters total
-			return sha1($saltpass) == substr($hash, 8);
-		if ($len == 32)  // originally used unsalted MD5
-			return md5($password) == $hash;
+	private static function CheckPassword(mysqli $db, string $password, string $hash, int $id): bool {
+		// if users would login and update their password security, we could drop the shorter cases.
+		$salt = substr($hash, 0, 8);
+		switch (strlen($hash)) {
+			case 96:  // currently using base64 SHA512 with 8-character base64 salt for 96 characters total
+				return self::HashPassword($password, $salt) == substr($hash, 8);
+			case 48:  // previously used hexadecimal SHA1 with 8-character hexadecimal salt for 48 characters total
+				if (sha1($password . $salt) == substr($hash, 8)) {
+					self::UpdatePassword($db, $id, $password);
+					return true;
+				}
+				break;
+			case 32:  // originally used unsalted MD5
+				if (md5($password) == $hash) {
+					self::UpdatePassword($db, $id, $password);
+					return true;
+				}
+				break;
+		}
 		return false;
+	}
+
+	/**
+	 * Calculate a password hash using the current algorithm
+	 * @param string $password Plain-text password
+	 * @param string $salt 8-character random salt
+	 * @return string Hashed password (does not contain salt)
+	 */
+	private static function HashPassword(string $password, string $salt): string {
+		$saltpass = $password . $salt;
+		return base64_encode(hash('sha512', $saltpass, true));
+	}
+
+	/**
+	 * Update a user's password using the current algorithm
+	 * @param mysqli $db Database connection
+	 * @param int $id User ID whose password to set
+	 * @param string $password Plain-text password
+	 */
+	private static function UpdatePassword(mysqli $db, int $id, string $password): void {
+		$salt = base64_encode(random_bytes(6));
+		$hash = self::HashPassword($password, $salt);
+		$saltedhash = $salt . $hash;
+		try {
+			$update = $db->prepare('update user set passwordhash=? where id=? limit 1');
+			$update->bind_param('si', $saltedhash, $id);
+			$update->execute();
+		} catch (mysqli_sql_exception $mse) {
+			throw DetailedException::FromMysqliException('error updating password', $mse);
+		}
 	}
 
 	private function StartRememberSeries(mysqli $db): void {
