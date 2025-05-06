@@ -352,7 +352,7 @@ if($("#messages").length)
 			SelectUser(user) {
 				const existingConv = this.conversations.find(c => c.With.ID == user.ID);
 				if(existingConv)
-					this.Select(conv);
+					this.Select(existingConv);
 				else {
 					const newConv = {
 						With: {
