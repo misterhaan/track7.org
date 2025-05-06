@@ -1,6 +1,6 @@
 create table contact (
 	user smallint unsigned not null,
-	foreign key(user) references users(id) on delete cascade on update cascade,
+	foreign key(user) references user(id) on delete cascade on update cascade,
 	type enum('email', 'website', 'twitter', 'facebook', 'github', 'deviantart', 'steam') not null,
 	primary key(user,type),
 	contact varchar(64) not null comment 'unique part of contact url',

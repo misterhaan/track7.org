@@ -4,5 +4,5 @@ create table remember (
 	expires datetime not null,
 	key(expires),
 	user smallint unsigned not null,
-	foreign key(user) references users(id)
+	foreign key(user) references user(id)
 );
