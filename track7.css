@@ -1769,7 +1769,7 @@ article.activity.comment .whatwhen {
 	background-image: url(/images/storytype/comment.png);
 }
 
-article.activity.post .whatwhen {
+article.activity.entry .whatwhen {
 	background-image: url(/images/storytype/entry.png);
 }
 
@@ -1782,7 +1782,7 @@ article.activity.photo .whatwhen {
 }
 
 article.activity.guide .whatwhen {
-	background-image: url(/images/storytype/guide.png);
+	background-image: url(/images/storytype/guides.png);
 }
 
 article.activity.art .whatwhen {
