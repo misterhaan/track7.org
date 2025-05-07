@@ -181,7 +181,7 @@ class EditPhoto extends Photo {
 			$select->bind_result($this->Post);
 			while ($select->fetch());
 
-			$update = $db->prepare('update post set title=?, url=concat(\'/album/\', ?), preview=concat(\'<p><img class=photo src="/album/photos/\', ?, \'.jpeg"></p>\') where id=? limit 1');
+			$update = $db->prepare('update post set title=?, url=concat(\'/album/\', ?), preview=concat(\'<p><img src="/album/photos/\', ?, \'.jpg"></p>\') where id=? limit 1');
 			$update->bind_param('sssi', $this->Title, $this->ID, $this->ID, $this->Post);
 			$update->execute();
 
@@ -200,7 +200,7 @@ class EditPhoto extends Photo {
 		try {
 			$db->begin_transaction();
 
-			$insert = $db->prepare('insert into post (instant, title, subsite, url, author, preview, hasmore) values (now(), ?, \'album\', concat(\'/album/\', ?), 1, concat(\'<p><img class=photo src="/album/photos/\', ?, \'.jpeg"></p>\'), 1)');
+			$insert = $db->prepare('insert into post (instant, title, subsite, url, author, preview, hasmore) values (now(), ?, \'album\', concat(\'/album/\', ?), 1, concat(\'<p><img src="/album/photos/\', ?, \'.jpg"></p>\'), 1)');
 			$insert->bind_param('sss', $this->Title, $this->ID, $this->ID);
 			$insert->execute();
 			$this->Post = $db->insert_id;

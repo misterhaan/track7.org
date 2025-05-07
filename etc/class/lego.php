@@ -169,7 +169,7 @@ class EditLego extends IndexLego {
 			$select->bind_result($post);
 			while ($select->fetch());
 
-			$update = $db->prepare('update post set title=?, url=concat(\'/lego/\', ?), preview=concat(\'<p><img class=lego src="/lego/data/\', ?, \'.png"></p>\') where id=? limit 1');
+			$update = $db->prepare('update post set title=?, url=concat(\'/lego/\', ?), preview=concat(\'<p><img src="/lego/data/\', ?, \'-thumb.png"></p>\') where id=? limit 1');
 			$update->bind_param('sssi', $this->Title, $this->ID, $this->ID, $post);
 			$update->execute();
 
@@ -183,7 +183,7 @@ class EditLego extends IndexLego {
 		try {
 			$db->begin_transaction();
 
-			$insert = $db->prepare('insert into post (instant, title, subsite, url, author, preview, hasmore) values (now(), ?, \'lego\', concat(\'/lego/\', ?), 1, concat(\'<p><img class=lego src="/lego/data/\', ?, \'.png"></p>\'), true)');
+			$insert = $db->prepare('insert into post (instant, title, subsite, url, author, preview, hasmore) values (now(), ?, \'lego\', concat(\'/lego/\', ?), 1, concat(\'<p><img src="/lego/data/\', ?, \'-thumb.png"></p>\'), true)');
 			$insert->bind_param('sss', $this->Title, $this->ID, $this->ID);
 			$insert->execute();
 			$post = $db->insert_id;

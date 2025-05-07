@@ -180,7 +180,7 @@ class EditArt extends Art {
 			$select->bind_result($this->Post, $this->Ext);
 			while ($select->fetch());
 
-			$update = $db->prepare('update post set title=?, url=concat(\'/art/\', ?), preview=concat(\'<p><img class=art src="/art/img/\', ?, \'.\', ?, \'"></p>\') where id=? limit 1');
+			$update = $db->prepare('update post set title=?, url=concat(\'/art/\', ?), preview=concat(\'<p><img src="/art/img/\', ?, \'-prev.\', ?, \'"></p>\') where id=? limit 1');
 			$update->bind_param('ssssi', $this->Title, $this->ID, $this->ID, $this->Ext, $this->Post);
 			$update->execute();
 
@@ -199,7 +199,7 @@ class EditArt extends Art {
 		try {
 			$db->begin_transaction();
 
-			$insert = $db->prepare('insert into post (instant, title, subsite, url, author, preview, hasmore) values (now(), ?, \'art\', concat(\'/art/\', ?), 1, concat(\'<p><img class=art src="/art/img/\', ?, \'.\', ?, \'"></p>\'), 1)');
+			$insert = $db->prepare('insert into post (instant, title, subsite, url, author, preview, hasmore) values (now(), ?, \'art\', concat(\'/art/\', ?), 1, concat(\'<p><img src="/art/img/\', ?, \'-prev.\', ?, \'"></p>\'), 1)');
 			$insert->bind_param('ssss', $this->Title, $this->ID, $this->ID, $this->Ext);
 			$insert->execute();
 			$this->Post = $db->insert_id;
