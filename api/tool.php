@@ -37,7 +37,6 @@ class ToolApi extends Api {
 			self::NotFound('git pull is only available to the administrator.');
 		chdir($_SERVER['DOCUMENT_ROOT']);
 		exec('git pull', $output, $retcode);
-		self::RequireKeys();  // for cloudflare API
 		self::Success(new GitPullResult(self::RequireUser(), $retcode, $output));
 	}
 
@@ -105,7 +104,7 @@ class ToolApi extends Api {
 }
 ToolApi::Respond();
 
-class GitPullResult {
+class GitPullResult extends KeyMaster {
 	public TimeTagData $Instant;
 	public int $ReturnCode;
 	public string $Output;
@@ -131,6 +130,7 @@ class GitPullResult {
 		}
 
 		if (count($this->CacheDelete)) {
+			self::RequireServiceKeys('t7keysCloudflare', 'ID', 'TOKEN');
 			$data = new stdClass();
 			$data->files = $this->CacheDelete;
 			$c = curl_init();

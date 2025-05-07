@@ -13,7 +13,7 @@ class TwitterAuth extends Auth {
 	}
 
 	public function Begin(bool $remember, ?string $return): string {
-		$this->RequireServiceKeys('t7keysTwitter', ['CONSUMER_KEY', 'CONSUMER_SECRET']);
+		self::RequireServiceKeys('t7keysTwitter', 'CONSUMER_KEY', 'CONSUMER_SECRET');
 
 		$_SESSION['twitter_continue'] = $this->GetReturnURL($return);
 		$_SESSION['twitter_remember'] = $remember;
@@ -99,7 +99,7 @@ class TwitterAuth extends Auth {
 	}
 
 	private function OauthHeader(string $method, string $url, ?string $token = null, ?string $secret = '', ?array $data = null): string {
-		$this->RequireServiceKeys('t7keysTwitter', ['CONSUMER_KEY', 'CONSUMER_SECRET']);
+		self::RequireServiceKeys('t7keysTwitter', 'CONSUMER_KEY', 'CONSUMER_SECRET');
 		// collect and sign oauth data
 		$oauth = [
 			'oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,

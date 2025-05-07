@@ -131,19 +131,6 @@ abstract class Auth extends KeyMaster {
 		unset($_SESSION['CSRF']);
 		return $csrf == $stored;
 	}
-
-	/**
-	 * Ensures service connection information is available before continuing.
-	 */
-	protected function RequireServiceKeys(string $keyClass, array $keys): void {
-		self::RequireKeys();
-		if (!class_exists($keyClass))
-			throw new DetailedException("$this->Name keys not specified or incomplete", "class:  $keyClass");
-		foreach ($keys as $key) {
-			if (!defined("$keyClass::$key"))
-				throw new DetailedException("$this->Name keys not specified or incomplete", "key:  $key");
-		}
-	}
 }
 
 class AuthResult {

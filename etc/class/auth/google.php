@@ -12,7 +12,7 @@ class GoogleAuth extends Auth {
 	}
 
 	public function Begin(bool $remember, ?string $return): string {
-		$this->RequireServiceKeys('t7keysGoogle', ['ID']);
+		self::RequireServiceKeys('t7keysGoogle', 'ID');
 		$return = $this->GetReturnURL($return);
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
@@ -47,7 +47,7 @@ class GoogleAuth extends Auth {
 	 * @param string $code value returned by google login
 	 */
 	private function GetIdToken(string $code): ?object {
-		$this->RequireServiceKeys('t7keysGoogle', ['ID', 'SECRET']);
+		self::RequireServiceKeys('t7keysGoogle', 'ID', 'SECRET');
 		$c = curl_init();
 		curl_setopt($c, CURLOPT_URL, self::VerifyURL);
 		curl_setopt($c, CURLOPT_POST, true);

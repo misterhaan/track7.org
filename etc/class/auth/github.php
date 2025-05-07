@@ -13,7 +13,7 @@ class GithubAuth extends Auth {
 	}
 
 	public function Begin(bool $remember, ?string $return): string {
-		$this->RequireServiceKeys('t7keysGithub', ['CLIENT_ID']);
+		self::RequireServiceKeys('t7keysGithub', 'CLIENT_ID');
 		$return = $this->GetReturnURL($return);
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
@@ -49,7 +49,7 @@ class GithubAuth extends Auth {
 	 * @param string $state value returned by github login
 	 */
 	private function GetAccessToken(string $code, string $state): string {
-		$this->RequireServiceKeys('t7keysGithub', ['CLIENT_ID', 'CLIENT_SECRET']);
+		self::RequireServiceKeys('t7keysGithub', 'CLIENT_ID', 'CLIENT_SECRET');
 		$c = curl_init();
 		curl_setopt($c, CURLOPT_URL, self::VerifyURL . '?' . http_build_query([
 			'code' => $code,

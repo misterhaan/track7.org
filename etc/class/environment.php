@@ -91,9 +91,7 @@ abstract class Responder extends KeyMaster {
 	 * Ensures database connection information is available before continuing.
 	 */
 	protected static function RequireDatabaseKeys() {
-		self::RequireKeys();
-		if (!class_exists('t7keysDB') || !defined('t7keysDB::HOST') || !defined('t7keysDB::NAME') || !defined('t7keysDB::USER') || !defined('t7keysDB::PASS'))
-			self::DetailedError('database connection details not specified or incomplete');
+		self::RequireServiceKeys('t7keysDB', 'HOST', 'NAME', 'USER', 'PASS');
 	}
 }
 
@@ -104,8 +102,23 @@ class KeyMaster {
 	/**
 	 * Ensures the keys file exists and can be loaded.
 	 **/
-	protected static function RequireKeys() {
+	private static function RequireKeys() {
 		require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/.t7keys.php';
+	}
+
+	/**
+	 * Ensures service connection information is available before continuing.
+	 * @param string $keyClass Name of the class that should contain the required keys
+	 * @param array ...$keys Names of the class constants that contain the required keys
+	 */
+	protected static function RequireServiceKeys(string $keyClass, string|array ...$keys): void {
+		self::RequireKeys();
+		if (!class_exists($keyClass))
+			throw new DetailedException('keys not specified or incomplete', "class:  $keyClass");
+		foreach ($keys as $key) {
+			if (!defined("$keyClass::$key"))
+				throw new DetailedException('keys not specified or incomplete', "key:  $key");
+		}
 	}
 }
 

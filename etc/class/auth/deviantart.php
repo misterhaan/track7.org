@@ -13,7 +13,7 @@ class DeviantartAuth extends Auth {
 	}
 
 	public function Begin(bool $remember, ?string $return): string {
-		$this->RequireServiceKeys('t7keysDeviantart', ['CLIENT_ID']);
+		self::RequireServiceKeys('t7keysDeviantart', 'CLIENT_ID');
 		$return = $this->GetReturnURL($return);
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
@@ -48,7 +48,7 @@ class DeviantartAuth extends Auth {
 	 * @param string $code value returned by deviantart login.
 	 */
 	private function GetAccessToken(string $code): string {
-		$this->RequireServiceKeys('t7keysDeviantart', ['CLIENT_ID', 'CLIENT_SECRET']);
+		self::RequireServiceKeys('t7keysDeviantart', 'CLIENT_ID', 'CLIENT_SECRET');
 		$c = curl_init();
 		curl_setopt($c, CURLOPT_URL, self::VerifyURL . '?' . http_build_query([
 			'code' => $code,
