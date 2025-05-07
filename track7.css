@@ -977,6 +977,10 @@ article>header .guidemeta {
 	content: "\f27b";
 }
 
+.meta .edithistory {
+	white-space: normal;
+}
+
 .meta .edithistory:before {
 	content: "\f044";
 }
