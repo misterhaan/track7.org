@@ -44,29 +44,26 @@ class BlogEntry extends Page {
 
 	private static function ShowMetadata(): void {
 	?>
-		<p class=postmeta>
-			posted by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a>
-			<?php
-			if (count(self::$entry->Tags)) {
-			?>
-				in
+		<p class=meta>
+			<span class=tags title="<?= count(self::$entry->Tags) == 1 ? '1 tag' : count(self::$entry->Tags) . ' tags'; ?>">
 				<?php
 				$notFirst = false;
 				foreach (self::$entry->Tags as $tagName) {
 					if ($notFirst)
 						echo ', ';
-					echo '<a href="' . (self::$tag ? '../' : '') . $tagName . '/" title="entries tagged ' . $tagName . '">' . $tagName . '</a>';
+					echo '<a class=tag href="' . (self::$tag ? '../' : '') . $tagName . '/" title="entries tagged ' . $tagName . '">' . $tagName . '</a>';
 					$notFirst = true;
 				}
 				?>
+			</span>
 			<?php
-			}
 			if (self::$entry->Instant) {
 			?>
-				on <time datetime="<?= self::$entry->Instant->DateTime; ?>" title="<?= self::$entry->Instant->Tooltip; ?>"><?= self::$entry->Instant->Display; ?></time>
+				<time class=posted datetime="<?= self::$entry->Instant->DateTime; ?>" title="posted <?= self::$entry->Instant->Tooltip; ?>"><?= self::$entry->Instant->Display; ?></time>
 			<?php
 			}
 			?>
+			<span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
 		</p>
 	<?php
 	}

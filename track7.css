@@ -918,6 +918,10 @@ article>header .guidemeta {
 	content: "\f1e5";
 }
 
+.meta .comments:before {
+	content: "\f0e6";
+}
+
 .meta .posted:before,
 .guidemeta .posted:before,
 .photometa .posted:before {

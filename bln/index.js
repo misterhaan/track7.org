@@ -54,14 +54,13 @@ createApp({
 		<article v-for="entry in entries">
 			<header class=floatbgstop>
 				<h2><a :href=entry.ID title="view this post with its comments">{{entry.Title}}</a></h2>
-				<p class=postmeta>
-					posted by <a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a>
-					<span class=tags v-if=entry.Tags.length>
-						in <template v-for="(tag, index) in entry.Tags">{{index ? ', ' : ''}}<a class=tag :href="(tagid ? '../' : '') + tag + '/'" :title="'entries tagged ' + tag">{{tag}}</a></template>
+				<p class=meta>
+					<span class=tags v-if=entry.Tags.length :title="entry.Tags.length == 1 ? '1 tag' : entry.Tags.length + ' tags'">
+						<template v-for="(tag, index) in entry.Tags">{{index ? ', ' : ''}}<a class=tag :href="(tagid ? '../' : '') + tag + '/'" :title="'entries tagged ' + tag">{{tag}}</a></template>
 					</span>
-					<span class=time v-if="entry.Instant">
-						on <time :datetime=entry.Instant.DateTime :title=entry.Instant.Tooltip>{{entry.Instant.Display}}</time>
-					</span>
+					<time v-if=entry.Instant class=posted v-html=entry.Instant.Display :datetime=entry.Instant.DateTime :title="'posted ' + entry.Instant.Tooltip"></time>
+					<span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
+					<a class=comments :href="entry.ID + '#comments'" :title="(entry.CommentCount ? 'join' : 'start') + ' the discussion on this entry'">{{entry.CommentCount}}</a>
 				</p>
 			</header>
 			<div class=entrycontent v-html=entry.Preview>
@@ -69,7 +68,6 @@ createApp({
 			<footer>
 				<p class=readmore>
 					<a class=continue :href=entry.ID title="read the rest of this entry">continue reading</a>
-					<a class=comments :href="entry.ID + '#comments'" :title="(entry.comments ? 'join' : 'start') + ' the discussion on this entry'">{{entry.CommentCount}} comments</a>
 				</p>
 			</footer>
 		</article>

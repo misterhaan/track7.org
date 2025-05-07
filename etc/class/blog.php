@@ -15,7 +15,7 @@ class IndexBlog {
 	private function __construct(CurrentUser $user, string $id, ?int $instant, string $title, string $preview, string $tags, int $commentCount) {
 		$this->ID = $id;
 		if ($instant)
-			$this->Instant = new TimeTagData($user, 'M j, Y', $instant, FormatDate::Long);
+			$this->Instant = new TimeTagData($user, 'smart', $instant, FormatDate::Long);
 		$this->Title = $title;
 		$this->Preview = $preview;
 		$this->Tags = explode(',', $tags);
@@ -105,7 +105,7 @@ class Blog {
 		$this->Published = $published;
 		$this->Post = $post;
 		if ($instant)
-			$this->Instant = new TimeTagData($user, 'M j, Y', $instant, FormatDate::Long);
+			$this->Instant = new TimeTagData($user, 'smart', $instant, FormatDate::Long);
 		$this->Title = $title;
 		$this->HTML = $html;
 		$this->Tags = explode(',', $tags);
