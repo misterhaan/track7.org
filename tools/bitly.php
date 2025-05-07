@@ -25,11 +25,10 @@ class BitlyTest extends Page {
 		</form>
 		<?php
 		if (isset($_POST['url'])) {
-			// TODO:  migrate t7send
-			require_once 't7send.php';
-			$url = t7send::Bitly(trim($_POST['url']));
+			require_once 'formatUrl.php';
+			$url = Bitly::Shorten(trim($_POST['url']));
 		?>
-			<pre><code><?php echo $url; ?></code></pre>
+			<pre><code><?= $url; ?></code></pre>
 <?php
 		}
 	}

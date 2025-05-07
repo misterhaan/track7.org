@@ -49,6 +49,16 @@ class FormatURL {
 	}
 
 	/**
+	 * Shortens a URL using a web service.
+	 * @param string $url URL to shorten.
+	 * @return string Shortened URL.
+	 */
+	public static function Shorten($url) {
+		require_once 'bitly.php';
+		return Bitly::Shorten($url);
+	}
+
+	/**
 	 * Get the beginning of a URL for this website, such as https://www.track7.org
 	 * @return string URL scheme and host
 	 */
