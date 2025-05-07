@@ -747,6 +747,8 @@ a.action.unlink:before {
 	font-size: .8em;
 	padding: .125em .625em .25em;
 	vertical-align: middle;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 @media (min-width: 25em) {
@@ -760,13 +762,13 @@ a.action.unlink:before {
 @media (min-width: 40em) {
 	.tagcloud:not(:empty) {
 		float: right;
+		display: block;
 		margin: -1.75em -.625em .625em .625em;
 		border-radius: .25em 0 0 .25em;
 	}
 }
 
 .tagcloud header {
-	display: inline;
 	margin: 0 .75em 0 .25em;
 }
 
@@ -803,16 +805,14 @@ a.action.unlink:before {
 }
 
 .tagcloud a:after {
-	margin: 0 .5em 0 .25em;
+	margin: 0 .5em 0 .15em;
 	content: "(" attr(data-count) ")";
 	color: #666;
 }
 
 @media (min-width: 40em) {
-	.tagcloud a:before {
+	.tagcloud a {
 		display: block;
-		/* need to specify content or it gets ignored */
-		content: "";
 	}
 
 	.tagcloud a:after {

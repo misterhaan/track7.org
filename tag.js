@@ -4,7 +4,6 @@ import autosize from "autosize";
 
 const subsite = window.location.pathname.split("/")[1];
 
-
 const tagcloud = document.querySelector(".tagcloud");
 if(tagcloud)
 	createApp({
@@ -29,13 +28,11 @@ if(tagcloud)
 			}
 		},
 		template: /* html */ `
-		<template v-if=tags.length>
-			<header>tags</header>
-			<template v-for="tag in tags">
-				<a :href="tag.Name.replaceAll(' ', '+') + '/'" :title="pluralName + ' tagged ' + tag.Name" :data-count=tag.Count>{{tag.Name}}</a>
+			<template v-if=tags.length>
+				<header>tags</header>
+				<a v-for="tag in tags" :href="tag.Name.replaceAll(' ', '+') + '/'" :title="pluralName + ' tagged ' + tag.Name" :data-count=tag.Count>{{tag.Name}}</a>
 			</template>
-		</template>
-	`
+		`
 	}).mount(".tagcloud");
 
 const taginfo = document.querySelector("#taginfo");
