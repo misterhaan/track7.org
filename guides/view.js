@@ -53,27 +53,27 @@ createApp({
 		`
 }).mount("#guidechapters");
 
-
-createApp({
-	name: "GuideAdmin",
-	methods: {
-		Publish(event) {
-			$.post(event.target.href).done(() => {
-				$("a.del").remove();
-				const nav = $(event.target).parent();
-				$(event.target).remove();
-				nav.append($("<span class=success>successfully published!</span>").delay(3000).fadeOut(1000));
-			}).fail(request => {
-				alert(request.responseText);
-			});
-		},
-		Delete(event) {
-			if(confirm("do you really want to delete this guide?  it will be gone forever!"))
-				$.ajax({ url: event.target.href, method: "DELETE" }).done(() => {
-					window.location.href = "./";  // to index
+if($("nav.actions").length)
+	createApp({
+		name: "GuideAdmin",
+		methods: {
+			Publish(event) {
+				$.post(event.target.href).done(() => {
+					$("a.del").remove();
+					const nav = $(event.target).parent();
+					$(event.target).remove();
+					nav.append($("<span class=success>successfully published!</span>").delay(3000).fadeOut(1000));
 				}).fail(request => {
 					alert(request.responseText);
 				});
+			},
+			Delete(event) {
+				if(confirm("do you really want to delete this guide?  it will be gone forever!"))
+					$.ajax({ url: event.target.href, method: "DELETE" }).done(() => {
+						window.location.href = "./";  // to index
+					}).fail(request => {
+						alert(request.responseText);
+					});
+			}
 		}
-	}
-}).mount("nav.actions");
+	}).mount("nav.actions");
