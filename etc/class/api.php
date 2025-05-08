@@ -6,7 +6,6 @@ require_once 'environment.php';
  * [controller]/[endpoint] with any required parameters separated by / after
  * the endpoint, and served by a function named [method]_[endpoint] in the Api
  * class in [controller].php.
- * @author misterhaan
  */
 abstract class Api extends Responder {
 	/**
@@ -61,9 +60,10 @@ abstract class Api extends Responder {
 	 * @param ?string $url URL to include with tweet (optional; sent through shortener)
 	 */
 	protected static function Tweet(string $message, ?string $url = ''): void {
-		// TODO:  migrate t7send
-		require_once 't7send.php';
-		t7send::Tweet($message, $url);
+		if (self::IsTestServer())
+			return;
+		require_once 'twitter.php';
+		Twitter::Tweet($message, $url);
 	}
 
 	/**

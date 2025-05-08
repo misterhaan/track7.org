@@ -22,7 +22,7 @@ class ToolsMenu extends Page {
 			<li><a href="/votes.php">votes</a></li>
 			<li><a href="/tags.php">tags</a></li>
 			<?php
-			if ($_SERVER['SERVER_PORT'] > 8000) {
+			if (self::IsTestServer()) {
 			?>
 				<li><a href="/phpmyadmin/?db=track7">phpmyadmin</a></li>
 			<?php

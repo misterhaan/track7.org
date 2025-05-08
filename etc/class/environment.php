@@ -90,8 +90,15 @@ abstract class Responder extends KeyMaster {
 	/**
 	 * Ensures database connection information is available before continuing.
 	 */
-	protected static function RequireDatabaseKeys() {
+	private static function RequireDatabaseKeys(): void {
 		self::RequireServiceKeys('t7keysDB', 'HOST', 'NAME', 'USER', 'PASS');
+	}
+
+	/**
+	 * Check if the webserver is a test server.
+	 */
+	public static function IsTestServer(): bool {
+		return +$_SERVER['SERVER_PORT'] >= 8000;
 	}
 }
 

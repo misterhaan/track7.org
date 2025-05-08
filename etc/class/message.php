@@ -144,7 +144,7 @@ class Message {
 	}
 
 	private static function NotifyRecipient(mysqli $db, User $toUser, $fromname): void {
-		if (+$_SERVER['SERVER_PORT'] > 8000)
+		if (Responder::IsTestServer())
 			return;  // don't actually send emails from test server
 		try {
 			$prefs = $toUser->GetNotificationSettings($db);

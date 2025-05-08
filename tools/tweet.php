@@ -28,9 +28,8 @@ class TweetTest extends Page {
 		</form>
 		<?php
 		if (isset($_POST['message'])) {
-			// TODO:  migrate t7send
-			require_once 't7send.php';
-			$tweet = t7send::Tweet(trim($_POST['message']), trim($_POST['url']));
+			require_once 'twitter.php';
+			$tweet = Twitter::Tweet(trim($_POST['message']), trim($_POST['url']));
 		?>
 			<h2>response code <?= $tweet->code; ?></h2>
 			<pre><code><?= $tweet->text; ?></code></pre>
