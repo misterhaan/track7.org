@@ -102,7 +102,6 @@ class ToolApi extends Api {
 		]);
 	}
 }
-ToolApi::Respond();
 
 class GitPullResult extends KeyMaster {
 	public TimeTagData $Instant;
@@ -159,3 +158,5 @@ class CloudflareResult {
 		$this->Text = $text;
 	}
 }
+
+ToolApi::Respond();
