@@ -164,11 +164,11 @@ class LoginProfile {
 	public ?string $Avatar;
 	public bool $LinkAvatar;
 
-	public function __construct(string $site, string $id, string $user, string $name, ?string $url, ?string $avatar, bool $linkAvatar) {
+	public function __construct(string $site, string $id, string $user, ?string $name, ?string $url, ?string $avatar, bool $linkAvatar) {
 		$this->Site = $site;
 		$this->ID = $id;
 		$this->UserID = $user;
-		$this->Name = $name;
+		$this->Name = $name ?? '';
 		$this->URL = $url;
 		$this->Avatar = $avatar;
 		$this->LinkAvatar = $linkAvatar;
