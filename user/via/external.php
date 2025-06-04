@@ -66,7 +66,7 @@ class ExternalSignIn extends Page {
 		if ($user->IsLoggedIn()) {  // should be true after previous line
 			$avatarChanged = self::$result->LoginMatch->Avatar != self::$result->User->Avatar;
 			if (self::$result->LoginMatch->Name != self::$result->User->DisplayName || self::$result->LoginMatch->URL != self::$result->User->ProfileURL || $avatarChanged) {
-				$user->UpdateLogin(self::RequireDatabase(), self::$auth->Name, self::$result->LoginMatch->ID, self::$result->User->DisplayName, self::$result->User->ProfileURL, self::$result->User->Avatar);
+				$user->UpdateLogin(self::RequireDatabase(), self::$auth->Name, self::$result->LoginMatch->ID, self::$result->User->DisplayName ?? self::$result->User->Username, self::$result->User->ProfileURL, self::$result->User->Avatar);
 				if (self::$result->LoginMatch->LinkAvatar && $avatarChanged && self::$result->User->Avatar)
 					$user->UpdateAvatar(self::RequireDatabase(), self::$result->User->Avatar);
 			}
@@ -75,7 +75,7 @@ class ExternalSignIn extends Page {
 	}
 
 	private static function AddLoginAndRedirect(): void {
-		self::$user->AddLogin(self::RequireDatabase(), self::$auth->Name, self::$result->User->ID, self::$result->User->DisplayName, self::$result->User->ProfileURL, self::$result->User->Avatar);
+		self::$user->AddLogin(self::RequireDatabase(), self::$auth->Name, self::$result->User->ID, self::$result->User->DisplayName ?? self::$result->User->Username, self::$result->User->ProfileURL, self::$result->User->Avatar);
 		if (self::$result->User->ProfileURL) {
 			require_once 'contact.php';
 			ContactLink::Add(self::RequireDatabase(), self::$user->ID, self::$auth->Name, self::$result->User->ProfileURL);
