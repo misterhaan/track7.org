@@ -100,6 +100,20 @@ class t7keysDeviantart {
 	const CLIENT_SECRET = '';
 }
 
+class KeysTwitch {
+	/**
+	 * client id from https://dev.twitch.tv/console/apps after selecting your app
+	 * @var string
+	 */
+	const ClientID = '';
+
+	/**
+	 * client secret from https://dev.twitch.tv/console/apps after selecting your app
+	 * @var string
+	 */
+	const ClientSecret = '';
+}
+
 class t7keysTweet {
 	/**
 	 * consumer key (api key) from apps.twitter.com after selecting your app

@@ -1,5 +1,5 @@
 create table login (
-	site enum ('google', 'twitter', 'github', 'deviantart', 'steam') not null,
+	site enum ('google', 'twitter', 'github', 'deviantart', 'steam', 'twitter') not null,
 	id varchar(64) not null comment 'id of account on external site',
 	primary key(site, id),
 	user smallint unsigned not null,

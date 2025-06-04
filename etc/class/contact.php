@@ -119,12 +119,21 @@ class ContactLink {
 					else
 						return new ValidationResult('valid');
 				return new ValidationResult('invalid', 'invalid steam username.  please enter your steam username or the url to your steam profile.');
+			case 'twitch':
+				$original = $value;
+				$value = self::CollapseURL('twitch', $value);
+				if (strlen($value) >= 3)
+					if ($original != $value)
+						return new ValidationResult('valid', '', $value);
+					else
+						return new ValidationResult('valid');
+				return new ValidationResult('invalid', 'invalid twitch username.  please enter your twitch username or the url to your twitch profile.');
 		}
 		throw new DetailedException('unsupported contact type “' . $type . '”');
 	}
 
 	private static function ValidType(string $type): bool {
-		return in_array($type, ['deviantart', 'email', 'facebook', 'github', 'steam', 'twitter', 'website']);
+		return in_array($type, ['deviantart', 'email', 'facebook', 'github', 'steam', 'twitch', 'twitter', 'website']);
 	}
 
 	public static function ExpandURL(string $type, string $contact): string {
@@ -139,6 +148,8 @@ class ContactLink {
 				return 'https://github.com/' . $contact;
 			case 'steam':
 				return 'https://steamcommunity.com/' . (preg_match('/^[0-9]+$/', $contact) ? 'profiles' : 'id') . '/' . $contact;
+			case 'twitch':
+				return 'https://www.twitch.tv/' . $contact;
 			case 'twitter':
 				return 'https://twitter.com/' . $contact;
 			case 'website':
@@ -175,6 +186,10 @@ class ContactLink {
 					return substr($url, 35);
 				if (substr($url, 0, 29) == 'http://steamcommunity.com/id/')
 					return substr($url, 29);
+				break;
+			case 'twitch':
+				if (preg_match('/^https?:\/\/(www\.)?twitch\.tv\/([A-Za-z0-9_]{3,})\/?$/', $url, $match))
+					return $match[2];
 				break;
 			case 'twitter':
 				if (preg_match('/^(https?:\/\/(twitter|x)\.com\/|@)([A-Za-z0-9_]{1,15})$/', $url, $match))

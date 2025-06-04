@@ -12,6 +12,7 @@ const contactTypes = [
 	{ id: "github", name: "github", msgChecking: "validating github username...", msgValid: "valid github profile", msgBlank: "github link will not be included", help: "your github username" },
 	{ id: "deviantart", name: "deviantart", msgChecking: "validating deviantart username...", msgValid: "valid deviantart profile", msgBlank: "deviantart link will not be included", help: "your deviantart username" },
 	{ id: "steam", name: "steam", msgChecking: "validating steam profile...", msgValid: "valid steam profile", msgBlank: "steam link will not be included", help: "your steam profile" },
+	{ id: "twitch", name: "twitch", msgChecking: "validating twitch username...", msgValid: "valid twitch username", msgBlank: "twitch link will not be included", help: "your twitch username" },
 ];
 
 const Profile = {
@@ -412,7 +413,7 @@ const Notification = {
 const LinkedAccounts = {
 	data() {
 		return {
-			authProviders: ["google", "twitter", "github", "deviantart", "steam"],
+			authProviders: ["google", "twitter", "github", "deviantart", "steam", "twitch"],
 			hasPassword: false,
 			passwordUsesOldEncryption: false,
 			accounts: [],

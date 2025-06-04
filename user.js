@@ -33,7 +33,7 @@ loginMenu.length && createApp({
 	data() {
 		return {
 			provider: null,
-			authProviders: ["google", "twitter", "github", "deviantart", "steam", "track7"],
+			authProviders: ["google", "twitter", "github", "deviantart", "steam", "twitch", "track7"],
 			username: "",
 			password: "",
 			remember: false,

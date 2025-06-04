@@ -2999,6 +2999,12 @@ main a.droptrigger {
 	background-color: #070609;
 }
 
+.linkedaccount.twitch:before,
+#authchoices .twitch:before {
+	content: "\f1e8";
+	background-color: #9147ff;
+}
+
 #authchoices .track7:before {
 	content: " ";
 	background-image: url(/user/via/track7.png);
@@ -3184,6 +3190,11 @@ section#contact a.deviantart:before {
 section#contact a.steam:before {
 	content: "\f1b7";
 	color: #070609;
+}
+
+section#contact a.twitch:before {
+	content: "\f1e8";
+	color: #9147ff;
 }
 
 #rank {
