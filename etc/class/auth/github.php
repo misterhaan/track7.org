@@ -36,7 +36,7 @@ class GithubAuth extends Auth {
 				$result->Continue = $this->GetReturnURL($state['continue']);
 			$result->Remember = isset($state['remember']);
 			if ($token = $this->GetAccessToken($_GET['code'], $_GET['state']))
-				if ($result->User = $this->GetUserInfo($token, $result))
+				if ($result->User = $this->GetUserInfo($token))
 					$result->LoginMatch = LoginProfile::Find($db, $this->Name, $result->User->ID);
 		}
 		return $result;
