@@ -57,15 +57,17 @@ class SteamAuth extends Auth {
 		foreach (explode(',', $_GET['openid_signed']) as $var)
 			$data['openid.' . $var] = $_GET['openid_' . str_replace('.', '_', $var)];
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::RequestURL);
-		curl_setopt($c, CURLOPT_POST, true);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		curl_setopt($c, CURLOPT_POSTFIELDS, http_build_query($data));
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::RequestURL,
+			CURLOPT_POST => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false,
+			CURLOPT_POSTFIELDS => http_build_query($data)
+		]);
 		$response = curl_exec($c);
 		curl_close($c);
 		$resarr = [];
@@ -82,14 +84,16 @@ class SteamAuth extends Auth {
 		$id = explode('/', $_GET['openid_claimed_id']);
 		$id = $id[count($id) - 1];
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::ProfileURL . $id . '/?xml=1');
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($c, CURLOPT_MAXREDIRS, 5);
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::ProfileURL . $id . '/?xml=1',
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_HEADER => false,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_MAXREDIRS => 5
+		]);
 		$response = curl_exec($c);
 		$code = curl_getinfo($c, CURLINFO_HTTP_CODE);
 		curl_close($c);

@@ -17,11 +17,13 @@ class Bitly extends KeyMaster {
 	public static function Shorten($url) {
 		self::RequireServiceKeys('t7keysBitly', 'LOGIN', 'KEY');
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::BitlyShortenURL . '?login=' . t7keysBitly::LOGIN . '&apiKey=' . t7keysBitly::KEY . '&uri=' . urlencode($url) . '&format=txt');
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::BitlyShortenURL . '?login=' . t7keysBitly::LOGIN . '&apiKey=' . t7keysBitly::KEY . '&uri=' . urlencode($url) . '&format=txt',
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30
+		]);
 		$short = curl_exec($c);
 		curl_close($c);
 		return $short;

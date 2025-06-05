@@ -83,13 +83,15 @@ class TwitterAuth extends Auth {
 		curl_setopt($c, CURLOPT_URL, $url);
 		if ($method == 'POST')
 			curl_setopt($c, CURLOPT_POST, true);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		curl_setopt($c, CURLOPT_HTTPHEADER, ["Authorization: OAuth $header"]);
+		curl_setopt_array($c, [
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false,
+			CURLOPT_HTTPHEADER => ["Authorization: OAuth $header"]
+		]);
 		if ($method == 'POST' && $data)
 			curl_setopt($c, CURLOPT_POSTFIELDS, $data);
 		$response = curl_exec($c);

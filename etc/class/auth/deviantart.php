@@ -50,19 +50,21 @@ class DeviantartAuth extends Auth {
 	private function GetAccessToken(string $code): string {
 		self::RequireServiceKeys('t7keysDeviantart', 'CLIENT_ID', 'CLIENT_SECRET');
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::VerifyURL . '?' . http_build_query([
-			'code' => $code,
-			'client_id' => t7keysDeviantart::CLIENT_ID,
-			'client_secret' => t7keysDeviantart::CLIENT_SECRET,
-			'grant_type' => 'authorization_code',
-			'redirect_uri' => $this->GetRedirectURL()
-		]));
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::VerifyURL . '?' . http_build_query([
+				'code' => $code,
+				'client_id' => t7keysDeviantart::CLIENT_ID,
+				'client_secret' => t7keysDeviantart::CLIENT_SECRET,
+				'grant_type' => 'authorization_code',
+				'redirect_uri' => $this->GetRedirectURL()
+			]),
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false
+		]);
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);
@@ -71,13 +73,15 @@ class DeviantartAuth extends Auth {
 
 	private function GetUserInfo($access): ?AuthUser {
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::UserInfoURL . '&access_token=' . $access);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::UserInfoURL . '&access_token=' . $access,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false
+		]);
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);

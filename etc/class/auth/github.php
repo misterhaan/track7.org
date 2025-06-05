@@ -51,20 +51,22 @@ class GithubAuth extends Auth {
 	private function GetAccessToken(string $code, string $state): string {
 		self::RequireServiceKeys('t7keysGithub', 'CLIENT_ID', 'CLIENT_SECRET');
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::VerifyURL . '?' . http_build_query([
-			'code' => $code,
-			'client_id' => t7keysGithub::CLIENT_ID,
-			'client_secret' => t7keysGithub::CLIENT_SECRET,
-			// without this it uses the one in the application defined in github
-			//'redirect_uri' => $this->GetRedirectURL(),
-			'state' => $state
-		]));
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::VerifyURL . '?' . http_build_query([
+				'code' => $code,
+				'client_id' => t7keysGithub::CLIENT_ID,
+				'client_secret' => t7keysGithub::CLIENT_SECRET,
+				// without this it uses the one in the application defined in github
+				//'redirect_uri' => $this->GetRedirectURL(),
+				'state' => $state
+			]),
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false
+		]);
 		$response = curl_exec($c);
 		curl_close($c);
 		parse_str($response, $tokens);
@@ -76,14 +78,16 @@ class GithubAuth extends Auth {
 	 */
 	public static function GetUserInfo(string $accessToken): ?AuthUser {
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::UserInfoURL);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		curl_setopt($c, CURLOPT_HTTPHEADER, array('Authorization: token ' . $accessToken));
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::UserInfoURL,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false,
+			CURLOPT_HTTPHEADER => array('Authorization: token ' . $accessToken)
+		]);
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);

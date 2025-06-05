@@ -133,18 +133,20 @@ class GitPullResult extends KeyMaster {
 			$data = new stdClass();
 			$data->files = $this->CacheDelete;
 			$c = curl_init();
-			curl_setopt($c, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/zones/' . t7keysCloudflare::ID . '/purge_cache');
-			curl_setopt($c, CURLOPT_CUSTOMREQUEST, "DELETE");
-			curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($c, CURLOPT_USERAGENT, 'track7.org git pull');
-			curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-			curl_setopt($c, CURLOPT_TIMEOUT, 30);
-			curl_setopt($c, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . t7keysCloudflare::TOKEN, 'Content-Type: application/json']);
-			curl_setopt($c, CURLOPT_POSTFIELDS, json_encode($data));
+			curl_setopt_array($c, [
+				CURLOPT_URL => 'https://api.cloudflare.com/client/v4/zones/' . t7keysCloudflare::ID . '/purge_cache',
+				CURLOPT_CUSTOMREQUEST => "DELETE",
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_USERAGENT => 'track7.org git pull',
+				CURLOPT_CONNECTTIMEOUT => 30,
+				CURLOPT_TIMEOUT => 30,
+				CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . t7keysCloudflare::TOKEN, 'Content-Type: application/json'],
+				CURLOPT_POSTFIELDS => json_encode($data)
+			]);
 			$text = curl_exec($c);
 			$code = curl_getinfo($c, CURLINFO_HTTP_CODE);
-			$this->Cloudflare = new CloudflareResult($code, $text);
 			curl_close($c);
+			$this->Cloudflare = new CloudflareResult($code, $text);
 		}
 	}
 }

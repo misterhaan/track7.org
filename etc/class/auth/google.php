@@ -49,21 +49,23 @@ class GoogleAuth extends Auth {
 	private function GetIdToken(string $code): ?object {
 		self::RequireServiceKeys('t7keysGoogle', 'ID', 'SECRET');
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::VerifyURL);
-		curl_setopt($c, CURLOPT_POST, true);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		curl_setopt($c, CURLOPT_POSTFIELDS, http_build_query(array(
-			'code' => $code,
-			'client_id' => t7keysGoogle::ID,
-			'client_secret' => t7keysGoogle::SECRET,
-			'redirect_uri' => $this->GetRedirectURL(),
-			'grant_type' => 'authorization_code'
-		)));
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::VerifyURL,
+			CURLOPT_POST => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false,
+			CURLOPT_POSTFIELDS => http_build_query([
+				'code' => $code,
+				'client_id' => t7keysGoogle::ID,
+				'client_secret' => t7keysGoogle::SECRET,
+				'redirect_uri' => $this->GetRedirectURL(),
+				'grant_type' => 'authorization_code'
+			])
+		]);
 		$response = curl_exec($c);
 		curl_close($c);
 		$response = json_decode($response);

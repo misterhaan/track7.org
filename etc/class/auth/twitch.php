@@ -56,15 +56,17 @@ class TwitchAuth extends Auth {
 			'redirect_uri' => $this->GetRedirectUrl()
 		];
 		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, self::VerifyURL);
-		curl_setopt($c, CURLOPT_POST, true);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['SERVER_NAME']);
-		curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($c, CURLOPT_TIMEOUT, 30);
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($c, CURLOPT_HEADER, false);
-		curl_setopt($c, CURLOPT_POSTFIELDS, http_build_query($data));
+		curl_setopt_array($c, [
+			CURLOPT_URL => self::VerifyURL,
+			CURLOPT_POST => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => $_SERVER['SERVER_NAME'],
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_HEADER => false,
+			CURLOPT_POSTFIELDS => http_build_query($data)
+		]);
 		$response = curl_exec($c);
 		curl_close($c);
 		$tokens = json_decode($response);
