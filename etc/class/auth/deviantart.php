@@ -88,8 +88,10 @@ class DeviantartAuth extends Auth {
 			$user->ProfileURL = ContactLink::ExpandURL($this->Name, $response->username);
 			$user->Avatar = $response->usericon;  // 50px
 			if (isset($response->profile)) {
-				$user->DisplayName = $response->profile->real_name;
-				$user->Website = $response->profile->website;
+				if ($response->profile->real_name)
+					$user->DisplayName = $response->profile->real_name;
+				if ($response->profile->website)
+					$user->Website = $response->profile->website;
 			}
 			return $user;
 		}
