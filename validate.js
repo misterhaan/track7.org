@@ -13,6 +13,20 @@ const Status = {
 	Invalid: "invalid"
 };
 
+const activeValidationRequests = new Set();
+const waitingValidationRequests = [];
+
+function finishValidationRequest(request) {
+	activeValidationRequests.delete(request);
+	if(waitingValidationRequests.length) {
+		const nextRequest = waitingValidationRequests.shift();
+		activeValidationRequests.add(nextRequest);
+		nextRequest().always(() => {
+			finishValidationRequest(nextRequest);
+		});
+	}
+}
+
 export const ValidatingField = {
 	props: [
 		"value",
@@ -78,25 +92,36 @@ export const ValidatingField = {
 	methods: {
 		Validate() {
 			this.state = Status.Checking;
+			this.$emit("validated", false, this.localValue);
 			this.lastMessage = null;
 			if(this.effectiveValue == "") {
 				this.state = this.isBlankValid ? Status.Valid : Status.Invalid;
 				this.$emit("validated", this.isBlankValid, "");
-			} else
-				$.ajax({
-					method: "POST",
-					url: this.validateUrl,
-					contentType: "text/plain; charset=utf-8",
-					data: this.effectiveValue
-				}).done(result => {
-					this.state = result.State;
-					this.lastMessage = result.Message;
-					this.$emit("validated", this.state == Status.Valid, this.localValue = result.NewValue || this.localValue);
-				}).fail(request => {
-					this.state = Status.Invalid;
-					this.lastMessage = request.responseText;
-					this.$emit("validated", false, this.localValue);
-				});
+			} else {
+				const request = () => {
+					return $.ajax({
+						method: "POST",
+						url: this.validateUrl,
+						contentType: "text/plain; charset=utf-8",
+						data: this.effectiveValue
+					}).done(result => {
+						this.state = result.State;
+						this.lastMessage = result.Message;
+						this.$emit("validated", this.state == Status.Valid, this.localValue = result.NewValue || this.localValue);
+					}).fail(request => {
+						this.state = Status.Invalid;
+						this.lastMessage = request.responseText;
+						this.$emit("validated", false, this.localValue);
+					});
+				}
+				if(activeValidationRequests.size < 2) {
+					activeValidationRequests.add(request);
+					request().always(() => {
+						finishValidationRequest(request);
+					});
+				} else
+					waitingValidationRequests.push(request);
+			}
 		}
 	},
 	template: /* html */ `
