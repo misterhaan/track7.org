@@ -32,12 +32,14 @@ class UpdateApi extends Api {
 		self::Success(Update::List(self::RequireDatabase(), self::RequireUser(), $skip));
 	}
 
-	protected static function POST_add(array $params): void {
+	protected static function POST_add(): void {
 		if (!self::HasAdminSecurity())
 			self::Forbidden('only the administrator can post a site update.');
 
 		$update = Update::FromPOST(self::RequireUser());
 		$update->Save(self::RequireDatabase());
+		require_once 'formatUrl.php';
+		self::Tweet('new update!', FormatURL::FullUrl('/updates/' . $update->ID));
 		self::Success($update->ID);
 	}
 }
