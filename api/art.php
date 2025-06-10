@@ -105,11 +105,8 @@ class ArtApi extends Api {
 
 		if ($id)
 			$art->Update(self::$db, $id);
-		else {
+		else
 			$art->SaveNew(self::$db);
-			require_once 'formatUrl.php';
-			self::Tweet('new art: ' . $art->Title, FormatURL::FullUrl('/art/' . $art->ID));
-		}
 
 		if ($id && $id != $art->ID) {
 			$path = $_SERVER['DOCUMENT_ROOT'] . '/art/img/';
@@ -121,6 +118,12 @@ class ArtApi extends Api {
 				rename($path . $id . '-prev.' . $art->Ext, $path . $art->ID . '-prev.' . $art->Ext);
 			}
 		}
+
+		if (!$id) {
+			require_once 'formatUrl.php';
+			self::Tweet('new art: ' . $art->Title, FormatURL::FullUrl('/art/' . $art->ID));
+		}
+
 		self::Success('/art/' . $art->ID);
 	}
 }

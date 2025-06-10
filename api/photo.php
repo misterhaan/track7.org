@@ -120,11 +120,8 @@ class PhotoApi extends Api {
 
 		if ($id)
 			$photo->Update(self::$db, $id);
-		else {
+		else
 			$photo->SaveNew(self::$db);
-			require_once 'formatUrl.php';
-			self::Tweet(($photo->Youtube ? 'new video: ' : 'new photo: ') . $photo->Title, FormatURL::FullUrl('/album/' . $photo->ID));
-		}
 
 		if ($id && $id != $photo->ID) {
 			$path = $_SERVER['DOCUMENT_ROOT'] . '/album/photos/';
@@ -136,6 +133,12 @@ class PhotoApi extends Api {
 				rename($path . $id . '.jpg', $path . $photo->ID . '.jpg');
 			}
 		}
+
+		if (!$id) {
+			require_once 'formatUrl.php';
+			self::Tweet(($photo->Youtube ? 'new video: ' : 'new photo: ') . $photo->Title, FormatURL::FullUrl('/album/' . $photo->ID));
+		}
+
 		self::Success('/album/' . $photo->ID);
 	}
 }

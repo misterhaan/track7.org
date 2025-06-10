@@ -107,11 +107,8 @@ class LegoApi extends Api {
 
 		if ($id)
 			$lego->Update(self::$db, $id);
-		else {
+		else
 			$lego->SaveNew(self::$db);
-			require_once 'formatUrl.php';
-			self::Tweet('new lego: ' . $lego->Title, FormatURL::FullUrl('/lego/' . $lego->ID));
-		}
 
 		if ($id && $id != $lego->ID) {
 			$path = $_SERVER['DOCUMENT_ROOT'] . '/lego/data/';
@@ -131,6 +128,12 @@ class LegoApi extends Api {
 			else
 				rename($path . $id . '.pdf', $path . $lego->ID . '.pdf');
 		}
+
+		if (!$id) {
+			require_once 'formatUrl.php';
+			self::Tweet('new lego: ' . $lego->Title, FormatURL::FullUrl('/lego/' . $lego->ID));
+		}
+
 		self::Success('/lego/' . $lego->ID);
 	}
 }

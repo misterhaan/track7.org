@@ -63,7 +63,13 @@ abstract class Api extends Responder {
 		if (self::IsTestServer())
 			return;
 		require_once 'twitter.php';
-		Twitter::Tweet($message, $url);
+		try {
+			Twitter::Tweet($message, $url);
+		} catch (DetailedException $de) {
+			// ifgnore if the tweet fails and the current user is not an administrator
+			if (self::HasAdminSecurity())
+				self::DetailedError($de);
+		}
 	}
 
 	/**
