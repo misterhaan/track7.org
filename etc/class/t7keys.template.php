@@ -46,30 +46,18 @@ class t7keysGoogle {
 	const SECRET = '';
 }
 
-class t7keysTwitter {
+class KeysTwitter {
 	/**
-	 * consumer key (api key) from apps.twitter.com after selecting your app
+	 * consumer key (api key) from https://developer.twitter.com/en/portal/dashboard after selecting your app.  hint can show the last 6 characters to verify.
 	 * @var string
 	 */
-	const CONSUMER_KEY = '';
+	const ConsumerKey = '';
 
 	/**
-	 * consumer secret (api secret) from apps.twitter.com after selecting your app
+	 * consumer secret (api secret) from https://developer.twitter.com/en/portal/dashboard after selecting your app.  it won’t tell you anything about this if you already set it up, but you can regenerate if needed.
 	 * @var string
 	 */
-	const CONSUMER_SECRET = '';
-
-	/**
-	 * access token from apps.twitter.com under your access token heading
-	 * @var string
-	 */
-	const OAUTH_TOKEN = '';
-
-	/**
-	 * access token secret from apps.twitter.com under your access token heading
-	 * @var string
-	 */
-	const OAUTH_TOKEN_SECRET = '';
+	const ConsumerSecret = '';
 }
 
 class t7keysGithub {

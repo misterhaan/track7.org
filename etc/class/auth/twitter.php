@@ -3,18 +3,16 @@ require_once dirname(__DIR__) . '/environment.php';
 require_once 'auth.php';
 
 class TwitterAuth extends Auth {
-	private const RequestURL = 'https://api.twitter.com/oauth/request_token';
-	private const AuthenticateURL = 'https://api.twitter.com/oauth/authenticate';
-	private const AcessTokenURL = 'https://api.twitter.com/oauth/access_token';
-	private const VerifyCredentialsURL = 'https://api.twitter.com/1.1/account/verify_credentials.json';
+	private const RequestURL = 'https://api.x.com/oauth/request_token';
+	private const AuthenticateURL = 'https://api.x.com/oauth/authenticate';
+	private const AcessTokenURL = 'https://api.x.com/oauth/access_token';
+	private const VerifyCredentialsURL = 'https://api.x.com/1.1/account/verify_credentials.json';
 
 	public function __construct() {
 		$this->Name = 'twitter';
 	}
 
 	public function Begin(bool $remember, ?string $return): string {
-		self::RequireServiceKeys('t7keysTwitter', 'CONSUMER_KEY', 'CONSUMER_SECRET');
-
 		$_SESSION['twitter_continue'] = $this->GetReturnURL($return);
 		$_SESSION['twitter_remember'] = $remember;
 
@@ -101,10 +99,10 @@ class TwitterAuth extends Auth {
 	}
 
 	private function OauthHeader(string $method, string $url, ?string $token = null, ?string $secret = '', ?array $data = null): string {
-		self::RequireServiceKeys('t7keysTwitter', 'CONSUMER_KEY', 'CONSUMER_SECRET');
+		self::RequireServiceKeys('KeysTwitter', 'ConsumerKey', 'ConsumerSecret');
 		// collect and sign oauth data
 		$oauth = [
-			'oauth_consumer_key' => t7keysTwitter::CONSUMER_KEY,
+			'oauth_consumer_key' => KeysTwitter::ConsumerKey,
 			'oauth_nonce' => md5(microtime() . mt_rand()),
 			'oauth_signature_method' => 'HMAC-SHA1',
 			'oauth_timestamp' => time(),
@@ -117,7 +115,7 @@ class TwitterAuth extends Auth {
 		ksort($oauth);
 
 		$sig = $method . '&' . rawurlencode($url) . '&' . rawurlencode(http_build_query($oauth, '', '&', PHP_QUERY_RFC3986));
-		$oauth['oauth_signature'] = rawurlencode(base64_encode(hash_hmac('sha1', $sig, t7keysTwitter::CONSUMER_SECRET . '&' . $secret, true)));
+		$oauth['oauth_signature'] = rawurlencode(base64_encode(hash_hmac('sha1', $sig, KeysTwitter::ConsumerSecret . '&' . $secret, true)));
 		ksort($oauth);
 
 		// quote all oauth variables for the authorization header
