@@ -38,7 +38,7 @@ class FormatDate {
 	}
 
 	public static function HowLongAgo(int $timestamp): string {
-		return self::TimeSpan(time() - $timestamp);
+		return self::TimeSpan(abs(time() - $timestamp));
 	}
 
 	public static function TimeSpan(int $seconds): string {

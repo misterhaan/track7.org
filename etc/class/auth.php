@@ -114,7 +114,7 @@ abstract class Auth extends KeyMaster {
 	 */
 	public static function GetCSRF(): string {
 		if (!isset($_SESSION['CSRF']))
-			$_SESSION['CSRF'] = bin2hex(openssl_random_pseudo_bytes(16));
+			$_SESSION['CSRF'] = bin2hex(random_bytes(16));
 		return $_SESSION['CSRF'];
 	}
 
@@ -122,14 +122,33 @@ abstract class Auth extends KeyMaster {
 	 * Check a returned value against the stored cross-site request forgery
 	 * token.  the stored token will be deleted as part of the check.
 	 * @param string $csrf returned value from the cross-site request.
-	 * @return boolean whether the returned value matches the stored value
+	 * @return bool whether the returned value matches the stored value
 	 */
-	protected static function CheckCSRF($csrf) {
+	public static function CheckCSRF($csrf): bool {
 		if (!isset($_SESSION['CSRF']))
 			return false;
 		$stored = $_SESSION['CSRF'];
 		unset($_SESSION['CSRF']);
 		return $csrf == $stored;
+	}
+}
+
+class CodeVerifier {
+	public static function GenerateHash(): string {
+		$_SESSION['CodeVerifier'] = self::base64url_encode(random_bytes(32));
+		return self::base64url_encode(hash('sha256', $_SESSION['CodeVerifier'], true));
+	}
+
+	public static function Pop(): string {
+		if (!isset($_SESSION['CodeVerifier']))
+			throw new DetailedException('code verifier not set');
+		$verifier = $_SESSION['CodeVerifier'];
+		unset($_SESSION['CodeVerifier']);
+		return $verifier;
+	}
+
+	private static function base64url_encode(string $data): string {
+		return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 	}
 }
 

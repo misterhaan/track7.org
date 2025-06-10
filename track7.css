@@ -610,14 +610,12 @@ a.action {
 .action:before {
 	font-family: fontawesome;
 	font-weight: normal;
-	font-size: .8em;
-	color: #998;
+	font-size: .9em;
 	margin-right: .325em;
 	display: inline-block;
 }
 
 .calltoaction a.action:before {
-	color: #777;
 	margin-right: .5em;
 }
 
@@ -734,6 +732,10 @@ a.action.link:before {
 a.action.unlink:before {
 	content: "\f127";
 	color: #b64;
+}
+
+.action.twitter:before {
+	content: "\f099";
 }
 
 @media (min-width: 25em) {
@@ -2355,6 +2357,17 @@ p.story {
 
 .indent {
 	text-indent: 2em;
+}
+
+/*------------------------------------------------------[ /tools/tweet.php ]--*/
+@media (min-width: 40em) {
+	#tweet span.label {
+		flex: 0 0 4.5em;
+	}
+
+	#tweet button {
+		margin: .75em 1em .75em 5.5em;
+	}
 }
 
 /*------------------------------------------------------[ /tools/regex.php ]--*/

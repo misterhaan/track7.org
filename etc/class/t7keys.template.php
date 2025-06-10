@@ -46,18 +46,33 @@ class t7keysGoogle {
 	const SECRET = '';
 }
 
+/**
+ * keys for the Twitter API.  set up at https://developer.twitter.com/en/portal/projects-and-apps
+ */
 class KeysTwitter {
 	/**
-	 * consumer key (api key) from https://developer.twitter.com/en/portal/dashboard after selecting your app.  hint can show the last 6 characters to verify.
+	 * consumer key (api key) from the authentication tokens section of the keys and tokens tab of your app.  hint can show the last 6 characters to verify.
 	 * @var string
 	 */
 	const ConsumerKey = '';
 
 	/**
-	 * consumer secret (api secret) from https://developer.twitter.com/en/portal/dashboard after selecting your app.  it won’t tell you anything about this if you already set it up, but you can regenerate if needed.
+	 * consumer secret (api secret) from the authentication tokens section of the keys and tokens tab of your app.  it won’t tell you anything about this if you already set it up, but you can regenerate if needed.
 	 * @var string
 	 */
 	const ConsumerSecret = '';
+
+	/**
+	 * client id from the authentication tokens section of the keys and tokens tab of your app.  the entire value stays visible.
+	 * @var string
+	 */
+	const ClientID = '';
+
+	/**
+	 * client secret from the authentication tokens section of the keys and tokens tab of your app.  hint can show the last 6 characters to verify.
+	 * @var string
+	 */
+	const ClientSecret = '';
 }
 
 class t7keysGithub {
@@ -100,32 +115,6 @@ class KeysTwitch {
 	 * @var string
 	 */
 	const ClientSecret = '';
-}
-
-class t7keysTweet {
-	/**
-	 * consumer key (api key) from apps.twitter.com after selecting your app
-	 * @var string
-	 */
-	const CONSUMER_KEY = '';
-
-	/**
-	 * consumer secret (api secret) from apps.twitter.com after selecting your app
-	 * @var string
-	 */
-	const CONSUMER_SECRET = '';
-
-	/**
-	 * access token from apps.twitter.com under your access token heading
-	 * @var string
-	 */
-	const OAUTH_TOKEN = '';
-
-	/**
-	 * access token secret from apps.twitter.com under your access token heading
-	 * @var string
-	 */
-	const OAUTH_TOKEN_SECRET = '';
 }
 
 class t7keysBitly {

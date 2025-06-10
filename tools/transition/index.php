@@ -27,6 +27,7 @@ class TransitionIndex extends Page {
 			<li><a href=logins.php>logins</a></li>
 			<li><a href=settings.php>settings</a></li>
 			<li><a href=messages.php>messages</a></li>
+			<li><a href=tokens.php>tokens</a></li>
 		</ul>
 
 <?php

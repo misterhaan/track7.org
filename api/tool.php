@@ -14,6 +14,18 @@ class ToolApi extends Api {
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'gitpull', 'updates track7 to the latest code on github.  must be logged in as the administrator.');
 
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'tweetAuthStatus', 'checks the status of the twitter authorization for the site.  must be logged in as the administrator.');
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'tweetAuthURL', 'gets the url to authenticate with twitter for tweeting site activity.  must be logged in as the administrator.');
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'tweetAuth', 'completes the twitter authorization process.  must be logged in as the administrator.', 'post');
+		$endpoint->BodyParameters[] = new ParameterDocumentation('code', 'string', 'the code returned from twitter after authorization.', true);
+		$endpoint->BodyParameters[] = new ParameterDocumentation('csrf', 'string', 'csrf token to prevent cross-site request forgery.', true);
+
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'tweet', 'sends a tweet with the specified message and url.  must be logged in as the administrator.', 'post');
+		$endpoint->BodyParameters[] = new ParameterDocumentation('message', 'string', 'message to tweet.  must be less than 280 characters.', true);
+		$endpoint->BodyParameters[] = new ParameterDocumentation('url', 'string', 'url to include with the tweet.  will be shortened if not already a bit.ly url.');
+
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'regexmatch', 'tests a regular expression against a string and returns the matches.', 'post', 'pattern and subject from test form.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('all', 'string', 'specify all to return all matches.  otherwise, only the first match is returned.');
 		$endpoint->BodyParameters[] = new ParameterDocumentation('pattern', 'string', 'regular expression pattern to match.', true);
@@ -34,10 +46,45 @@ class ToolApi extends Api {
 
 	public static function POST_gitpull(): void {
 		if (!self::HasAdminSecurity())
-			self::NotFound('git pull is only available to the administrator.');
+			self::Forbidden('git pull is only available to the administrator.');
 		chdir($_SERVER['DOCUMENT_ROOT']);
 		exec('git pull', $output, $retcode);
 		self::Success(new GitPullResult(self::RequireUser(), $retcode, $output));
+	}
+
+	public static function GET_tweetAuthStatus(): void {
+		if (!self::HasAdminSecurity())
+			self::Forbidden('tweet authorization status is only available to the administrator.');
+		require_once 'twitter.php';
+		self::Success(Twitter::AuthStatus(self::RequireDatabase()));
+	}
+
+	public static function GET_tweetAuthURL(): void {
+		if (!self::HasAdminSecurity())
+			self::Forbidden('tweet authorization url is only available to the administrator.');
+		require_once 'twitter.php';
+		self::Success(Twitter::AuthorizeURL('/tools/tweet.php'));
+	}
+
+	public static function POST_tweetAuth(): void {
+		if (!self::HasAdminSecurity())
+			self::Forbidden('tweet authorization is only available to the administrator.');
+		if (!isset($_POST['code']))
+			self::NotFound('code must be specified.');
+		$csrf = $_POST['csrf'];
+		require_once 'twitter.php';
+		self::Success(Twitter::UpdateAuth(self::RequireDatabase(), $csrf, $_POST['code']));
+	}
+
+	public static function POST_tweet(): void {
+		if (!self::HasAdminSecurity())
+			self::Forbidden('tweeting is only available to the administrator.');
+		if (!isset($_POST['message']))
+			self::NotFound('message must be specified.');
+		$message = trim($_POST['message']);
+		$url = isset($_POST['url']) ? trim($_POST['url']) : '';
+		require_once 'twitter.php';
+		self::Success(Twitter::Tweet(self::RequireDatabase(), $message, $url));
 	}
 
 	public static function POST_regexmatch(array $params): void {

@@ -64,7 +64,7 @@ abstract class Api extends Responder {
 			return;
 		require_once 'twitter.php';
 		try {
-			Twitter::Tweet($message, $url);
+			Twitter::Tweet(self::RequireDatabase(), $message, $url);
 		} catch (DetailedException $de) {
 			// ifgnore if the tweet fails and the current user is not an administrator
 			if (self::HasAdminSecurity())
