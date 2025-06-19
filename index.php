@@ -49,9 +49,7 @@ class Track7Index extends Page {
 	private static function ShowAdminActions(): void {
 		if (self::HasAdminSecurity()) {
 		?>
-			<div class=floatbgstop>
-				<nav class=actions><a class=new href="/updates/new.php">add update message</a></nav>
-			</div>
+			<nav class=actions><a class=new href="/updates/new.php">add update message</a></nav>
 <?php
 		}
 	}

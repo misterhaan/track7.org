@@ -35,18 +35,16 @@ class AlbumIndex extends Page {
 
 	private static function ShowAdminActions() {
 	?>
-		<div class=floatbgstop>
-			<nav class=actions>
-				<a href="<?= dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>add a photo or video</a>
-				<?php
-				if (self::$tag) {
-				?>
-					<a href="#tagedit" class=edit>edit tag description</a>
-				<?php
-				}
-				?>
-			</nav>
-		</div>
+		<nav class=actions>
+			<a href="<?= dirname($_SERVER['PHP_SELF']); ?>/edit.php" class=new>add a photo or video</a>
+			<?php
+			if (self::$tag) {
+			?>
+				<a href="#tagedit" class=edit>edit tag description</a>
+			<?php
+			}
+			?>
+		</nav>
 
 <?php
 	}

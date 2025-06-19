@@ -19,9 +19,7 @@ class RecentUpdates extends Page {
 
 	private static function ShowAdminActions() {
 	?>
-		<div class=floatbgstop>
-			<nav class=actions><a class=new href="new.php">add update message</a></nav>
-		</div>
+		<nav class=actions><a class=new href="new.php">add update message</a></nav>
 <?php
 	}
 }

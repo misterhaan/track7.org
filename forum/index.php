@@ -22,18 +22,16 @@ class ForumIndex extends Page {
 		if (!self::$tag)
 			self::ShowTagCloud('discussions');
 		?>
-		<div class=floatbgstop>
-			<nav class=actions>
-				<a class=new href="<?= dirname($_SERVER['PHP_SELF']); ?>/start.php">start a new discussion</a>
-				<?php
-				if (self::$tag && self::HasAdminSecurity()) {
-				?>
-					<a href="#tagedit" class=edit>edit tag description</a>
-				<?php
-				}
-				?>
-			</nav>
-		</div>
+		<nav class=actions>
+			<a class=new href="<?= dirname($_SERVER['PHP_SELF']); ?>/start.php">start a new discussion</a>
+			<?php
+			if (self::$tag && self::HasAdminSecurity()) {
+			?>
+				<a href="#tagedit" class=edit>edit tag description</a>
+			<?php
+			}
+			?>
+		</nav>
 		<?php
 		if (self::$tag)
 			self::$tag->ShowInfo(self::HasAdminSecurity());
