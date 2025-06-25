@@ -88,7 +88,7 @@ createApp({
 					<div class=userlevel>{{user.LevelName}}</div>
 				</header>
 				<div>
-					<a class=avatar :href="user.Username + '/'"><img class=avatar alt="" :src=user.Avatar></a>
+					<a class=avatar :href="user.Username + '/'" tabindex=-1><img class=avatar alt="" :src=user.Avatar></a>
 					<div class=userstats>
 						<time class=lastlogin :datetime=user.LastLogin.DateTime :title="'last signed in ' + user.LastLogin.Tooltip">{{user.LastLogin.Display + ' ago'}}</time>
 						<time class=joined :datetime=user.Registered.DateTime :title="'joined ' + user.Registered.Tooltip">{{user.Registered.Display + ' ago'}}</time>
