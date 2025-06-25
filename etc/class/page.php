@@ -221,7 +221,7 @@ abstract class Page extends Responder {
 			<meta charset=utf-8>
 			<meta name=viewport content="width=device-width, initial-scale=1">
 			<title><?= htmlspecialchars(self::$title); ?></title>
-			<link rel=stylesheet href="/track7.css">
+			<link rel=stylesheet href=/theme/track7.css>
 			<?php
 			self::SendScripts();
 			self::SendIcons();
@@ -238,6 +238,7 @@ abstract class Page extends Responder {
 		}
 		?>
 		<script src="/prism.js" type="text/javascript"></script>
+		<script src="/theme.js" type="module"></script>
 		<script src="/user.js" type=module></script>
 		<?php
 		if (file_exists(str_replace('.php', '.js', $_SERVER['SCRIPT_FILENAME']))) {
@@ -271,6 +272,7 @@ abstract class Page extends Responder {
 	?>
 		<header>
 			<a id=gohome href="/" title="track7 home"><img src="/images/home.png" alt="track7"></a>
+			<button id=theme-toggle title="change theme"></button>
 			<div id=userstatus>
 				<?php
 				if (self::IsUserLoggedIn()) {
@@ -279,7 +281,7 @@ abstract class Page extends Responder {
 				<?php
 				} else {
 				?>
-					<a id=signin href="#signin">sign in</a>
+					<a id=signin href=#signin>sign in</a>
 				<?php
 				}
 				?>

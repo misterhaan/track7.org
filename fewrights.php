@@ -72,9 +72,9 @@ class FewRights extends Page {
 		<h2>stuff i didn’t make</h2>
 		<p>
 			some of the stuff on track7 was made by other people, so i don’t control
-			the rights. the text font is <a href="https://www.google.com/fonts/specimen/Rosario">rosario</a>,
-			header font is <a href="https://www.google.com/fonts/specimen/Monda">monda</a>,
-			code font is <a href="https://www.google.com/fonts/specimen/Inconsolata">inconsolata</a>,
+			the rights. the text font is <a href="https://fonts.google.com/specimen/Rosario">rosario</a>,
+			header font is <a href="https://fonts.google.com/specimen/Monda">monda</a>,
+			code font is <a href="https://github.com/microsoft/cascadia-code">cascadia code</a>,
 			and icon font is <a href="http://fontawesome.io/">fontawesome</a>.
 			markdown gets parsed into html by <a href="http://parsedown.org/">parsedown</a>
 			in php. <a href="http://prismjs.com/">prism</a> puts syntax

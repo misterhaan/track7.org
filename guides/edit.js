@@ -153,10 +153,12 @@ createApp({
 				<TagsField :tags=guide.Tags @changed=TagsChanged></TagsField>
 			</label>
 			<fieldset v-for="(chapter, index) of guide.Chapters">
-				<legend>chapter {{index + 1}}</legend>
-				<a class="action up" href="#moveup" title="move this chapter earlier" v-if=index @click.prevent=MoveChapterUp(chapter)></a>
-				<a class="action down" href="#movedown" title="move this chapter later" v-if="index < guide.Chapters.length - 1" @click.prevent=MoveChapterDown(chapter)></a>
-				<a class="action del" href="#del" title="remove this chapter" @click.prevent=RemoveChapter(chapter)></a>
+				<legend>
+					chapter {{index + 1}}
+					<a class="action up" href="#moveup" title="move this chapter earlier" v-if=index @click.prevent=MoveChapterUp(chapter)></a>
+					<a class="action down" href="#movedown" title="move this chapter later" v-if="index < guide.Chapters.length - 1" @click.prevent=MoveChapterDown(chapter)></a>
+					<a class="action del" href="#del" title="remove this chapter" @click.prevent=RemoveChapter(chapter)></a>
+				</legend>
 				<label :title="'title for chapter ' + (index + 1)">
 					<span class=label>title:</span>
 					<span class=field><input maxlength=128 required v-model=chapter.Title></span>

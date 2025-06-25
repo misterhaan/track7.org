@@ -1,0 +1,114 @@
+#codetypes {
+	@media (min-width: 40em) {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		margin: 0 .5em 1em;
+	}
+
+	section {
+		margin-top: 1em;
+		background-color: $main-shadow;
+		padding-bottom: .0125em;
+
+		@media (min-width: 25em) {
+			border-radius: .25em;
+		}
+
+		@media (min-width: 40em) {
+			width: calc(50% - 1em);
+			margin: 1em .5em 0;
+		}
+
+		@media(min-width: 57em) {
+			width: calc(33.333333% - 1em);
+		}
+
+		@media(min-width: 76em) {
+			width: calc(25% - 1em);
+		}
+	}
+
+	h2 {
+		text-align: center;
+		margin: 0;
+
+		a {
+			display: block;
+			background-color: $main-highlight;
+			color: $main-highlight-link-text;
+			padding: .125em .25em .25em;
+
+			@media (min-width: 25em) {
+				border-radius: .25em .25em 0 0;
+			}
+		}
+
+		&:after {
+			font-family: fontawesome;
+			font-size: 3em;
+			text-decoration: none;
+			display: block;
+			line-height: 1em;
+			margin-top: .25em;
+		}
+	}
+}
+
+img.icon {
+	vertical-align: middle;
+	margin-right: .125em;
+}
+
+.downloads {
+	margin: 0 1em;
+
+	a.action {
+		margin: 0 .375em .75em;
+	}
+}
+
+img.icon.preview {
+	width: 32px;
+	height: 32px;
+}
+
+.screenshot {
+	display: block;
+	margin: .75em auto;
+
+	@media (min-width: 25em) {
+		float: right;
+		margin: .25em 1em .25em .5em;
+	}
+}
+
+@media (min-width: 40em) {
+	#editapp span.label {
+		flex: 0 0 5.5em;
+	}
+
+	#editapp button {
+		margin: .75em 1em .75em 6.5em;
+	}
+
+	#addrel span.label {
+		flex: 0 0 4.75em;
+	}
+
+	#addrel button {
+		margin: .75em 1em .75em 5.75em;
+	}
+
+	#editscr .label {
+		flex: 0 0 6em;
+	}
+
+	#editscr fieldset.checkboxes .field {
+		margin-left: 6em;
+	}
+
+	#editscr button {
+		margin: .75em 1em .75em 7em;
+	}
+}

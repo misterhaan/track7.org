@@ -29,7 +29,7 @@ if(tagcloud)
 		},
 		template: /* html */ `
 			<template v-if=tags.length>
-				<header>tags</header>
+				<header class=tags>tags</header>
 				<a v-for="tag in tags" :href="tag.Name.replaceAll(' ', '+') + '/'" :title="pluralName + ' tagged ' + tag.Name" :data-count=tag.Count>{{tag.Name}}</a>
 			</template>
 		`

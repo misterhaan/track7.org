@@ -1,0 +1,286 @@
+label,
+label * {
+	vertical-align: baseline;
+}
+
+input,
+select,
+textarea,
+button {
+	font-family: inherit;
+	font-size: inherit;
+}
+
+main input,
+main select,
+main textarea {
+	margin: 0 .25em;
+	padding: .1em .25em .15em;
+	background-color: $main-field;
+	border: none;
+	border-radius: .25em;
+
+	&:focus,
+	&:hover {
+		outline: none;
+		box-shadow: 0 0 0 3px $main-text;
+	}
+}
+
+button {
+	font-weight: bold;
+	border: none;
+	border-radius: .25em;
+	padding: .25em .75em .5em;
+	cursor: pointer;
+
+	&:not(:disabled) {
+		background-color: $main-shadow;
+		color: $main-link-text;
+
+		&:hover,
+		&:focus {
+			outline: none;
+			box-shadow: 0 0 0 3px $main-text;
+			background-color: $main-highlight;
+			color: $main-highlight-link-text;
+		}
+	}
+
+	&:disabled {
+		background: $main-disabled;
+		color: $main-text;
+		cursor: not-allowed;
+	}
+
+	&.link {
+		border: none;
+		background: transparent;
+		padding: 0 .5em .125em;
+		margin-right: .5em;
+
+		&:not(:disabled) {
+
+			&:hover,
+			&:focus {
+				color: $main-link-text;
+				text-decoration: underline;
+				background: transparent;
+				box-shadow: none;
+			}
+		}
+	}
+}
+
+fieldset {
+	margin: 1em 0 .75em;
+	padding: 0;
+	border: none;
+	border-left: .5em solid $main-shadow;
+
+	@media (min-width: 25em) {
+		border-radius: .325em 0 0 .325em;
+		margin: 1em 0 .75em .5em;
+	}
+
+	label {
+		clear: left;
+	}
+}
+
+fieldset.selectafield,
+fieldset.checkboxes {
+	margin: -.75em 0; // due to non-collapsing child margins
+	border-left: none;
+}
+
+fieldset.selectafield:first-child {
+	margin-top: 0;
+}
+
+fieldset.selectafield label {
+	margin: 0;
+}
+
+fieldset.selectafield .label input[type="radio"] {
+	margin: 0 .2em 0 0;
+}
+
+main label,
+main button:not(.link),
+fieldset.checkboxes,
+fieldset.selectafield div {
+	margin: .75em .5em;
+	display: block;
+
+	@media (min-width: 25em) {
+		margin: .75em 1em;
+	}
+
+	@media (min-width: 40em) {
+		display: flex;
+		align-items: center;
+
+		&.multiline {
+			align-items: baseline;
+		}
+	}
+}
+
+main .field {
+	display: block;
+	display: flex;
+	margin: .1em 0;
+	flex: 1 0;
+	align-items: center;
+
+	input:not([type="checkbox"]):not([type="radio"]),
+	select,
+	textarea,
+	.suggestinput {
+		flex: 1 0;
+		margin: 0;
+		width: 100%;
+	}
+
+	&.suggest {
+		position: relative;
+	}
+}
+
+main .field.list {
+	flex-wrap: wrap;
+	background-color: $main-field;
+	border-radius: .25em;
+
+	&:before {
+		content: none;
+	}
+
+	.chosen {
+		white-space: nowrap;
+		margin-left: .25em;
+
+		a {
+			margin-right: 0;
+		}
+	}
+
+	input:focus,
+	input:hover {
+		box-shadow: none;
+	}
+
+	&:focus-within,
+	&:hover {
+		box-shadow: 0 0 0 3px $main-text;
+	}
+}
+
+legend {
+	margin: 0 .75em .75em -.25em;
+	padding: .1em 0 .25em .75em;
+	background-color: $main-shadow;
+	float: left;
+	border-radius: 0 .325em .325em 0;
+
+	@media (min-width: 25em) {
+		padding: .1em 0 .25em .825em;
+	}
+
+	.action:first-child {
+		margin-left: 1em;
+	}
+
+	.action:hover,
+	.action:focus {
+		box-shadow: 0 0 0 3px $main-text;
+		border-radius: .25em;
+	}
+}
+
+fieldset.checkboxes legend {
+	background: none;
+	float: none;
+	margin: 0;
+	padding: 0;
+
+	@media (min-width: 40em) {
+		position: absolute;
+	}
+}
+
+fieldset.checkboxes .field {
+	flex-wrap: wrap;
+}
+
+.field label.checkbox {
+	display: inline-flex;
+	margin: .1em 0;
+	align-items: center;
+	margin-right: 1em;
+}
+
+main .field .suggestinput {
+	display: flex;
+	position: relative;
+
+	input:not([type="checkbox"]):not([type="radio"]) {
+		flex: 1 0 2em;
+	}
+}
+
+.suggestions {
+	position: absolute;
+	top: 1.4em;
+	left: .125em;
+	background-color: $main-shadow;
+	padding: 0 3px 3px;
+	border-radius: 0 0 3px 3px;
+
+	&>* {
+		display: block;
+		cursor: pointer;
+		background-color: $main-field;
+		padding: .125em .25em;
+
+		&:hover,
+		&.selected {
+			background-color: $main-highlight;
+			color: $main-highlight-link-text;
+		}
+
+		em {
+			font-style: inherit;
+			font-weight: bold;
+		}
+	}
+}
+
+img.preview {
+	max-height: 200px;
+}
+
+.hidden {
+	display: none;
+}
+
+.validation {
+	margin-top: -.5em;
+	@include icon-left;
+
+	@media (min-width: 40em) {
+		margin-top: 0;
+		padding-left: .5em;
+	}
+
+	&:after {
+		content: attr(title);
+		margin-left: .25em;
+
+		@media (min-width: 40em) {
+			content: none;
+			margin-left: 0;
+		}
+	}
+}

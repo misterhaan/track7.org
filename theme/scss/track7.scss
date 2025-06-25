@@ -1,0 +1,345 @@
+@import "!color";
+@import "!font";
+@import "!icon";
+
+header,
+main {
+
+	a:link,
+	a:visited {
+		text-decoration: none;
+		font-weight: bold;
+
+		&:focus,
+		&:hover {
+			outline: none;
+			text-decoration: underline;
+		}
+	}
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+	font-family: monda, sans-serif;
+	line-height: 1.125em;
+}
+
+h1 {
+	margin: 0 .333em;
+	font-size: 1.5em;
+
+	@media (min-width: 40em) {
+		margin-top: .25em;
+	}
+}
+
+h2 {
+	margin: 1em .4em 0;
+	font-size: 1.25em;
+}
+
+h3 {
+	margin: 1em .5em 0;
+	font-size: 1.1em;
+}
+
+.floatbgstop {
+	display: flex;
+	flex-direction: column;
+}
+
+.meta {
+	margin: 0 0 .75em;
+	padding: 0 .625em;
+	font-size: .8em;
+
+	&.image {
+		text-align: center;
+	}
+
+	&>* {
+		margin-right: .75em;
+		white-space: nowrap;
+	}
+
+	&>.tags {
+		white-space: normal;
+	}
+}
+
+p,
+dl,
+table,
+blockquote {
+	margin: .75em .5em;
+
+	@media (min-width: 25em) {
+		margin: .75em 1em;
+	}
+}
+
+p,
+tbody {
+	line-height: 1.5em;
+}
+
+td {
+	padding: 0 .25em;
+}
+
+blockquote {
+	border-left: .25em solid $main-shadow;
+}
+
+.error {
+	color: $main-error-text;
+	@include icon-left;
+}
+
+.success {
+	@include icon-left;
+}
+
+.actions {
+	line-height: 1.5em;
+	padding: 0 .125em .1em;
+
+	&:not(.readmore) {
+		margin: .5em 0;
+	}
+
+	&.image {
+		text-align: center;
+	}
+}
+
+img.avatar {
+	border-radius: 10%;
+}
+
+img.avatar.inline {
+	height: 1em;
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: -.125em;
+}
+
+article>header h2 {
+	margin: 1em 0 0;
+	background-color: $main-highlight;
+	padding: .1em .4em;
+
+	@media (min-width: 25em) {
+		margin: 1em .4em 0;
+		border-radius: .4em .4em 0 0;
+	}
+
+	a:link,
+	a:visited {
+		color: $main-highlight-link-text;
+	}
+}
+
+article>header .meta {
+	background-color: $main-shadow;
+	padding: 0 .625em .15em;
+
+	@media (min-width: 25em) {
+		margin: 0 .625em .75em;
+	}
+}
+
+ol.gallery {
+	list-style-type: none;
+	margin: .75em 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+
+	@media (min-width: 25em) {
+		padding: .5em;
+		margin: .75em 1em;
+	}
+
+	li a:focus-within,
+	li a:hover {
+		box-shadow: 0 0 0 3px $main-text;
+	}
+
+	a.thumb {
+		margin: .75em .5em;
+		display: block;
+		text-align: center;
+
+		img {
+			display: block;
+			border-radius: .25em;
+		}
+
+		.caption {
+			display: block;
+			padding: 0 .25em 7px;
+		}
+	}
+}
+
+.actions a,
+a.action {
+	margin: 0 .25em;
+	white-space: nowrap;
+}
+
+@media (min-width: 25em) {
+	.actions a {
+		margin: 0 .5em;
+	}
+}
+
+.calltoaction {
+	text-align: center;
+}
+
+.calltoaction a.action {
+	margin: 0 auto;
+	background-color: $main-shadow;
+	border-radius: .25em;
+	padding: .25em .625em .325em;
+	display: inline-block;
+	white-space: nowrap;
+
+	&:link,
+	&:visited {
+		color: $main-link-text;
+
+		&:hover,
+		&:focus {
+			box-shadow: 0 0 0 3px $main-text;
+			background-color: $main-highlight;
+			color: $main-highlight-link-text;
+			text-decoration: none;
+		}
+	}
+}
+
+.fadeout-leave-active {
+	transition: all 2s ease;
+}
+
+.fadeout-leave-to {
+	transform: translateX(10em);
+	opacity: 0;
+}
+
+.droptrigger {
+	background-color: $main-field;
+	border-radius: .25em;
+	margin-left: .5em;
+	padding: .1em 0 .15em;
+	white-space: nowrap;
+}
+
+.droptrigger:after {
+	content: "\25bc";
+	font-size: .45em;
+	margin-right: .6em;
+	display: inline-block;
+	transform: translateY(-.3em);
+}
+
+.droplist {
+	display: none;
+	position: absolute;
+	right: .125em;
+	top: 1.25em;
+	background-color: $main-field;
+	padding: .125em 0;
+	border-radius: .25em 0 .25em .25em;
+	filter: drop-shadow(2px 2px 1px $main-divider);
+	z-index: 1; // on top of the down arrow from .droptrigger:after
+
+	a {
+		display: block;
+		padding: .125em .25em;
+	}
+}
+
+h1 .sortoption {
+	position: relative;
+
+	.droptrigger {
+		margin-left: 0;
+		background-color: transparent;
+
+		&:after {
+			margin-left: .25em;
+		}
+	}
+
+	.droplist a {
+		font-size: .666666666666667em;
+		font-family: rosario;
+		font-weight: normal;
+		line-height: 1.25em;
+		padding: 0 .5em;
+		white-space: nowrap;
+		text-align: right;
+	}
+}
+
+#vote {
+	cursor: pointer;
+	margin-left: .5em;
+	@include icon-left;
+
+	span {
+		@include icon-left;
+	}
+
+	&.voted:before,
+	&.voted span:before,
+	&:hover:before,
+	&:hover span:before {
+		color: $main-link-text;
+	}
+
+	&.voted:before,
+	&.voted span.voted:before,
+	&.voted:hover span:hover:before,
+	&:hover:before,
+	span:hover:before {
+		font-weight: bold;
+	}
+
+	&.voted:hover span:before {
+		font-weight: normal;
+	}
+}
+
+@import "!form";
+@import "!tabs";
+@import "!auth";
+@import "!header";
+@import "!footer";
+@import "!main";
+@import "!tag";
+@import "!comment";
+@import "!code";
+@import "404";
+@import "index";
+@import "album";
+@import "art";
+@import "bln";
+@import "code";
+@import "forum";
+@import "guides";
+@import "lego";
+@import "messages";
+@import "pen";
+@import "tools";
+@import "user";
+@import "votes";

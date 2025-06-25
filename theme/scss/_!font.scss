@@ -1,0 +1,49 @@
+@font-face {
+	font-family: rosario;
+	font-style: normal;
+	font-weight: normal;
+	src: local('Rosario'), url(Rosario-VariableFont_wght.woff2);
+}
+
+@font-face {
+	font-family: rosario;
+	font-style: italic;
+	font-weight: normal;
+	src: local('Rosario'), url(Rosario-Italic-VariableFont_wght.woff2);
+}
+
+@font-face {
+	font-family: monda;
+	font-style: normal;
+	font-weight: normal;
+	src: local('Monda'), url(Monda-VariableFont_wght.woff2);
+}
+
+@font-face {
+	font-family: cascadia-code;
+	src: local('Cascadia Code'), url(CascadiaCode.woff2);
+}
+
+@font-face {
+	font-family: fontawesome;
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	src: url(fa-regular-400.woff2);
+}
+
+@font-face {
+	font-family: fontawesome;
+	font-style: normal;
+	font-weight: 900;
+	font-display: block;
+	src: url(fa-solid-900.woff2);
+}
+
+@font-face {
+	font-family: fontawesome-brands;
+	font-style: normal;
+	font-weight: bold; // isn't really bold, but this keeps it from applying bold
+	font-display: block;
+	src: url(fa-brands-400.woff2);
+}

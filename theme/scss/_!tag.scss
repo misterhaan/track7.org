@@ -1,0 +1,97 @@
+.tagcloud:not(:empty) {
+	background-color: $main-shadow;
+	font-size: .8em;
+	padding: .125em .625em .25em;
+	vertical-align: middle;
+	display: flex;
+	flex-wrap: wrap;
+
+	@media (min-width: 25em) {
+		margin: 0 .625em;
+		padding: .25em .5em .325em;
+		border-radius: .25em;
+	}
+
+	@media (min-width: 40em) {
+		float: right;
+		display: block;
+		margin: -1.75em -.625em .625em .625em;
+		border-radius: .25em 0 0 .25em;
+	}
+
+	header {
+		margin: 0 .75em 0 .25em;
+		@include icon-left;
+
+		@media (min-width: 40em) {
+			display: block;
+			background-color: $main-highlight;
+			margin: -.25em -.5em 0;
+			padding: .25em .5em;
+			border-radius: .5em 0 0 0;
+		}
+	}
+
+	a:link,
+	a:visited {
+		font-weight: normal;
+
+		@media (min-width: 40em) {
+			display: block;
+		}
+
+		&:after {
+			margin-right: .5em;
+			content: " (" attr(data-count) ")";
+
+			@media (min-width: 40em) {
+				margin: 0;
+			}
+		}
+	}
+}
+
+nav.tagprevnext {
+	text-align: center;
+	font-size: .8em;
+}
+
+nav.tagprevnext a {
+	margin: 0 .25em;
+}
+
+#taginfo {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+
+	li {
+		display: flex;
+		margin: .75em .5em;
+
+		@media (min-width: 25em) {
+			margin: .75em 1em;
+		}
+	}
+
+	.tagdata {
+		background-color: $main-shadow;
+		padding: .25em .5em;
+		border-radius: .25em 0 0 .25em;
+		flex: 0 0 auto;
+
+		&>* {
+			display: block;
+		}
+
+		span,
+		time {
+			font-size: .8em;
+		}
+	}
+
+	.description {
+		padding: .25em .5em;
+		flex: 1 1 auto;
+	}
+}

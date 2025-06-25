@@ -1,0 +1,16 @@
+.series h2 {
+	@include icon-left;
+}
+
+p.story {
+	text-indent: 2em;
+	margin: 0 .5em;
+
+	@media (min-width: 25em) {
+		margin: 0 1em;
+	}
+}
+
+.indent {
+	text-indent: 2em;
+}

@@ -1,0 +1,41 @@
+html {
+	color-scheme: light dark;
+	--sqrt2: 1.4142135623730950488016887242097;
+}
+
+html.dark {
+	color-scheme: dark;
+}
+
+html.light {
+	color-scheme: light;
+}
+
+$void-background: light-dark(#777, #0f1614);
+$void-text: light-dark(#ccc, #cacfc0);
+$void-link-text: #fff;
+
+$main-background: light-dark(#ffd, #2d2e2c);
+$main-shadow: light-dark(#ddc, #434541);
+$main-divider: light-dark(#777, #666);
+$main-disabled: repeating-linear-gradient(-45deg, $main-shadow, $main-shadow calc(3px / var(--sqrt2)), transparent calc(3px / var(--sqrt2)), transparent calc(6px / var(--sqrt2)));
+$main-highlight: light-dark(#abc, #357);
+$main-highlight-link-text: light-dark(#135, #def);
+$main-text: light-dark(#444, #cacfc0);
+$main-link-text: light-dark(#357, #9df);
+$main-valid-text: #7b4;
+$main-error-text: light-dark(#b64, #f86);
+$main-field: light-dark(#eed, #1d1e1c);
+
+$header-background: #352;
+$header-highlight: #574;
+$header-focus: #130;
+$header-disabled: repeating-linear-gradient(-45deg, $header-background, $header-background calc(3px / var(--sqrt2)), transparent calc(3px / var(--sqrt2)), transparent calc(6px / var(--sqrt2)));
+$header-text: #ccc;
+$header-link-text: #fff;
+
+$notify-background: #d82;
+$notify-text: #fff;
+
+$photo-background: light-dark(#fff, #1d1e1c);
+$photo-shadow: light-dark(#777, #666);

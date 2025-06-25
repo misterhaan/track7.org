@@ -16,7 +16,7 @@ class FullGuide extends Page {
 	protected static function MainContent(): void {
 ?>
 		<h1><?= htmlspecialchars(self::$guide->Title); ?></h1>
-		<p class=guidemeta>
+		<p class=meta>
 			<span class=guidelevel title="<?= self::$guide->Level; ?> level"><?= self::$guide->Level; ?></span>
 			<span class=tags><?php self::ShowTagLinks(); ?></span>
 			<span class=views title="viewed <?= self::$guide->Views; ?> times"><?= self::$guide->Views; ?></span>

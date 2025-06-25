@@ -34,7 +34,7 @@ createApp({
 
 		<a v-for="contact in contacts" :class=contact.Type :href=contact.URL :title=contact.Action></a>
 	`
-}).mount("#contact");
+}).mount("#contacts");
 
 createApp({
 	name: "Activity",

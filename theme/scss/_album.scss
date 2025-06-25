@@ -1,0 +1,30 @@
+ol.gallery a.photo.thumb {
+	background-color: $photo-background;
+	border-radius: .25em;
+	filter: drop-shadow(.5px .5px 1px $photo-shadow);
+
+	img {
+		padding: 7px;
+		margin: 0 auto;
+		border-radius: 9px;
+	}
+}
+
+img.photo,
+iframe.photo {
+	max-width: 100%;
+	border: 1px solid $photo-shadow;
+	border-radius: .25em;
+	display: block;
+	margin: 0 auto;
+}
+
+@media (min-width: 40em) {
+	#editphoto span.label {
+		flex: 0 0 4.5em;
+	}
+
+	#editphoto button {
+		margin: .75em 1em .75em 5.5em;
+	}
+}

@@ -1,0 +1,193 @@
+@media (min-width: 40em) {
+	#sendmessage span.label {
+		flex: 0 0 4.5em;
+	}
+
+	#sendmessage button {
+		margin: .75em 1em .75em 5.5em;
+	}
+}
+
+#sendmessage .suggest a.user {
+	margin: 0 .25em;
+}
+
+ol.usersuggest {
+	position: absolute;
+	list-style-type: none;
+	padding: 0 3px 3px;
+	background-color: $main-highlight;
+	border-radius: 0 0 3px 3px;
+	top: .45em;
+	left: .25em;
+
+	li {
+		background-color: $main-field;
+		margin: 0;
+		padding: .25em;
+		border-radius: 0;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+
+
+		&.suggesteduser {
+
+			&:hover,
+			&.highlight {
+				background-color: $main-highlight;
+				color: $main-highlight-link-text;
+			}
+
+			img.avatar {
+				height: 20px;
+			}
+
+			span {
+				padding: 0 .5em;
+			}
+		}
+	}
+}
+
+ol.conversations {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+
+	&>li {
+		margin: .75em .5em;
+		padding: 0;
+		border-radius: .375em;
+
+		@media (min-width: 25em) {
+			margin: .75em 1em;
+		}
+	}
+}
+
+#conversations ol {
+	li.selected>header {
+		background-color: $main-highlight;
+		border-radius: .25em;
+	}
+
+	li>header {
+		line-height: 2em;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		&>* {
+			margin: 0 .25em;
+		}
+	}
+
+	header span {
+		flex: 1 0 auto;
+	}
+
+	header.incoming {
+		padding-right: 2.25em;
+
+		&:before {
+			width: 2em;
+			line-height: 2em;
+			margin-right: .25em;
+			display: inline-block;
+			background-color: $main-highlight;
+			color: $main-highlight-link-text;
+			text-align: center;
+			border-radius: .25em 0 0 .25em;
+		}
+	}
+
+	header.outgoing {
+		padding-left: 2.25em;
+
+		&:after {
+			width: 2em;
+			line-height: 2em;
+			margin-left: .25em;
+			display: inline-block;
+			background-color: $main-shadow;
+			text-align: center;
+			border-radius: 0 .25em .25em 0;
+		}
+	}
+
+	header>img.avatar {
+		height: 1.5em;
+	}
+}
+
+ol.messages {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+
+	li.loading {
+		text-align: center;
+	}
+
+	li.reply .message {
+		padding-left: 2px;
+		flex: 1 0;
+	}
+
+	li.reply .label {
+		display: none;
+	}
+
+	@media (min-width: 25em) {
+
+		li.reply label,
+		li.reply button {
+			margin-top: 0;
+			margin-left: 0;
+		}
+	}
+
+	.outgoing .userinfo,
+	.outgoing header {
+		text-align: right;
+	}
+
+	@media (min-width: 25em) {
+		.outgoing {
+			flex-direction: row-reverse;
+		}
+
+		.outgoing .userinfo {
+			border-radius: 0 .25em .25em 0;
+		}
+
+		.outgoing header {
+			border-radius: .3125em 0 0;
+		}
+	}
+}
+
+#conversationpane {
+	display: none;
+	overflow-x: auto;
+
+	@media (min-width: 50em) {
+		display: block;
+	}
+}
+
+@media (min-width: 50em) {
+	#messages {
+		display: flex;
+	}
+
+	#conversations {
+		width: 22em;
+		flex: 0 0 auto;
+
+		ol.messages {
+			display: none;
+		}
+	}
+}

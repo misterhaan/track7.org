@@ -1,0 +1,117 @@
+h1 img {
+	max-width: 100%;
+}
+
+#features {
+	margin: .25em;
+
+	@media (min-width: 48.5em) {
+		float: right;
+		margin-top: -230px;
+		margin-right: -.5em;
+	}
+
+	nav {
+		display: flex;
+		flex-wrap: wrap;
+
+		@media (min-width: 48.5em) {
+			display: block;
+		}
+
+		a {
+			display: flex;
+			background-color: $main-shadow;
+			border-radius: .25em;
+			padding: .35em .5em .35em .35em;
+			margin: .0625em;
+			line-height: 32px;
+
+			@media (min-width: 48.5em) {
+				border-radius: .25em 0 0 .25em;
+				margin: .125em 0;
+			}
+
+			&:hover,
+			&:focus {
+				outline: none;
+				background-color: $main-highlight;
+				color: $main-highlight-link-text;
+			}
+		}
+
+		img {
+			margin-right: .5em;
+			vertical-align: middle;
+		}
+	}
+}
+
+article.activity {
+	display: flex;
+
+	.whatwhen {
+		flex: none;
+		font-size: .9em;
+		margin: 1.5em 0 .75em .5em;
+		padding: .5em 0 .25em;
+		background-color: $main-shadow;
+		border-radius: .325em;
+		width: calc(48px + 1em);
+		height: calc(48px + 1.6em);
+		background-repeat: no-repeat;
+		background-position: center .55em;
+
+		time {
+			padding-top: calc(48px + .25em);
+			display: block;
+			text-align: center;
+		}
+	}
+
+	h2 {
+		@media (min-width: 25em) {
+			margin-left: .75em;
+		}
+	}
+
+	img.photothumb {
+		border-radius: .25em;
+	}
+
+	&.art .whatwhen {
+		background-image: url(/images/storytype/art.png);
+	}
+
+	&.code .whatwhen {
+		background-image: url(/images/storytype/code.png);
+	}
+
+	&.comment .whatwhen {
+		background-image: url(/images/storytype/comment.png);
+	}
+
+	&.entry .whatwhen {
+		background-image: url(/images/storytype/entry.png);
+	}
+
+	&.discuss .whatwhen {
+		background-image: url(/images/storytype/post.png);
+	}
+
+	&.guide .whatwhen {
+		background-image: url(/images/storytype/guides.png);
+	}
+
+	&.lego .whatwhen {
+		background-image: url(/images/storytype/lego.png);
+	}
+
+	&.photo .whatwhen {
+		background-image: url(/images/storytype/photo.png);
+	}
+
+	&.update .whatwhen {
+		background-image: url(/images/storytype/update.png);
+	}
+}

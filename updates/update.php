@@ -15,7 +15,7 @@ class SingleUpdate extends Page {
 	protected static function MainContent(): void {
 ?>
 		<h1>track7 update</h1>
-		<p class=guidemeta><time class=posted title="posted <?= self::$update->Instant->Tooltip; ?>" datetime="<?= self::$update->Instant->DateTime; ?>"><?= self::$update->Instant->Display; ?></time></p>
+		<p class=meta><time class=posted title="posted <?= self::$update->Instant->Tooltip; ?>" datetime="<?= self::$update->Instant->DateTime; ?>"><?= self::$update->Instant->Display; ?></time></p>
 <?php
 		echo self::$update->HTML;
 		self::ShowComments(self::$update->ID);

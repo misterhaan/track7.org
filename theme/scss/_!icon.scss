@@ -1,0 +1,605 @@
+@mixin icon-left {
+	&:before {
+		font-size: .9em;
+		margin-right: .4em;
+		display: inline-block;
+	}
+}
+
+@keyframes icon-spin {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(359deg);
+	}
+}
+
+.actions a,
+.action,
+.meta>* {
+	@include icon-left;
+}
+
+.addfriend:before {
+	font-family: fontawesome;
+	content: "\f234";
+}
+
+.visibility[data-value="all"]:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f0ac";
+}
+
+.author:before {
+	font-family: fontawesome;
+	content: "\f007";
+}
+
+.branch:before {
+	font-family: fontawesome;
+	content: "\f126";
+}
+
+.calculator:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f1ec";
+}
+
+.cancel:before {
+	font-family: fontawesome;
+	content: "\f05e";
+}
+
+.checking:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f110";
+	animation: icon-spin 1s infinite steps(8);
+}
+
+#codevs h2:after {
+	font-family: fontawesome;
+	content: "\f108";
+}
+
+#codescr h2:after {
+	font-family: fontawesome;
+	content: "\f121";
+}
+
+#codeti h2:after {
+	font-family: fontawesome;
+	content: "\f1ec";
+}
+
+#codemzx h2:after {
+	font-family: fontawesome;
+	content: "\f118";
+}
+
+#comments h2,
+.comments {
+	&:before {
+		font-family: fontawesome;
+		font-weight: normal;
+		content: "\f0e6";
+	}
+}
+
+a[href="#contact"]:before {
+	font-family: fontawesome;
+	content: "\f08e";
+}
+
+.continue:before {
+	font-family: fontawesome;
+	content: "\f04e";
+}
+
+.del:before {
+	font-family: fontawesome;
+	content: "\f00d";
+	color: $main-error-text;
+}
+
+.deviantart:before {
+	font-family: fontawesome-brands;
+	content: "\f1bd";
+}
+
+.dmzx:before {
+	font-family: fontawesome;
+	content: "\f118";
+}
+
+.documentation:before {
+	font-family: fontawesome;
+	content: "\f02d";
+}
+
+.down:before {
+	font-family: fontawesome;
+	content: "\f13a";
+}
+
+.download:before {
+	font-family: fontawesome;
+	content: "\f019";
+}
+
+.edit:before {
+	font-family: fontawesome;
+	content: "\f040";
+}
+
+.edithistory:before {
+	font-family: fontawesome;
+	content: "\f044";
+}
+
+.email:before {
+	font-family: fontawesome;
+	font-weight: normal;
+	content: "\f2b7";
+}
+
+.error:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f06a";
+}
+
+.facebook:before {
+	font-family: fontawesome-brands;
+	content: "\f230";
+}
+
+.fans:before {
+	font-family: fontawesome;
+	content: "\f006";
+}
+
+.firstpost:before {
+	font-family: fontawesome;
+	content: "\f0e5";
+}
+
+.friend:after {
+	font-family: fontawesome;
+	font-size: .9em;
+	margin-left: .5em;
+	font-weight: normal;
+	content: "\f006";
+}
+
+.visibility[data-value="friends"]:before {
+	font-family: fontawesome;
+	content: "\f006";
+}
+
+a.gallery:before {
+	font-family: fontawesome;
+	content: "\f58d";
+}
+
+.gameengine:before {
+	font-family: fontawesome;
+	content: "\f118";
+}
+
+.get:before {
+	font-family: fontawesome;
+	content: "\f019";
+}
+
+.github:before {
+	font-family: fontawesome-brands;
+	content: "\f09b";
+}
+
+.google:before {
+	font-family: fontawesome-brands;
+	content: "\f1a0";
+}
+
+.guidelevel:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f19d";
+}
+
+header.incoming:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f0e0";
+}
+
+header.incoming.read:before {
+	font-weight: normal;
+	content: "\f003";
+}
+
+.invalid:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f05e";
+	color: $main-error-text;
+}
+
+.joined:before {
+	font-family: fontawesome;
+	content: "\f2c1";
+}
+
+.lastlogin:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f090";
+}
+
+.lastpost:before {
+	font-family: fontawesome;
+	content: "\f27b";
+}
+
+.list:before {
+	font-family: fontawesome;
+	content: "\f03a";
+}
+
+.loading:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	font-size: .9em;
+	margin-right: .5em;
+	display: inline-block;
+	content: "\f110";
+	animation: icon-spin 1s infinite steps(8);
+}
+
+a[href="#linkedaccounts"]:before {
+	font-family: fontawesome;
+	content: "\f090";
+}
+
+#logoutlink:before {
+	font-family: fontawesome;
+	content: "\f08b";
+	transform: rotate(180deg);
+}
+
+a.messages:before {
+	font-family: fontawesome;
+	content: "\f0e0";
+}
+
+.msi:before {
+	font-family: fontawesome;
+	content: "\f019";
+}
+
+.new:before {
+	font-family: fontawesome;
+	content: "+";
+}
+
+.next:before {
+	font-family: fontawesome;
+	content: "\f138";
+}
+
+.visibility[data-value="none"]:before {
+	font-family: fontawesome;
+	font-weight: normal;
+	content: "\f070";
+}
+
+a[href="#notification"]:before {
+	font-family: fontawesome;
+	content: "\f0a2";
+}
+
+.okay:before {
+	font-family: fontawesome;
+	content: "\f00c";
+}
+
+header.outgoing:after {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f1d8";
+}
+
+header.outgoing.read:after {
+	font-weight: normal;
+	content: "\f1d9";
+}
+
+.pdf:before {
+	font-family: fontawesome;
+	font-weight: normal;
+	content: "\f1c1";
+}
+
+.pieces:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f12e";
+}
+
+.posted:before {
+	font-family: fontawesome;
+	content: "\f073";
+}
+
+.posts:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f0a1";
+}
+
+.prev:before {
+	font-family: fontawesome;
+	content: "\f137";
+}
+
+a[href="#profile"]:before,
+.profile:before {
+	font-family: fontawesome;
+	content: "\f2bb";
+}
+
+.publish:before {
+	font-family: fontawesome;
+	content: "\f093";
+}
+
+#rank header:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f091";
+}
+
+.rating {
+	@include icon-left;
+}
+
+.rating:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	margin-right: 0;
+}
+
+.rating[data-stars="1"]:before {
+	content: "\f005";
+}
+
+.rating[data-stars="1.5"]:before {
+	content: "\f005\f5c0";
+}
+
+.rating[data-stars="2"]:before {
+	content: "\f005\f005";
+}
+
+.rating[data-stars="2.5"]:before {
+	content: "\f005\f005\f5c0";
+}
+
+.rating[data-stars="3"]:before {
+	content: "\f005\f005\f005";
+}
+
+.rating[data-stars="3.5"]:before {
+	content: "\f005\f005\f005\f5c0";
+}
+
+.rating[data-stars="4"]:before {
+	content: "\f005\f005\f005\f005";
+}
+
+.rating[data-stars="4.5"]:before {
+	content: "\f005\f005\f005\f005\f5c0";
+}
+
+.rating[data-stars="5"]:before {
+	content: "\f005\f005\f005\f005\f005";
+}
+
+.rating:after {
+	font-family: fontawesome;
+	font-weight: normal;
+	font-size: .9em;
+}
+
+.rating[data-stars="1"]:after {
+	content: "\f006\f006\f006\f006";
+}
+
+.rating[data-stars="1.5"]:after,
+.rating[data-stars="2"]:after {
+	content: "\f006\f006\f006";
+}
+
+.rating[data-stars="2.5"]:after,
+.rating[data-stars="3"]:after {
+	content: "\f006\f006";
+}
+
+.rating[data-stars="3.5"]:after,
+.rating[data-stars="4"]:after {
+	content: "\f006";
+}
+
+.removefriend:before {
+	font-family: fontawesome;
+	content: "\f235";
+}
+
+.replies:before {
+	font-family: fontawesome;
+	content: "\f0e6";
+}
+
+.schoolsubject:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f02d";
+}
+
+.scripttype:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f121";
+}
+
+.sendmessage:before {
+	font-family: fontawesome;
+	content: "\f1d8";
+}
+
+.series h2:before {
+	font-family: fontawesome;
+	font-weight: normal;
+	content: "\f0c5";
+}
+
+.settings:before {
+	font-family: fontawesome;
+	content: "\f085";
+}
+
+.steam:before {
+	font-family: fontawesome-brands;
+	content: "\f3f6";
+}
+
+.success:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f00c";
+	color: $main-valid-text;
+}
+
+.tag:before {
+	font-family: fontawesome;
+	content: "\f02b";
+}
+
+.tags:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f02c";
+}
+
+.tags .tag:before {
+	content: none;
+}
+
+.taken:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f083";
+}
+
+.theme-dark:before {
+	font-family: fontawesome;
+	content: "\f186";
+}
+
+.theme-light:before {
+	font-family: fontawesome;
+	content: "\f185";
+}
+
+.theme-system:before {
+	font-family: fontawesome;
+	content: "\f042";
+}
+
+.ticalc:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f1ec";
+}
+
+a[href="#timezone"]:before {
+	font-family: fontawesome;
+	font-weight: normal;
+	content: "\f017";
+}
+
+.toc header:before {
+	font-family: fontawesome;
+	content: "\f097";
+}
+
+.twitch:before {
+	font-family: fontawesome-brands;
+	content: "\f1e8";
+}
+
+.twitter:before {
+	font-family: fontawesome-brands;
+	content: "\f099";
+}
+
+.unlink:before {
+	font-family: fontawesome;
+	content: "\f127";
+	color: $main-error-text;
+}
+
+.up:before {
+	font-family: fontawesome;
+	content: "\f139";
+}
+
+.visibility[data-value="users"]:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f0c0";
+}
+
+.valid:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f00c";
+	color: $main-valid-text;
+}
+
+.views:before {
+	font-family: fontawesome;
+	font-weight: bold;
+	content: "\f1e5";
+}
+
+#vote:before,
+#vote span:before {
+	font-family: fontawesome;
+	content: "\f006";
+}
+
+a.website:before {
+	font-family: fontawesome;
+	content: "\f0ac";
+}
+
+.working:after {
+	font-family: fontawesome;
+	font-weight: bold;
+	font-size: .9em;
+	margin-left: .5em;
+	display: inline-block;
+	content: "\f110";
+	animation: icon-spin 1s infinite steps(8);
+}
+
+.zip:before {
+	font-family: fontawesome;
+	content: "\f187";
+}

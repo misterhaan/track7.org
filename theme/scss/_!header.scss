@@ -1,0 +1,286 @@
+body>header {
+	background-color: $header-background;
+	color: $header-text;
+	height: 42px;
+	display: flex;
+
+	@media (min-width: 40em) {
+		border-radius: 0 0 .625em .625em;
+	}
+}
+
+body>header a {
+	color: $header-link-text;
+}
+
+#gohome {
+	display: block;
+	height: 36px;
+	margin-left: calc(.5em - 2px);
+	margin-top: 6px;
+	padding-left: 2px;
+	padding-right: 7px;
+	border-radius: .25em .25em 0 0;
+
+	@media (min-width: 40em) {
+		margin-left: calc(.625em - 2px);
+	}
+
+	&:focus,
+	&:hover {
+		outline: none;
+		background-color: $header-highlight;
+	}
+
+	img {
+		display: block;
+		height: 36px;
+	}
+}
+
+#theme-toggle {
+	@include icon-left;
+	display: block;
+	margin: 5px 7px 5px auto;
+	padding: 0; // override button defaults
+	height: 32px;
+	width: 32px;
+	line-height: 32px;
+	text-align: center;
+	border-radius: .25em;
+	background-color: transparent;
+	color: $header-link-text;
+
+	&:before {
+		display: block;
+		margin: 0;
+	}
+
+	&:focus,
+	&:hover {
+		outline: none;
+		text-decoration: none;
+		background-color: $header-highlight;
+	}
+}
+
+#userstatus {
+	margin-right: .25em;
+
+	@media (min-width: 40em) {
+		margin-right: .625em;
+	}
+}
+
+#signin,
+#whodat {
+	display: block;
+	height: 42px;
+	line-height: 40px;
+	padding: 0 .5em;
+
+	&:focus,
+	&:hover,
+	&.open {
+		outline: none;
+		background-color: $header-highlight;
+	}
+
+	&.open:hover,
+	&.open:focus {
+		box-shadow: 0 0 0 3px $header-focus;
+	}
+
+	img.avatar {
+		height: 30px;
+		margin-left: .5em;
+		margin-bottom: 3px;
+		vertical-align: middle;
+	}
+}
+
+.notifycount {
+	display: inline-block;
+	background-color: $notify-background;
+	color: $notify-text;
+	border-radius: .5em;
+	margin-left: .5em;
+	height: 1em;
+	line-height: .9em;
+	padding: 0 .2em;
+	min-width: .6em;
+	text-align: center;
+}
+
+#loginmenu,
+#usermenu {
+	display: none;
+	background-color: $header-highlight;
+	color: $header-text;
+	padding: .25em .5em .5em;
+}
+
+#usermenu {
+	position: absolute;
+	/* don't hide under main */
+	z-index: 1;
+	margin-left: auto;
+	padding: .25em 0 .5em;
+	right: .25em;
+	border-radius: 0 0 .625em .625em;
+
+	@media (min-width: 40em) {
+		right: 2em;
+	}
+}
+
+#loginmenu {
+	@media (min-width: 25em) {
+		padding: .25em 1.5em .5em;
+	}
+
+	@media (min-width: 35em) {
+		position: absolute;
+		/* don't hide under main */
+		z-index: 1;
+		margin-left: auto;
+		padding: .25em .5em .5em;
+		right: .25em;
+		border-radius: 0 0 .625em .625em;
+	}
+
+	@media (min-width: 40em) {
+		right: 2em;
+	}
+}
+
+#signinform {
+	padding-bottom: .25em;
+
+	@media (min-width: 40em) {
+		width: 16.5em;
+	}
+
+	label {
+		display: block;
+		margin: .5em 0;
+
+		border-radius: .25em;
+
+		&.checkbox {
+			width: 13em;
+			margin: .5em auto;
+		}
+
+		&:focus,
+		&:hover {
+			outline: none;
+			box-shadow: 0 0 0 3px $header-focus;
+		}
+
+		&.checkbox:focus-within {
+			box-shadow: 0 0 0 3px $header-focus;
+		}
+	}
+
+	input[type=checkbox] {
+		color-scheme: dark; // background color is always dark even in light theme, so get a dark checkbox
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	button {
+		display: block;
+		margin: 0 auto;
+
+		&:disabled {
+			background: $header-disabled;
+			color: $header-text;
+		}
+
+		&:not(:disabled) {
+			background-color: $header-background;
+			color: $header-link-text;
+
+			&:hover,
+			&:focus {
+				outline: none;
+				box-shadow: 0 0 0 3px $header-focus;
+			}
+		}
+	}
+}
+
+#authchoices {
+	display: flex;
+	justify-content: center;
+	align-content: middle;
+	flex-wrap: wrap;
+	width: auto;
+
+	a {
+		margin: 0 .125em .5em;
+		padding: 4px;
+	}
+
+	label {
+		margin: .5em .25em 0;
+		padding: 4px;
+
+		&.selected {
+			background-color: $header-link-text;
+			border-radius: 8px;
+		}
+	}
+
+	input {
+		display: none;
+	}
+}
+
+#oldlogin {
+	padding-top: .5em;
+
+	label {
+		margin: .5em auto;
+		width: 12.5em;
+	}
+
+	input {
+		display: block;
+		width: 12em;
+		border: none;
+		background-color: $main-background;
+		color: $main-text;
+		border-radius: .25em;
+		padding: 0 .25em .1em;
+
+		&:hover,
+		&:focus {
+			outline: none;
+			box-shadow: 0 0 0 3px $header-focus;
+		}
+	}
+}
+
+#useractions a {
+	@include icon-left;
+	display: block;
+	font-weight: bold;
+	text-decoration: none;
+	color: $header-link-text;
+	padding: .125em .5em .25em;
+
+	&:before {
+		width: 1.4em;
+		text-align: center;
+	}
+
+	&:hover,
+	&:focus {
+		outline: none;
+		background-color: $header-background;
+	}
+}

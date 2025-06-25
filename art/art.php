@@ -52,7 +52,7 @@ class Artwork extends Page {
 		if (!self::$prevNext)
 			self::FindPrevNext();
 	?>
-		<nav class=tagprevnext>
+		<nav class="tagprevnext actions">
 			<?php
 			if (self::$prevNext->Next) {
 				$tooltip = 'see the art posted after this';
@@ -147,7 +147,7 @@ class Artwork extends Page {
 	private static function ShowMetadata(): void {
 		require_once 'formatDate.php';
 	?>
-		<p class="art meta">
+		<p class="image meta">
 			<?php
 			if (self::$art->Instant) {
 				$posted = new TimeTagData(self::$user, 'smart', self::$art->Instant, FormatDate::Long);

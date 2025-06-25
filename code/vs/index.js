@@ -62,8 +62,8 @@ createApp({
 				</p>
 			</header>
 			<div v-html=app.Description></div>
-			<p class=downloads v-if=DownloadURL(app)><a class="action download" :href=DownloadURL(app)>{{DownloadTitle(app)}}</a></p>
-			<p class=downloads><a class="action list" :href=app.ID>other versions and source code</a></p>
+			<p class=actions v-if=DownloadURL(app)><a class=download :href=DownloadURL(app)>{{DownloadTitle(app)}}</a></p>
+			<p class=actions><a class=list :href=app.ID>other versions and source code</a></p>
 		</article>
 	`
 }).mount("#vsapps");

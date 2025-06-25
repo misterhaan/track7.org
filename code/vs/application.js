@@ -58,8 +58,8 @@ createApp({
 			if(url.startsWith("https://github.com/"))
 				return "github";
 			if(url.startsWith("https://") || url.startsWith("http://"))
-				return 'link';
-			return 'zip';
+				return "branch";
+			return "zip";
 		}
 	},
 	template: /* html */ `
@@ -80,7 +80,7 @@ createApp({
 				</p>
 				<div v-if=release.Changelog v-html=release.Changelog></div>
 			</header>
-			<nav class="downloads">
+			<p class=downloads>
 				<a :class="'action ' + GetExtension(release.BinURL)" :href=release.BinURL>{{GetDownloadName(release, 64)}}</a>
 				<a v-if=release.Bin32URL :class="'action ' + GetExtension(release.Bin32URL)" :href=release.Bin32URL>{{GetDownloadName(release, 32)}}</a>
 				<a v-if=release.SourceURL :class="'action ' + GetCodeType(release.SourceURL)" :href=release.SourceURL>source v{{release.Version}}</a>

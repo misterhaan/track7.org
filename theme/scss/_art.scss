@@ -1,0 +1,24 @@
+ol.gallery a.art.thumb {
+	border-radius: .25em;
+
+	img {
+		filter: drop-shadow(2px 2px 1px $main-divider);
+	}
+}
+
+img.art {
+	max-width: 100%;
+	border-radius: .25em;
+	display: block;
+	margin: 0 auto;
+}
+
+@media (min-width: 40em) {
+	#editart span.label {
+		flex: 0 0 5.5em;
+	}
+
+	#editart button {
+		margin: .75em 1em .75em 6.5em;
+	}
+}

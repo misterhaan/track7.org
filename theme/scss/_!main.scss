@@ -1,0 +1,42 @@
+body {
+	padding: 0;
+	margin: 0;
+	background-color: $void-background;
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+	font-family: rosario, serif;
+	font-size: 1.1em;
+
+	@media (min-width: 40em) {
+		padding: 0 1.5em;
+		position: relative;
+	}
+}
+
+body.text {
+	max-width: 75em;
+	margin: 0 auto;
+}
+
+
+main {
+	background-color: $main-background;
+	color: $main-text;
+	padding: .5em 0;
+	position: relative;
+
+	@media (min-width: 25em) {
+		padding: .5em;
+	}
+
+	@media (min-width: 40em) {
+		margin-top: 1.5em;
+		border-radius: .75em;
+	}
+
+	a:link,
+	a:visited {
+		color: $main-link-text;
+	}
+}

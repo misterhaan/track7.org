@@ -51,7 +51,7 @@ class AlbumPhoto extends Page {
 		if (!self::$prevNext)
 			self::FindPrevNext();
 	?>
-		<nav class=tagprevnext>
+		<nav class="tagprevnext actions">
 			<?php
 			if (self::$prevNext->Next) {
 				$tooltip = 'see the photo posted after this';
@@ -153,7 +153,7 @@ class AlbumPhoto extends Page {
 		require_once 'formatDate.php';
 		$posted = new TimeTagData(self::RequireUser(), 'smart', self::$photo->Instant, FormatDate::Long);
 		?>
-		<p class=photometa>
+		<p class="image meta">
 			<?php
 			if (self::$photo->Taken) {
 				$taken = new TimeTagData(self::$user, 'smart', self::$photo->Taken, FormatDate::Long);

@@ -40,7 +40,7 @@ class LegoModel extends Page {
 		if (!self::$prevNext)
 			self::FindPrevNext();
 	?>
-		<nav class=tagprevnext>
+		<nav class="tagprevnext actions">
 			<?php
 			if (self::$prevNext->Next) {
 			?>

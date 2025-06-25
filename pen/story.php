@@ -26,7 +26,7 @@ class StoryPage extends Page {
 		<?php
 		if (self::$story->SeriesID || self::$story->Instant) {
 		?>
-			<p class=postmeta>
+			<p class=meta>
 				<?php
 				if (self::$story->SeriesID) {
 				?>
@@ -36,7 +36,7 @@ class StoryPage extends Page {
 				}
 				if (self::$story->Instant) {
 				?>
-					published <time datetime="<?= self::$story->Instant->DateTime; ?>" title="<?= self::$story->Instant->Tooltip; ?>"><?= htmlspecialchars(self::$story->Instant->Display); ?></time>
+					<time class=posted datetime="<?= self::$story->Instant->DateTime; ?>" title="posted <?= self::$story->Instant->Tooltip; ?>"><?= htmlspecialchars(self::$story->Instant->Display); ?></time>
 				<?php
 				}
 				?>

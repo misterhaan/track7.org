@@ -1,0 +1,82 @@
+ol.matches {
+	padding: none;
+	list-style-type: none;
+	counter-reset: match -1;
+}
+
+ol.matches li:before {
+	float: left;
+	counter-increment: match;
+	content: "[" counter(match) "]";
+	margin-left: -1.5em;
+}
+
+#timestampdata {
+	margin: .75em .5em;
+
+	@media (min-width: 25em) {
+		margin: .75em 1em;
+	}
+
+	dt {
+		position: absolute;
+
+		&:after {
+			content: ":";
+		}
+	}
+
+	dd {
+		margin-left: 6.5em;
+	}
+}
+
+@media (min-width: 40em) {
+	#tweet span.label {
+		flex: 0 0 4.5em;
+	}
+
+	#tweet button {
+		margin: .75em 1em .75em 5.5em;
+	}
+
+	.regextest .label {
+		flex: 0 0 4em;
+	}
+
+	.regextest legend {
+		position: absolute;
+	}
+
+	.regextest fieldset.checkboxes .field {
+		margin-left: 4em;
+	}
+
+	main .regextest button {
+		margin: .75em 1em .75em 5em;
+	}
+
+	#timestamps .label {
+		flex: 0 0 6.5em;
+	}
+
+	#timestamps legend {
+		position: absolute;
+	}
+
+	#timestamps fieldset.checkboxes .field {
+		margin-left: 6.5em;
+	}
+
+	#timestamps button {
+		margin: .75em 1em .75em 7.5em;
+	}
+
+	#editupdate span.label {
+		flex: 0 0 4em;
+	}
+
+	#editupdate button {
+		margin: .75em 1em .75em 5em;
+	}
+}

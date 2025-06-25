@@ -93,12 +93,12 @@ const UserField = {
 	template: /* html */ `
 		<input id=usermatch placeholder="find a person" autocomplete=off autofocus v-model=usermatch @blur=HideSuggestions(250) @keydown.esc=HideSuggestions @keydown.down.prevent=Next @keydown.up.prevent=Prev @keydown.enter.prevent=SelectCursorUser @keydown.tab=SelectCursorUser>
 		<ol class=usersuggest v-if="usermatch.length >= 3">
-			<li class=message v-if=findingusers>finding people...</li>
+			<li v-if=findingusers>finding people...</li>
 			<li class=suggesteduser v-for="user in matchingusers" :class="{highlight: user.ID == cursor?.ID}" @click.prevent=Select(user)>
 				<img class=avatar alt="" :src=user.Avatar>
 				<span class=username :class="{friend: user.Friend}" :title="user.Friend ? user.DisplayName + ' is your friend' : null">{{user.DisplayName}}</span>
 			</li>
-			<li class=message v-if="!findingusers && matchingusers.length < 1">nobody here by that name</li>
+			<li v-if="!findingusers && matchingusers.length < 1">nobody here by that name</li>
 		</ol>
 	`
 };

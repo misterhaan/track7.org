@@ -15,7 +15,7 @@ class ScriptPage extends Page {
 	protected static function MainContent(): void {
 ?>
 		<h1><?= htmlspecialchars(self::$script->Title); ?></h1>
-		<p class=guidemeta>
+		<p class=meta>
 			<span class=scripttype><?= self::$script->Type; ?></span>
 			<time class=posted title="released <?= self::$script->Instant->Tooltip; ?>" datetime="<?= self::$script->Instant->DateTime; ?>"><?= self::$script->Instant->Display; ?></time>
 		</p>

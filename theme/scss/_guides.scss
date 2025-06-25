@@ -1,0 +1,51 @@
+.toc {
+	margin: .5em 0;
+	line-height: 1.5em;
+
+	@media (min-width: 25em) {
+		margin: .5em;
+	}
+
+	@media (min-width: 40em) {
+		margin: .25em -.5em .5em 1em;
+		float: right;
+	}
+
+	header {
+		background-color: $main-highlight;
+		padding: 0 .5em;
+		@include icon-left;
+
+		@media (min-width: 25em) {
+			border-radius: .25em .25em 0 0;
+		}
+
+		@media (min-width: 40em) {
+			border-radius: .25em 0 0 0;
+		}
+	}
+
+	ol {
+		background-color: $main-shadow;
+		margin: 0;
+		padding: .125em .75em .25em 2em;
+
+		@media (min-width: 25em) {
+			border-radius: 0 0 .25em .25em;
+		}
+
+		@media (min-width: 40em) {
+			border-radius: 0 0 0 .25em;
+		}
+	}
+}
+
+@media (min-width: 40em) {
+	#editguide span.label {
+		flex: 0 0 4.75em;
+	}
+
+	#editguide button {
+		margin: .75em 1em .75em 5.75em;
+	}
+}

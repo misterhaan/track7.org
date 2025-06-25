@@ -54,13 +54,13 @@ createApp({
 		<article v-for="guide in guides">
 			<header class=floatbgstop>
 				<h2><a :href="(tagid ? '../' : '') + guide.ID" title="read this guide">{{guide.Title}}</a></h2>
-				<p class=guidemeta>
+				<p class=meta>
 					<span class=guidelevel :title="guide.Level + ' level'">{{guide.Level}}</span>
 					<span class=tags v-if=guide.Tags.length :title="guide.Tags.length == 1 ? '1 tag' : guide.Tags.length + ' tags'">
-						<template v-for="(tag, index) in guide.Tags">{{index ? ', ' : ''}}<a class=tag :href="(tagid ? '../' : '') + tag + '/'" :title="'guides tagged ' + tag">{{tag}}</a></template>
+						<template v-for="(tag, index) in guide.Tags">{{index ? ', ' : ''}}<a :href="(tagid ? '../' : '') + tag + '/'" :title="'guides tagged ' + tag">{{tag}}</a></template>
 					</span>
 					<span class=views :title="'viewed ' + guide.Views + ' times'">{{guide.Views}}</span>
-					<span class=rating :data-stars=Math.round(guide.Rating*2)/2 :title="'rated ' + guide.Rating + ' stars by ' + (guide.Votes == 0 ? 'nobody' : (guide.Votes == 1 ? '1 person' : guide.Votes + ' people'))"></span>
+					<span class=rating :data-stars=Math.round(guide.Rating*2)/2 :title="'rated ' + guide.Rating + ' stars by ' + (guide.VoteCount == 0 ? 'nobody' : (guide.VoteCount == 1 ? '1 person' : guide.VoteCount + ' people'))"></span>
 					<time class=posted v-html=guide.Instant.Display :datetime=guide.Instant.DateTime :title="'posted ' + (guide.Posted ? guide.Instant.Tooltip + ' (originally ' + guide.Posted + ')' : guide.Instant.Tooltip)"></time>
 					<span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
 				</p>
@@ -68,7 +68,7 @@ createApp({
 			<div class=summary v-html=guide.Summary>
 			</div>
 			<footer>
-				<p class=readmore>
+				<p class="actions readmore">
 					<a class=continue :href=guide.ID>read this guide</a>
 				</p>
 			</footer>

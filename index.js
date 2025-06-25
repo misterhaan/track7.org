@@ -41,7 +41,7 @@ createApp({
 					<span v-if=!act.Contact>{{act.Name}}</span>
 				</h2>
 				<div class=summary v-html=act.Preview></div>
-				<p v-if=act.HasMore class=readmore><a class=continue :href=act.URL>read more</a></p>
+				<p v-if=act.HasMore class="actions readmore"><a class=continue :href=act.URL>read more</a></p>
 			</div>
 		</article>
 		<p class=loading v-if=loading>loading activity...</p>

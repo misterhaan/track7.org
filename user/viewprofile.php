@@ -47,7 +47,7 @@ class UserProfile extends Page {
 			<?php
 			} else {
 			?>
-				<a class=message title="send <?= htmlspecialchars(self::$profile->DisplayName); ?> a private message" href="/user/messages.php#!to=<?= htmlspecialchars(self::$profile->Username); ?>">send message</a>
+				<a class=sendmessage title="send <?= htmlspecialchars(self::$profile->DisplayName); ?> a private message" href="/user/messages.php#!to=<?= htmlspecialchars(self::$profile->Username); ?>">send message</a>
 				<?php
 				if (self::$profile->Friend) {
 				?>
@@ -67,7 +67,7 @@ class UserProfile extends Page {
 
 	private static function WriteContacts(): void {
 	?>
-		<section id=contact></section>
+		<section id=contacts></section>
 
 		<?php
 	}

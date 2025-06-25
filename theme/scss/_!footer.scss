@@ -1,0 +1,35 @@
+body>footer {
+	font-size: .9em;
+	color: $void-text;
+	margin: .25em 0;
+	display: flex;
+	flex-wrap: wrap;
+
+	@media (min-width: 25em) {
+		margin: .25em .5em;
+	}
+
+	@media (min-width: 40em) {
+		margin: .25em 0;
+	}
+
+	a {
+		color: $void-text;
+
+		&:hover,
+		&:focus {
+			outline: none;
+			color: $void-link-text;
+		}
+	}
+
+	&>* {
+		margin: .25em .5em;
+		flex: 0 0 auto;
+	}
+
+	div {
+		flex: 1 0 auto;
+		text-align: right;
+	}
+}

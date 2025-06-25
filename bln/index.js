@@ -56,7 +56,7 @@ createApp({
 				<h2><a :href=entry.ID title="view this post with its comments">{{entry.Title}}</a></h2>
 				<p class=meta>
 					<span class=tags v-if=entry.Tags.length :title="entry.Tags.length == 1 ? '1 tag' : entry.Tags.length + ' tags'">
-						<template v-for="(tag, index) in entry.Tags">{{index ? ', ' : ''}}<a class=tag :href="(tagid ? '../' : '') + tag + '/'" :title="'entries tagged ' + tag">{{tag}}</a></template>
+						<template v-for="(tag, index) in entry.Tags">{{index ? ', ' : ''}}<a :href="(tagid ? '../' : '') + tag + '/'" :title="'entries tagged ' + tag">{{tag}}</a></template>
 					</span>
 					<time v-if=entry.Instant class=posted v-html=entry.Instant.Display :datetime=entry.Instant.DateTime :title="'posted ' + entry.Instant.Tooltip"></time>
 					<span class=author title="written by misterhaan"><a href="/user/misterhaan/" title="view misterhaan’s profile">misterhaan</a></span>
@@ -66,7 +66,7 @@ createApp({
 			<div class=entrycontent v-html=entry.Preview>
 			</div>
 			<footer>
-				<p class=readmore>
+				<p class="actions readmore">
 					<a class=continue :href=entry.ID title="read the rest of this entry">continue reading</a>
 				</p>
 			</footer>

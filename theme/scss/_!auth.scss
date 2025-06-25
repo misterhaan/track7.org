@@ -1,0 +1,95 @@
+$deviantart-color: #11c05d;
+$github-color: #24292e;
+$google-color: #4285f4;
+$facebook-color: #466ca6;
+$steam-color: #070609;
+$twitch-color: #9147ff;
+$twitter-color: #1da1f2;
+
+#authchoices label,
+#authchoices a,
+.linkedaccount {
+	&:before {
+		display: inline-block;
+		font-size: 2em;
+		line-height: 1em;
+		width: 1em;
+		text-align: center;
+		padding: .25em;
+		color: #fff;
+	}
+
+	&.deviantart:before {
+		background-color: $deviantart-color;
+	}
+
+	&.github:before {
+		background-color: $github-color;
+	}
+
+	&.google:before {
+		background-color: $google-color;
+	}
+
+	&.steam:before {
+		background-color: $steam-color;
+	}
+
+	&.track7:before {
+		content: " ";
+		background-image: url(/user/via/track7.png);
+		background-size: 1.5em;
+		padding: 0;
+		height: 1.5em;
+		width: 1.5em;
+		vertical-align: middle;
+	}
+
+	&.twitch:before {
+		background-color: $twitch-color;
+	}
+
+	&.twitter:before {
+		background-color: $twitter-color;
+	}
+}
+
+#authchoices label:before {
+	border-radius: 5px;
+}
+
+#authchoices a:before {
+	border-radius: 50%;
+}
+
+#authchoices a:hover,
+#authchoices a:focus {
+	box-shadow: 0 0 0 3px $main-text;
+	border-radius: 50%;
+}
+
+#contacts {
+	.deviantart {
+		color: $deviantart-color;
+	}
+
+	.facebook {
+		color: $facebook-color;
+	}
+
+	.github {
+		color: light-dark($github-color, $main-link-text);
+	}
+
+	.steam {
+		color: light-dark($steam-color, $main-link-text);
+	}
+
+	.twitch {
+		color: $twitch-color;
+	}
+
+	.twitter {
+		color: $twitter-color;
+	}
+}

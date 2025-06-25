@@ -37,7 +37,7 @@ createApp({
 
 		<article v-for="story in stories">
 			<h2><a :href=story.ID>{{story.Title}}</a></h2>
-			<p class=postmeta v-if=story.Instant>
+			<p class=meta v-if=story.Instant>
 				<span>posted <time :datetime=story.Instant.DateTime :title=story.Instant.Tooltip v-html=story.Instant.Display></time></span>
 			</p>
 			<div class=description v-html=story.Description></div>

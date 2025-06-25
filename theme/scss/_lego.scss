@@ -1,0 +1,25 @@
+ol.gallery a.lego.thumb {
+	border-radius: .25em;
+
+	img {
+		filter: drop-shadow(2px 2px 1px $main-divider);
+	}
+}
+
+img.lego {
+	max-width: 100%;
+	border-radius: .25em;
+	display: block;
+	margin: 0 auto;
+	filter: drop-shadow(4px 4px 2px $main-divider);
+}
+
+@media (min-width: 40em) {
+	#editlego span.label {
+		flex: 0 0 6em;
+	}
+
+	#editlego button {
+		margin: .75em 1em .75em 7em;
+	}
+}
