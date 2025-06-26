@@ -76,9 +76,12 @@ class Update {
 			$insert->bind_param('is', $posted, $this->HTML);
 			$insert->execute();
 			$this->ID = $insert->insert_id;
+			$insert->close();
+
 			$update = $db->prepare('update post set url=concat(\'/updates/\', ?) where id=?');
 			$update->bind_param('ii', $this->ID, $this->ID);
 			$update->execute();
+			$update->close();
 		} catch (mysqli_sql_exception $mse) {
 			throw DetailedException::FromMysqliException('error saving site update', $mse);
 		}

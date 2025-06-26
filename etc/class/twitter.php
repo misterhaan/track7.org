@@ -122,6 +122,7 @@ class Twitter extends KeyMaster {
 			$replace = $db->prepare('replace into token (service, type, token, scope, expires) values (\'twitter\', \'access\', ?, ?, date_add(now(), interval ? second)), (\'twitter\', \'refresh\', ?, ?, date_add(now(), interval 6 month))');
 			$replace->bind_param('ssiss', $refreshableToken->access_token, $refreshableToken->scope, $refreshableToken->expires_in, $refreshableToken->refresh_token, $refreshableToken->scope);
 			$replace->execute();
+			$replace->close();
 		} catch (mysqli_sql_exception $mse) {
 			$db->rollback();
 			throw DetailedException::FromMysqliException('error saving twitter auth tokens', $mse);
@@ -130,7 +131,7 @@ class Twitter extends KeyMaster {
 
 	private static function GetAccessToken(mysqli $db): string {
 		try {
-			$select = $db->prepare('select token, unix_timestamp(expires) from token where service=\'twitter\' and type=\'access\'');
+			$select = $db->prepare('select token, unix_timestamp(expires) from token where service=\'twitter\' and type=\'access\' limit 1');
 			$select->execute();
 			$select->bind_result($token, $expiration);
 			if ($select->fetch() && $expiration > time()) {
@@ -139,13 +140,13 @@ class Twitter extends KeyMaster {
 			}
 			$select->close();
 
-			$select = $db->prepare('select token, unix_timestamp(expires) from token where service=\'twitter\' and type=\'refresh\'');
+			$select = $db->prepare('select token, unix_timestamp(expires) from token where service=\'twitter\' and type=\'refresh\' limit 1');
 			$select->execute();
 			$select->bind_result($token, $expiration);
 			if ($select->fetch() && $expiration > time()) {
+				$select->close();
 				$refreshableToken = self::RefreshAuthToken($token);
 				self::SaveAuth($db, $refreshableToken);
-				$select->close();
 				return $refreshableToken->access_token;
 			}
 			$select->close();
