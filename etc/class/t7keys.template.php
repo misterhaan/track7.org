@@ -117,7 +117,12 @@ class KeysTwitch {
 	const ClientSecret = '';
 }
 
-class t7keysBitly {
+class KeysBitly {
+	/**
+	 * Access token from https://app.bitly.com/settings/api
+	 * @var string
+	 */
+	const AccessToken = '';
 	/**
 	 * bitly account login name
 	 * @var string

@@ -26,6 +26,7 @@ class BitlyTest extends Page {
 		<?php
 		if (isset($_POST['url'])) {
 			require_once 'formatUrl.php';
+			require_once 'bitly.php';
 			$url = Bitly::Shorten(trim($_POST['url']));
 		?>
 			<pre><code><?= $url; ?></code></pre>
