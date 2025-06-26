@@ -66,7 +66,7 @@ abstract class Api extends Responder {
 		try {
 			Twitter::Tweet(self::RequireDatabase(), $message, $url);
 		} catch (DetailedException $de) {
-			// ifgnore if the tweet fails and the current user is not an administrator
+			// ignore if the tweet fails and the current user is not an administrator
 			if (self::HasAdminSecurity())
 				self::DetailedError($de);
 		}
@@ -96,9 +96,12 @@ abstract class Api extends Responder {
 		http_response_code(500);
 		header('Content-Type: text/plain');
 		if (self::HasAdminSecurity())
-			if ($error instanceof DetailedException)
-				die($error->getDetailedMessage());
-			elseif ($detail)
+			if ($error instanceof DetailedException) {
+				$message = $error->getDetailedMessage();
+				if ($previous = $error->getPrevious())
+					$message .= "\n\n" . $previous->getTraceAsString();
+				die($message);
+			} elseif ($detail)
 				die("$error:  $detail");
 			else
 				die($error);
