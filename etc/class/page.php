@@ -27,12 +27,12 @@ abstract class Page extends Responder {
 	 * @param $title Title of the page to show on the browser tab.
 	 */
 	public function __construct(string $title) {
-		self::SetTitle($title);
-		self::$importmap['vue'] = file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.esm-browser.js') ? '/vue.esm-browser.js' : '/vue.esm-browser.prod.js';
+		self::Initialize($title);
 		self::Send();
 	}
 
-	private static function SetTitle(string $title): void {
+	private static function Initialize(string $title): void {
+		self::$importmap['vue'] = file_exists($_SERVER['DOCUMENT_ROOT'] . '/vue.esm-browser.js') ? '/vue.esm-browser.js' : '/vue.esm-browser.prod.js';
 		if (strpos($title, self::siteTitle) === false)
 			self::$title = $title . ' - ' . self::siteTitle;
 		else
@@ -162,7 +162,7 @@ abstract class Page extends Responder {
 	 */
 	protected static function NotFound(string $title = '404 bad guess', string $body = '') {
 		header('HTTP/1.0 404 Not Found');
-		self::SetTitle($title);
+		self::Initialize($title);
 		if (!$body)
 			$body = '			<p>
 				sorry, that’s not a thing.  if you followed a link and expected to find
@@ -310,7 +310,7 @@ abstract class Page extends Responder {
 		?>
 		<footer>
 			<a href="https://twitter.com/track7feed" title="follow track7 on twitter">twitter</a>
-			<a href="https://github.com/misterhaan/track7.org/blob/master<?= $_SERVER['SCRIPT_NAME']; ?>?ts=2" title="view the php source for this page on github">php source</a>
+			<a href="https://github.com/misterhaan/track7.org/blob/master<?= $_SERVER['SCRIPT_NAME']; ?>" title="view the php source for this page on github">php source</a>
 			<a href="/privacy.php" title="view the privacy policy">privacy</a>
 			<div id=copyright>© 1996 - <?= self::copyrightEndYear; ?> track7 — <a href="/fewrights.php">few rights reserved</a></div>
 		</footer>
