@@ -16,7 +16,7 @@ class BlogIndex extends Page {
 	}
 
 	protected static function MainContent(): void {
-		$headingtext = 'latest blog entries' . (self::$tag ? ' — ' . self::$tag->Name : '');
+		$headingtext = 'latest' . (self::$tag ? ' ' . htmlspecialchars(self::$tag->Name) : '') . ' blog entries';
 ?>
 		<h1><?= $headingtext; ?></h1>
 		<?php

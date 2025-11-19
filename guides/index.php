@@ -17,7 +17,7 @@ class GuideIndex extends Page {
 
 	protected static function MainContent(): void {
 ?>
-		<h1><?= htmlspecialchars(self::$tag ? self::$tag->Name . ' - guides' : 'latest guides'); ?></h1>
+		<h1>latest<?= self::$tag ? ' ' . htmlspecialchars(self::$tag->Name) : ''; ?> guides</h1>
 		<?php
 		if (!self::$tag)
 			self::ShowTagCloud('guides');
