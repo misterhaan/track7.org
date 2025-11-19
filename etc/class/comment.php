@@ -18,7 +18,7 @@ class Comment {
 		$this->ID = $id;
 		$this->Instant = new TimeTagData($user, FormatDate::LongHTML, $instant);
 		$this->HTML = $html;
-		$this->CanChange = $user->IsAdmin() || $user->ID == $authorUserID;
+		$this->CanChange = $user->IsAdmin() || $user->ID && $user->ID == $authorUserID;
 		if ($this->CanChange) {
 			$this->Markdown = $markdown;
 			if (!$markdown && $user->IsAdmin())
