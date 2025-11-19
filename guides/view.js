@@ -14,7 +14,7 @@ createApp({
 		};
 	},
 	created: function() {
-		this.id = window.location.pathname.split("/")[2];
+		this.id = location.pathname.split("/")[2];
 		const summaryDiv = $("#summary");
 		this.summary = summaryDiv.html();
 		summaryDiv.remove();
@@ -70,7 +70,7 @@ if($("nav.actions").length)
 			Delete(event) {
 				if(confirm("do you really want to delete this guide?  it will be gone forever!"))
 					$.ajax({ url: event.target.href, method: "DELETE" }).done(() => {
-						window.location.href = "./";  // to index
+						location.href = "./";  // to index
 					}).fail(request => {
 						alert(request.responseText);
 					});

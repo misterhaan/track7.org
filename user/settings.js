@@ -470,7 +470,7 @@ const LinkedAccounts = {
 		},
 		AddLogin(auth) {
 			$.get(`/api/user.php/auth/${auth}/`).done(redirectURL => {
-				window.location = redirectURL;
+				location = redirectURL;
 			}).fail(request => {
 				this.error = request.responseText;
 			});

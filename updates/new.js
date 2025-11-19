@@ -35,7 +35,7 @@ createApp({
 		Save() {
 			this.saving = true;
 			$.post("/api/update.php/add", { markdown: this.markdown, posted: this.date }).done(result => {
-				window.location.href = result;
+				location.href = result;
 			}).fail(request => {
 				this.error = request.responseText;
 			}).always(() => {

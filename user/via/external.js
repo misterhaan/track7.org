@@ -69,7 +69,7 @@ if($("#newuser").length)
 						linkprofile: this.linkprofile,
 						useavatar: this.useavatar
 					}).done(result => {
-						window.location = result;
+						location = result;
 					}).fail(request => {
 						this.error = request.responseText;
 					}).always(() => {

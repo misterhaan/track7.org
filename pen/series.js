@@ -11,7 +11,7 @@ createApp({
 		};
 	},
 	created: function() {
-		this.id = window.location.pathname.split("/")[2];
+		this.id = location.pathname.split("/")[2];
 		this.Load();
 	},
 	methods: {
