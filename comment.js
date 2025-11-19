@@ -3,7 +3,7 @@ import { currentUser } from "user";
 import { createApp } from "vue";
 import autosize from "autosize";
 
-const subsite = window.location.pathname.split("/")[1];
+const subsite = location.pathname.split("/")[1];
 
 export const Comment = {
 	props: ["comment"],

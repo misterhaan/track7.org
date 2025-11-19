@@ -35,7 +35,7 @@ createApp({
 		}
 	},
 	created() {
-		const queryString = new URLSearchParams(window.location.search);
+		const queryString = new URLSearchParams(location.search);
 		if(this.id = queryString.get("id") || "")
 			this.Load();
 		else {
@@ -114,7 +114,7 @@ createApp({
 				correctionsOnly: this.correctionsOnly
 			};
 			$.post({ url: url, data: JSON.stringify(data), contentType: "application/json; charset=utf-8" }).done(result => {
-				window.location.href = result;
+				location.href = result;
 			}).fail(request => {
 				alert(request.responseText);
 			}).always(() => {

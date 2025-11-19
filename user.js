@@ -18,7 +18,7 @@ popup.register("#usermenu", userLink);
 
 $("#logoutlink").click(event => {
 	$.post(event.target.href).done(() => {
-		window.location.reload(false);
+		location.reload(false);
 	}).fail(request => {
 		alert(request.responseText);
 	});
@@ -66,7 +66,7 @@ loginMenu.length && createApp({
 			this.error = "";
 			if(this.provider == "track7") {
 				$.post("/api/user.php/login/" + this.remember, { username: this.username, password: this.password }).done(() => {
-					window.location.reload();
+					location.reload();
 				}).fail(request => {
 					this.error = request.responseText;
 				}).always(() => {
@@ -74,7 +74,7 @@ loginMenu.length && createApp({
 				});
 			} else
 				$.get(`/api/user.php/auth/${this.provider}/${this.remember}`).done(redirectURL => {
-					window.location = redirectURL;
+					location = redirectURL;
 				}).fail(request => {
 					this.error = request.responseText;
 				}).always(() => {

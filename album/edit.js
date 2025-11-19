@@ -26,7 +26,7 @@ createApp({
 		}
 	},
 	created: function() {
-		const queryString = new URLSearchParams(window.location.search);
+		const queryString = new URLSearchParams(location.search);
 		if(this.id = queryString.get("id") || "")
 			this.Load();
 		else
@@ -77,7 +77,7 @@ createApp({
 			data.append("deltags", FindAddedTags(this.originalTags, this.photo.Tags));
 
 			$.post({ url: "/api/photo.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
-				window.location.href = result;
+				location.href = result;
 			}).fail(request => {
 				alert(request.responseText);
 			}).always(() => {

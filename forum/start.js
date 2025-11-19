@@ -45,7 +45,7 @@ createApp({
 				data.contact = this.contact;
 			}
 			$.post("/api/forum.php/start", data).done(result => {
-				window.location.href = result;
+				location.href = result;
 			}).fail(request => {
 				alert(request.responseText);
 			}).always(() => {

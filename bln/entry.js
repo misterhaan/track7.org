@@ -23,7 +23,7 @@ createApp({
 				const url = deleteLink.attr("href");
 				$.ajax({ url: url, method: "DELETE" })
 					.done(() => {
-						window.location.href = "./";  // to index
+						location.href = "./";  // to index
 					}).fail(request => {
 						alert(request.responseText);
 					});

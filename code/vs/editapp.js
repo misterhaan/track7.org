@@ -25,7 +25,7 @@ createApp({
 		}
 	},
 	created() {
-		const queryString = new URLSearchParams(window.location.search);
+		const queryString = new URLSearchParams(location.search);
 		if(this.id = queryString.get("id") || "")
 			this.Load();
 		else {
@@ -76,7 +76,7 @@ createApp({
 				data.append("wiki", this.app.Wiki);
 
 			$.post({ url: "/api/application.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
-				window.location.href = result;
+				location.href = result;
 			}).fail(request => {
 				alert(request.responseText);
 			}).always(() => {

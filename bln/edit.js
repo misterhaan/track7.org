@@ -24,7 +24,7 @@ createApp({
 		}
 	},
 	created() {
-		const queryString = new URLSearchParams(window.location.search);
+		const queryString = new URLSearchParams(location.search);
 		if(this.id = queryString.get("id") || "")
 			this.Load();
 		else {
@@ -69,7 +69,7 @@ createApp({
 			};
 
 			$.post(url, data).done(result => {
-				window.location.href = result;
+				location.href = result;
 			}).fail(request => {
 				alert(request.responseText);
 			}).always(() => {

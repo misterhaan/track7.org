@@ -13,7 +13,7 @@ createApp({
 		};
 	},
 	created: function() {
-		this.tagid = window.location.pathname.split("/")[2].replaceAll("+", " ");
+		this.tagid = location.pathname.split("/")[2].replaceAll("+", " ");
 		this.Load();
 	},
 	methods: {

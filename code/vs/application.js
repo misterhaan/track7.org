@@ -13,7 +13,7 @@ createApp({
 		};
 	},
 	created: function() {
-		this.application = window.location.pathname.split("/")[3];
+		this.application = location.pathname.split("/")[3];
 		this.Load();
 	},
 	methods: {

@@ -17,7 +17,7 @@ createApp({
 		}
 	},
 	created() {
-		const queryString = new URLSearchParams(window.location.search);
+		const queryString = new URLSearchParams(location.search);
 		this.app = queryString.get("app") || "";
 		this.Autosize();
 	},
@@ -48,7 +48,7 @@ createApp({
 				srcurl: this.release.SrcURL
 			};
 			$.post("/api/release.php/add/" + this.app, data).done(result => {
-				window.location.href = result;
+				location.href = result;
 			}).fail(request => {
 				alert(request.responseText);
 			}).always(() => {

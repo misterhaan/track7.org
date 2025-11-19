@@ -19,7 +19,7 @@ applyTheme(currentTheme);
 themeToggle.on("click", event => {
 	event.stopPropagation();
 	event.preventDefault();
-	const darkSystem = window.matchMedia("(prefers-color-scheme: dark)").matches;
+	const darkSystem = matchMedia("(prefers-color-scheme: dark)").matches;
 	switch(currentTheme) {
 		case "dark":
 			currentTheme = darkSystem ? "system" : "light";
