@@ -11,9 +11,9 @@ class TwitchAuth extends Auth {
 		$this->Name = 'twitch';
 	}
 
-	public function Begin(bool $remember, ?string $return): string {
+	public function Begin(bool $remember): string {
 		self::RequireServiceKeys('KeysTwitch', 'ClientID');
-		$return = $this->GetReturnURL($return);
+		$return = $this->GetReturnURL();
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
 			'claims' => json_encode(['id_token' => ['email' => null, 'picture' => null, 'preferred_username' => null]]),

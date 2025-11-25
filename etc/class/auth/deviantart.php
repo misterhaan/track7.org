@@ -12,9 +12,9 @@ class DeviantartAuth extends Auth {
 		$this->Name = 'deviantart';
 	}
 
-	public function Begin(bool $remember, ?string $return): string {
+	public function Begin(bool $remember): string {
 		self::RequireServiceKeys('t7keysDeviantart', 'CLIENT_ID');
-		$return = $this->GetReturnURL($return);
+		$return = $this->GetReturnURL();
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
 			'response_type' => 'code',

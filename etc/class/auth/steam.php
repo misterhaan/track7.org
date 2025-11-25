@@ -14,9 +14,9 @@ class SteamAuth extends Auth {
 		$this->Name = 'steam';
 	}
 
-	public function Begin(bool $remember, ?string $return): string {
+	public function Begin(bool $remember): string {
 		require_once 'formatUrl.php';
-		$return = $this->GetReturnURL($return);
+		$return = $this->GetReturnURL();
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
 			'openid.ns' => self::OpenIdNS,

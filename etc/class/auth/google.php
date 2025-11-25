@@ -11,9 +11,9 @@ class GoogleAuth extends Auth {
 		$this->Name = 'google';
 	}
 
-	public function Begin(bool $remember, ?string $return): string {
+	public function Begin(bool $remember): string {
 		self::RequireServiceKeys('t7keysGoogle', 'ID');
-		$return = $this->GetReturnURL($return);
+		$return = $this->GetReturnURL();
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
 			'client_id' => t7keysGoogle::ID,

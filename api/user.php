@@ -43,7 +43,6 @@ class UserApi extends Api {
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'auth', 'retrieves the URL to authenticate with an external login provider.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('provider', 'string', 'name of the external login provider to authenticate with.', true);
 		$endpoint->PathParameters[] = new ParameterDocumentation('remember', 'boolean', 'whether the user wants the login remembered.');
-		$endpoint->PathParameters[] = new ParameterDocumentation('return', 'string', 'root track7 url to return to after authentication.  default is the referring url.');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('PUT', 'friend', 'adds a user as a friend for the logged-in user.  requires authentication.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('id', 'string', 'user id of the friend to add.', true);
@@ -136,9 +135,8 @@ class UserApi extends Api {
 			self::NotFound('login provider must be specified.');
 		$remember = trim(array_shift($params));
 		$remember = boolval($remember) && strtolower($remember) != 'false';
-		$return = trim(array_shift($params));
 		require_once 'auth.php';
-		self::Success(Auth::Provider($site)->Begin($remember, $return));
+		self::Success(Auth::Provider($site)->Begin($remember));
 	}
 
 	protected static function PUT_friend(array $params): void {

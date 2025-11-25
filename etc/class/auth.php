@@ -18,7 +18,7 @@ abstract class Auth extends KeyMaster {
 		return new $className();
 	}
 
-	public abstract function Begin(bool $remember, ?string $return): string;
+	public abstract function Begin(bool $remember): string;
 
 	public abstract function Process(mysqli $db): ?AuthResult;
 
@@ -91,7 +91,7 @@ abstract class Auth extends KeyMaster {
 	 * @param ?string $return requested URL to return to after authentication
 	 * @return string URL to return to after authentication
 	 */
-	protected static function GetReturnURL(?string $return): string {
+	protected static function GetReturnURL(?string $return = null): string {
 		if (!$return && isset($_SERVER['HTTP_REFERER']) && !str_contains($_SERVER['HTTP_REFERER'], '/user/via/'))
 			$return = $_SERVER['HTTP_REFERER'];
 		require_once 'formatUrl.php';

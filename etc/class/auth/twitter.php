@@ -12,8 +12,8 @@ class TwitterAuth extends Auth {
 		$this->Name = 'twitter';
 	}
 
-	public function Begin(bool $remember, ?string $return): string {
-		$_SESSION['twitter_continue'] = $this->GetReturnURL($return);
+	public function Begin(bool $remember): string {
+		$_SESSION['twitter_continue'] = $this->GetReturnURL();
 		$_SESSION['twitter_remember'] = $remember;
 
 		// twitter documentation says i need to include oauth_callback set to %-encoded fully-qualified callback url, but i get an error if i include it

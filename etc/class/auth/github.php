@@ -12,9 +12,9 @@ class GithubAuth extends Auth {
 		$this->Name = 'github';
 	}
 
-	public function Begin(bool $remember, ?string $return): string {
+	public function Begin(bool $remember): string {
 		self::RequireServiceKeys('t7keysGithub', 'CLIENT_ID');
-		$return = $this->GetReturnURL($return);
+		$return = $this->GetReturnURL();
 		$csrf = $this->GetCSRF();
 		return self::RequestURL . '?' . http_build_query([
 			'client_id' => t7keysGithub::CLIENT_ID,
