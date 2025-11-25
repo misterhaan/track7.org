@@ -102,6 +102,7 @@ a[href="#contact"]:before {
 
 .del:before {
 	font-family: fontawesome;
+	font-weight: bold;
 	content: "\f00d";
 	color: $main-error-text;
 }
