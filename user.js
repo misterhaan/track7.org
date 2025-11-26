@@ -1,34 +1,33 @@
-import "jquery";
-import { popup } from "popup";
 import { createApp } from "vue";
+import { popup } from "popup";
+import UserApi from "/api/user.js";
 
-const userLink = $("#whodat");
-const loginMenu = $("#loginmenu");
+const userLink = document.querySelector("#whodat");
+const loginMenu = document.querySelector("#loginmenu");
 
-export const currentUser = userLink.length ? {
-	URL: userLink.attr("href"),
-	DisplayName: userLink.text(),
-	Avatar: userLink.find("img").attr("src"),
-	Level: userLink.data("level"),
-	Profile: userLink.attr("href")
+export const currentUser = userLink ? {
+	URL: userLink.href,
+	DisplayName: userLink.textContent.trim(),
+	Avatar: userLink.querySelector("img")?.src,
+	Level: userLink.dataset.level,
 } : null;
 
 popup.register(loginMenu, "#signin");
 popup.register("#usermenu", userLink);
 
-$("#logoutlink").click(event => {
-	$.post(event.target.href).done(() => {
-		location.reload(false);
-	}).fail(request => {
-		alert(request.responseText);
-	});
+document.querySelector("#logoutlink")?.addEventListener("click", async event => {
 	event.preventDefault();
 	event.stopPropagation();
-	return false;
+	try {
+		await UserApi.logout();
+		location.reload(false);
+	} catch(error) {
+		alert(error.message);
+	}
 });
 
 
-loginMenu.length && createApp({
+loginMenu && createApp({
 	name: "LoginMenu",
 	data() {
 		return {
@@ -61,25 +60,27 @@ loginMenu.length && createApp({
 			if(!this.loginDisabled)
 				this.Login();
 		},
-		Login() {
+		async Login() {
 			this.working = true;
 			this.error = "";
-			if(this.provider == "track7") {
-				$.post("/api/user.php/login/" + this.remember, { username: this.username, password: this.password }).done(() => {
+			if(this.provider == "track7")
+				try {
+					await UserApi.login(this.username, this.password, this.remember);
 					location.reload();
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
+				} catch(error) {
+					this.error = error.message;
+				} finally {
 					this.working = false;
-				});
-			} else
-				$.get(`/api/user.php/auth/${this.provider}/${this.remember}`).done(redirectURL => {
+				}
+			else
+				try {
+					const redirectURL = await UserApi.auth(this.provider, this.remember)
 					location = redirectURL;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
+				} catch(error) {
+					this.error = error.message;
+				} finally {
 					this.working = false;
-				});
+				}
 		}
 	},
 	template: /* html */ `

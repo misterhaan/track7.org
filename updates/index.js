@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import UpdateApi from "/api/update.js";
 
 createApp({
 	name: "RecentUpdates",
@@ -15,16 +15,17 @@ createApp({
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/update.php/list/" + this.updates.length).done(result => {
+			try {
+				const result = await UpdateApi.list(this.updates.length);
 				this.updates = this.updates.concat(result.Updates);
 				this.hasmore = result.HasMore;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `

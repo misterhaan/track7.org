@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import ApplicationApi from "/api/application.js";
 
 createApp({
 	name: "VS Apps",
@@ -11,27 +11,22 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.is64 = IsUserAgent64Bit();
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/application.php/list";
-			if(this.applications.length)
-				url += "/" + this.applications.length;
-
-			$.get(url)
-				.done(result => {
-					this.applications = this.applications.concat(result.Applications);
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await ApplicationApi.list(this.applications.length);
+				this.applications = this.applications.concat(result.Applications);
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		},
 		DownloadURL(app) {
 			if(!this.is64 && app.Bin32URL)

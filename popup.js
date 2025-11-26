@@ -1,52 +1,49 @@
 class PopupManager {
-	#popup = null;;
+	#popup = null;
 	#seen = new Set();
 
 	constructor() {
-		$(document).click(() => {
+		document.addEventListener("click", () => {
 			this.hide();
 		});
 	}
 
 	register(popup, trigger) {
-		if(!(popup instanceof $))
-			popup = $(popup);
-		if(!(trigger instanceof $))
-			trigger = $(trigger);
+		if(typeof popup == "string")
+			popup = document.querySelector(popup);
+		if(typeof trigger == "string")
+			trigger = document.querySelector(trigger);
 
-		trigger.click(event => {
+		trigger?.addEventListener("click", event => {
 			this.toggle(popup, trigger);
 			event.preventDefault();
 			event.stopPropagation();
 		});
 
-		if(popup[0])
-			popup[0].trigger = trigger;
+		if(popup)
+			popup.trigger = trigger;
 	}
 
 	toggle(popup) {
-		if(!(popup instanceof $))
-			popup = $(popup);
-
-		if(this.#popup && this.#popup[0] == popup[0])
+		if(this.#popup && this.#popup == popup)
 			this.hide();
 		else {
 			this.hide();
 			this.#show(popup);
-			popup[0].trigger?.addClass("open");
+			popup.trigger?.classList.add("open");
 		}
 	}
 
 	#show(popup) {
 		this.#popup = popup;
 		this.#stopPropagation(popup);
-		popup.show();
+		popup.style.display = "unset";
 	}
 
 	#stopPropagation(popup) {
-		if(!this.#seen.has(popup[0])) {
-			this.#seen.add(popup[0]);
-			popup.click(event => {
+		if(!this.#seen.has(popup)) {
+			this.#seen.add(popup);
+			popup.addEventListener("click", event => {
 				// so document click doesn't close the popup
 				event.stopPropagation();
 			});
@@ -55,8 +52,8 @@ class PopupManager {
 
 	hide() {
 		if(this.#popup) {
-			this.#popup.hide();
-			this.#popup[0].trigger?.removeClass("open");
+			this.#popup.style?.removeProperty("display");
+			this.#popup.trigger?.classList.remove("open");
 			this.#popup = null;
 		}
 	}

@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import autosize from "autosize";
+import ToolApi from "/api/tool.js";
 
 createApp({
 	data() {
@@ -44,20 +44,21 @@ createApp({
 				autosize(this.$refs.editField);
 			});
 		},
-		Match() {
-			const url = this.all ? "/api/tool.php/regexmatch/all" : "/api/tool.php/regexmatch";
-			$.post(url, { pattern: this.pattern, subject: this.subject }).done(result => {
+		async Match() {
+			try {
+				const result = await ToolApi.regexmatch(this.pattern, this.subject, this.all);
 				this.matches = result;
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		},
-		Replace() {
-			$.post("/api/tool.php/regexreplace", { pattern: this.pattern, replacement: this.replacement, subject: this.subject }).done(result => {
+		async Replace() {
+			try {
+				const result = await ToolApi.regexreplace(this.pattern, this.replacement, this.subject);
 				this.result = result;
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		}
 	},
 	template: /* html */ `

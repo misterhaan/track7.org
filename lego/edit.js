@@ -1,6 +1,7 @@
-import { createApp } from 'vue';
-import { NameToUrl, ValidatingField } from "validate";
+import { createApp } from "vue";
 import autosize from "autosize";
+import { NameToUrl, ValidatingField } from "validate";
+import LegoApi from "/api/lego.js";
 
 createApp({
 	name: "EditLego",
@@ -13,13 +14,13 @@ createApp({
 		};
 	},
 	computed: {
-		defaultUrl: function() {
+		defaultUrl() {
 			return NameToUrl(this.lego.Title);
 		},
-		effectiveUrl: function() {
+		effectiveUrl() {
 			return this.lego.ID || this.defaultUrl;
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.lego.Title && this.invalidFields.size <= 0 && this.lego.Description && (this.id || this.image && this.$refs.ldrawField.files.length && this.$refs.pdfField.files.length);
 		}
 	},
@@ -36,14 +37,16 @@ createApp({
 				autosize(this.$refs.descriptionField);
 			});
 		},
-		Load() {
-			$.get("/api/lego.php/edit/" + this.id).done(lego => {
+		async Load() {
+			try {
+				const lego = await LegoApi.edit(this.id);
 				this.lego = lego;
 				this.Autosize();
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		},
+		validateId: LegoApi.idAvailable,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -62,21 +65,24 @@ createApp({
 			} else
 				this.image = null;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
 			const data = new FormData(this.$refs.legoForm);
-			data.append("id", this.effectiveUrl);
-			data.append("title", this.lego.Title);
-			data.append("pieces", this.lego.Pieces);
-			data.append("description", this.lego.Description);
-
-			$.post({ url: "/api/lego.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
+			try {
+				const result = await LegoApi.save(
+					this.id,
+					data,
+					this.effectiveUrl,
+					this.lego.Title,
+					this.lego.Pieces,
+					this.lego.Description
+				);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -87,7 +93,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=lego.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/lego.php/idAvailable/' + this.id"
+				<ValidatingField :value=lego.ID :default=defaultUrl :original=this.id :urlCharsOnly=true :validate=validateId
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
 					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"

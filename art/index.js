@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import "tag";
+import ArtApi from "/api/art.js";
 
 createApp({
 	name: "VisualArt",
@@ -12,29 +12,22 @@ createApp({
 			error: null
 		};
 	},
-	created: function() {
+	created() {
 		this.tagid = location.pathname.split("/")[2];
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/art.php/list";
-			if(this.tagid)
-				url += "/" + this.tagid;
-			if(this.arts.length)
-				url += "/" + this.arts.length;
-
-			$.get(url)
-				.done(result => {
-					this.arts = this.arts.concat(result.Art);
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await ArtApi.list(this.tagid, this.arts.length);
+				this.arts = this.arts.concat(result.Art);
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `

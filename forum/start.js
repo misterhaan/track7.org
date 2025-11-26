@@ -1,8 +1,8 @@
-import "jquery";
-import { currentUser } from "user";
 import { createApp } from "vue";
-import { ExistingTagsField } from "tag";
 import autosize from "autosize";
+import { currentUser } from "user";
+import { ExistingTagsField } from "tag";
+import ForumApi from "/api/forum.js";
 
 createApp({
 	name: "StartDiscussion",
@@ -17,10 +17,10 @@ createApp({
 		};
 	},
 	computed: {
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.title.trim() && this.tags.trim() && this.message.trim();
 		},
-		user: function() {
+		user() {
 			return currentUser;
 		}
 	},
@@ -33,24 +33,23 @@ createApp({
 		TagsChanged(newTags) {
 			this.tags = newTags;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
-			const data = {
-				title: this.title,
-				tags: this.tags,
-				message: this.message
-			};
-			if(!currentUser) {
-				data.name = this.name;
-				data.contact = this.contact;
-			}
-			$.post("/api/forum.php/start", data).done(result => {
+			try {
+				const result = await ForumApi.start(
+					this.title,
+					this.tags,
+					this.message,
+					currentUser,
+					this.name,
+					this.contact
+				);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `

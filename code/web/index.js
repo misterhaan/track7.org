@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import ScriptApi from "/api/script.js";
 
 createApp({
 	name: "WebScripts",
@@ -11,26 +11,21 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/script.php/list";
-			if(this.scripts.length)
-				url += "/" + this.scripts.length;
-
-			$.get(url)
-				.done(result => {
-					this.scripts = this.scripts.concat(result.Scripts);
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await ScriptApi.list(this.scripts.length);
+				this.scripts = this.scripts.concat(result.Scripts);
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `

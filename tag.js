@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import autosize from "autosize";
+import TagApi from "/api/tag.js";
 
 const subsite = location.pathname.split("/")[1];
 
@@ -13,18 +13,18 @@ if(tagcloud)
 				tags: []
 			};
 		},
-		created: function() {
+		created() {
 			this.pluralName = tagcloud.dataset.pluralName;
 			this.Load();
 		},
 		methods: {
-			Load: function() {
-				$.get("/api/tag.php/list/" + subsite)
-					.done(result => {
-						this.tags = result;
-					}).fail(request => {
-						alert(request.responseText);
-					});
+			async Load() {
+				try {
+					const result = await TagApi.list(subsite);
+					this.tags = result;
+				} catch(error) {
+					alert(error.message);
+				}
 			}
 		},
 		template: /* html */ `
@@ -36,8 +36,8 @@ if(tagcloud)
 	}).mount(".tagcloud");
 
 const taginfo = document.querySelector("#taginfo");
-const editLink = $("a[href$='#tagedit']");
-if(taginfo && editLink.length) {
+const editLink = document.querySelector("a[href$='#tagedit']");
+if(taginfo && editLink) {
 	const tagDescription = taginfo.querySelector(".editable");
 	const initialDescription = tagDescription?.innerHTML;
 	if(tagDescription)
@@ -52,43 +52,40 @@ if(taginfo && editLink.length) {
 				saving: false
 			};
 		},
-		created: function() {
-			editLink.click(event => {
+		created() {
+			editLink.addEventListener("click", event => {
 				this.StartEdit();
 				event.preventDefault();
 			});
 			this.name = taginfo.dataset.name;
 		},
 		methods: {
-			StartEdit: function() {
+			StartEdit() {
 				this.editing = true;
 				this.oldDescription = this.description;
-				editLink.hide();
+				editLink.style.display = "none";
 				this.$nextTick(() => {
 					this.$refs.editField.focus();
 					autosize(this.$refs.editField);
 				});
 			},
-			CancelEdit: function() {
+			CancelEdit() {
 				this.editing = false;
 				this.description = this.oldDescription;
 				delete this.oldDescription;
-				editLink.show();
+				editLink.style.removeProperty("display");
 			},
-			SaveEdit: function() {
+			async SaveEdit() {
 				this.saving = true;
-				$.ajax({
-					url: "/api/tag.php/description/" + subsite + "/" + this.name,
-					type: "PUT",
-					data: this.description
-				}).done(() => {
+				try {
+					await TagApi.description(subsite, this.name, this.description);
 					this.editing = false;
-					editLink.show();
-				}).fail(request => {
-					alert(request.responseText);
-				}).always(() => {
+					editLink.style.removeProperty("display");
+				} catch(error) {
+					alert(error.message);
+				} finally {
 					this.saving = false;
-				});
+				}
 			}
 		}
 	}).mount("#taginfo");
@@ -107,12 +104,13 @@ export const ExistingTagsField = {
 			tagArray: []
 		};
 	},
-	created() {
-		$.get("/api/tag.php/list/" + subsite + "/1").done(result => {
+	async created() {
+		try {
+			const result = await TagApi.list(subsite, 1);
 			this.allTags = result.map(tag => tag.Name).sort();
-		}).fail(request => {
-			alert(request.responseText);
-		});
+		} catch(error) {
+			alert(error.message);
+		}
 	},
 	watch: {
 		tags(value) {
@@ -154,12 +152,13 @@ export const TagsField = {
 			cursor: ""
 		};
 	},
-	created() {
-		$.get("/api/tag.php/list/" + subsite + "/1").done(result => {
+	async created() {
+		try {
+			const result = await TagApi.list(subsite, 1);
 			this.allTags = result.map(tag => tag.Name);
-		}).fail(request => {
-			alert(request.responseText);
-		});
+		} catch(error) {
+			alert(error.message);
+		}
 	},
 	watch: {
 		tags(value) {

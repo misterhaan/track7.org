@@ -79,9 +79,8 @@ class FewRights extends Page {
 			markdown gets parsed into html by <a href="http://parsedown.org/">parsedown</a>
 			in php. <a href="http://prismjs.com/">prism</a> puts syntax
 			highlighting on code blocks (only using their javascript not their css).
-			<a href="http://jquery.com/">jquery</a> makes my javascript work better
-			and <a href="https://vuejs.org/">vue.js</a> helps my pages be more
-			responsive. i’m also using <a href="http://www.jacklmoore.com/autosize/">jack moore’s autosize script</a>
+			<a href="https://vuejs.org/">vue.js</a> helps my pages be more responsive.
+			i’m also using <a href="http://www.jacklmoore.com/autosize/">jack moore’s autosize script</a>
 			to keep multiline text boxes sized to their contents.
 		</p>
 

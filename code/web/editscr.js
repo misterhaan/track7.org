@@ -1,7 +1,8 @@
-import "jquery";
-import { createApp } from 'vue';
-import { NameToUrl, ValidatingField } from "validate";
+import { createApp } from "vue";
 import autosize from "autosize";
+import { NameToUrl, ValidatingField } from "validate";
+import DateApi from "/api/date.js";
+import ScriptApi from "/api/script.js";
 
 createApp({
 	name: "EditScript",
@@ -15,13 +16,13 @@ createApp({
 		};
 	},
 	computed: {
-		defaultUrl: function() {
+		defaultUrl() {
 			return NameToUrl(this.script.Title);
 		},
-		effectiveUrl: function() {
+		effectiveUrl() {
 			return this.script.ID || this.defaultUrl;
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.script.Title && this.script.Description && (this.filelocation == "link" && this.script.Download || this.filelocation == "upload" && (this.id || this.$refs.fileUpload.files.length)) && this.invalidFields.size <= 0;
 		}
 	},
@@ -40,16 +41,19 @@ createApp({
 				autosize(this.$refs.instructions);
 			});
 		},
-		Load() {
-			$.get("/api/script.php/edit/" + this.id).done(script => {
+		async Load() {
+			try {
+				const script = await ScriptApi.edit(this.id);
 				this.script = script;
 				if(script.Download)
 					this.filelocation = "link";
 				this.Autosize();
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		},
+		validateId: ScriptApi.idAvailable,
+		validateInstant: DateApi.validatePast,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -57,30 +61,29 @@ createApp({
 				this.invalidFields.add(fieldName);
 			this.script[fieldName] = newValue;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
 			const data = new FormData(this.$refs.scriptForm);
-			data.append("id", this.effectiveUrl);
-			data.append("title", this.script.Title);
-			data.append("type", this.script.Type);
-			data.append("description", this.script.Description);
-			data.append("instructions", this.script.Instructions);
-			if(this.filelocation == "link")
-				data.append("download", this.script.Download);
-			if(this.script.GitHub)
-				data.append("github", this.script.GitHub);
-			if(this.script.Wiki)
-				data.append("wiki", this.script.Wiki);
-			if(this.script.FormattedInstant)
-				data.append("instant", this.script.FormattedInstant);
-
-			$.post({ url: "/api/script.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
+			try {
+				const result = await ScriptApi.save(
+					this.id,
+					data,
+					this.effectiveUrl,
+					this.script.Title,
+					this.script.Type,
+					this.script.Description,
+					this.script.Instructions,
+					this.filelocation == "link" ? this.script.Download : null,
+					this.script.GitHub,
+					this.script.Wiki,
+					this.script.FormattedInstant
+				);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		},
 	},
 	template: /* html */ `
@@ -91,7 +94,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=script.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/script.php/idAvailable/' + this.id"
+				<ValidatingField :value=script.ID :default=defaultUrl :original=this.id :urlCharsOnly=true :validate=validateId
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
 					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-\\._]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"
@@ -136,7 +139,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>date:</span>
-				<ValidatingField :value=script.FormattedInstant validateUrl="/api/date.php/validatePast"
+				<ValidatingField :value=script.FormattedInstant :validate=validateInstant
 				msgChecking="validating date / time..." msgValid="valid date / time"
 					msgBlank="will use current date / time" :isBlankValid=true
 					@validated="(isValid, newValue) => OnValidated('FormattedInstant', isValid, newValue)"

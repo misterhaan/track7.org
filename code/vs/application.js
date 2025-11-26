@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import "comment";
+import ReleaseApi from "/api/release.js";
 
 createApp({
 	name: "Releases",
@@ -12,27 +12,22 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.application = location.pathname.split("/")[3];
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/release.php/list/" + this.application;
-			if(this.releases.length)
-				url += "/" + this.releases.length;
-
-			$.get(url)
-				.done(result => {
-					this.releases = this.releases.concat(result.Releases);
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await ReleaseApi.list(this.application, this.releases.length);
+				this.releases = this.releases.concat(result.Releases);
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		},
 		GetExtension(url) {
 			const parts = url.split(".");

@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import LegoApi from "/api/lego.js";
 
 createApp({
 	name: "LegoModels",
@@ -15,19 +15,17 @@ createApp({
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			let url = "/api/lego.php/list";
-			if(this.legos.length)
-				url += "/" + this.legos.length;
-			$.get(url).done(result => {
+			try {
+				const result = await LegoApi.list(this.legos.length);
 				this.legos = this.legos.concat(result.Legos);
 				this.hasMore = result.HasMore;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `

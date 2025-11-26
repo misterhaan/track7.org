@@ -1,7 +1,7 @@
-import "jquery";
-import { currentUser } from "user";
 import { createApp } from "vue";
 import autosize from "autosize";
+import { currentUser } from "user";
+import CommentApi from "/api/comment.js";
 
 const subsite = location.pathname.split("/")[1];
 
@@ -16,15 +16,15 @@ export const Comment = {
 		};
 	},
 	computed: {
-		trusted: function() {
+		trusted() {
 			return currentUser?.Level >= "3-trusted";
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.comment.Markdown && this.oldMarkdown != this.comment.Markdown.trim();
 		}
 	},
 	methods: {
-		Edit: function() {
+		Edit() {
 			this.editing = true;
 			this.oldMarkdown = this.comment.Markdown;
 			this.$nextTick(() => {
@@ -32,7 +32,7 @@ export const Comment = {
 				autosize(this.$refs.editField);
 			});
 		},
-		Unedit: function() {
+		Unedit() {
 			this.editing = false;
 			this.comment.Markdown = this.oldMarkdown;
 			this.oldMarkdown = '';
@@ -40,29 +40,24 @@ export const Comment = {
 				Prism.highlightAll();
 			});
 		},
-		Save: function(leaveANote) {
+		async Save(leaveANote) {
 			this.saving = true;
-			let url = "/api/comment.php/id/";
-			if(!leaveANote)
-				url += "stealth/";
-			url += this.comment.ID;
-
-			$.ajax({ url: url, type: "PATCH", data: this.comment.Markdown })
-				.done(html => {
-					this.editing = false;
-					this.comment.HTML = html;
-					if(leaveANote)
-						this.comment.Edits.push({ Instant: { Display: "just now" }, DisplayName: currentUser.DisplayName, Username: currentUser.URL.split("/")[1] });
-					this.$nextTick(() => {
-						Prism.highlightAll();
-					});
-				}).fail(request => {
-					alert(request.responseText);
-				}).always(() => {
-					this.saving = false;
+			try {
+				const html = await CommentApi.patch(this.comment.ID, this.comment.Markdown, !leaveANote);
+				this.editing = false;
+				this.comment.HTML = html;
+				if(leaveANote)
+					this.comment.Edits.push({ Instant: { Display: "just now" }, DisplayName: currentUser.DisplayName, Username: currentUser.URL.split("/")[1] });
+				this.$nextTick(() => {
+					Prism.highlightAll();
 				});
+			} catch(error) {
+				alert(error.message);
+			} finally {
+				this.saving = false;
+			}
 		},
-		Delete: function() {
+		Delete() {
 			if(confirm("do you really want to delete your comment?  there’s no coming back!")) {
 				this.$emit("delete", this.comment);
 			}
@@ -106,7 +101,7 @@ export const Comment = {
 
 const comments = document.querySelector("#comments");
 if(comments) {
-	const postID = $(comments).data("post");
+	const postID = comments.dataset.post;
 
 	createApp({
 		name: "Comments",
@@ -125,66 +120,63 @@ if(comments) {
 			};
 		},
 		computed: {
-			user: function() {
+			user() {
 				return currentUser;
 			},
-			canSave: function() {
+			canSave() {
 				return !this.saving && this.newComment.markdown.trim() && (this.user || this.newComment.name.trim());
 			},
-			heading: function() {
+			heading() {
 				return subsite != "forum";
 			},
-			commentLabel: function() {
+			commentLabel() {
 				return subsite == "forum" ? "reply" : "comment";
 			},
-			commentLabelPlural: function() {
+			commentLabelPlural() {
 				return subsite == "forum" ? "replies" : "comments";
 			}
 		},
-		created: function() {
+		created() {
 			this.Load();
 			this.$nextTick(() => {
 				autosize(this.$refs.commentField);
 			});
 		},
 		methods: {
-			Add() {
+			async Add() {
 				this.saving = true;
-				$.ajax({ url: "/api/comment.php/new/" + postID, type: "POST", data: this.newComment })
-					.done(comment => {
-						this.comments.push(comment);
-						this.newComment.markdown = "";
-					}).fail(request => {
-						alert(request.responseText);
-					}).always(() => {
-						this.saving = false;
-					});
+				try {
+					const comment = await CommentApi.new(postID, this.newComment);
+					this.comments.push(comment);
+					this.newComment.markdown = "";
+				} catch(error) {
+					alert(error.message);
+				} finally {
+					this.saving = false;
+				}
 			},
-			Load() {
+			async Load() {
 				this.loading = true;
-				let url = "/api/comment.php/bypost/" + postID;
-				if(this.comments.length)
-					url += "/" + this.comments.length;
-				$.get(url)
-					.done(result => {
-						this.comments = this.comments.concat(result.Comments);
-						this.hasMore = result.HasMore;
-						this.$nextTick(() => {
-							Prism.highlightAll();
-						});
-					}).fail(request => {
-						this.error = request.responseText;
-					}).always(() => {
-						this.loading = false;
+				try {
+					const result = await CommentApi.byPost(postID, this.comments.length);
+					this.comments = this.comments.concat(result.Comments);
+					this.hasMore = result.HasMore;
+					this.$nextTick(() => {
+						Prism.highlightAll();
 					});
+				} catch(error) {
+					this.error = error.message;
+				} finally {
+					this.loading = false;
+				}
 			},
-			Delete(index) {
-				$.ajax({ url: "/api/comment.php/id/" + this.comments[index].ID, type: "DELETE" })
-					.done(() => {
-						this.comments.splice(index, 1);
-					}).fail(request => {
-						alert(request.responseText);
-					});
+			async Delete(index) {
+				try {
+					await CommentApi.delete(this.comments[index].ID);
+					this.comments.splice(index, 1);
+				} catch(error) {
+					alert(error.message);
+				}
 			}
 		},
 		template: /*html*/ `

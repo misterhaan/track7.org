@@ -22,7 +22,7 @@ class UserApi extends Api {
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'registration', 'retrieves registration information validated by an external authentication provider.');
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'register', 'registers a new user.  requires previous authentication through an external login provider.', 'form data', 'send the registration information as form data in the request body.');
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'register', 'registers a new user.  requires previous authentication through an external login provider.', 'multipart', 'send the registration information as form data in the request body.');
 		$endpoint->BodyParameters[] = new ParameterDocumentation('csrf', 'string', 'cross-site request forgery token to validate the request.', true);
 		$endpoint->BodyParameters[] = new ParameterDocumentation('username', 'string', 'username for the new user.', true);
 		$endpoint->BodyParameters[] = new ParameterDocumentation('displayname', 'string', 'display name for the new user.');
@@ -37,8 +37,10 @@ class UserApi extends Api {
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'nameAvailable', 'checks if a display name is valid and available.  this means not in use or already used by the specified user.', 'plain text', 'send the proposed new display name as the request body.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('oldName', 'string', 'curent display name of the user that might be changing its name.');
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'login', 'logs in a user with a username and password.');
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'login', 'logs in a user with a username and password.', 'multipart');
 		$endpoint->PathParameters[] = new ParameterDocumentation('remember', 'boolean', 'whether the user wants the login remembered.');
+		$endpoint->BodyParameters[] = new ParameterDocumentation('username', 'string', 'username of the user logging in.', true);
+		$endpoint->BodyParameters[] = new ParameterDocumentation('password', 'string', 'password for the user logging in.', true);
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'auth', 'retrieves the URL to authenticate with an external login provider.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('provider', 'string', 'name of the external login provider to authenticate with.', true);

@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import "tag";
+import GuideApi from "/api/guide.js";
 
 createApp({
 	name: "Guides",
@@ -13,30 +13,23 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.tagid = location.pathname.split("/")[2];
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/guide.php/list";
-			if(this.tagid)
-				url += "/" + this.tagid;
-			if(this.guides.length)
-				url += "/" + this.guides.length;
-
-			$.get(url)
-				.done(result => {
-					this.guides = this.guides.concat(result.Guides);
-					this.drafts = result.Drafts || [];
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await GuideApi.list(this.tagid, this.guides.length);
+				this.guides = this.guides.concat(result.Guides);
+				this.drafts = result.Drafts || [];
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `

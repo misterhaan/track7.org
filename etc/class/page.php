@@ -11,7 +11,6 @@ abstract class Page extends Responder {
 	protected static string $title = self::siteTitle;
 	protected static string $bodytype = 'text';
 	protected static array $importmap = [
-		'jquery' => '/jquery-3.7.1.min.js',
 		'autosize' => '/autosize.esm.js',
 		'popup' => '/popup.js',
 		'user' => '/user.js',

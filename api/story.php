@@ -16,7 +16,7 @@ class StoryApi extends Api {
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'list', 'retrieves the lastest stories with most recent first.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('skip', 'integer', 'specify a number of stories to skip. usually the number of stories currently loaded.');
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'series', 'retrieves the lastest stories with most recent first.');
+		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'series', 'retrieves the latest stories with most recent first.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('skip', 'integer', 'specify a number of stories to skip. usually the number of stories currently loaded.');
 
 		return $endpoints;

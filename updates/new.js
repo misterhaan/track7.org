@@ -1,7 +1,8 @@
-import "jquery";
 import { createApp } from "vue";
-import { ValidatingField } from "validate";
 import autosize from "autosize";
+import { ValidatingField } from "validate";
+import DateApi from "/api/date.js";
+import UpdateApi from "/api/update.js";
 
 createApp({
 	name: "EditUpdate",
@@ -25,6 +26,7 @@ createApp({
 		});
 	},
 	methods: {
+		validateDate: DateApi.validatePast,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -32,15 +34,16 @@ createApp({
 				this.invalidFields.add(fieldName);
 			this[fieldName] = newValue;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
-			$.post("/api/update.php/add", { markdown: this.markdown, posted: this.date }).done(result => {
+			try {
+				const result = await UpdateApi.add(this.markdown, this.date);
 				location.href = result;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.saving = false;
-			});
+			}
 		},
 	},
 	template: /* html */ `
@@ -51,7 +54,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>date:</span>
-				<ValidatingField :value=date validateUrl="/api/date.php/validatePast"
+				<ValidatingField :value=date :validate=validateDate
 					msgChecking="validating date / time..." msgValid="valid date / time"
 					msgBlank="will use current date / time" :isBlankValid=true
 					@validated="(isValid, newValue) => OnValidated('date', isValid, newValue)"

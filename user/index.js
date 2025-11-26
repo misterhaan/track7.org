@@ -1,6 +1,6 @@
-import "jquery";
-import { popup } from "popup";
 import { createApp } from "vue";
+import { popup } from "popup";
+import UserApi from "/api/user.js";
 
 const sortoptions = [
 	{ key: "lastlogin", display: "latest sign-in" },
@@ -24,7 +24,7 @@ const sortfunction = {
 	},
 };
 
-if($("#whodat").length) {
+if(document.querySelector("#whodat")) {
 	sortoptions.push({ key: "friends", display: "friendship" });
 	sortfunction.friends = function(left, right) {
 		return right.Friend - left.Friend;
@@ -47,19 +47,20 @@ createApp({
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/user.php/list/" + this.users.length).done(result => {
+			try {
+				const result = await UserApi.list(this.users.length);
 				this.users = this.users.concat(result.Users);
 				this.hasmore = result.HasMore;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
-		ShowSortOptions(e) {
-			const visdrop = $(e.target).siblings(".droplist");
+		ShowSortOptions(event) {
+			const visdrop = event.target.parentElement.querySelector(".droplist");
 			popup.toggle(visdrop);
 		},
 		Sort(option) {

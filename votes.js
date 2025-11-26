@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import { currentUser } from "user";
+import VoteApi from "/api/vote.js";
 
 
 createApp({
@@ -18,29 +18,31 @@ createApp({
 			return currentUser?.Level >= "4-admin";
 		}
 	},
-	created: function() {
+	created() {
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/vote.php/list/" + this.votes.length).done(result => {
+			try {
+				const result = await VoteApi.list(this.votes.length);
 				this.votes = this.votes.concat(result.Votes);
 				this.hasMore = result.HasMore;
-			}).fail(request => {
-				alert(request.responseMessage);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
-		Delete(vote) {
-			$.post("/api/vote.php/delete/" + vote.ID).done(result => {
+		async Delete(vote) {
+			try {
+				const result = await VoteApi.delete(vote.ID);
 				const v = this.votes.indexOf(vote);
 				if(v > -1)
 					this.votes.splice(v, 1);
-			}).fail(request => {
-				this.error = request.responseMessage;
-			});
+			} catch(error) {
+				this.error = error.message;
+			}
 		}
 	},
 	template: /* html */ `

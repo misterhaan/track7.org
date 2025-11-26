@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import "tag";
+import BlogApi from "/api/blog.js";
 
 createApp({
 	name: "BlogEntries",
@@ -13,30 +13,23 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.tagid = location.pathname.split("/")[2];
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/blog.php/list";
-			if(this.tagid)
-				url += "/" + this.tagid;
-			if(this.entries.length)
-				url += "/" + this.entries.length;
-
-			$.get(url)
-				.done(result => {
-					this.entries = this.entries.concat(result.Entries);
-					this.drafts = result.Drafts || [];
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await BlogApi.list(this.tagid, this.entries.length);
+				this.entries = this.entries.concat(result.Entries);
+				this.drafts = result.Drafts || [];
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `

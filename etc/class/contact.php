@@ -119,6 +119,7 @@ class ContactLink {
 					else
 						return new ValidationResult('valid');
 				return new ValidationResult('invalid', 'invalid steam username.  please enter your steam username or the url to your steam profile.');
+
 			case 'twitch':
 				$original = $value;
 				$value = self::CollapseURL('twitch', $value);

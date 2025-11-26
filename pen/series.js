@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import StoryApi from "/api/story.js";
 
 createApp({
 	name: "Series",
@@ -10,22 +10,21 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.id = location.pathname.split("/")[2];
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			$.get("/api/story.php/series/" + this.id)
-				.done(result => {
-					this.stories = this.stories.concat(result);
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await StoryApi.series(this.id);
+				this.stories = this.stories.concat(result);
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `

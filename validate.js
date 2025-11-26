@@ -16,14 +16,16 @@ const Status = {
 const activeValidationRequests = new Set();
 const waitingValidationRequests = [];
 
-function finishValidationRequest(request) {
+async function finishValidationRequest(request) {
 	activeValidationRequests.delete(request);
 	if(waitingValidationRequests.length) {
 		const nextRequest = waitingValidationRequests.shift();
 		activeValidationRequests.add(nextRequest);
-		nextRequest().always(() => {
+		try {
+			await nextRequest();
+		} finally {
 			finishValidationRequest(nextRequest);
-		});
+		}
 	}
 }
 
@@ -31,8 +33,9 @@ export const ValidatingField = {
 	props: [
 		"value",
 		"default",
+		"original",
 		"urlCharsOnly",
-		"validateUrl",
+		"validate",
 		"msgChecking",
 		"msgValid",
 		"msgBlank",
@@ -50,7 +53,7 @@ export const ValidatingField = {
 		};
 	},
 	watch: {
-		localValue: function(val) {
+		localValue(val) {
 			if(this.urlCharsOnly)
 				this.localValue = NameToUrl(val);
 		},
@@ -90,7 +93,7 @@ export const ValidatingField = {
 		this.Validate();
 	},
 	methods: {
-		Validate() {
+		async Validate() {
 			this.state = Status.Checking;
 			this.$emit("validated", false, this.localValue);
 			this.lastMessage = null;
@@ -98,27 +101,25 @@ export const ValidatingField = {
 				this.state = this.isBlankValid ? Status.Valid : Status.Invalid;
 				this.$emit("validated", this.isBlankValid, "");
 			} else {
-				const request = () => {
-					return $.ajax({
-						method: "POST",
-						url: this.validateUrl,
-						contentType: "text/plain; charset=utf-8",
-						data: this.effectiveValue
-					}).done(result => {
+				const request = async () => {
+					try {
+						const result = await this.validate(this.effectiveValue, this.original);
 						this.state = result.State;
 						this.lastMessage = result.Message;
 						this.$emit("validated", this.state == Status.Valid, this.localValue = result.NewValue || this.localValue);
-					}).fail(request => {
+					} catch(error) {
 						this.state = Status.Invalid;
-						this.lastMessage = request.responseText;
+						this.lastMessage = error.message;
 						this.$emit("validated", false, this.localValue);
-					});
+					}
 				}
 				if(activeValidationRequests.size < 2) {
 					activeValidationRequests.add(request);
-					request().always(() => {
+					try {
+						await request();
+					} finally {
 						finishValidationRequest(request);
-					});
+					}
 				} else
 					waitingValidationRequests.push(request);
 			}

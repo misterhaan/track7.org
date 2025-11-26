@@ -1,7 +1,7 @@
-import "jquery";
-import { currentUser } from "user";
 import { createApp } from "vue";
 import autosize from "autosize";
+import { currentUser } from "user";
+import TagApi from "/api/tag.js";
 
 createApp({
 	name: "TagInfo",
@@ -35,22 +35,23 @@ createApp({
 		}
 	},
 	methods: {
-		LoadSubsiteTags(subsite) {
+		async LoadSubsiteTags(subsite) {
 			this.loading = true;
-			$.get("/api/tag.php/stats/" + subsite).done(tags => {
+			try {
+				const tags = await TagApi.stats(subsite);
 				this.tags = tags;
 				this.subsite = subsite;
-			}).fail(response => {
-				alert(response.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
 		Edit(tag) {
 			if(this.canEdit) {
 				this.edit = { Name: tag.Name, Description: tag.Description };
 				this.$nextTick(() => {
-					this.$refs.editField.focus();
+					this.$refs.editField[0]?.focus();
 					autosize(this.$refs.editField);
 				});
 			}
@@ -58,18 +59,15 @@ createApp({
 		Cancel() {
 			this.edit = false;
 		},
-		Save(tag) {
+		async Save(tag) {
 			if(this.canEdit)
-				$.ajax({
-					url: "/api/tag.php/description/" + this.subsite + "/" + tag.Name,
-					type: "PUT",
-					data: this.edit.Description
-				}).done(() => {
+				try {
+					await TagApi.description(this.subsite, tag.Name, this.edit.Description);
 					tag.Description = this.edit.Description;
 					this.edit = false;
-				}).fail(request => {
-					alert(request.responseText);
-				});
+				} catch(error) {
+					alert(error.message);
+				}
 		}
 	},
 	template: /* html */ `

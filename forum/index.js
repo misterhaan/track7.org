@@ -1,6 +1,6 @@
-import "jquery";
 import { createApp } from "vue";
 import "tag";
+import ForumApi from "/api/forum.js";
 
 createApp({
 	name: "DiscussionList",
@@ -12,29 +12,22 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.tagid = location.pathname.split("/")[2].replaceAll("+", " ");
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/forum.php/list";
-			if(this.tagid)
-				url += "/" + this.tagid;
-			if(this.discussions.length)
-				url += "/" + this.discussions.length;
-
-			$.get(url)
-				.done(result => {
-					this.discussions = this.discussions.concat(result.Discussions);
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await ForumApi.list(this.tagid, this.discussions.length);
+				this.discussions = this.discussions.concat(result.Discussions);
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `

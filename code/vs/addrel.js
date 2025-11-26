@@ -1,6 +1,8 @@
-import { createApp } from 'vue';
-import { ValidatingField } from "validate";
+import { createApp } from "vue";
 import autosize from "autosize";
+import { ValidatingField } from "validate";
+import DateApi from "/api/date.js";
+import ReleaseApi from "/api/release.js";
 
 createApp({
 	name: "AddRelease",
@@ -12,7 +14,7 @@ createApp({
 		};
 	},
 	computed: {
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.release.Version && this.release.BinURL && this.invalidFields.size <= 0;
 		}
 	},
@@ -27,6 +29,8 @@ createApp({
 				autosize(this.$refs.markdownField);
 			});
 		},
+		validateVersion: ReleaseApi.versionAvailable,
+		validateInstant: DateApi.validatePast,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -34,33 +38,34 @@ createApp({
 				this.invalidFields.add(fieldName);
 			this.release[fieldName] = newValue;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
-			const data = {
-				version: this.release.Version,
-				instant: this.release.Instant,
-				language: this.release.Language,
-				dotnet: this.release.DotNet,
-				visualstudio: this.release.VisualStudio,
-				changelog: this.release.Changelog,
-				binurl: this.release.BinURL,
-				bin32url: this.release.Bin32URL,
-				srcurl: this.release.SrcURL
-			};
-			$.post("/api/release.php/add/" + this.app, data).done(result => {
+			try {
+				const result = await ReleaseApi.add(
+					this.app,
+					this.release.Version,
+					this.release.Instant,
+					this.release.Language,
+					this.release.DotNet,
+					this.release.VisualStudio,
+					this.release.Changelog,
+					this.release.BinURL,
+					this.release.Bin32URL,
+					this.release.SrcURL
+				);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
 		<form method=post enctype="" @submit.prevent=Save ref=relForm>
 			<label>
 				<span class=label>version:</span>
-				<ValidatingField :value=release.Version :validateUrl="'/api/release.php/versionAvailable/' + this.app"
+				<ValidatingField :value=release.Version :validate=validateVersion
 					msgChecking="checking if version is already released..." msgValid="can release this version" msgBlank="version is required"
 					inputAttributes="{maxlength: 10, pattern: '[0-9]+(\.[0-9]+){0,2}', required: true}"
 					@validated="(isValid, newValue) => OnValidated('Version', isValid, newValue)"
@@ -68,7 +73,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>date:</span>
-				<ValidatingField :value=release.Instant validateUrl="/api/date.php/validatePast"
+				<ValidatingField :value=release.Instant :validate=validateInstant
 				msgChecking="validating date / time..." msgValid="valid date / time"
 					msgBlank="will use current date / time" :isBlankValid=true
 					@validated="(isValid, newValue) => OnValidated('Instant', isValid, newValue)"

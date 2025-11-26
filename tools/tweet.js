@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import ToolApi from "/api/tool.js";
 
 createApp({
 	name: "Tweet",
@@ -43,50 +43,46 @@ createApp({
 			return this.hasAuth && !this.tweeting && this.message.trim().length;
 		}
 	},
-	created() {
+	async created() {
 		const query = new URLSearchParams(location.search);
 		const code = query.get("code");
 		const csrf = query.get("state");
-		if(code && csrf) {
-			$.post("/api/tool.php/tweetAuth", {
-				code: code,
-				csrf: csrf
-			}).done(result => {
+		if(code && csrf)
+			try {
+				const result = await ToolApi.tweetAuth(code, csrf);
 				this.authStatus = result;
 				history.replaceState({}, document.title, location.pathname);  // clear the query parameters
-			}).fail(request => {
-				this.error = request.responseText;
-			});
-		} else {
-			$.get("/api/tool.php/tweetAuthStatus").done(status => {
-				this.authStatus = status;
-			});
+			} catch(error) {
+				this.error = error.message;
+			}
+		else {
+			const status = await ToolApi.tweetAuthStatus()
+			this.authStatus = status;
 		}
 	},
 	methods: {
-		RequestAuth() {
+		async RequestAuth() {
 			if(!this.authorizing) {
 				this.authorizing = true;
-				$.get("/api/tool.php/tweetAuthURL").done(url => {
+				try {
+					const url = await ToolApi.tweetAuthURL();
 					location.href = url;
-				}).fail(request => {
-					alert(request.responseText);
+				} catch(error) {
+					alert(error.message);
 					this.authorizing = false;
-				});
+				}
 			}
 		},
-		Tweet() {
+		async Tweet() {
 			this.tweeting = true;
-			$.post("/api/tool.php/tweet", {
-				message: this.message,
-				url: this.url
-			}).done(response => {
+			try {
+				const response = await ToolApi.tweet(this.message, this.url);
 				this.response = response;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.tweeting = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `

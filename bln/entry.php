@@ -77,6 +77,7 @@ class BlogEntry extends Page {
 			?>
 				<a class=publish href="/api/blog.php/publish/<?= self::$entry->Post; ?>" @click.prevent=Publish>publish</a>
 				<a class=del href="/api/blog.php/entry/<?= self::$entry->ID; ?>" @click.prevent=Delete>delete</a>
+				<Transition name=fadeout><span class=success v-if=showPublishSuccess>successfully published!</span></Transition>
 			<?php
 			}
 			?>

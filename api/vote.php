@@ -62,6 +62,7 @@ class VoteApi extends Api {
 		if (!$id)
 			self::NotFound('vote id must be specified');
 		Vote::Delete(self::RequireDatabase(), $id);
+		self::Success();
 	}
 }
 VoteApi::Respond();

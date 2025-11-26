@@ -1,7 +1,8 @@
-import { createApp } from 'vue';
-import { NameToUrl, ValidatingField } from "validate";
+import { createApp } from "vue";
 import autosize from "autosize";
-import { TagsField, FindAddedTags } from "tag";
+import { NameToUrl, ValidatingField } from "validate";
+import { TagsField } from "tag";
+import BlogApi from "/api/blog.js";
 
 createApp({
 	name: "EditEntry",
@@ -13,13 +14,13 @@ createApp({
 		};
 	},
 	computed: {
-		defaultUrl: function() {
+		defaultUrl() {
 			return NameToUrl(this.entry.Title);
 		},
-		effectiveUrl: function() {
+		effectiveUrl() {
 			return this.entry.ID || this.defaultUrl;
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.entry.Title && this.invalidFields.size <= 0 && this.entry.Markdown;
 		}
 	},
@@ -38,15 +39,17 @@ createApp({
 				autosize(this.$refs.markdownField);
 			});
 		},
-		Load() {
-			$.get("/api/blog.php/edit/" + this.id).done(entry => {
+		async Load() {
+			try {
+				const entry = await BlogApi.edit(this.id);
 				this.entry = entry;
 				this.originalTags = this.entry.Tags;
 				this.Autosize();
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		},
+		validateId: BlogApi.idAvailable,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -57,24 +60,16 @@ createApp({
 		TagsChanged(value) {
 			this.entry.Tags = value;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
-			const url = "/api/blog.php/save/" + this.id;
-			const data = {
-				id: this.effectiveUrl,
-				title: this.entry.Title,
-				markdown: this.entry.Markdown,
-				addtags: FindAddedTags(this.entry.Tags, this.originalTags),
-				deltags: FindAddedTags(this.originalTags, this.entry.Tags)
-			};
-
-			$.post(url, data).done(result => {
+			try {
+				const result = await BlogApi.save(this.id, this.effectiveUrl, this.entry.Title, this.entry.Markdown, this.entry.Tags, this.originalTags);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -85,7 +80,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=entry.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/blog.php/idAvailable/' + this.id"
+				<ValidatingField :value=entry.ID :default=defaultUrl :original=this.id :urlCharsOnly=true :validate=validateId
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
 					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"

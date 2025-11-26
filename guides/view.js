@@ -1,7 +1,7 @@
-import "jquery";
 import { createApp } from "vue";
 import "vote";
 import "comment";
+import GuideApi from "/api/guide.js";
 
 createApp({
 	name: "Chapters",
@@ -13,27 +13,27 @@ createApp({
 			error: ""
 		};
 	},
-	created: function() {
+	created() {
 		this.id = location.pathname.split("/")[2];
-		const summaryDiv = $("#summary");
-		this.summary = summaryDiv.html();
+		const summaryDiv = document.querySelector("#summary");
+		this.summary = summaryDiv.innerHTML;
 		summaryDiv.remove();
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/guide.php/chapters/" + this.id)
-				.done(chapters => {
-					this.chapters = chapters;
-					this.$nextTick(() => {
-						Prism.highlightAll();
-					});
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
+			try {
+				const chapters = await GuideApi.chapters(this.id);
+				this.chapters = chapters;
+				this.$nextTick(() => {
+					Prism.highlightAll();
 				});
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `
@@ -53,27 +53,37 @@ createApp({
 		`
 }).mount("#guidechapters");
 
-if($("nav.actions").length)
+if(document.querySelector("nav.actions"))
 	createApp({
 		name: "GuideAdmin",
+		data() {
+			return {
+				showPublishSuccess: false
+			};
+		},
 		methods: {
-			Publish(event) {
-				$.post(event.target.href).done(() => {
-					$("a.del").remove();
-					const nav = $(event.target).parent();
-					$(event.target).remove();
-					nav.append($("<span class=success>successfully published!</span>").delay(3000).fadeOut(1000));
-				}).fail(request => {
-					alert(request.responseText);
-				});
+			async Publish(event) {
+				const id = event.target.href.split("/").pop();
+				try {
+					await GuideApi.publish(id);
+					document.querySelector("a.del")?.remove();
+					event.target.remove();
+					this.showPublishSuccess = true;
+					await new Promise(resolve => setTimeout(resolve, 3000));
+					this.showPublishSuccess = false;
+				} catch(error) {
+					alert(error.message);
+				}
 			},
-			Delete(event) {
+			async Delete(event) {
 				if(confirm("do you really want to delete this guide?  it will be gone forever!"))
-					$.ajax({ url: event.target.href, method: "DELETE" }).done(() => {
+					try {
+						const id = event.target.href.split("/").pop();
+						await GuideApi.delete(id);
 						location.href = "./";  // to index
-					}).fail(request => {
-						alert(request.responseText);
-					});
+					} catch(error) {
+						alert(error.message);
+					}
 			}
 		}
 	}).mount("nav.actions");

@@ -1,9 +1,8 @@
-import "jquery";
-
-$(function() {
-	$("#codetypes section").click(function(e) {
-		if(e.target.nodeName.toLowerCase() != "a")
-			location.href = $(e.delegateTarget).find("h2 a").attr("href");
+const sections = document.querySelectorAll("#codetypes section");
+sections.forEach(section => {
+	section.addEventListener("click", event => {
+		if(event.target.nodeName.toLowerCase() != "a")
+			location.href = event.currentTarget.querySelector("h2 a")?.href;
 	});
-	$("#codetypes section").css("cursor", "pointer");
+	section.style.cursor = "pointer";
 });

@@ -1,33 +1,40 @@
-import "jquery";
 import { createApp } from "vue";
 import "comment";
+import BlogApi from "/api/blog.js";
 
-createApp({
-	name: "BlogActions",
-	methods: {
-		Publish() {
-			const publishLink = $("nav.actions a.publish");
-			const url = publishLink.attr("href");
-			$.post(url)
-				.done(() => {
-					publishLink.remove();
-					$("nav.actions a.del").remove();
-					$("nav.actions").append($("<span class=success>successfully published!</span>").delay(3000).fadeOut(1000));
-				}).fail(request => {
-					alert(request.responseText);
-				});
+if(document.querySelector("nav.actions"))
+	createApp({
+		name: "BlogActions",
+		data() {
+			return {
+				showPublishSuccess: false
+			};
 		},
-		Delete() {
-			if(confirm("do you really want to delete this blog entry?  it will be gone forever!")) {
-				const deleteLink = $("nav.actions a.del");
-				const url = deleteLink.attr("href");
-				$.ajax({ url: url, method: "DELETE" })
-					.done(() => {
+		methods: {
+			async Publish() {
+				const publishLink = document.querySelector("nav.actions a.publish");
+				const postID = publishLink.href.split("/").pop();
+				try {
+					await BlogApi.publish(postID);
+					publishLink.remove();
+					document.querySelector("nav.actions a.del")?.remove();
+					this.showPublishSuccess = true;
+					await new Promise(resolve => setTimeout(resolve, 3000));
+					this.showPublishSuccess = false;
+				} catch(error) {
+					alert(error.message);
+				}
+			},
+			async Delete() {
+				if(confirm("do you really want to delete this blog entry?  it will be gone forever!")) {
+					const id = document.querySelector("nav.actions a.del").href.split("/").pop();
+					try {
+						await BlogApi.delete(id);
 						location.href = "./";  // to index
-					}).fail(request => {
-						alert(request.responseText);
-					});
+					} catch(error) {
+						alert(error.message);
+					}
+				}
 			}
 		}
-	}
-}).mount("nav.actions");
+	}).mount("nav.actions");

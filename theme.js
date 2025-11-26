@@ -1,22 +1,19 @@
-import "jquery";
-
-const themeToggle = $("#theme-toggle");
+const themeToggle = document.querySelector("#theme-toggle");
 
 function applyTheme(theme) {
-	const html = $("html");
-	themeToggle.removeClass("theme-system theme-dark theme-light");
-	html.removeClass("dark light");
+	const html = document.querySelector("html");
+	themeToggle?.classList.remove("theme-system", "theme-dark", "theme-light");
+	html.classList.remove("dark", "light");
 
-	themeToggle.addClass("theme-" + theme);
-	if(theme != "system") {
-		html.addClass(theme);
-	}
+	themeToggle?.classList.add("theme-" + theme);
+	if(theme != "system")
+		html.classList.add(theme);
 }
 
 let currentTheme = localStorage.getItem("theme") || "system";
 applyTheme(currentTheme);
 
-themeToggle.on("click", event => {
+themeToggle?.addEventListener("click", event => {
 	event.stopPropagation();
 	event.preventDefault();
 	const darkSystem = matchMedia("(prefers-color-scheme: dark)").matches;

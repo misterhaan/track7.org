@@ -1,7 +1,7 @@
-import "jquery";
-import { createApp } from 'vue';
-import { NameToUrl, ValidatingField } from "validate";
+import { createApp } from "vue";
 import autosize from "autosize";
+import { NameToUrl, ValidatingField } from "validate";
+import ApplicationApi from "/api/application.js";
 
 createApp({
 	name: "EditApp",
@@ -14,13 +14,13 @@ createApp({
 		};
 	},
 	computed: {
-		defaultUrl: function() {
+		defaultUrl() {
 			return NameToUrl(this.app.Name);
 		},
-		effectiveUrl: function() {
+		effectiveUrl() {
 			return this.app.ID || this.defaultUrl;
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.app.Name && this.invalidFields.size <= 0 && this.app.Markdown && (this.id || this.icon);
 		}
 	},
@@ -38,14 +38,16 @@ createApp({
 				autosize(this.$refs.markdownField);
 			});
 		},
-		Load() {
-			$.get("/api/application.php/edit/" + this.id).done(entry => {
+		async Load() {
+			try {
+				const entry = await ApplicationApi.edit(this.id);
 				this.app = entry;
 				this.Autosize();
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		},
+		validateId: ApplicationApi.idAvailable,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -64,24 +66,25 @@ createApp({
 			} else
 				this.icon = null;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
 			const data = new FormData(this.$refs.appForm);
-			data.append("id", this.effectiveUrl);
-			data.append("name", this.app.Name);
-			data.append("markdown", this.app.Markdown);
-			if(this.app.GitHub)
-				data.append("github", this.app.GitHub);
-			if(this.app.Wiki)
-				data.append("wiki", this.app.Wiki);
-
-			$.post({ url: "/api/application.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
+			try {
+				const result = await ApplicationApi.save(
+					this.id,
+					data,
+					this.effectiveUrl,
+					this.app.Name,
+					this.app.Markdown,
+					this.app.GitHub,
+					this.app.Wiki
+				);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		},
 	},
 	template: /* html */ `
@@ -92,7 +95,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=app.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/application.php/idAvailable/' + this.id"
+				<ValidatingField :value=app.ID :default=defaultUrl :original=this.id :urlCharsOnly=true :validate=validateId
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
 					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"

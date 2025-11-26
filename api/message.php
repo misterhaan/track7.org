@@ -17,6 +17,7 @@ class MessageApi extends Api {
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'conversation', 'retrieves all messages in the conversation between the logged-in user and the specified user.  requires authentication.');
 		$endpoint->PathParameters[] = new ParameterDocumentation('withUserID', 'integer', 'id of the other user the conversation is with, or 0 for messages from anonymous users.', true);
+		$endpoint->PathParameters[] = new ParameterDocumentation('skip', 'integer', 'number of messages to skip from the start of the conversation (for paging).');
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'send', 'sends a message to a track7 user.', 'multipart');
 		$endpoint->PathParameters[] = new ParameterDocumentation('toUserID', 'integer', 'id of the user the message is being sent to.', true);

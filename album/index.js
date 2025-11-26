@@ -1,6 +1,6 @@
-import "jquery";
-import { createApp } from 'vue';
-import 'tag';
+import { createApp } from "vue";
+import "tag";
+import PhotoApi from "/api/photo.js";
 
 createApp({
 	name: "Photos",
@@ -12,29 +12,22 @@ createApp({
 			hasMore: false
 		};
 	},
-	created: function() {
+	created() {
 		this.tagid = location.pathname.split("/")[2];
 		this.Load();
 	},
 	methods: {
-		Load: function() {
+		async Load() {
 			this.loading = true;
-
-			let url = "/api/photo.php/list";
-			if(this.tagid)
-				url += "/" + this.tagid;
-			if(this.photos.length)
-				url += "/" + this.photos.length;
-
-			$.get(url)
-				.done(result => {
-					this.photos = this.photos.concat(result.Photos);
-					this.hasMore = result.HasMore;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
-				});
+			try {
+				const result = await PhotoApi.list(this.tagid, this.photos.length);
+				this.photos = this.photos.concat(result.Photos);
+				this.hasMore = result.HasMore;
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		}
 	},
 	template: /* html */ `

@@ -1,18 +1,21 @@
-import "jquery";
 import { createApp } from "vue";
 import { ValidatingField } from "validate";
 import { popup } from "popup";
 import { currentUser } from "user";
+import ContactApi from "/api/contact.js";
+import DateApi from "/api/date.js";
+import SettingsApi from "/api/settings.js";
+import UserApi from "/api/user.js";
 
 const contactTypes = [
-	{ id: "email", name: "e-mail", msgChecking: "validating e-mail address...", msgValid: "valid e-mail address", msgBlank: "e-mail address will not be included", help: "address at which track7 and (if you choose) users and / or visitors can contact you" },
-	{ id: "website", name: "website", msgChecking: "validating website url...", msgValid: "website url exists", msgBlank: "website link will not be included", help: "url of your personal website" },
-	{ id: "twitter", name: "twitter", msgChecking: "validating twitter username...", msgValid: "valid twitter handle", msgBlank: "twitter link will not be included", help: "your twitter handle (without the @)" },
-	{ id: "facebook", name: "facebook", msgChecking: "validating facebook username...", msgValid: "valid facebook profile", msgBlank: "facebook link will not be included", help: "your facebook username" },
-	{ id: "github", name: "github", msgChecking: "validating github username...", msgValid: "valid github profile", msgBlank: "github link will not be included", help: "your github username" },
-	{ id: "deviantart", name: "deviantart", msgChecking: "validating deviantart username...", msgValid: "valid deviantart profile", msgBlank: "deviantart link will not be included", help: "your deviantart username" },
-	{ id: "steam", name: "steam", msgChecking: "validating steam profile...", msgValid: "valid steam profile", msgBlank: "steam link will not be included", help: "your steam profile" },
-	{ id: "twitch", name: "twitch", msgChecking: "validating twitch username...", msgValid: "valid twitch username", msgBlank: "twitch link will not be included", help: "your twitch username" },
+	{ id: "email", name: "e-mail", validate: ContactApi.validateEmail, msgChecking: "validating e-mail address...", msgValid: "valid e-mail address", msgBlank: "e-mail address will not be included", help: "address at which track7 and (if you choose) users and / or visitors can contact you" },
+	{ id: "website", name: "website", validate: ContactApi.validateWebsite, msgChecking: "validating website url...", msgValid: "website url exists", msgBlank: "website link will not be included", help: "url of your personal website" },
+	{ id: "twitter", name: "twitter", validate: ContactApi.validateTwitter, msgChecking: "validating twitter username...", msgValid: "valid twitter handle", msgBlank: "twitter link will not be included", help: "your twitter handle (without the @)" },
+	{ id: "facebook", name: "facebook", validate: ContactApi.validateFacebook, msgChecking: "validating facebook username...", msgValid: "valid facebook profile", msgBlank: "facebook link will not be included", help: "your facebook username" },
+	{ id: "github", name: "github", validate: ContactApi.validateGithub, msgChecking: "validating github username...", msgValid: "valid github profile", msgBlank: "github link will not be included", help: "your github username" },
+	{ id: "deviantart", name: "deviantart", validate: ContactApi.validateDeviantart, msgChecking: "validating deviantart username...", msgValid: "valid deviantart profile", msgBlank: "deviantart link will not be included", help: "your deviantart username" },
+	{ id: "steam", name: "steam", validate: ContactApi.validateSteam, msgChecking: "validating steam profile...", msgValid: "valid steam profile", msgBlank: "steam link will not be included", help: "your steam profile" },
+	{ id: "twitch", name: "twitch", validate: ContactApi.validateTwitch, msgChecking: "validating twitch username...", msgValid: "valid twitch username", msgBlank: "twitch link will not be included", help: "your twitch username" },
 ];
 
 const Profile = {
@@ -30,7 +33,7 @@ const Profile = {
 		};
 	},
 	computed: {
-		canSave: function() {
+		canSave() {
 			return !this.loading && !this.saving && this.invalidFields.size <= 0;
 		}
 	},
@@ -38,19 +41,22 @@ const Profile = {
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/settings.php/profile").done(result => {
+			try {
+				const result = await SettingsApi.loadProfile();
 				this.username = result.Username;
 				this.displayname = result.DisplayName;
 				this.avatarID = result.AvatarOptions.find(o => o.ImageURL == result.Avatar)?.ID;;
 				this.avatarOptions = result.AvatarOptions;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
+		validateUsername: UserApi.idAvailable,
+		validateDisplayname: UserApi.nameAvailable,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -58,31 +64,31 @@ const Profile = {
 				this.invalidFields.add(fieldName);
 			this[fieldName] = newValue;
 		},
-		Save() {
+		async Save() {
 			if(!this.canSave)
 				alert("address errors before saving.");
 			else {
 				this.saving = true;
 				this.error = "";
-				$.post("/api/settings.php/profile", {
-					username: this.username,
-					displayname: this.displayname,
-					avatarsource: this.avatarID
-				}).done(() => {
-					this.showSaveSuccess = true;
-					setTimeout(() => {
-						this.showSaveSuccess = false;
-					}, 2000);
+				try {
+					await SettingsApi.saveProfile(this.username, this.displayname, this.avatarID);
 
-					$("a[href='" + $("#whodat").attr("href") + "']").attr("href", "/user/" + this.username + "/");
-					$("#whodat").contents().get(0).nodeValue = this.displayname || this.username;
+					const whodat = document.querySelector("#whodat");
+					const oldProfileURL = whodat.href;
+					const newProfileURL = "/user/" + this.username + "/";
+					document.querySelectorAll("a[href='" + oldProfileURL + "']").forEach(profileLink => profileLink.href = newProfileURL);
+					whodat.childNodes[0].nodeValue = this.displayname || this.username;
 					if(this.avatarID)
-						$("#whodat img.avatar").attr("src", this.avatarOptions.find(o => o.ID == this.avatarID).ImageURL);
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
+						whodat.querySelector("img.avatar").src = this.avatarOptions.find(o => o.ID == this.avatarID).ImageURL;
+
 					this.saving = false;
-				});
+					this.showSaveSuccess = true;
+					await new Promise(resolve => setTimeout(resolve, 2000));
+					this.showSaveSuccess = false;
+				} catch(error) {
+					this.error = error.message;
+					this.saving = false;
+				}
 			}
 		}
 	},
@@ -91,7 +97,7 @@ const Profile = {
 			<p class=error v-if=error>{{error}}</p>
 			<label title="used in the url to your profile">
 				<span class=label>username:</span>
-				<ValidatingField :value=username validateUrl="/api/user.php/idAvailable"
+				<ValidatingField :value=username :validate=validateUsername
 					msgChecking="validating username..." msgValid="username available" msgBlank="username required"
 					inputAttributes="{maxlength: 32, required: true, pattern: '[a-zA-Z0-9_\-]+'}"
 					@validated="(isValid, newValue) => OnValidated('username', isValid, newValue)"
@@ -99,7 +105,7 @@ const Profile = {
 			</label>
 			<label title="an easier to read name for when you comment, etc.  leave blank to just show your username">
 				<span class=label>display name:</span>
-				<ValidatingField :value=displayname :default=username validateUrl="/api/user.php/nameAvailable" :isBlankValid=true
+				<ValidatingField :value=displayname :default=username :validate=validateDisplayname :isBlankValid=true
 					msgChecking="validating display name..." msgValid="display name available" msgBlank="username will be used for display"
 					inputAttributes="{maxlength: 32}"
 					@validated="(isValid, newValue) => OnValidated('displayname', isValid, newValue)"
@@ -135,7 +141,7 @@ const TimeZone = {
 		};
 	},
 	computed: {
-		canSave: function() {
+		canSave() {
 			return !this.loading && !this.saving && this.invalidFields.size <= 0;
 		}
 	},
@@ -143,17 +149,19 @@ const TimeZone = {
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/settings.php/time").done(result => {
+			try {
+				const result = await SettingsApi.loadTime();
 				this.currentTime = result.CurrentTime;
 				this.dst = result.DST;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
+		validateTime: DateApi.validateTime,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -169,25 +177,22 @@ const TimeZone = {
 			const jul = new Date(now.getFullYear(), 7, 1);
 			this.dst = jan.getTimezoneOffset() != jul.getTimezoneOffset();
 		},
-		Save() {
+		async Save() {
 			if(!this.canSave)
 				alert("address errors before saving.");
 			else {
 				this.saving = true;
 				this.error = "";
-				$.post("/api/settings.php/time", {
-					currenttime: this.currentTime,
-					dst: this.dst
-				}).done(() => {
-					this.showSaveSuccess = true;
-					setTimeout(() => {
-						this.showSaveSuccess = false;
-					}, 2000);
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
+				try {
+					await SettingsApi.saveTime(this.currentTime, this.dst);
 					this.saving = false;
-				});
+					this.showSaveSuccess = true;
+					await new Promise(resolve => setTimeout(resolve, 2000));
+					this.showSaveSuccess = false;
+				} catch(error) {
+					this.error = error.message;
+					this.saving = false;
+				}
 			}
 		},
 	},
@@ -196,7 +201,7 @@ const TimeZone = {
 			<p class=error v-if=error>{{error}}</p>
 			<label>
 				<span class=label>current time:</span>
-				<ValidatingField :value=currentTime validateUrl="/api/date.php/validateTime"
+				<ValidatingField :value=currentTime :validate=validateTime
 					msgChecking="validating time..." msgValid="time valid" msgBlank="time required"
 					inputAttributes="{required: true}"
 					@validated="(isValid, newValue) => OnValidated('currentTime', isValid, newValue)"
@@ -238,9 +243,10 @@ const Contact = {
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/settings.php/contacts").done(result => {
+			try {
+				const result = await SettingsApi.loadContacts();
 				this.contacts = result.map(contact => {
 					return {
 						type: this.availableContactTypes.find(type => type.id == contact.Type),
@@ -248,11 +254,11 @@ const Contact = {
 						visibility: contact.Visibility
 					};
 				});
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
@@ -271,30 +277,26 @@ const Contact = {
 				event.target.value = null;
 			}
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
 			this.contacts = this.contacts.filter(contact => contact.value != "");
-			$.ajax({
-				method: "POST",
-				url: "/api/settings.php/contacts",
-				contentType: "text/plain; charset=utf-8",
-				data: JSON.stringify(this.contacts.map(contact => {
-					return {
-						type: contact.type.id,
-						value: contact.value,
-						visibility: contact.visibility
-					};
-				}))
-			}).done(() => {
-				this.showSaveSuccess = true;
-				setTimeout(() => {
-					this.showSaveSuccess = false;
-				}, 2000);
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
-				this.saving = false;
+			const data = this.contacts.map(contact => {
+				return {
+					type: contact.type.id,
+					value: contact.value,
+					visibility: contact.visibility
+				};
 			});
+			try {
+				await SettingsApi.saveContacts(data);
+				this.saving = false;
+				this.showSaveSuccess = true;
+				await new Promise(resolve => setTimeout(resolve, 2000));
+				this.showSaveSuccess = false;
+			} catch(error) {
+				this.error = error.message;
+				this.saving = false;
+			}
 		}
 	},
 	template: /* html */ `
@@ -316,7 +318,7 @@ const Contact = {
 					{{canAddContact ? "" : contact.type.name + ":"}}
 				</span>
 				<span class=field>
-					<ValidatingField :value=contact.value :validateUrl="'/api/contact.php/validate/' + contact.type.id" :isBlankValid=true
+					<ValidatingField :value=contact.value :validate=contact.type.validate :isBlankValid=true
 						:msgChecking=contact.type.msgChecking :msgValid=contact.type.msgValid :msgBlank=contact.type.msgBlank
 						@validated="(isValid, newValue) => OnValidated(contact.type.id, isValid, newValue)"
 					/>
@@ -357,30 +359,31 @@ const Notification = {
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/settings.php/notification").done(result => {
+			try {
+				const result = await SettingsApi.loadNotification();
 				this.email = result.EmailAddress;
 				this.notifymsg = result.EmailNewMessage;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
 			this.error = "";
-			$.post("/api/settings.php/notification", { emailnewmessage: this.notifymsg }).done(() => {
-				this.showSaveSuccess = true;
-				setTimeout(() => {
-					this.showSaveSuccess = false;
-				}, 2000);
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			try {
+				await SettingsApi.saveNotification(this.notifymsg);
 				this.saving = false;
-			});
+				this.showSaveSuccess = true;
+				await new Promise(resolve => setTimeout(resolve, 2000));
+				this.showSaveSuccess = false;
+			} catch(error) {
+				this.error = error.message;
+				this.saving = false;
+			}
 		}
 	},
 	template: /* html */ `
@@ -433,47 +436,45 @@ const LinkedAccounts = {
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/settings.php/logins").done(result => {
+			try {
+				const result = await SettingsApi.loadLogins();
 				this.hasPassword = result.HasPassword;
 				this.passwordUsesOldEncryption = result.PasswordUsesOldEncryption;
 				this.accounts = result.Accounts;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		},
-		RemovePassword() {
+		async RemovePassword() {
 			this.error = "";
-			$.ajax({
-				method: "DELETE",
-				url: "/api/settings.php/password"
-			}).done(() => {
+			try {
+				await SettingsApi.deletePassword();
 				this.hasPassword = false;
 				this.passwordUsesOldEncryption = false;
-			}).fail(request => {
-				this.error = request.responseText;
-			});
+			} catch(error) {
+				this.error = error.message;
+			}
 		},
-		RemoveLogin(site, id) {
+		async RemoveLogin(site, id) {
 			this.error = "";
-			$.ajax({
-				method: "DELETE",
-				url: `/api/settings.php/login/${site}/${id}`
-			}).done(() => {
+			try {
+				await SettingsApi.deleteLogin(site, id);
 				this.accounts = this.accounts.filter(account => account.Site != site || account.ID != id);
-			}).fail(request => {
-				this.error = request.responseText;
-			});
+			} catch(error) {
+				this.error = error.message;
+			}
 		},
-		AddLogin(auth) {
-			$.get(`/api/user.php/auth/${auth}/`).done(redirectURL => {
+		async AddLogin(auth) {
+			try {
+				const redirectURL = await UserApi.auth(auth);
 				location = redirectURL;
-			}).fail(request => {
-				this.error = request.responseText;
-			});
+			} catch(error) {
+				this.error = error.message;
+			}
 		}
 	},
 	template: /* html */ `
@@ -529,7 +530,7 @@ const VisibilitySelector = {
 	},
 	methods: {
 		Toggle() {
-			popup.toggle($(this.$refs.droplist));
+			popup.toggle(this.$refs.droplist);
 		},
 		Select(newValue) {
 			this.localValue = newValue;
@@ -564,7 +565,7 @@ createApp({
 	},
 	created() {
 		this.ParseHash();
-		$(window).on("hashchange", this.ParseHash);
+		window.addEventListener("hashchange", this.ParseHash);
 	},
 	methods: {
 		ParseHash() {

@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import ToolApi from "/api/tool.js";
 
 createApp({
 	name: "Timestamps",
@@ -21,11 +21,9 @@ createApp({
 		};
 	},
 	methods: {
-		Analyze() {
-			let url = "/api/tool.php/timestamp/" + this.zone;
-			if(this.inputtype == "formatted")
-				url += "/formatted";
-			$.get(url, { value: this.inputtype == "formatted" ? this.formatted : +this.timestamp }).done(result => {
+		async Analyze() {
+			try {
+				const result = await ToolApi.timestamp(this.inputtype == "formatted" ? this.formatted : +this.timestamp, this.zone, this.inputtype == "formatted");
 				this.resulttimestamp = result.timestamp;
 				this.smart = result.smart;
 				this.ago = result.ago;
@@ -34,9 +32,9 @@ createApp({
 				this.day = result.day;
 				this.weekday = result.weekday;
 				this.time = result.time;
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		}
 	},
 	template: /* html */ `

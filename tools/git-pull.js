@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import ToolApi from "/api/tool.js";
 
 createApp({
 	name: "GitPull",
@@ -11,15 +11,16 @@ createApp({
 		};
 	},
 	methods: {
-		Update() {
+		async Update() {
 			this.working = true;
-			$.post("/api/tool.php/gitpull").done(result => {
+			try {
+				const result = await ToolApi.gitpull();
 				this.results = [result, ...this.results];
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.working = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `

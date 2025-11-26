@@ -1,8 +1,10 @@
-import "jquery";
 import { createApp } from "vue";
+import ActivityApi from "/api/activity.js";
+import ContactApi from "/api/contact.js";
+import UserApi from "/api/user.js";
 
 const username = location.pathname.split("/").filter(n => n).pop();
-const displayname = $("h1").text();
+const displayname = document.querySelector("h1").innerText;
 
 createApp({
 	name: "Contact",
@@ -17,15 +19,16 @@ createApp({
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/contact.php/list/" + username).done(result => {
+			try {
+				const result = await ContactApi.list(username);
 				this.contacts = result;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -50,16 +53,17 @@ createApp({
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/activity.php/byuser/" + username + "/" + this.activity.length).done(result => {
+			try {
+				const result = await ActivityApi.byuser(username, this.activity.length);
 				this.activity = this.activity.concat(result.Activity);
 				this.hasMore = result.HasMore;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -81,49 +85,48 @@ createApp({
 	}
 }).mount("#activity");
 
-$("a.addfriend").click(friend);
-$("a.removefriend").click(friend);
+document.querySelector("a.addfriend")?.addEventListener("click", friend);
+document.querySelector("a.removefriend")?.addEventListener("click", friend);
 
-function friend() {
+async function friend(event) {
+	event.preventDefault();
+	event.stopPropagation();
+
 	const method = getApiMethodFromClass(this.className);
-	$.ajax({
-		url: this.href,
-		type: method,
-	}).done(() => {
+	const id = this.href.split("/").filter(n => n).pop();
+	try {
+		await method(id);
 		toggleFriendship(this);
-	}).fail(request => {
-		alert(request.responseText);
-	});
-	return false;
+	} catch(error) {
+		alert(error.message);
+	}
 }
 
 function getApiMethodFromClass(className) {
 	switch(className) {
 		case "addfriend":
-			return "PUT";
+			return UserApi.putFriend;
 		case "removefriend":
-			return "DELETE";
+			return UserApi.deleteFriend;
 	}
 }
 
 function toggleFriendship(link) {
-	const h1 = $("h1");
+	const h1 = document.querySelector("h1");
 	switch(link.className) {
 		case "addfriend":
-			h1.addClass("friend");
-			$(link)
-				.removeClass("addfriend")
-				.addClass("removefriend")
-				.text("remove friend")
-				.attr("title", "remove " + displayname + " from your friends list");
+			h1.classList.add("friend");
+			link.classList.remove("addfriend");
+			link.classList.add("removefriend");
+			link.innerText = "remove friend";
+			link.title = "remove " + displayname + " from your friends list";
 			break;
 		case "removefriend":
-			h1.removeClass("friend");
-			$(link)
-				.removeClass("removefriend")
-				.addClass("addfriend")
-				.text("add friend")
-				.attr("title", "add " + displayname + " to your friends list");
+			h1.classList.remove("friend");
+			link.classList.remove("removefriend");
+			link.classList.add("addfriend");
+			link.innerText = "add friend";
+			link.title = "add " + displayname + " to your friends list";
 			break;
 	}
 }

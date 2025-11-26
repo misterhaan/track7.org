@@ -1,8 +1,9 @@
-import "jquery";
-import { createApp } from 'vue';
+import { createApp } from "vue";
 import autosize from "autosize";
 import { NameToUrl, ValidatingField } from "validate";
-import { TagsField, FindAddedTags } from "tag";
+import { TagsField } from "tag";
+import DateApi from "/api/date.js";
+import PhotoApi from "/api/photo.js";
 
 createApp({
 	name: "EditPhoto",
@@ -15,38 +16,46 @@ createApp({
 		};
 	},
 	computed: {
-		defaultUrl: function() {
+		defaultUrl() {
 			return NameToUrl(this.photo.Title);
 		},
-		effectiveUrl: function() {
+		effectiveUrl() {
 			return this.photo.ID || this.defaultUrl;
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.photo.Title && this.invalidFields.size <= 0 && this.photo.StoryMarkdown && (this.image || this.id);
 		}
 	},
-	created: function() {
+	created() {
 		const queryString = new URLSearchParams(location.search);
 		if(this.id = queryString.get("id") || "")
 			this.Load();
-		else
+		else {
 			this.originalTags = "";
-		this.$nextTick(() => {
-			autosize(this.$refs.storyField);
-		});
+			this.Autosize();
+		}
 	},
 	methods: {
-		Load() {
-			$.get("/api/photo.php/edit/" + this.id).done(photo => {
+		Autosize() {
+			this.$nextTick(() => {
+				autosize(this.$refs.storyField);
+			});
+		},
+		async Load() {
+			try {
+				const photo = await PhotoApi.edit(this.id);
 				if(!photo.StoryMarkdown)
 					photo.StoryMarkdown = photo.Story;
 				delete photo.Story;
 				this.photo = photo;
 				this.originalTags = this.photo.Tags;
-			}).fail(request => {
-				alert(request.responseText);
-			});
+				this.Autosize();
+			} catch(error) {
+				alert(error.message);
+			}
 		},
+		validateId: PhotoApi.idAvailable,
+		validateTaken: DateApi.validatePast,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -68,21 +77,18 @@ createApp({
 		TagsChanged(value) {
 			this.photo.Tags = value;
 		},
-		Save: function() {
+		async Save() {
 			this.saving = true;
 			const data = new FormData(this.$refs.photoForm);
-			data.append("id", this.effectiveUrl);
-			data.append("taken", this.photo.TakenFormatted);
-			data.append("addtags", FindAddedTags(this.photo.Tags, this.originalTags));
-			data.append("deltags", FindAddedTags(this.originalTags, this.photo.Tags));
 
-			$.post({ url: "/api/photo.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
+			try {
+				const result = await PhotoApi.save(this.id, data, this.effectiveUrl, this.photo.TakenFormatted, this.photo.Tags, this.originalTags);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -93,7 +99,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=photo.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/photo.php/idAvailable/' + this.id"
+				<ValidatingField :value=photo.ID :default=defaultUrl :original=this.id :urlCharsOnly=true :validate=validateId
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
 					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"
@@ -116,7 +122,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>taken:</span>
-				<ValidatingField :value=photo.TakenFormatted validateUrl="/api/date.php/validatePast"
+				<ValidatingField :value=photo.TakenFormatted :validate=validateTaken
 				msgChecking="validating date / time..." msgValid="valid date / time"
 					msgBlank="will attempt to look up from photo exif data" :isBlankValid=true
 					@validated="(isValid, newValue) => OnValidated('TakenFormatted', isValid, newValue)"

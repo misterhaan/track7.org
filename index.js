@@ -1,5 +1,5 @@
-import "jquery";
 import { createApp } from "vue";
+import ActivityApi from "/api/activity.js";
 
 createApp({
 	name: "LatestActivity",
@@ -15,16 +15,17 @@ createApp({
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			$.get("/api/activity.php/list/" + this.activity.length).done(result => {
+			try {
+				const result = await ActivityApi.list(this.activity.length);
 				this.activity = this.activity.concat(result.Activity);
 				this.hasMore = result.HasMore;
-			}).fail(request => {
-				this.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.error = error.message;
+			} finally {
 				this.loading = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `

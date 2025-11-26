@@ -1,7 +1,8 @@
-import { createApp } from 'vue';
-import { NameToUrl, ValidatingField } from "validate";
+import { createApp } from "vue";
 import autosize from "autosize";
-import { TagsField, FindAddedTags } from "tag";
+import { NameToUrl, ValidatingField } from "validate";
+import { TagsField } from "tag";
+import GuideApi from "/api/guide.js";
 
 createApp({
 	name: "EditGuide",
@@ -24,13 +25,13 @@ createApp({
 		};
 	},
 	computed: {
-		defaultUrl: function() {
+		defaultUrl() {
 			return NameToUrl(this.guide.Title);
 		},
-		effectiveUrl: function() {
+		effectiveUrl() {
 			return this.guide.ID || this.defaultUrl;
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.guide.Title && this.guide.Summary && this.invalidFields.size <= 0 && this.guide.Chapters.every(p => p.Title && p.Markdown);
 		}
 	},
@@ -47,20 +48,22 @@ createApp({
 		Autosize(update) {
 			this.$nextTick(() => {
 				if(update)
-					autosize.update($("textarea"));
+					autosize.update(document.querySelectorAll("textarea"));
 				else
-					autosize($("textarea"));
+					autosize(document.querySelectorAll("textarea"));
 			});
 		},
-		Load() {
-			$.get("/api/guide.php/edit/" + this.id).done(guide => {
+		async Load() {
+			try {
+				const guide = await GuideApi.edit(this.id);
 				this.guide = guide;
 				this.originalTags = this.guide.Tags;
 				this.Autosize();
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		},
+		validateId: GuideApi.idAvailable,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -71,7 +74,7 @@ createApp({
 		TagsChanged(value) {
 			this.guide.Tags = value;
 		},
-		MoveChapterUp: function(chapter) {
+		MoveChapterUp(chapter) {
 			const index = this.guide.Chapters.indexOf(chapter);
 			if(index > 0) {
 				this.guide.Chapters.splice(index, 1);
@@ -79,7 +82,7 @@ createApp({
 			}
 			this.Autosize(true);
 		},
-		MoveChapterDown: function(chapter) {
+		MoveChapterDown(chapter) {
 			const index = this.guide.Chapters.indexOf(chapter);
 			if(index >= 0 && index < this.guide.Chapters.length - 1) {
 				this.guide.Chapters.splice(index, 1);
@@ -87,7 +90,7 @@ createApp({
 			}
 			this.Autosize(true);
 		},
-		RemoveChapter: function(chapter) {
+		RemoveChapter(chapter) {
 			if(confirm("do you really want to remove this chapter?  any changes to its content will be lost.")) {
 				const index = this.guide.Chapters.indexOf(chapter);
 				if(index >= 0) {
@@ -96,30 +99,31 @@ createApp({
 			}
 			this.Autosize(true);
 		},
-		AddChapter: function() {
+		AddChapter() {
 			this.guide.Chapters.push({ Title: "", Markdown: "" });
 			this.Autosize();
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
-			const url = "/api/guide.php/save/" + this.id;
-			const data = {
-				id: this.effectiveUrl,
-				title: this.guide.Title,
-				summary: this.guide.Summary,
-				level: this.guide.Level,
-				addTags: FindAddedTags(this.guide.Tags, this.originalTags),
-				delTags: FindAddedTags(this.originalTags, this.guide.Tags),
-				chapters: this.guide.Chapters.map(c => { return { title: c.Title, markdown: c.Markdown }; }),
-				correctionsOnly: this.correctionsOnly
-			};
-			$.post({ url: url, data: JSON.stringify(data), contentType: "application/json; charset=utf-8" }).done(result => {
+			const chapters = this.guide.Chapters.map(c => { return { title: c.Title, markdown: c.Markdown }; });
+			try {
+				const result = await GuideApi.save(
+					this.id,
+					this.effectiveUrl,
+					this.guide.Title,
+					this.guide.Summary,
+					this.guide.Level,
+					this.guide.Tags,
+					this.originalTags,
+					chapters,
+					this.correctionsOnly
+				);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -130,7 +134,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label title="unique portion of guide url (alphanumeric with dots, dashes, and underscores)">url:</span>
-				<ValidatingField :value=guide.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/guide.php/idAvailable/' + this.id"
+				<ValidatingField :value=guide.ID :default=defaultUrl :original=this.id :urlCharsOnly=true :validate=validateId
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
 					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"

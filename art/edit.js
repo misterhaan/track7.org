@@ -1,7 +1,8 @@
-import { createApp } from 'vue';
-import { NameToUrl, ValidatingField } from "validate";
+import { createApp } from "vue";
 import autosize from "autosize";
-import { TagsField, FindAddedTags } from "tag";
+import { NameToUrl, ValidatingField } from "validate";
+import { TagsField } from "tag";
+import ArtApi from "/api/art.js";
 
 createApp({
 	name: "EditArt",
@@ -14,13 +15,13 @@ createApp({
 		};
 	},
 	computed: {
-		defaultUrl: function() {
+		defaultUrl() {
 			return NameToUrl(this.art.Title);
 		},
-		effectiveUrl: function() {
+		effectiveUrl() {
 			return this.art.ID || this.defaultUrl;
 		},
-		canSave: function() {
+		canSave() {
 			return !this.saving && this.art.Title && this.invalidFields.size <= 0 && this.art.Description && (this.image || this.id);
 		}
 	},
@@ -39,15 +40,17 @@ createApp({
 				autosize(this.$refs.descriptionField);
 			});
 		},
-		Load() {
-			$.get("/api/art.php/edit/" + this.id).done(art => {
+		async Load() {
+			try {
+				const art = await ArtApi.edit(this.id);
 				this.art = art;
 				this.originalTags = this.art.Tags;
 				this.Autosize();
-			}).fail(request => {
-				alert(request.responseText);
-			});
+			} catch(error) {
+				alert(error.message);
+			}
 		},
+		validateId: ArtApi.idAvailable,
 		OnValidated(fieldName, isValid, newValue) {
 			if(isValid)
 				this.invalidFields.delete(fieldName);
@@ -69,20 +72,17 @@ createApp({
 		TagsChanged(value) {
 			this.art.Tags = value;
 		},
-		Save() {
+		async Save() {
 			this.saving = true;
 			const data = new FormData(this.$refs.artForm);
-			data.append("id", this.effectiveUrl);
-			data.append("addtags", FindAddedTags(this.art.Tags, this.originalTags));
-			data.append("deltags", FindAddedTags(this.originalTags, this.art.Tags));
-
-			$.post({ url: "/api/art.php/save/" + this.id, data: data, contentType: false, processData: false }).done(result => {
+			try {
+				const result = await ArtApi.save(this.id, data, this.effectiveUrl, this.art.Tags, this.originalTags);
 				location.href = result;
-			}).fail(request => {
-				alert(request.responseText);
-			}).always(() => {
+			} catch(error) {
+				alert(error.message);
+			} finally {
 				this.saving = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -93,7 +93,7 @@ createApp({
 			</label>
 			<label>
 				<span class=label>url:</span>
-				<ValidatingField :value=art.ID :default=defaultUrl :urlCharsOnly=true :validateUrl="'/api/art.php/idAvailable/' + this.id"
+				<ValidatingField :value=art.ID :default=defaultUrl :original=this.id :urlCharsOnly=true :validate=validateId
 					msgChecking="validating url..." msgValid="url available" msgBlank="url required"
 					inputAttributes="{maxlength: 32, pattern: '[a-z0-9\\-_]+', required: true}"
 					@validated="(isValid, newValue) => OnValidated('ID', isValid, newValue)"

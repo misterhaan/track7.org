@@ -1,7 +1,8 @@
-import "jquery";
 import { createApp } from "vue";
-import { currentUser } from "user";
 import autosize from "autosize";
+import { currentUser } from "user";
+import MessageApi from "/api/message.js";
+import UserApi from "/api/user.js";
 
 const UserField = {
 	data() {
@@ -14,7 +15,7 @@ const UserField = {
 	},
 	emits: ["selectUser"],
 	watch: {
-		usermatch: function(match) {
+		usermatch(match) {
 			if(this.waitUserSuggest)
 				clearTimeout(this.waitUserSuggest);
 			delete this.waitUserSuggest;
@@ -22,20 +23,16 @@ const UserField = {
 				this.matchingusers = [];
 				this.findingusers = false;
 			} else {
-				this.waitUserSuggest = setTimeout(() => {
+				this.waitUserSuggest = setTimeout(async () => {
 					this.findingusers = true;
-					$.ajax({
-						method: "POST",
-						url: "/api/user.php/suggest",
-						data: match,
-						contentType: "text/plain; charset=utf-8"
-					}).done(matches => {
+					try {
+						const matches = await UserApi.suggest(match);
 						this.matchingusers = matches;
-					}).fail(request => {
-						alert(request.responseText);
-					}).always(() => {
+					} catch(error) {
+						alert(error.message);
+					} finally {
 						this.findingusers = false;
-					});
+					}
 				}, 250);
 			}
 		}
@@ -44,13 +41,14 @@ const UserField = {
 		this.SelectHashUser();
 	},
 	methods: {
-		SelectHashUser() {
+		async SelectHashUser() {
 			if(location.hash.substring(0, 5) == "#!to=")
-				$.get("/api/user.php/info/" + location.hash.substring(5)).done(user => {
+				try {
+					const user = await UserApi.info(location.hash.substring(5));
 					this.Select(user);
-				}).fail(() => {
+				} catch {
 					this.usermatch = location.hash.substring(5);
-				});
+				}
 		},
 		HideSuggestions(delay) {
 			setTimeout(() => {
@@ -103,7 +101,7 @@ const UserField = {
 	`
 };
 
-if($("#sendmessage").length)
+if(document.querySelector("#sendmessage"))
 	createApp({
 		name: "SendMessage",
 		data() {
@@ -130,26 +128,23 @@ if($("#sendmessage").length)
 		methods: {
 			SelectUser(user) {
 				this.user = user;
-				$(this.$refs.fromname).trigger("focus");
+				this.$refs.fromname?.focus();
 			},
-			Send() {
+			async Send() {
 				this.sending = true;
 				this.error = "";
-				$.post("/api/message.php/send/" + this.user.ID, {
-					message: this.message,
-					fromname: this.fromname,
-					fromcontact: this.fromcontact
-				}).done(message => {
+				try {
+					const message = await MessageApi.send(this.user.ID, this.message, this.fromname, this.fromcontact);
+					this.message = "";
 					this.sentmessages.push(message);
 					this.$nextTick(() => {
 						Prism.highlightAll();
 					});
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
+				} catch(error) {
+					this.error = error.message;
+				} finally {
 					this.sending = false;
-				});
-				this.message = "";
+				}
 			},
 			ClearUser() {
 				if(history.replaceState)
@@ -158,7 +153,7 @@ if($("#sendmessage").length)
 					location.hash = "";
 				this.user = null;
 				this.$nextTick(() => {
-					$("#usermatch").trigger("focus");
+					document.querySelector("#usermatch")?.focus();
 				});
 			}
 		},
@@ -227,7 +222,8 @@ const Messages = {
 			if(!newVal && oldVal)
 				this.$nextTick(() => {
 					Prism.highlightAll();
-					const shownMessages = $(".messages:visible li");
+					const visibleMessageContainer = firstVisible(document.querySelectorAll(".messages"));
+					const shownMessages = visibleMessageContainer.querySelectorAll("li");
 					let index = 0;
 					if(!this.lastScrollCount) {
 						const firstUnread = this.conv.messages.findIndex(m => m.Unread && !m.Outgoing);
@@ -237,9 +233,9 @@ const Messages = {
 							index = this.conv.messages.length - 1;
 					} else
 						index = this.conv.messages.length - this.lastScrollCount;
-					$("html, body").animate({ scrollTop: $(shownMessages[index]).offset().top }, 750);
+					timedScrollTo(shownMessages[index], 750);
 					if(!this.lastScrollCount)
-						$(this.$refs.response).trigger("focus");
+						this.$refs.response.focus();
 					this.lastScrollCount = this.conv.messages.length;
 				});
 		}
@@ -248,26 +244,28 @@ const Messages = {
 		this.$nextTick(() => {
 			autosize(this.$refs.response);
 			if(!this.conv.loading)
-				$(this.$refs.response).trigger("focus");
+				this.$refs.response.focus();
 		});
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.conv.loading = true;
 			this.conv.error = "";
-			$.get("/api/message.php/conversation/" + this.conv.With.ID + "/" + this.conv.messages.length).done(result => {
+			try {
+				const result = await MessageApi.conversation(this.conv.With.ID, this.conv.messages.length);
 				this.conv.messages = [...result.Messages, ...this.conv.messages];
 				this.conv.hasMore = result.HasMore;
-			}).fail(request => {
-				this.conv.error = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.conv.error = error.message;
+			} finally {
 				this.conv.loading = false;
-			});
+			}
 		},
-		Reply() {
+		async Reply() {
 			this.sending = true;
 			this.sendError = "";
-			$.post("/api/message.php/send/" + this.conv.With.ID, { message: this.response }).done(message => {
+			try {
+				const message = await MessageApi.send(this.conv.With.ID, this.response);
 				this.conv.messages.push(message);
 				this.conv.Instant.Display = "now";
 				this.conv.Instant.DateTime = message.Instant.DateTime;
@@ -277,11 +275,11 @@ const Messages = {
 				this.$nextTick(() => {
 					Prism.highlightAll();
 				});
-			}).fail(request => {
-				this.sendError = request.responseText;
-			}).always(() => {
+			} catch(error) {
+				this.sendError = error.message;
+			} finally {
 				this.sending = false;
-			});
+			}
 		}
 	},
 	template: /* html */ `
@@ -296,7 +294,7 @@ const Messages = {
 					<div class=username v-if="!msg.Outgoing && !conv.With.ID && !msg.Contact">{{msg.Name}}</div>
 					<div class=username v-if="!msg.Outgoing && !conv.With.ID && msg.Contact"><a :href=msg.Contact>{{msg.Name}}</a></div>
 					<div class=username v-if="!msg.Outgoing && conv.With.URL"><a :href=conv.With.URL>{{conv.With.Name}}</a></div>
-					<div class=username v-if=msg.Outgoing><a href=${currentUser?.Profile}>${currentUser?.DisplayName}</a></div>
+					<div class=username v-if=msg.Outgoing><a href=${currentUser?.URL}>${currentUser?.DisplayName}</a></div>
 					<img class=avatar v-if="!msg.Outgoing && conv.With.Avatar" :src=conv.With.Avatar>
 					<img class=avatar v-if=msg.Outgoing src="${currentUser?.Avatar}">
 				</div>
@@ -324,7 +322,7 @@ const Messages = {
 	`
 };
 
-if($("#messages").length)
+if(document.querySelector("#messages"))
 	createApp({
 		name: "Conversations",
 		data() {
@@ -339,15 +337,16 @@ if($("#messages").length)
 			this.Load();
 		},
 		methods: {
-			Load() {
+			async Load() {
 				this.loading = true;
-				$.get("/api/message.php/list").done(conversations => {
+				try {
+					const conversations = await MessageApi.list();
 					this.conversations = conversations;
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
+				} catch(error) {
+					this.error = error.message;
+				} finally {
 					this.loading = false;
-				});
+				}
 			},
 			SelectUser(user) {
 				const existingConv = this.conversations.find(c => c.With.ID == user.ID);
@@ -374,18 +373,19 @@ if($("#messages").length)
 					this.Select(newConv);
 				}
 			},
-			Select(conv) {
+			async Select(conv) {
 				this.selected = conv;
 				if(!conv.messages) {
 					conv.loading = true;
-					$.get("/api/message.php/conversation/" + +conv.With.ID).done(result => {
+					try {
+						const result = await MessageApi.conversation(conv.With.ID);
 						conv.messages = result.Messages;
 						conv.hasMore = result.HasMore;
-					}).fail(request => {
-						conv.error = request.responseText;
-					}).always(() => {
+					} catch(error) {
+						conv.error = error.message;
+					} finally {
 						conv.loading = false;
-					});
+					}
 				}
 			},
 			MessageSent() {
@@ -417,3 +417,25 @@ if($("#messages").length)
 	}).component("UserField", UserField)
 		.component("Messages", Messages)
 		.mount("#messages");
+
+function firstVisible(elements) {
+	for(const element of elements)
+		if(element.checkVisibility())
+			return element;
+}
+
+function timedScrollTo(element, duration) {
+	const startY = window.pageYOffset;
+	const scrollDistance = element.getBoundingClientRect().top;
+	let startTime = null;
+	function animationStep(now) {
+		if(!startTime)
+			startTime = now;
+		const elapsedPortion = Math.min((now - startTime) / duration, 1);
+		const elapsedDistance = .5 - Math.cos(elapsedPortion * Math.PI) / 2;
+		window.scrollTo(0, startY + scrollDistance * elapsedDistance);
+		if(elapsedPortion < 1)
+			requestAnimationFrame(animationStep);
+	}
+	requestAnimationFrame(animationStep);
+}

@@ -1,6 +1,6 @@
-import "jquery";
-import { Comment } from "comment";
 import { createApp } from "vue";
+import { Comment } from "comment";
+import CommentApi from "/api/comment.js";
 
 createApp({
 	name: "RecentComments",
@@ -13,35 +13,34 @@ createApp({
 		};
 	},
 	created() {
-		this.user = $("#recentcomments").data("user");
+		this.user = document.querySelector("#recentcomments").dataset.user;
 		this.Load();
 	},
 	methods: {
-		Load() {
+		async Load() {
 			this.loading = true;
-			let url = this.user ? "/api/comment.php/byuser/" + this.user : "/api/comment.php/all";
-			if(this.comments.length)
-				url += "/" + this.comments.length;
-			$.get(url)
-				.done(result => {
-					this.comments = this.comments.concat(result.Comments);
-					this.hasMore = result.HasMore;
-					this.$nextTick(() => {
-						Prism.highlightAll();
-					});
-				}).fail(request => {
-					this.error = request.responseText;
-				}).always(() => {
-					this.loading = false;
+			try {
+				const result = await (this.user
+					? CommentApi.byUser(this.user, this.comments.length)
+					: CommentApi.all(this.comments.length));
+				this.comments = this.comments.concat(result.Comments);
+				this.hasMore = result.HasMore;
+				this.$nextTick(() => {
+					Prism.highlightAll();
 				});
+			} catch(error) {
+				this.error = error.message;
+			} finally {
+				this.loading = false;
+			}
 		},
-		Delete(index) {
-			$.ajax({ url: "/api/comment.php/id/" + this.comments[index].ID, type: "DELETE" })
-				.done(() => {
-					this.comments.splice(index, 1);
-				}).fail(request => {
-					alert(request.responseText);
-				});
+		async Delete(index) {
+			try {
+				await CommentApi.delete(this.comments[index].ID);
+				this.comments.splice(index, 1);
+			} catch(error) {
+				alert(error.message);
+			}
 		}
 	},
 	template: /* html */ `

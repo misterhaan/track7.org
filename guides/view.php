@@ -63,6 +63,7 @@ class FullGuide extends Page {
 			?>
 				<a class=publish href="/api/guide.php/publish/<?= self::$guide->ID; ?>" @click.prevent=Publish>publish this guide</a>
 				<a class=del href="/api/guide.php/id/<?= self::$guide->ID; ?>" @click.prevent=Delete>delete this guide</a>
+				<Transition name=fadeout><span class=success v-if=showPublishSuccess>successfully published!</span></Transition>
 			<?php
 			}
 			?>

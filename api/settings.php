@@ -28,7 +28,7 @@ class SettingsApi extends Api {
 
 		$endpoints[] = $endpoint = new EndpointDocumentation('GET', 'contacts', 'retrieves contact methods for the current user.');
 
-		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'time', 'saves contact methods for the current user.', 'json', 'send a json array of contact methods, each with the following properties (or an empty array to remove all).');
+		$endpoints[] = $endpoint = new EndpointDocumentation('POST', 'contacts', 'saves contact methods for the current user.', 'json', 'send a json array of contact methods, each with the following properties (or an empty array to remove all).');
 		$endpoint->BodyParameters[] = new ParameterDocumentation('type', 'string', 'type of contact method.  must be one of the supported types.', true);
 		$endpoint->BodyParameters[] = new ParameterDocumentation('value', 'string', 'value of the contact method.  must be appropriate for the type; could be an e-mail address, url, username, or user id.', true);
 		$endpoint->BodyParameters[] = new ParameterDocumentation('visibility', 'string', 'visibility of the contact method.  must be one of none, friends, users, or all.', true);
