@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { NameToUrl, ValidatingField } from "validate";
 import { TagsField } from "tag";
@@ -45,13 +45,12 @@ createApp({
 		}
 	},
 	methods: {
-		Autosize(update) {
-			this.$nextTick(() => {
-				if(update)
-					autosize.update(document.querySelectorAll("textarea"));
-				else
-					autosize(document.querySelectorAll("textarea"));
-			});
+		async Autosize(update) {
+			await nextTick();
+			if(update)
+				autosize.update(document.querySelectorAll("textarea"));
+			else
+				autosize(document.querySelectorAll("textarea"));
 		},
 		async Load() {
 			try {

@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { currentUser } from "user";
 import CommentApi from "/api/comment.js";
@@ -24,21 +24,19 @@ export const Comment = {
 		}
 	},
 	methods: {
-		Edit() {
+		async Edit() {
 			this.editing = true;
 			this.oldMarkdown = this.comment.Markdown;
-			this.$nextTick(() => {
-				this.$refs.editField.focus();
-				autosize(this.$refs.editField);
-			});
+			await nextTick();
+			this.$refs.editField.focus();
+			autosize(this.$refs.editField);
 		},
-		Unedit() {
+		async Unedit() {
 			this.editing = false;
 			this.comment.Markdown = this.oldMarkdown;
 			this.oldMarkdown = '';
-			this.$nextTick(() => {
-				Prism.highlightAll();
-			});
+			await nextTick();
+			Prism.highlightAll();
 		},
 		async Save(leaveANote) {
 			this.saving = true;
@@ -48,9 +46,8 @@ export const Comment = {
 				this.comment.HTML = html;
 				if(leaveANote)
 					this.comment.Edits.push({ Instant: { Display: "just now" }, DisplayName: currentUser.DisplayName, Username: currentUser.URL.split("/")[1] });
-				this.$nextTick(() => {
-					Prism.highlightAll();
-				});
+				await nextTick();
+				Prism.highlightAll();
 			} catch(error) {
 				alert(error.message);
 			} finally {
@@ -136,11 +133,10 @@ if(comments) {
 				return subsite == "forum" ? "replies" : "comments";
 			}
 		},
-		created() {
+		async created() {
 			this.Load();
-			this.$nextTick(() => {
-				autosize(this.$refs.commentField);
-			});
+			await nextTick();
+			autosize(this.$refs.commentField);
 		},
 		methods: {
 			async Add() {
@@ -161,9 +157,8 @@ if(comments) {
 					const result = await CommentApi.byPost(postID, this.comments.length);
 					this.comments = this.comments.concat(result.Comments);
 					this.hasMore = result.HasMore;
-					this.$nextTick(() => {
-						Prism.highlightAll();
-					});
+					await nextTick();
+					Prism.highlightAll();
 				} catch(error) {
 					this.error = error.message;
 				} finally {

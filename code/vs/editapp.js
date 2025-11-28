@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { NameToUrl, ValidatingField } from "validate";
 import ApplicationApi from "/api/application.js";
@@ -33,10 +33,9 @@ createApp({
 		}
 	},
 	methods: {
-		Autosize() {
-			this.$nextTick(() => {
-				autosize(this.$refs.markdownField);
-			});
+		async Autosize() {
+			await nextTick();
+			autosize(this.$refs.markdownField);
 		},
 		async Load() {
 			try {

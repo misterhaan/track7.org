@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { NameToUrl, ValidatingField } from "validate";
 import DateApi from "/api/date.js";
@@ -35,11 +35,10 @@ createApp({
 		}
 	},
 	methods: {
-		Autosize() {
-			this.$nextTick(() => {
-				autosize(this.$refs.description);
-				autosize(this.$refs.instructions);
-			});
+		async Autosize() {
+			await nextTick();
+			autosize(this.$refs.description);
+			autosize(this.$refs.instructions);
 		},
 		async Load() {
 			try {

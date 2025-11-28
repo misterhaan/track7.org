@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { currentUser } from "user";
 import TagApi from "/api/tag.js";
@@ -47,13 +47,12 @@ createApp({
 				this.loading = false;
 			}
 		},
-		Edit(tag) {
+		async Edit(tag) {
 			if(this.canEdit) {
 				this.edit = { Name: tag.Name, Description: tag.Description };
-				this.$nextTick(() => {
-					this.$refs.editField[0]?.focus();
-					autosize(this.$refs.editField);
-				});
+				await nextTick();
+				this.$refs.editField[0]?.focus();
+				autosize(this.$refs.editField);
 			}
 		},
 		Cancel() {

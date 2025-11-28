@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import "vote";
 import "comment";
 import GuideApi from "/api/guide.js";
@@ -26,9 +26,8 @@ createApp({
 			try {
 				const chapters = await GuideApi.chapters(this.id);
 				this.chapters = chapters;
-				this.$nextTick(() => {
-					Prism.highlightAll();
-				});
+				await nextTick();
+				Prism.highlightAll();
 			} catch(error) {
 				this.error = error.message;
 			} finally {

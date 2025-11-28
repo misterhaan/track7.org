@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import ToolApi from "/api/tool.js";
 
@@ -39,10 +39,9 @@ createApp({
 		}
 	},
 	methods: {
-		Autosize() {
-			this.$nextTick(() => {
-				autosize(this.$refs.editField);
-			});
+		async Autosize() {
+			await nextTick();
+			autosize(this.$refs.editField);
 		},
 		async Match() {
 			try {

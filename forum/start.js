@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { currentUser } from "user";
 import { ExistingTagsField } from "tag";
@@ -24,10 +24,9 @@ createApp({
 			return currentUser;
 		}
 	},
-	created() {
-		this.$nextTick(() => {
-			autosize(this.$refs.textField);
-		});
+	async created() {
+		await nextTick();
+		autosize(this.$refs.textField);
 	},
 	methods: {
 		TagsChanged(newTags) {

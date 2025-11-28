@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { NameToUrl, ValidatingField } from "validate";
 import { TagsField } from "tag";
@@ -36,10 +36,9 @@ createApp({
 		}
 	},
 	methods: {
-		Autosize() {
-			this.$nextTick(() => {
-				autosize(this.$refs.storyField);
-			});
+		async Autosize() {
+			await nextTick();
+			autosize(this.$refs.storyField);
 		},
 		async Load() {
 			try {

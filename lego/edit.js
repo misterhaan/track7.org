@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { NameToUrl, ValidatingField } from "validate";
 import LegoApi from "/api/lego.js";
@@ -32,10 +32,9 @@ createApp({
 			this.Autosize();
 	},
 	methods: {
-		Autosize() {
-			this.$nextTick(() => {
-				autosize(this.$refs.descriptionField);
-			});
+		async Autosize() {
+			await nextTick();
+			autosize(this.$refs.descriptionField);
 		},
 		async Load() {
 			try {

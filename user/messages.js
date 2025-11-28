@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { currentUser } from "user";
 import MessageApi from "/api/message.js";
@@ -120,10 +120,9 @@ if(document.querySelector("#sendmessage"))
 				return !this.sending && this.user && this.message.length > 1;
 			}
 		},
-		created() {
-			this.$nextTick(() => {
-				autosize(this.$refs.message);
-			});
+		async created() {
+			await nextTick();
+			autosize(this.$refs.message);
 		},
 		methods: {
 			SelectUser(user) {
@@ -137,24 +136,22 @@ if(document.querySelector("#sendmessage"))
 					const message = await MessageApi.send(this.user.ID, this.message, this.fromname, this.fromcontact);
 					this.message = "";
 					this.sentmessages.push(message);
-					this.$nextTick(() => {
-						Prism.highlightAll();
-					});
+					await nextTick();
+					Prism.highlightAll();
 				} catch(error) {
 					this.error = error.message;
 				} finally {
 					this.sending = false;
 				}
 			},
-			ClearUser() {
+			async ClearUser() {
 				if(history.replaceState)
 					history.replaceState(null, null, location.pathname);
 				else
 					location.hash = "";
 				this.user = null;
-				this.$nextTick(() => {
-					document.querySelector("#usermatch")?.focus();
-				});
+				nextTick();
+				document.querySelector("#usermatch")?.focus();
 			}
 		},
 		template: /* html */ `
@@ -218,34 +215,32 @@ const Messages = {
 		}
 	},
 	watch: {
-		loading(newVal, oldVal) {
+		async loading(newVal, oldVal) {
 			if(!newVal && oldVal)
-				this.$nextTick(() => {
-					Prism.highlightAll();
-					const visibleMessageContainer = firstVisible(document.querySelectorAll(".messages"));
-					const shownMessages = visibleMessageContainer.querySelectorAll("li");
-					let index = 0;
-					if(!this.lastScrollCount) {
-						const firstUnread = this.conv.messages.findIndex(m => m.Unread && !m.Outgoing);
-						if(firstUnread > -1)
-							index = firstUnread;
-						else
-							index = this.conv.messages.length - 1;
-					} else
-						index = this.conv.messages.length - this.lastScrollCount;
-					timedScrollTo(shownMessages[index], 750);
-					if(!this.lastScrollCount)
-						this.$refs.response.focus();
-					this.lastScrollCount = this.conv.messages.length;
-				});
+				await nextTick();
+			Prism.highlightAll();
+			const visibleMessageContainer = firstVisible(document.querySelectorAll(".messages"));
+			const shownMessages = visibleMessageContainer.querySelectorAll("li");
+			let index = 0;
+			if(!this.lastScrollCount) {
+				const firstUnread = this.conv.messages.findIndex(m => m.Unread && !m.Outgoing);
+				if(firstUnread > -1)
+					index = firstUnread;
+				else
+					index = this.conv.messages.length - 1;
+			} else
+				index = this.conv.messages.length - this.lastScrollCount;
+			timedScrollTo(shownMessages[index], 750);
+			if(!this.lastScrollCount)
+				this.$refs.response.focus();
+			this.lastScrollCount = this.conv.messages.length;
 		}
 	},
-	created() {
-		this.$nextTick(() => {
-			autosize(this.$refs.response);
-			if(!this.conv.loading)
-				this.$refs.response.focus();
-		});
+	async created() {
+		await nextTick();
+		autosize(this.$refs.response);
+		if(!this.conv.loading)
+			this.$refs.response.focus();
 	},
 	methods: {
 		async Load() {
@@ -272,9 +267,8 @@ const Messages = {
 				this.conv.Instant.Tooltip = message.Instant.Display.replaceAll(/<\/?sup>/g, "");
 				this.$emit("messageSent", message);
 				this.response = "";
-				this.$nextTick(() => {
-					Prism.highlightAll();
-				});
+				await nextTick();
+				Prism.highlightAll();
 			} catch(error) {
 				this.sendError = error.message;
 			} finally {

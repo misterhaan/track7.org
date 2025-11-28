@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import { Comment } from "comment";
 import CommentApi from "/api/comment.js";
 
@@ -25,9 +25,8 @@ createApp({
 					: CommentApi.all(this.comments.length));
 				this.comments = this.comments.concat(result.Comments);
 				this.hasMore = result.HasMore;
-				this.$nextTick(() => {
-					Prism.highlightAll();
-				});
+				await nextTick();
+				Prism.highlightAll();
 			} catch(error) {
 				this.error = error.message;
 			} finally {

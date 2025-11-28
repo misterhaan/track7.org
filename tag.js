@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import TagApi from "/api/tag.js";
 
@@ -60,14 +60,13 @@ if(taginfo && editLink) {
 			this.name = taginfo.dataset.name;
 		},
 		methods: {
-			StartEdit() {
+			async StartEdit() {
 				this.editing = true;
 				this.oldDescription = this.description;
 				editLink.style.display = "none";
-				this.$nextTick(() => {
-					this.$refs.editField.focus();
-					autosize(this.$refs.editField);
-				});
+				await nextTick();
+				this.$refs.editField.focus();
+				autosize(this.$refs.editField);
 			},
 			CancelEdit() {
 				this.editing = false;

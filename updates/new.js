@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, nextTick } from "vue";
 import autosize from "autosize";
 import { ValidatingField } from "validate";
 import DateApi from "/api/date.js";
@@ -20,10 +20,9 @@ createApp({
 			return !this.saving && this.markdown && this.invalidFields.size <= 0;
 		}
 	},
-	created() {
-		this.$nextTick(() => {
-			autosize(this.$refs.markdown);
-		});
+	async created() {
+		await nextTick();
+		autosize(this.$refs.markdown);
 	},
 	methods: {
 		validateDate: DateApi.validatePast,
