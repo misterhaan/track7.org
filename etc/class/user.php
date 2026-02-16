@@ -99,6 +99,7 @@ class User {
 			$select = $db->prepare('select e.contact, s.emailnewmessage from settings as s left join contact as e on e.user=s.user and e.type=\'email\' where s.user=? limit 1');
 			$select->bind_param('i', $this->ID);
 			$select->execute();
+			/** @var string $emailnewmessage */
 			$select->bind_result($email, $emailnewmessage);
 			$select->fetch();
 			return new NotificationSettings($email, $emailnewmessage);
@@ -127,6 +128,8 @@ class MatchingUser extends User {
 			$select = $db->prepare('select u.id, u.avatar, u.displayname, u.username, not isnull(f.fan) as isfriend, u.username=? or u.displayname=? as exact, u.username like ? or u.displayname like ? as start from user as u left join friend as f on f.fan=? and f.friend=u.id where u.id!=? and (u.username like ? or u.displayname like ?) order by isfriend desc, exact desc, start desc, coalesce(nullif(u.displayname, \'\'), u.username) limit 8');
 			$select->bind_param('ssssiiss', $match, $match, $startsMatch, $startsMatch, $user->ID, $user->ID, $containsMatch, $containsMatch);
 			$select->execute();
+			/** @var string $username */
+			/** @var bool $friend */
 			$select->bind_result($id, $avatar, $displayname, $username, $friend, $exact, $start);
 			$matches = [];
 			while ($select->fetch())
@@ -175,6 +178,12 @@ class DetailedUser extends User {
 			$select = $db->prepare('select u.id, u.level, u.username, u.displayname, u.avatar, unix_timestamp(u.registered), unix_timestamp(u.lastlogin), not isnull(f.fan), r.posts, r.postrank, r.comments, r.commentrank, r.fans, r.fanrank, r.friends, r.friendrank, r.votes, r.voterank from user as u left join friend as f on f.friend=u.id and f.fan=? left join ranking as r on r.user=u.id where u.username=? limit 1');
 			$select->bind_param('is', $user->ID, $username);
 			$select->execute();
+			/** @var int $level */
+			/** @var string $displayname */
+			/** @var string $avatar */
+			/** @var int $registered */
+			/** @var int $lastlogin */
+			/** @var bool $friend */
 			$select->bind_result($id, $level, $username, $displayname, $avatar, $registered, $lastlogin, $friend, $posts, $postrank, $comments, $commentrank, $fans, $fanrank, $friends, $friendrank, $votes, $voterank);
 			if ($select->fetch())
 				return new self($user, $id, $level, $username, $displayname, $avatar, $registered, $lastlogin, $friend, $posts, $postrank, $comments, $commentrank, $fans, $fanrank, $friends, $friendrank, $votes, $voterank);
@@ -189,6 +198,13 @@ class DetailedUser extends User {
 			$select = $db->prepare('select u.id, u.level, u.username, u.displayname, u.avatar, unix_timestamp(u.registered), unix_timestamp(u.lastlogin), not isnull(f.fan), r.posts, r.postrank, r.comments, r.commentrank, r.fans, r.fanrank, r.friends, r.friendrank, r.votes, r.voterank from user as u left join friend as f on f.friend=u.id and f.fan=? left join ranking as r on r.user=u.id order by u.lastlogin desc');
 			$select->bind_param('i', $user->ID);
 			$select->execute();
+			/** @var int $level */
+			/** @var string $username */
+			/** @var string $displayname */
+			/** @var string $avatar */
+			/** @var int $registered */
+			/** @var int $lastlogin */
+			/** @var bool $friend */
 			$select->bind_result($id, $level, $username, $displayname, $avatar, $registered, $lastlogin, $friend, $posts, $postrank, $comments, $commentrank, $fans, $fanrank, $friends, $friendrank, $votes, $voterank);
 			$result = new UserList();
 			while ($select->fetch())
@@ -299,6 +315,7 @@ class CurrentUser extends User {
 			$select = $db->prepare('select id, passwordhash from user where username=? and passwordhash is not null limit 1');
 			$select->bind_param('s', $username);
 			$select->execute();
+			/** @var string $hash */
 			$select->bind_result($id, $hash);
 			if ($select->fetch() && self::CheckPassword($db, $password, $hash, $id))
 				return self::Login($db, 'password', $id, $remember);
@@ -354,6 +371,7 @@ class CurrentUser extends User {
 			$select = $db->prepare('select site, id, name, avatar from login where user=? and avatar is not null');
 			$select->bind_param('i', $this->ID);
 			$select->execute();
+			/** @var string $avatar */
 			$select->bind_result($site, $id, $name, $avatar);
 			while ($select->fetch())
 				$settings->AvatarOptions[] = new AvatarOption("$site/$id", "link to $site account $name", $avatar);
@@ -485,6 +503,8 @@ class CurrentUser extends User {
 			$select = $db->prepare('select type, contact, visibility from contact where user=?');
 			$select->bind_param('i', $this->ID);
 			$select->execute();
+			/** @var string $contact */
+			/** @var string $visibility */
 			$select->bind_result($type, $contact, $visibility);
 			$result = [];
 			while ($select->fetch())
@@ -561,6 +581,7 @@ class CurrentUser extends User {
 			$select = $db->prepare('select site, id, name, url, avatar from login where user=?');
 			$select->bind_param('i', $this->ID);
 			$select->execute();
+			/** @var string $id */
 			$select->bind_result($site, $id, $name, $url, $avatar);
 			while ($select->fetch())
 				$result->Accounts[] = new LoginAccount($site, $id, $name, $url, $avatar);
@@ -767,6 +788,7 @@ class CurrentUser extends User {
 		$select = $db->prepare('select tokenhash, unix_timestamp(expires), user from remember where series=? limit 1');
 		$select->bind_param('s', $series);
 		$select->execute();
+		/** @var int $id */
 		$select->bind_result($tokenhash, $expires, $id);
 		if ($select->fetch() && $expires >= time())
 			if ($tokenhash == base64_encode(hash('sha512', base64_decode($token), true)))

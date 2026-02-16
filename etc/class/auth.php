@@ -1,7 +1,4 @@
 <?php
-
-use Dom\Mysql;
-
 require_once 'environment.php';
 
 abstract class Auth extends KeyMaster {
@@ -198,6 +195,8 @@ class LoginProfile {
 			$select = $db->prepare('select site, id, user, name, url, avatar, linkavatar from login where site=? and id=?');
 			$select->bind_param('ss', $site, $id);
 			$select->execute();
+			/** @var string $user */
+			/** @var bool $linkAvatar */
 			$select->bind_result($site, $id, $user, $name, $url, $avatar, $linkAvatar);
 			if ($select->fetch())
 				return new self($site, $id, $user, $name, $url, $avatar, $linkAvatar);
