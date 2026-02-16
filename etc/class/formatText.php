@@ -39,7 +39,7 @@ class HeaderlessParsedown extends Parsedown {
 	protected function blockHeader($Line) {
 		return;
 	}
-	protected function blockSetextHeader($Line, array $Block = NULL) {
+	protected function blockSetextHeader($Line, ?array $Block = null) {
 		return;
 	}
 }
