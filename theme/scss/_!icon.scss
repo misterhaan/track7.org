@@ -1,10 +1,5 @@
-@mixin icon-left {
-	&:before {
-		font-size: .9em;
-		margin-right: .4em;
-		display: inline-block;
-	}
-}
+@use "!color" as color;
+@use "!mixin" as mixin;
 
 @keyframes icon-spin {
 	from {
@@ -19,7 +14,7 @@
 .actions a,
 .action,
 .meta>* {
-	@include icon-left;
+	@include mixin.icon-left;
 }
 
 .addfriend:before {
@@ -104,7 +99,7 @@ a[href="#contact"]:before {
 	font-family: fontawesome;
 	font-weight: bold;
 	content: "\f00d";
-	color: $main-error-text;
+	color: color.$main-error-text;
 }
 
 .deviantart:before {
@@ -228,7 +223,7 @@ header.incoming.read:before {
 	font-family: fontawesome;
 	font-weight: bold;
 	content: "\f05e";
-	color: $main-error-text;
+	color: color.$main-error-text;
 }
 
 .joined:before {
@@ -366,7 +361,7 @@ a[href="#profile"]:before,
 }
 
 .rating {
-	@include icon-left;
+	@include mixin.icon-left;
 }
 
 .rating:before {
@@ -483,7 +478,7 @@ a[href="#profile"]:before,
 	font-family: fontawesome;
 	font-weight: bold;
 	content: "\f00c";
-	color: $main-valid-text;
+	color: color.$main-valid-text;
 }
 
 .tag:before {
@@ -552,7 +547,7 @@ a[href="#timezone"]:before {
 .unlink:before {
 	font-family: fontawesome;
 	content: "\f127";
-	color: $main-error-text;
+	color: color.$main-error-text;
 }
 
 .up:before {
@@ -570,7 +565,7 @@ a[href="#timezone"]:before {
 	font-family: fontawesome;
 	font-weight: bold;
 	content: "\f00c";
-	color: $main-valid-text;
+	color: color.$main-valid-text;
 }
 
 .views:before {

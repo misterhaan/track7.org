@@ -1,3 +1,6 @@
+@use "!color" as color;
+@use "!mixin" as mixin;
+
 #userlist {
 	list-style-type: none;
 	margin: .25em .5em;
@@ -20,19 +23,19 @@
 
 		&>div {
 			display: flex;
-			background-color: $main-shadow;
+			background-color: color.$main-shadow;
 			border-radius: 0 0 .25em .25em;
 		}
 	}
 
 	header {
 		display: flex;
-		background-color: $main-highlight;
+		background-color: color.$main-highlight;
 		border-radius: .25em .25em 0 0;
 		padding: .125em .5em;
 
 		a {
-			color: $main-highlight-link-text;
+			color: color.$main-highlight-link-text;
 		}
 
 		.userlevel {
@@ -58,7 +61,7 @@
 
 		* {
 			display: block;
-			@include icon-left;
+			@include mixin.icon-left;
 
 			&:before {
 				display: inline-block;
@@ -127,7 +130,7 @@ header.profile {
 	a {
 		padding: 4px;
 		border-radius: .25em;
-		@include icon-left;
+		@include mixin.icon-left;
 
 		&:before {
 			display: inline-block;
@@ -140,15 +143,15 @@ header.profile {
 
 		&:hover,
 		&:focus {
-			color: $main-highlight-link-text;
-			background-color: $main-highlight;
+			color: color.$main-highlight-link-text;
+			background-color: color.$main-highlight;
 			text-decoration: none;
 		}
 	}
 }
 
 #rank {
-	background-color: $main-shadow;
+	background-color: color.$main-shadow;
 	padding: .125em .625em;
 	vertical-align: middle;
 	margin: .5em 0;
@@ -161,7 +164,7 @@ header.profile {
 	}
 
 	header {
-		background-color: $main-highlight;
+		background-color: color.$main-highlight;
 		margin: -.125em -.625em 0;
 		padding: .25em .5em;
 
@@ -227,7 +230,7 @@ fieldset.avatar img.avatar {
 }
 
 fieldset.avatar input:checked+img.avatar {
-	box-shadow: 0 0 0 .25em $main-link-text;
+	box-shadow: 0 0 0 .25em color.$main-link-text;
 }
 
 .submit {
@@ -266,7 +269,7 @@ main #detecttime {
 }
 
 #contact a.droptrigger {
-	color: $main-text;
+	color: color.$main-text;
 }
 
 .visibility:before {
@@ -322,7 +325,7 @@ main #detecttime {
 
 	a:hover,
 	a:focus {
-		box-shadow: 0 0 0 3px $main-text;
+		box-shadow: 0 0 0 3px color.$main-text;
 		border-radius: .25em;
 		z-index: 1;
 	}
@@ -330,7 +333,7 @@ main #detecttime {
 	.actions {
 		margin: 0;
 		padding: .125em .25em;
-		background-color: $main-shadow;
+		background-color: color.$main-shadow;
 		border-radius: 0 .25em .25em 0;
 
 		a {

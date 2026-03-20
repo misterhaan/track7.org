@@ -1,16 +1,3 @@
-html {
-	color-scheme: light dark;
-	--sqrt2: 1.4142135623730950488016887242097;
-}
-
-html.dark {
-	color-scheme: dark;
-}
-
-html.light {
-	color-scheme: light;
-}
-
 $void-background: light-dark(#777, #0f1614);
 $void-text: light-dark(#ccc, #cacfc0);
 $void-link-text: #fff;

@@ -1,3 +1,5 @@
+@use "!color" as color;
+
 @media (min-width: 40em) {
 	#sendmessage span.label {
 		flex: 0 0 4.5em;
@@ -16,13 +18,13 @@ ol.usersuggest {
 	position: absolute;
 	list-style-type: none;
 	padding: 0 3px 3px;
-	background-color: $main-highlight;
+	background-color: color.$main-highlight;
 	border-radius: 0 0 3px 3px;
 	top: .45em;
 	left: .25em;
 
 	li {
-		background-color: $main-field;
+		background-color: color.$main-field;
 		margin: 0;
 		padding: .25em;
 		border-radius: 0;
@@ -35,8 +37,8 @@ ol.usersuggest {
 
 			&:hover,
 			&.highlight {
-				background-color: $main-highlight;
-				color: $main-highlight-link-text;
+				background-color: color.$main-highlight;
+				color: color.$main-highlight-link-text;
 			}
 
 			img.avatar {
@@ -68,7 +70,7 @@ ol.conversations {
 
 #conversations ol {
 	li.selected>header {
-		background-color: $main-highlight;
+		background-color: color.$main-highlight;
 		border-radius: .25em;
 	}
 
@@ -95,8 +97,8 @@ ol.conversations {
 			line-height: 2em;
 			margin-right: .25em;
 			display: inline-block;
-			background-color: $main-highlight;
-			color: $main-highlight-link-text;
+			background-color: color.$main-highlight;
+			color: color.$main-highlight-link-text;
 			text-align: center;
 			border-radius: .25em 0 0 .25em;
 		}
@@ -110,7 +112,7 @@ ol.conversations {
 			line-height: 2em;
 			margin-left: .25em;
 			display: inline-block;
-			background-color: $main-shadow;
+			background-color: color.$main-shadow;
 			text-align: center;
 			border-radius: 0 .25em .25em 0;
 		}

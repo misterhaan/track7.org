@@ -1,7 +1,9 @@
+@use "!color" as color;
+
 ol.gallery a.photo.thumb {
-	background-color: $photo-background;
+	background-color: color.$photo-background;
 	border-radius: .25em;
-	filter: drop-shadow(.5px .5px 1px $photo-shadow);
+	filter: drop-shadow(.5px .5px 1px color.$photo-shadow);
 
 	img {
 		padding: 7px;
@@ -13,7 +15,7 @@ ol.gallery a.photo.thumb {
 img.photo,
 iframe.photo {
 	max-width: 100%;
-	border: 1px solid $photo-shadow;
+	border: 1px solid color.$photo-shadow;
 	border-radius: .25em;
 	display: block;
 	margin: 0 auto;

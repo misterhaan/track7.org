@@ -1,3 +1,5 @@
+@use "!color" as color;
+
 h1 img {
 	max-width: 100%;
 }
@@ -21,7 +23,7 @@ h1 img {
 
 		a {
 			display: flex;
-			background-color: $main-shadow;
+			background-color: color.$main-shadow;
 			border-radius: .25em;
 			padding: .35em .5em .35em .35em;
 			margin: .0625em;
@@ -35,8 +37,8 @@ h1 img {
 			&:hover,
 			&:focus {
 				outline: none;
-				background-color: $main-highlight;
-				color: $main-highlight-link-text;
+				background-color: color.$main-highlight;
+				color: color.$main-highlight-link-text;
 			}
 		}
 
@@ -55,7 +57,7 @@ article.activity {
 		font-size: .9em;
 		margin: 1.5em 0 .75em .5em;
 		padding: .5em 0 .25em;
-		background-color: $main-shadow;
+		background-color: color.$main-shadow;
 		border-radius: .325em;
 		width: calc(48px + 1em);
 		height: calc(48px + 1.6em);

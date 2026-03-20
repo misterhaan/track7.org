@@ -1,3 +1,5 @@
+@use "!color" as color;
+
 @media (min-width: 40em) {
 	.tabbed {
 		display: flex;
@@ -33,8 +35,8 @@
 		}
 
 		&.selected {
-			background-color: $main-highlight;
-			color: $main-highlight-link-text;
+			background-color: color.$main-highlight;
+			color: color.$main-highlight-link-text;
 			border-radius: .25em;
 		}
 	}

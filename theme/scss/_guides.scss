@@ -1,3 +1,6 @@
+@use "!color" as color;
+@use "!mixin" as mixin;
+
 .toc {
 	margin: .5em 0;
 	line-height: 1.5em;
@@ -12,9 +15,9 @@
 	}
 
 	header {
-		background-color: $main-highlight;
+		background-color: color.$main-highlight;
 		padding: 0 .5em;
-		@include icon-left;
+		@include mixin.icon-left;
 
 		@media (min-width: 25em) {
 			border-radius: .25em .25em 0 0;
@@ -26,7 +29,7 @@
 	}
 
 	ol {
-		background-color: $main-shadow;
+		background-color: color.$main-shadow;
 		margin: 0;
 		padding: .125em .75em .25em 2em;
 

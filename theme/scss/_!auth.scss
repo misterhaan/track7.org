@@ -1,3 +1,5 @@
+@use "!color" as color;
+
 $deviantart-color: #11c05d;
 $github-color: #24292e;
 $google-color: #4285f4;
@@ -64,7 +66,7 @@ $twitter-color: #1da1f2;
 
 #authchoices a:hover,
 #authchoices a:focus {
-	box-shadow: 0 0 0 3px $main-text;
+	box-shadow: 0 0 0 3px color.$main-text;
 	border-radius: 50%;
 }
 
@@ -78,11 +80,11 @@ $twitter-color: #1da1f2;
 	}
 
 	.github {
-		color: light-dark($github-color, $main-link-text);
+		color: light-dark($github-color, color.$main-link-text);
 	}
 
 	.steam {
-		color: light-dark($steam-color, $main-link-text);
+		color: light-dark($steam-color, color.$main-link-text);
 	}
 
 	.twitch {

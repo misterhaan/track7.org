@@ -1,0 +1,7 @@
+@mixin icon-left {
+	&:before {
+		font-size: .9em;
+		margin-right: .4em;
+		display: inline-block;
+	}
+}

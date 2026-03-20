@@ -1,5 +1,7 @@
+@use "!mixin" as mixin;
+
 .series h2 {
-	@include icon-left;
+	@include mixin.icon-left;
 }
 
 p.story {

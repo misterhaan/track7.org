@@ -1,7 +1,9 @@
+@use "!color" as color;
+
 body {
 	padding: 0;
 	margin: 0;
-	background-color: $void-background;
+	background-color: color.$void-background;
 	-moz-text-size-adjust: none;
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
@@ -21,8 +23,8 @@ body.text {
 
 
 main {
-	background-color: $main-background;
-	color: $main-text;
+	background-color: color.$main-background;
+	color: color.$main-text;
 	padding: .5em 0;
 	position: relative;
 
@@ -37,6 +39,6 @@ main {
 
 	a:link,
 	a:visited {
-		color: $main-link-text;
+		color: color.$main-link-text;
 	}
 }

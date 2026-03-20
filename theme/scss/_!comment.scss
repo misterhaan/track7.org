@@ -1,8 +1,11 @@
+@use "!color" as color;
+@use "!mixin" as mixin;
+
 #comments h2 {
-	border-top: .0625em dashed $main-divider;
+	border-top: .0625em dashed color.$main-divider;
 	margin: 1em 0 0;
 	padding: .375em .4em 0;
-	@include icon-left;
+	@include mixin.icon-left;
 }
 
 section.comment,
@@ -22,7 +25,7 @@ ol.messages li {
 
 	.userinfo {
 		padding: 0 .25em 0 .5em;
-		background-color: $main-shadow;
+		background-color: color.$main-shadow;
 		flex: none;
 
 		@media (min-width: 25em) {

@@ -1,8 +1,10 @@
+@use "!color" as color;
+
 ol.gallery a.lego.thumb {
 	border-radius: .25em;
 
 	img {
-		filter: drop-shadow(2px 2px 1px $main-divider);
+		filter: drop-shadow(2px 2px 1px color.$main-divider);
 	}
 }
 
@@ -11,7 +13,7 @@ img.lego {
 	border-radius: .25em;
 	display: block;
 	margin: 0 auto;
-	filter: drop-shadow(4px 4px 2px $main-divider);
+	filter: drop-shadow(4px 4px 2px color.$main-divider);
 }
 
 @media (min-width: 40em) {

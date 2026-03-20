@@ -1,3 +1,6 @@
+@use "!color" as color;
+@use "!mixin" as mixin;
+
 label,
 label * {
 	vertical-align: baseline;
@@ -16,14 +19,14 @@ main select,
 main textarea {
 	margin: 0 .25em;
 	padding: .1em .25em .15em;
-	background-color: $main-field;
+	background-color: color.$main-field;
 	border: none;
 	border-radius: .25em;
 
 	&:focus,
 	&:hover {
 		outline: none;
-		box-shadow: 0 0 0 3px $main-text;
+		box-shadow: 0 0 0 3px color.$main-text;
 	}
 }
 
@@ -35,21 +38,21 @@ button {
 	cursor: pointer;
 
 	&:not(:disabled) {
-		background-color: $main-shadow;
-		color: $main-link-text;
+		background-color: color.$main-shadow;
+		color: color.$main-link-text;
 
 		&:hover,
 		&:focus {
 			outline: none;
-			box-shadow: 0 0 0 3px $main-text;
-			background-color: $main-highlight;
-			color: $main-highlight-link-text;
+			box-shadow: 0 0 0 3px color.$main-text;
+			background-color: color.$main-highlight;
+			color: color.$main-highlight-link-text;
 		}
 	}
 
 	&:disabled {
-		background: $main-disabled;
-		color: $main-text;
+		background: color.$main-disabled;
+		color: color.$main-text;
 		cursor: not-allowed;
 	}
 
@@ -63,7 +66,7 @@ button {
 
 			&:hover,
 			&:focus {
-				color: $main-link-text;
+				color: color.$main-link-text;
 				text-decoration: underline;
 				background: transparent;
 				box-shadow: none;
@@ -76,7 +79,7 @@ fieldset {
 	margin: 1em 0 .75em;
 	padding: 0;
 	border: none;
-	border-left: .5em solid $main-shadow;
+	border-left: .5em solid color.$main-shadow;
 
 	@media (min-width: 25em) {
 		border-radius: .325em 0 0 .325em;
@@ -150,7 +153,7 @@ main .field {
 
 main .field.list {
 	flex-wrap: wrap;
-	background-color: $main-field;
+	background-color: color.$main-field;
 	border-radius: .25em;
 
 	&:before {
@@ -173,14 +176,14 @@ main .field.list {
 
 	&:focus-within,
 	&:hover {
-		box-shadow: 0 0 0 3px $main-text;
+		box-shadow: 0 0 0 3px color.$main-text;
 	}
 }
 
 legend {
 	margin: 0 .75em .75em -.25em;
 	padding: .1em 0 .25em .75em;
-	background-color: $main-shadow;
+	background-color: color.$main-shadow;
 	float: left;
 	border-radius: 0 .325em .325em 0;
 
@@ -194,7 +197,7 @@ legend {
 
 	.action:hover,
 	.action:focus {
-		box-shadow: 0 0 0 3px $main-text;
+		box-shadow: 0 0 0 3px color.$main-text;
 		border-radius: .25em;
 	}
 }
@@ -234,20 +237,20 @@ main .field .suggestinput {
 	position: absolute;
 	top: 1.4em;
 	left: .125em;
-	background-color: $main-shadow;
+	background-color: color.$main-shadow;
 	padding: 0 3px 3px;
 	border-radius: 0 0 3px 3px;
 
 	&>* {
 		display: block;
 		cursor: pointer;
-		background-color: $main-field;
+		background-color: color.$main-field;
 		padding: .125em .25em;
 
 		&:hover,
 		&.selected {
-			background-color: $main-highlight;
-			color: $main-highlight-link-text;
+			background-color: color.$main-highlight;
+			color: color.$main-highlight-link-text;
 		}
 
 		em {
@@ -267,7 +270,7 @@ img.preview {
 
 .validation {
 	margin-top: -.5em;
-	@include icon-left;
+	@include mixin.icon-left;
 
 	@media (min-width: 40em) {
 		margin-top: 0;

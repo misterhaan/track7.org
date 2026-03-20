@@ -1,3 +1,5 @@
+@use "!color" as color;
+
 #codetypes {
 	@media (min-width: 40em) {
 		display: flex;
@@ -8,7 +10,7 @@
 
 	section {
 		margin-top: 1em;
-		background-color: $main-shadow;
+		background-color: color.$main-shadow;
 		padding-bottom: .0125em;
 
 		@media (min-width: 25em) {
@@ -35,8 +37,8 @@
 
 		a {
 			display: block;
-			background-color: $main-highlight;
-			color: $main-highlight-link-text;
+			background-color: color.$main-highlight;
+			color: color.$main-highlight-link-text;
 			padding: .125em .25em .25em;
 
 			@media (min-width: 25em) {

@@ -1,6 +1,9 @@
+@use "!color" as color;
+@use "!mixin" as mixin;
+
 body>header {
-	background-color: $header-background;
-	color: $header-text;
+	background-color: color.$header-background;
+	color: color.$header-text;
 	height: 42px;
 	display: flex;
 
@@ -10,7 +13,7 @@ body>header {
 }
 
 body>header a {
-	color: $header-link-text;
+	color: color.$header-link-text;
 }
 
 #gohome {
@@ -29,7 +32,7 @@ body>header a {
 	&:focus,
 	&:hover {
 		outline: none;
-		background-color: $header-highlight;
+		background-color: color.$header-highlight;
 	}
 
 	img {
@@ -39,7 +42,7 @@ body>header a {
 }
 
 #theme-toggle {
-	@include icon-left;
+	@include mixin.icon-left;
 	display: block;
 	margin: 5px 7px 5px auto;
 	padding: 0; // override button defaults
@@ -49,7 +52,7 @@ body>header a {
 	text-align: center;
 	border-radius: .25em;
 	background-color: transparent;
-	color: $header-link-text;
+	color: color.$header-link-text;
 
 	&:before {
 		display: block;
@@ -60,7 +63,7 @@ body>header a {
 	&:hover {
 		outline: none;
 		text-decoration: none;
-		background-color: $header-highlight;
+		background-color: color.$header-highlight;
 	}
 }
 
@@ -83,12 +86,12 @@ body>header a {
 	&:hover,
 	&.open {
 		outline: none;
-		background-color: $header-highlight;
+		background-color: color.$header-highlight;
 	}
 
 	&.open:hover,
 	&.open:focus {
-		box-shadow: 0 0 0 3px $header-focus;
+		box-shadow: 0 0 0 3px color.$header-focus;
 	}
 
 	img.avatar {
@@ -101,8 +104,8 @@ body>header a {
 
 .notifycount {
 	display: inline-block;
-	background-color: $notify-background;
-	color: $notify-text;
+	background-color: color.$notify-background;
+	color: color.$notify-text;
 	border-radius: .5em;
 	margin-left: .5em;
 	height: 1em;
@@ -115,8 +118,8 @@ body>header a {
 #loginmenu,
 #usermenu {
 	display: none;
-	background-color: $header-highlight;
-	color: $header-text;
+	background-color: color.$header-highlight;
+	color: color.$header-text;
 	padding: .25em .5em .5em;
 }
 
@@ -175,11 +178,11 @@ body>header a {
 		&:focus,
 		&:hover {
 			outline: none;
-			box-shadow: 0 0 0 3px $header-focus;
+			box-shadow: 0 0 0 3px color.$header-focus;
 		}
 
 		&.checkbox:focus-within {
-			box-shadow: 0 0 0 3px $header-focus;
+			box-shadow: 0 0 0 3px color.$header-focus;
 		}
 	}
 
@@ -196,18 +199,18 @@ body>header a {
 		margin: 0 auto;
 
 		&:disabled {
-			background: $header-disabled;
-			color: $header-text;
+			background: color.$header-disabled;
+			color: color.$header-text;
 		}
 
 		&:not(:disabled) {
-			background-color: $header-background;
-			color: $header-link-text;
+			background-color: color.$header-background;
+			color: color.$header-link-text;
 
 			&:hover,
 			&:focus {
 				outline: none;
-				box-shadow: 0 0 0 3px $header-focus;
+				box-shadow: 0 0 0 3px color.$header-focus;
 			}
 		}
 	}
@@ -230,7 +233,7 @@ body>header a {
 		padding: 4px;
 
 		&.selected {
-			background-color: $header-link-text;
+			background-color: color.$header-link-text;
 			border-radius: 8px;
 		}
 	}
@@ -252,25 +255,25 @@ body>header a {
 		display: block;
 		width: 12em;
 		border: none;
-		background-color: $main-background;
-		color: $main-text;
+		background-color: color.$main-background;
+		color: color.$main-text;
 		border-radius: .25em;
 		padding: 0 .25em .1em;
 
 		&:hover,
 		&:focus {
 			outline: none;
-			box-shadow: 0 0 0 3px $header-focus;
+			box-shadow: 0 0 0 3px color.$header-focus;
 		}
 	}
 }
 
 #useractions a {
-	@include icon-left;
+	@include mixin.icon-left;
 	display: block;
 	font-weight: bold;
 	text-decoration: none;
-	color: $header-link-text;
+	color: color.$header-link-text;
 	padding: .125em .5em .25em;
 
 	&:before {
@@ -281,6 +284,6 @@ body>header a {
 	&:hover,
 	&:focus {
 		outline: none;
-		background-color: $header-background;
+		background-color: color.$header-background;
 	}
 }
