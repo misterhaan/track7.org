@@ -24,9 +24,9 @@ export default class ToolApi {
 		return Ajax.post(url, data);
 	}
 
-	static tweet(message, url) {
+	static tweet(message, link) {
 		const url = `${apiURL}tweet`;
-		const data = { message: message, url: url };
+		const data = { message: message, link: link };
 		return Ajax.post(url, data);
 	}
 
